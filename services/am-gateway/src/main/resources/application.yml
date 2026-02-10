@@ -1,0 +1,26 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: am-websocket-gateway
+  kafka:
+    consumer:
+      group-id: am-websocket-gateway-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG
+    com.am.gateway: INFO
+
+# Portfolio Calculation Scheduler Configuration
+portfolio:
+  calculation:
+    interval-seconds: 10 # Trigger calculation every 10 seconds for subscribed users
+    max-concurrent-users: 100 # Maximum number of concurrent subscribed users

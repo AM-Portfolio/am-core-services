@@ -1,0 +1,618 @@
+{
+    "info": {
+        "_postman_id": "am-analysis-service-v1",
+        "name": "AM Analysis Service",
+        "description": "Comprehensive API collection for AM Analysis Service endpoints. Provides portfolio and basket analysis including allocation, performance tracking, and top movers identification.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "am-analysis-v1"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{auth_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8090",
+            "type": "string"
+        },
+        {
+            "key": "auth_token",
+            "value": "your-jwt-token-here",
+            "type": "string"
+        },
+        {
+            "key": "portfolio_id",
+            "value": "sample-portfolio-id",
+            "type": "string"
+        },
+        {
+            "key": "basket_id",
+            "value": "sample-basket-id",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Allocation Analysis",
+            "description": "Endpoints for retrieving asset allocation data by sector and asset class",
+            "item": [
+                {
+                    "name": "Get Portfolio Allocation",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/allocation",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "{{portfolio_id}}",
+                                "allocation"
+                            ]
+                        },
+                        "description": "Retrieves allocation breakdown for a specific portfolio, including:\n- Sector allocation (by percentage and value)\n- Asset class distribution (by percentage and value)"
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/analysis/portfolio/portfolio-123/allocation",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "analysis",
+                                        "portfolio",
+                                        "portfolio-123",
+                                        "allocation"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n    \"portfolioId\": \"portfolio-123\",\n    \"sectors\": [\n        {\n            \"name\": \"Technology\",\n            \"value\": 50000.00,\n            \"percentage\": 35.5\n        },\n        {\n            \"name\": \"Healthcare\",\n            \"value\": 30000.00,\n            \"percentage\": 21.3\n        },\n        {\n            \"name\": \"Finance\",\n            \"value\": 25000.00,\n            \"percentage\": 17.7\n        }\n    ],\n    \"assetClasses\": [\n        {\n            \"name\": \"Equity\",\n            \"value\": 80000.00,\n            \"percentage\": 56.8\n        },\n        {\n            \"name\": \"Debt\",\n            \"value\": 40000.00,\n            \"percentage\": 28.4\n        },\n        {\n            \"name\": \"Cash\",\n            \"value\": 20000.00,\n            \"percentage\": 14.2\n        }\n    ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Basket Allocation",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/basket/{{basket_id}}/allocation",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "basket",
+                                "{{basket_id}}",
+                                "allocation"
+                            ]
+                        },
+                        "description": "Retrieves allocation breakdown for a specific basket, including:\n- Sector allocation (by percentage and value)\n- Asset class distribution (by percentage and value)"
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/analysis/basket/basket-456/allocation",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "analysis",
+                                        "basket",
+                                        "basket-456",
+                                        "allocation"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n    \"portfolioId\": \"basket-456\",\n    \"sectors\": [\n        {\n            \"name\": \"IT Services\",\n            \"value\": 15000.00,\n            \"percentage\": 45.5\n        },\n        {\n            \"name\": \"Banking\",\n            \"value\": 12000.00,\n            \"percentage\": 36.4\n        }\n    ],\n    \"assetClasses\": [\n        {\n            \"name\": \"Equity\",\n            \"value\": 27000.00,\n            \"percentage\": 81.8\n        },\n        {\n            \"name\": \"Cash\",\n            \"value\": 6000.00,\n            \"percentage\": 18.2\n        }\n    ]\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Performance Analysis",
+            "description": "Endpoints for tracking portfolio and basket performance over various time frames",
+            "item": [
+                {
+                    "name": "Get Portfolio Performance (1 Month)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/performance?timeFrame=1M",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "{{portfolio_id}}",
+                                "performance"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1M",
+                                    "description": "Time frame for performance analysis. Options: 1D, 1W, 1M, 3M, 6M, 1Y, YTD, ALL"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves performance metrics for a portfolio over the specified time frame, including:\n- Total return percentage\n- Total return value\n- Historical chart data points"
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/analysis/portfolio/portfolio-123/performance?timeFrame=1M",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "analysis",
+                                        "portfolio",
+                                        "portfolio-123",
+                                        "performance"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "timeFrame",
+                                            "value": "1M"
+                                        }
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n    \"portfolioId\": \"portfolio-123\",\n    \"timeFrame\": \"1M\",\n    \"totalReturnPercentage\": 8.75,\n    \"totalReturnValue\": 12500.00,\n    \"chartData\": [\n        {\n            \"date\": \"2026-01-10\",\n            \"value\": 142000.00\n        },\n        {\n            \"date\": \"2026-01-17\",\n            \"value\": 145000.00\n        },\n        {\n            \"date\": \"2026-01-24\",\n            \"value\": 148000.00\n        },\n        {\n            \"date\": \"2026-01-31\",\n            \"value\": 150000.00\n        },\n        {\n            \"date\": \"2026-02-07\",\n            \"value\": 154500.00\n        }\n    ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Portfolio Performance (1 Year)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/performance?timeFrame=1Y",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "{{portfolio_id}}",
+                                "performance"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1Y"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves 1-year performance metrics for a portfolio"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Portfolio Performance (YTD)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/performance?timeFrame=YTD",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "{{portfolio_id}}",
+                                "performance"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "YTD"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves year-to-date performance metrics for a portfolio"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Basket Performance",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/basket/{{basket_id}}/performance?timeFrame=1M",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "basket",
+                                "{{basket_id}}",
+                                "performance"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1M",
+                                    "description": "Time frame for performance analysis"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves performance metrics for a basket over the specified time frame"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Top Movers Analysis",
+            "description": "Endpoints for identifying top gainers and losers within portfolios and baskets",
+            "item": [
+                {
+                    "name": "Get Portfolio Top Movers (1 Day)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/top-movers?timeFrame=1D",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "{{portfolio_id}}",
+                                "top-movers"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1D",
+                                    "description": "Time frame for top movers. Options: 1D, 1W, 1M, YTD"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves top gaining and losing holdings within a specific portfolio for the given time frame"
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/analysis/portfolio/portfolio-123/top-movers?timeFrame=1D",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "analysis",
+                                        "portfolio",
+                                        "portfolio-123",
+                                        "top-movers"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "timeFrame",
+                                            "value": "1D"
+                                        }
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [],
+                            "cookie": [],
+                            "body": "{\n    \"gainers\": [\n        {\n            \"symbol\": \"RELIANCE\",\n            \"name\": \"Reliance Industries Ltd\",\n            \"price\": 2458.50,\n            \"changePercentage\": 3.85,\n            \"changeAmount\": 91.20\n        },\n        {\n            \"symbol\": \"TCS\",\n            \"name\": \"Tata Consultancy Services Ltd\",\n            \"price\": 3542.10,\n            \"changePercentage\": 2.34,\n            \"changeAmount\": 81.00\n        },\n        {\n            \"symbol\": \"INFY\",\n            \"name\": \"Infosys Ltd\",\n            \"price\": 1489.75,\n            \"changePercentage\": 1.92,\n            \"changeAmount\": 28.10\n        }\n    ],\n    \"losers\": [\n        {\n            \"symbol\": \"HDFC\",\n            \"name\": \"HDFC Bank Ltd\",\n            \"price\": 1621.30,\n            \"changePercentage\": -2.15,\n            \"changeAmount\": -35.70\n        },\n        {\n            \"symbol\": \"ICICIBANK\",\n            \"name\": \"ICICI Bank Ltd\",\n            \"price\": 978.40,\n            \"changePercentage\": -1.68,\n            \"changeAmount\": -16.70\n        }\n    ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Portfolio Top Movers (1 Week)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/top-movers?timeFrame=1W",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "{{portfolio_id}}",
+                                "top-movers"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1W"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves weekly top movers for a portfolio"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Basket Top Movers",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/basket/{{basket_id}}/top-movers?timeFrame=1D",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "basket",
+                                "{{basket_id}}",
+                                "top-movers"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1D"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves top gaining and losing holdings within a specific basket"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Category Top Movers (Portfolio)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/portfolio/top-movers?timeFrame=1D",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "portfolio",
+                                "top-movers"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1D"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves top movers across all portfolios for the user (category-level view)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Category Top Movers (Basket)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{auth_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analysis/basket/top-movers?timeFrame=1D",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analysis",
+                                "basket",
+                                "top-movers"
+                            ],
+                            "query": [
+                                {
+                                    "key": "timeFrame",
+                                    "value": "1D"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves top movers across all baskets for the user (category-level view)"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Health Check",
+            "description": "Service health and status endpoints",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/actuator/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "actuator",
+                                "health"
+                            ]
+                        },
+                        "description": "Spring Boot Actuator health endpoint for service monitoring"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Pre-request script to ensure auth token is set",
+                    "if (!pm.collectionVariables.get('auth_token') || pm.collectionVariables.get('auth_token') === 'your-jwt-token-here') {",
+                    "    console.warn('⚠️ Please set a valid auth_token in collection variables');",
+                    "}"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Global test script for all requests",
+                    "pm.test('Status code is 200', function () {",
+                    "    pm.response.to.have.status(200);",
+                    "});",
+                    "",
+                    "pm.test('Response time is acceptable', function () {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                    "});",
+                    "",
+                    "pm.test('Response is JSON', function () {",
+                    "    pm.response.to.be.json;",
+                    "});"
+                ]
+            }
+        }
+    ]
+}

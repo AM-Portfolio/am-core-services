@@ -1,0 +1,11 @@
+target/
+*.log
+.idea/
+.vscode/
+*.iml
+.DS_Store
+build_log.txt
+security_build_log.txt
+hs_err_pid*.log
+replay_pid*.log
+.env

@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # WebSocket Gateway Service
+  am-gateway:
+    image: eclipse-temurin:17-jre-focal
+    container_name: am-gateway-dev
+    ports:
+      - "8091:8091"
+    env_file:
+      - .env.dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - MONGODB_CONNECTION_URL=${MONGODB_CONNECTION_URL}
+      - server.port=8091
+    volumes:
+      # Mount the LOCAL build artifact to the container
+      # When you run `mvn package` locally, this file updates instantly in the container!
+      - ./services/am-gateway/target/am-gateway-1.0.0-SNAPSHOT.jar:/app/app.jar
+    command: ["java", "-jar", "/app/app.jar"]
+    networks:
+      - am-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Analysis Service
+  am-analysis:
+    image: eclipse-temurin:17-jre-focal
+    container_name: am-analysis-dev
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env.dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - MONGODB_CONNECTION_URL=${MONGODB_CONNECTION_URL}
+      - server.port=8090
+    volumes:
+      # Mount the LOCAL build artifact to the container
+      # When you run `mvn package` locally, this file updates instantly in the container!
+      - ./services/am-analysis/target/am-analysis-1.0.0-SNAPSHOT.jar:/app/app.jar
+    command: ["java", "-jar", "/app/app.jar"]
+    networks:
+      - am-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  am-net:
+    external: true
+    name: am-infra_am-net
