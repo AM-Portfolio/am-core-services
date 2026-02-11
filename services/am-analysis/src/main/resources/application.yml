@@ -13,7 +13,7 @@ spring:
     trade-topic: ${KAFKA_TRADE_TOPIC:am-trade}
     consumer:
       group-id: am-analysis-group
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     properties:
@@ -29,3 +29,19 @@ logging:
     root: INFO
     com.am.analysis: DEBUG
     am.trade: DEBUG
+
+am:
+  analysis:
+    adapter:
+      market:
+        enabled: false # Enable/disable Market Event Listener
+      portfolio:
+        enabled: false # Enable/disable Portfolio Event Listener
+      trade:
+        enabled: false # Enable/disable Trade Event Listener
+      ingestion:
+        enabled: false # Enable/disable Analysis Ingestion Service
+
+  services:
+    market-data:
+      url: ${MARKET_DATA_URL:http://localhost:8092} # Default to standard port, can be overridden

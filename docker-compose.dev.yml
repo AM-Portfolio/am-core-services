@@ -34,6 +34,7 @@ services:
     image: eclipse-temurin:17-jre-focal
     container_name: am-analysis-dev
     ports:
+    
       - "8090:8090"
     env_file:
       - .env.dev
@@ -41,6 +42,7 @@ services:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
       - MONGODB_CONNECTION_URL=${MONGODB_CONNECTION_URL}
+      - MARKET_DATA_URL=${MARKET_DATA_URL}
       - server.port=8090
     volumes:
       # Mount the LOCAL build artifact to the container

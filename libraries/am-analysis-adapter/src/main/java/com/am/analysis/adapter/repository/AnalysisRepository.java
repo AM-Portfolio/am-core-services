@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface AnalysisRepository extends MongoRepository<AnalysisEntity, String> {
     List<AnalysisEntity> findByOwnerId(String ownerId);
+    List<AnalysisEntity> findByOwnerIdAndType(String ownerId, AnalysisEntityType type);
     
     // Top Gainers
     List<AnalysisEntity> findTop10ByTypeOrderByTotalGainLossPercentageDesc(AnalysisEntityType type);

@@ -47,5 +47,6 @@ public class AnalysisHolding {
     // Classification (for sector allocation)
     private String sector;
     private String industry;
+    private String marketCapType; // LARGE_CAP, MID_CAP, SMALL_CAP
     private String exchange;
 }

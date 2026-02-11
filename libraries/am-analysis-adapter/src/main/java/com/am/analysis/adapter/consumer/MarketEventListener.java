@@ -5,12 +5,14 @@ import com.am.analysis.adapter.service.AnalysisIngestionService;
 import com.am.common.investment.model.events.EquityPriceUpdateEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "am.analysis.adapter.market", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class MarketEventListener {
 
     private final AnalysisEventMapper mapper;
