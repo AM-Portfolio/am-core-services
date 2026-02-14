@@ -32,6 +32,11 @@
             <groupId>com.am.domain</groupId>
             <artifactId>am-portfolio-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-analysis-adapter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Spring Boot Starters -->
         <dependency>

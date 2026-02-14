@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.am</groupId>
-        <artifactId>am-portfolio-monorepo</artifactId>
+        <artifactId>am-core-services</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -32,15 +32,45 @@
             <artifactId>am-common-lib</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.am.domain</groupId>
+            <artifactId>am-market-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
             <version>${project.version}</version>
+
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-security-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-cache-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-feign-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Market Data Client Library -->
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-market-client-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- Feign Client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -58,6 +88,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Jackson JSR310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
     </dependencies>
 

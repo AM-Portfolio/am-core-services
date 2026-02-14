@@ -1,26 +1,37 @@
 package com.am.analysis.service.impl;
 
 import com.am.analysis.adapter.model.AnalysisEntity;
+import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.dto.PerformanceResponse;
+import com.am.analysis.service.calculator.PerformanceCalculator;
+import com.am.market.client.service.MarketDataClientService;
+import com.am.market.domain.enums.TimeFrame;
+import com.am.market.domain.model.HistoricalData;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AnalysisCalculationService {
 
+    private final MarketDataClientService marketDataService;
+    private final PerformanceCalculator performanceCalculator;
+
     public AllocationResponse calculateAllocation(AnalysisEntity entity) {
-        log.debug("Calculating allocation for Entity: {}, TotalValue: {}", entity.getSourceId(), entity.getTotalValue());
-        double totalValue = entity.getTotalValue() != null ? entity.getTotalValue() : 0.0;
+        double totalValue = (entity.getPerformance() != null && entity.getPerformance().getTotalValue() != null) 
+                ? entity.getPerformance().getTotalValue() : 0.0;
+        
+        log.debug("Calculating allocation for Entity: {}, TotalValue: {}", entity.getSourceId(), totalValue);
+        // ... (Allocation logic remains unchanged) ...
         List<AllocationResponse.AllocationItem> sectors = new ArrayList<>();
         List<AllocationResponse.AllocationItem> assetClasses = new ArrayList<>();
         List<AllocationResponse.AllocationItem> marketCaps = new ArrayList<>();
@@ -28,21 +39,21 @@ public class AnalysisCalculationService {
         if (entity.getHoldings() != null && !entity.getHoldings().isEmpty()) {
             
             // Group by Sector
-            Map<String, List<com.am.analysis.adapter.model.AnalysisHolding>> sectorMap = entity.getHoldings().stream()
-                    .filter(h -> h.getSector() != null)
-                    .collect(Collectors.groupingBy(com.am.analysis.adapter.model.AnalysisHolding::getSector));
+            Map<String, List<AnalysisHolding>> sectorMap = entity.getHoldings().stream()
+                    .filter(h -> h.getClassification() != null && h.getClassification().getSector() != null)
+                    .collect(Collectors.groupingBy(h -> h.getClassification().getSector()));
             sectors = buildAllocationItems(sectorMap, totalValue);
 
             // Group by Asset Class
-            Map<String, List<com.am.analysis.adapter.model.AnalysisHolding>> assetMap = entity.getHoldings().stream()
-                    .filter(h -> h.getAssetClass() != null)
-                    .collect(Collectors.groupingBy(com.am.analysis.adapter.model.AnalysisHolding::getAssetClass));
+            Map<String, List<AnalysisHolding>> assetMap = entity.getHoldings().stream()
+                    .filter(h -> h.getIdentity() != null && h.getIdentity().getAssetClass() != null)
+                    .collect(Collectors.groupingBy(h -> h.getIdentity().getAssetClass()));
             assetClasses = buildAllocationItems(assetMap, totalValue);
 
             // Group by Market Cap
-            Map<String, List<com.am.analysis.adapter.model.AnalysisHolding>> marketCapMap = entity.getHoldings().stream()
-                    .filter(h -> h.getMarketCapType() != null)
-                    .collect(Collectors.groupingBy(com.am.analysis.adapter.model.AnalysisHolding::getMarketCapType));
+            Map<String, List<AnalysisHolding>> marketCapMap = entity.getHoldings().stream()
+                    .filter(h -> h.getClassification() != null && h.getClassification().getMarketCapType() != null)
+                    .collect(Collectors.groupingBy(h -> h.getClassification().getMarketCapType()));
             marketCaps = buildAllocationItems(marketCapMap, totalValue);
         } else {
              // Fallback
@@ -61,29 +72,29 @@ public class AnalysisCalculationService {
                 .marketCaps(marketCaps)
                 .build();
     }
-
+    
     private List<AllocationResponse.AllocationItem> buildAllocationItems(
-            Map<String, List<com.am.analysis.adapter.model.AnalysisHolding>> groupedHoldings, 
+            Map<String, List<AnalysisHolding>> groupedHoldings, 
             double totalPortfolioValue) {
         
         List<AllocationResponse.AllocationItem> items = new ArrayList<>();
         
         groupedHoldings.forEach((key, holdings) -> {
             double groupTotal = holdings.stream()
-                .mapToDouble(h -> h.getValue() != null ? h.getValue() : 0.0)
+                .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
                 .sum();
                 
             double groupPercentage = totalPortfolioValue != 0 ? (groupTotal / totalPortfolioValue) * 100 : 0.0;
             
             List<AllocationResponse.AllocationHolding> itemHoldings = holdings.stream()
                 .map(h -> {
-                    double hValue = h.getValue() != null ? h.getValue() : 0.0;
+                    double hValue = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
                     double hPctInGroup = groupTotal != 0 ? (hValue / groupTotal) * 100 : 0.0;
                     double hPctInPortfolio = totalPortfolioValue != 0 ? (hValue / totalPortfolioValue) * 100 : 0.0;
                     
                     return AllocationResponse.AllocationHolding.builder()
-                        .symbol(h.getSymbol())
-                        .name(h.getName() != null ? h.getName() : h.getSymbol())
+                        .symbol(h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN")
+                        .name(h.getIdentity() != null && h.getIdentity().getName() != null ? h.getIdentity().getName() : (h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN"))
                         .value(BigDecimal.valueOf(hValue).setScale(2, java.math.RoundingMode.HALF_UP))
                         .percentage(BigDecimal.valueOf(hPctInGroup).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
                         .portfolioPercentage(BigDecimal.valueOf(hPctInPortfolio).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
@@ -104,45 +115,151 @@ public class AnalysisCalculationService {
         return items;
     }
 
+    @Cacheable(value = "performance", key = "#a0.sourceId + '_' + #a1 + '_' + (#a0.lastUpdated != null ? #a0.lastUpdated.toString() : 'null') + '_' + T(java.time.LocalDate).now().toString()")
     public PerformanceResponse calculatePerformance(AnalysisEntity entity, String timeFrame) {
-        log.debug("Calculating performance for Entity: {}, TimeFrame: {}", entity.getSourceId(), timeFrame);
-        // In a real scenario, this would potentially fetch historical data or use a time-series DB
-        // For now, generating a simulated curve based on the current value and a "trend" if available
+        long startTime = System.currentTimeMillis();
+        String entityId = entity.getSourceId();
+        log.info("[PerfCalc] Starting calculation for Entity: {}, TimeFrame: {}", entityId, timeFrame);
         
-        List<PerformanceResponse.DataPoint> data = new ArrayList<>();
-        double currentValue = entity.getTotalValue() != null ? entity.getTotalValue() : 10000;
-        double volatility = 0.02; // 2% daily volatility simulation
-        
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusMonths(1); // Default 1M
-        
-        if ("1Y".equalsIgnoreCase(timeFrame)) {
-            startDate = endDate.minusYears(1);
-        } else if ("YTD".equalsIgnoreCase(timeFrame)) {
-            startDate = LocalDate.of(endDate.getYear(), 1, 1);
+        if (entity.getHoldings() == null || entity.getHoldings().isEmpty()) {
+            log.warn("[PerfCalc] No holdings found for Entity: {}. Returning empty response.", entityId);
+            return PerformanceResponse.builder()
+                    .portfolioId(entityId)
+                    .timeFrame(timeFrame)
+                    .totalReturnPercentage(0.0)
+                    .totalReturnValue(BigDecimal.ZERO)
+                    .chartData(Collections.emptyList())
+                    .build();
         }
 
-        // Generate data points
-        LocalDate current = startDate;
-        double simValue = currentValue * 0.9; // Start slightly lower to show growth (simulated)
+        // 1. Determine Date Range
+        LocalDate earliestTxnDate = findEarliestTransactionDate(entity);
+        LocalDate lifecycleStartDate = (entity.getLifecycle() != null && entity.getLifecycle().getStartDate() != null) 
+                ? entity.getLifecycle().getStartDate().toLocalDate() : null;
         
-        while (!current.isAfter(endDate)) {
-            data.add(PerformanceResponse.DataPoint.builder()
-                    .date(current)
-                    .value(BigDecimal.valueOf(simValue))
-                    .build());
+        LocalDate startDate = earliestTxnDate != null ? earliestTxnDate : lifecycleStartDate;
+
+        LocalDate endDate = (entity.getLifecycle() != null && entity.getLifecycle().getEndDate() != null) 
+                ? entity.getLifecycle().getEndDate().toLocalDate() : LocalDate.now();
+        LocalDate toDate = endDate; 
+        
+        LocalDate fromDate;
+        if (startDate != null && ("ALL".equalsIgnoreCase(timeFrame) || "TRADE_LIFETIME".equalsIgnoreCase(timeFrame))) {
+            fromDate = startDate;
+        } else {
+            fromDate = calculateFromDate(timeFrame, toDate);
+            if (startDate != null && fromDate.isBefore(startDate)) {
+                fromDate = startDate;
+            }
+        }
+        log.info("[PerfCalc] Date Range for {}: {} to {}", entityId, fromDate, toDate);
+
+        // 2. Extract Symbols
+        log.debug("[PerfCalc] Inspecting Holdings for Entity {}: Total Holdings = {}", entityId, entity.getHoldings() != null ? entity.getHoldings().size() : "null");
+        if (entity.getHoldings() != null && log.isDebugEnabled()) {
+            for (int i = 0; i < Math.min(entity.getHoldings().size(), 5); i++) {
+                AnalysisHolding h = entity.getHoldings().get(i);
+                log.debug("[PerfCalc] Holding [{}]: Identity={}, Symbol={}", i, h.getIdentity(), h.getIdentity() != null ? h.getIdentity().getSymbol() : "null");
+            }
+        }
+
+        List<String> symbols = entity.getHoldings().stream()
+                .filter(h -> h.getIdentity() != null)
+                .map(h -> h.getIdentity().getSymbol())
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+
+        log.info("[PerfCalc] Extracted {} unique symbols for Entity {}: {}", symbols.size(), entityId, symbols);
+
+        if (symbols.isEmpty()) {
+            log.warn("[PerfCalc] No valid symbols found for Entity {}. Skipping Market Data fetch.", entityId);
+            return PerformanceResponse.builder()
+                    .portfolioId(entityId)
+                    .timeFrame(timeFrame)
+                    .totalReturnPercentage(0.0)
+                    .totalReturnValue(BigDecimal.ZERO)
+                    .chartData(Collections.emptyList())
+                    .errorMessage("No symbols found in portfolio to analyze.")
+                    .build();
+        }
+
+            // 3. Batch Fetch Market Data
+        Map<String, HistoricalData> marketDataMap = Collections.emptyMap();
+        long fetchStart = System.currentTimeMillis();
+        try {
+            log.info("[PerfCalc] Fetching market data for {} symbols...", symbols.size());
             
-            // Random walk
-            simValue = simValue * (1 + (Math.random() * volatility - (volatility / 2)) + 0.001); 
-            current = current.plusDays(1);
+            marketDataMap = marketDataService.getHistoricalDataBatch(
+                String.join(",", symbols), 
+                fromDate.toString(), 
+                toDate.toString(), 
+                TimeFrame.DAY
+            );
+            
+            log.info("[PerfCalc] Market data fetch completed in {} ms. Received data for {} symbols.", 
+                    (System.currentTimeMillis() - fetchStart), marketDataMap.size());
+        } catch (Exception e) {
+            log.error("[PerfCalc] Failed to fetch batch market data for analysis after {} ms. Error: {}", 
+                    (System.currentTimeMillis() - fetchStart), e.getMessage(), e);
+            return PerformanceResponse.builder()
+                    .portfolioId(entityId)
+                    .timeFrame(timeFrame)
+                    .errorMessage("Failed to fetch market data: " + e.getMessage())
+                    .build();
         }
 
-        return PerformanceResponse.builder()
-                .portfolioId(entity.getSourceId())
-                .timeFrame(timeFrame)
-                .totalReturnPercentage(entity.getTotalGainLossPercentage() != null ? entity.getTotalGainLossPercentage() : 0.0)
-                .totalReturnValue(BigDecimal.valueOf(entity.getTotalGainLoss() != null ? entity.getTotalGainLoss() : 0.0))
-                .chartData(data)
-                .build();
+        // 4. Delegate Calculation
+        PerformanceResponse response = performanceCalculator.calculate(entity, timeFrame, marketDataMap, fromDate, toDate);
+        log.info("[PerfCalc] Calculation completed in {} ms. Total Return: {}%", (System.currentTimeMillis() - startTime), response.getTotalReturnPercentage());
+        return response;
+    }
+
+    private LocalDate calculateFromDate(String timeFrame, LocalDate toDate) {
+        if (timeFrame == null) return toDate.minusMonths(1);
+        
+        switch (timeFrame.toUpperCase()) {
+            case "1W": return toDate.minusWeeks(1);
+            case "1M": return toDate.minusMonths(1);
+            case "3M": return toDate.minusMonths(3);
+            case "6M": return toDate.minusMonths(6);
+            case "1Y": return toDate.minusYears(1);
+            case "3Y": return toDate.minusYears(3);
+            case "5Y": return toDate.minusYears(5);
+            case "YTD": return LocalDate.of(toDate.getYear(), 1, 1);
+            case "ALL": return toDate.minusYears(10); // Cap at 10 years or earliest available
+            default: return toDate.minusMonths(1);
+        }
+    }
+
+    private LocalDate findEarliestTransactionDate(AnalysisEntity entity) {
+        if (entity.getHoldings() == null) return null;
+        
+        // 1. Try to find from transactions
+        LocalDate earliestTxn = entity.getHoldings().stream()
+                .filter(h -> h.getTransactions() != null)
+                .flatMap(h -> h.getTransactions().stream())
+                .map(com.am.analysis.adapter.model.components.Transaction::getDate)
+                .filter(Objects::nonNull)
+                .min(java.time.LocalDateTime::compareTo)
+                .map(java.time.LocalDateTime::toLocalDate)
+                .orElse(null);
+                
+        if (earliestTxn != null) return earliestTxn;
+        
+        // 2. Fallback: Find earliest holding start date
+        LocalDate earliestHoldingStart = entity.getHoldings().stream()
+                .filter(h -> h.getLifecycle() != null && h.getLifecycle().getStartDate() != null)
+                .map(h -> h.getLifecycle().getStartDate().toLocalDate())
+                .min(LocalDate::compareTo)
+                .orElse(null);
+                
+        if (earliestHoldingStart != null) return earliestHoldingStart;
+        
+        // 3. Last Fallback: Entity last updated date (or reasonable default)
+        return entity.getLastUpdated() != null ? entity.getLastUpdated().toLocalDate() : LocalDate.now();
     }
 }
+

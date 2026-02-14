@@ -13,10 +13,10 @@ public interface AnalysisRepository extends MongoRepository<AnalysisEntity, Stri
     List<AnalysisEntity> findByOwnerIdAndType(String ownerId, AnalysisEntityType type);
     
     // Top Gainers
-    List<AnalysisEntity> findTop10ByTypeOrderByTotalGainLossPercentageDesc(AnalysisEntityType type);
+    List<AnalysisEntity> findTop10ByTypeOrderByPerformanceTotalGainLossPercentageDesc(AnalysisEntityType type);
     
     // Top Losers
-    List<AnalysisEntity> findTop10ByTypeOrderByTotalGainLossPercentageAsc(AnalysisEntityType type);
+    List<AnalysisEntity> findTop10ByTypeOrderByPerformanceTotalGainLossPercentageAsc(AnalysisEntityType type);
 
     // Batch lookup
     List<AnalysisEntity> findBySourceIdInAndType(List<String> sourceIds, AnalysisEntityType type);

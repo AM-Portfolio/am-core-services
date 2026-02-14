@@ -47,8 +47,9 @@ public class TopMoversAnalysisService {
 
             // Deduplicate by symbol
             Map<String, com.am.analysis.adapter.model.AnalysisHolding> uniqueHoldings = allHoldings.stream()
+                .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
                 .collect(java.util.stream.Collectors.toMap(
-                    com.am.analysis.adapter.model.AnalysisHolding::getSymbol,
+                    h -> h.getIdentity().getSymbol(),
                     h -> h,
                     (existing, replacement) -> existing // Keep existing
                 ));
@@ -71,8 +72,8 @@ public class TopMoversAnalysisService {
         }
 
         // Fallback for non-portfolio types or public types (if any)
-        List<AnalysisEntity> gainers = repository.findTop10ByTypeOrderByTotalGainLossPercentageDesc(type);
-        List<AnalysisEntity> losers = repository.findTop10ByTypeOrderByTotalGainLossPercentageAsc(type);
+        List<AnalysisEntity> gainers = repository.findTop10ByTypeOrderByPerformanceTotalGainLossPercentageDesc(type);
+        List<AnalysisEntity> losers = repository.findTop10ByTypeOrderByPerformanceTotalGainLossPercentageAsc(type);
         return buildTopMoversResponse(gainers, losers);
     }
 
@@ -107,9 +108,9 @@ public class TopMoversAnalysisService {
 
     private double getPercentage(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
         if (useDaily) {
-            return h.getDayChangePercentage() != null ? h.getDayChangePercentage() : 0.0;
+            return (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) ? h.getMarket().getDayChangePercentage() : 0.0;
         } else {
-            return h.getProfitLossPercentage() != null ? h.getProfitLossPercentage() : 0.0;
+            return (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
         }
     }
 
@@ -131,47 +132,49 @@ public class TopMoversAnalysisService {
     }
 
     private TopMoversResponse.MoverItem mapToMoverItem(AnalysisEntity entity) {
+        var perf = entity.getPerformance();
+        double totalGainLoss = (perf != null && perf.getTotalGainLoss() != null) ? perf.getTotalGainLoss() : 0.0;
+        double totalGainLossPct = (perf != null && perf.getTotalGainLossPercentage() != null) ? perf.getTotalGainLossPercentage() : 0.0;
+        double totalValue = (perf != null && perf.getTotalValue() != null) ? perf.getTotalValue() : 0.0;
+
         log.debug("Mapping AnalysisEntity to MoverItem - ID: {}, TotalGainLoss: {}, TotalGainLossPercentage: {}", 
-                entity.getSourceId(), entity.getTotalGainLoss(), entity.getTotalGainLossPercentage());
+                entity.getSourceId(), totalGainLoss, totalGainLossPct);
+        
         return TopMoversResponse.MoverItem.builder()
                 .symbol(entity.getSourceId())
                 .name(entity.getSourceId())
-                .price(BigDecimal.valueOf(entity.getTotalValue() != null ? entity.getTotalValue() : 0.0))
-                .changePercentage(entity.getTotalGainLossPercentage() != null ? entity.getTotalGainLossPercentage() : 0.0)
-                .changeAmount(BigDecimal.valueOf(entity.getTotalGainLoss() != null ? entity.getTotalGainLoss() : 0.0))
+                .price(BigDecimal.valueOf(totalValue))
+                .changePercentage(totalGainLossPct)
+                .changeAmount(BigDecimal.valueOf(totalGainLoss))
                 .build();
     }
 
     private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
-        log.debug("Mapping AnalysisHolding to MoverItem - Symbol: {}, Name: {}, CurrentPrice: {}, DayChangePercentage: {}, ProfitLossPercentage: {}, DayChange: {}, ProfitLoss: {}, TodayProfitLoss: {}, TodayProfitLossPercentage: {}", 
-                h.getSymbol(), h.getName(), h.getCurrentPrice(), h.getDayChangePercentage(), h.getProfitLossPercentage(), h.getDayChange(), h.getProfitLoss(), h.getTodayProfitLoss(), h.getTodayProfitLossPercentage());
+        String symbol = h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN";
+        String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
+        Double currentPrice = (h.getMarket() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
         double pct = 0.0;
         double amt = 0.0;
         
         if (useDaily) {
-            // First try dayChangePercentage (from market data/calculation), fallback to todayProfitLossPercentage (from holding)
-            if (h.getDayChangePercentage() != null) {
-                pct = h.getDayChangePercentage();
-            } else if (h.getTodayProfitLossPercentage() != null) {
-                pct = h.getTodayProfitLossPercentage();
-            }
-            
-            // First try dayChange, fallback to todayProfitLoss
-            if (h.getDayChange() != null) {
-                amt = h.getDayChange();
-            } else if (h.getTodayProfitLoss() != null) {
-                amt = h.getTodayProfitLoss();
+            if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
+                pct = h.getMarket().getDayChangePercentage();
+                amt = (h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
+            } else if (h.getInvestment() != null) {
+                // Fallback to investment stats if market isn't updated
+                pct = (h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
+                amt = (h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
             }
         } else {
-             pct = h.getProfitLossPercentage() != null ? h.getProfitLossPercentage() : 0.0;
-             amt = h.getProfitLoss() != null ? h.getProfitLoss() : 0.0;
+             pct = (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
+             amt = (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
         }
 
         return TopMoversResponse.MoverItem.builder()
-                .symbol(h.getSymbol())
-                .name(h.getName() != null ? h.getName() : h.getSymbol())
-                .price(BigDecimal.valueOf(h.getCurrentPrice() != null ? h.getCurrentPrice() : 0.0).setScale(2, java.math.RoundingMode.HALF_UP))
+                .symbol(symbol)
+                .name(name)
+                .price(BigDecimal.valueOf(currentPrice != null ? currentPrice : 0.0).setScale(2, java.math.RoundingMode.HALF_UP))
                 .changePercentage(BigDecimal.valueOf(pct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
                 .changeAmount(BigDecimal.valueOf(amt).setScale(2, java.math.RoundingMode.HALF_UP))
                 .build();

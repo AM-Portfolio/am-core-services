@@ -20,6 +20,7 @@
 
         <!-- Spring Boot -->
         <spring-boot.version>3.2.3</spring-boot.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
         
         <!-- Spring -->
         <spring-kafka.version>3.1.2</spring-kafka.version>
@@ -30,7 +31,7 @@
         
         <!-- Utilities -->
         <lombok.version>1.18.30</lombok.version>
-        <jackson.version>2.15.3</jackson.version>
+        <jackson.version>2.19.2</jackson.version>
         <validation-api.version>3.0.2</validation-api.version>
         
         <!-- Testing -->
@@ -43,6 +44,9 @@
         <module>libraries/am-kafka-lib</module>
         <module>libraries/am-analysis-adapter</module>
         <module>libraries/am-security-lib</module>
+        <module>libraries/am-cache-lib</module>
+        <module>libraries/am-feign-lib</module>
+        <module>libraries/am-market-client-lib</module>
         
         <!-- Domain Layer -->
         <module>domain/am-market-domain</module>
@@ -55,6 +59,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud BOM -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Spring Boot BOM -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -85,6 +98,21 @@
                 <artifactId>am-portfolio-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.am.libraries</groupId>
+                <artifactId>am-cache-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.am.libraries</groupId>
+                <artifactId>am-feign-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.am.libraries</groupId>
+                <artifactId>am-market-client-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Lombok -->
             <dependency>
@@ -98,6 +126,11 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
 

@@ -14,6 +14,7 @@ public class PerformanceResponse {
     private double totalReturnPercentage;
     private BigDecimal totalReturnValue;
     private List<DataPoint> chartData;
+    private String errorMessage;
 
     @Data
     @Builder

@@ -1,5 +1,7 @@
 package com.am.analysis.adapter.model;
 
+import com.am.analysis.adapter.model.components.Lifecycle;
+import com.am.analysis.adapter.model.components.PerformanceSummary;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,17 +26,20 @@ public class AnalysisEntity {
     private AnalysisEntityType type;
     private String ownerId; // User ID
     
+    // Performance Metrics Grouped
+    private PerformanceSummary performance;
+
     // Standardized Holdings for Allocation Analysis
     private List<AnalysisHolding> holdings;
-    
-    // Performance Metrics
-    private Double totalValue;
-    private Double totalInvestment;
-    private Double totalGainLoss;
-    private Double totalGainLossPercentage;
     
     // Flexible Stats for specific needs
     private Map<String, Object> additionalStats;
     
+    // Periods
+    private Lifecycle lifecycle;
+    
     private LocalDateTime lastUpdated;
+
+
 }
+

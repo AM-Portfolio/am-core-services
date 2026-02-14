@@ -5,14 +5,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import org.springframework.cloud.openfeign.EnableFeignClients;
+
 @SpringBootApplication(exclude = {
         org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
         org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
 })
 @EnableMongoRepositories(basePackages = "com.am.analysis.adapter.repository")
+@EnableFeignClients
 @ComponentScan(basePackages = {
         "com.am.analysis",
-        "am.trade"
+        "com.am.market.client",
+        "com.am.feign"
 })
 public class AmAnalysisApplication {
     public static void main(String[] args) {

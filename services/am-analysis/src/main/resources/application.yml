@@ -6,6 +6,8 @@ server:
   port: 8090
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: am-analysis
   kafka:
@@ -28,6 +30,7 @@ logging:
   level:
     root: INFO
     com.am.analysis: DEBUG
+    com.am.feign: DEBUG
     am.trade: DEBUG
 
 am:

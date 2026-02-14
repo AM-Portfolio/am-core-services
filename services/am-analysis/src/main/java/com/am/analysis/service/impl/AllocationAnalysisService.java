@@ -20,7 +20,7 @@ public class AllocationAnalysisService {
 
     private final AnalysisRepository repository;
     private final AnalysisCalculationService calculationService;
-    private final com.am.analysis.integration.MarketDataClient marketDataClient;
+    private final com.am.market.client.service.MarketDataClientService marketDataClientService;
     private final AnalysisAccessValidator accessValidator;
 
     public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId) {
@@ -49,24 +49,30 @@ public class AllocationAnalysisService {
         }
 
         List<String> symbols = entity.getHoldings().stream()
-                .map(h -> h.getSymbol())
-                .filter(s -> s != null && !s.isEmpty())
+                .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
+                .map(h -> h.getIdentity().getSymbol())
                 .distinct()
                 .toList();
 
-        Map<String, com.am.analysis.dto.MarketDataResponse.Match> marketData = marketDataClient.getSecurities(symbols);
+        Map<String, com.am.portfolio.client.market.model.SecurityMetadata> marketData = marketDataClientService.searchSecurities(symbols);
 
         entity.getHoldings().forEach(h -> {
-            if (marketData.containsKey(h.getSymbol())) {
-                var match = marketData.get(h.getSymbol());
-                if (h.getSector() == null || h.getSector().isEmpty()) {
-                    h.setSector(match.getSector());
+            if (h.getIdentity() != null && marketData.containsKey(h.getIdentity().getSymbol())) {
+                var metadata = marketData.get(h.getIdentity().getSymbol());
+                
+                if (h.getClassification() == null) {
+                    h.setClassification(new com.am.analysis.adapter.model.components.AssetClassification());
                 }
-                if (h.getIndustry() == null || h.getIndustry().isEmpty()) {
-                    h.setIndustry(match.getIndustry());
+                
+                var cls = h.getClassification();
+                if (cls.getSector() == null || cls.getSector().isEmpty()) {
+                    cls.setSector(metadata.getSector());
                 }
-                if (h.getMarketCapType() == null || h.getMarketCapType().isEmpty()) {
-                    h.setMarketCapType(match.getMarketCapType());
+                if (cls.getIndustry() == null || cls.getIndustry().isEmpty()) {
+                    cls.setIndustry(metadata.getIndustry());
+                }
+                if (cls.getMarketCapType() == null || cls.getMarketCapType().isEmpty()) {
+                    cls.setMarketCapType(metadata.getMarketCapType());
                 }
             }
         });

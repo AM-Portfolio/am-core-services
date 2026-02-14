@@ -45,4 +45,7 @@ public class EquityModel {
     private String sector;
     private String industry;
     private String exchange;
+
+    @Builder.Default
+    private java.util.List<TransactionModel> transactions = new java.util.ArrayList<>();
 }

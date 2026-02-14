@@ -41,6 +41,16 @@
             <groupId>am.trade</groupId>
             <artifactId>am-trade-kafka</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>am.trade</groupId>
+                    <artifactId>am-trade-services</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>am.trade</groupId>
+                    <artifactId>am-trade-persistence</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.am.common</groupId>

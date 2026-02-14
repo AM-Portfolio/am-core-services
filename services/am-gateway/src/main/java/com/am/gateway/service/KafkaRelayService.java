@@ -33,7 +33,7 @@ public class KafkaRelayService {
         }
     }
 
-    private final com.am.portfolio.domain.mapper.PortfolioGenericMapper genericMapper = new com.am.portfolio.domain.mapper.PortfolioGenericMapper();
+    private final com.am.analysis.adapter.mapper.AnalysisEventMapper analysisEventMapper;
 
     @KafkaListener(topics = com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE, groupId = "am-websocket-gateway-group")
     public void handlePortfolioStreamUpdate(String message) {
@@ -57,7 +57,7 @@ public class KafkaRelayService {
                 }
 
                 // 4. Transform using common mapper from adapter
-                PortfolioUpdateDto optimizedPayload = genericMapper.mapToDto(event);
+                PortfolioUpdateDto optimizedPayload = analysisEventMapper.mapToDto(event);
 
                 int holdingCount = (optimizedPayload.getEquities() != null) ? optimizedPayload.getEquities().size() : 0;
 
