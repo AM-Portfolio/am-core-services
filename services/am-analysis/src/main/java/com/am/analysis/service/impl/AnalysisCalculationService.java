@@ -2,6 +2,7 @@ package com.am.analysis.service.impl;
 
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisHolding;
+import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.dto.PerformanceResponse;
 import com.am.analysis.service.calculator.PerformanceCalculator;
@@ -26,43 +27,45 @@ public class AnalysisCalculationService {
     private final MarketDataClientService marketDataService;
     private final PerformanceCalculator performanceCalculator;
 
-    public AllocationResponse calculateAllocation(AnalysisEntity entity) {
+    public AllocationResponse calculateAllocation(AnalysisEntity entity, AnalysisGroupBy groupBy) {
         double totalValue = (entity.getPerformance() != null && entity.getPerformance().getTotalValue() != null) 
                 ? entity.getPerformance().getTotalValue() : 0.0;
         
-        log.debug("Calculating allocation for Entity: {}, TotalValue: {}", entity.getSourceId(), totalValue);
-        // ... (Allocation logic remains unchanged) ...
-        List<AllocationResponse.AllocationItem> sectors = new ArrayList<>();
-        List<AllocationResponse.AllocationItem> assetClasses = new ArrayList<>();
-        List<AllocationResponse.AllocationItem> marketCaps = new ArrayList<>();
+        log.debug("Calculating allocation for Entity: {}, TotalValue: {}, GroupBy: {}", entity.getSourceId(), totalValue, groupBy);
+
+        List<AllocationResponse.AllocationItem> sectors = null;
+        List<AllocationResponse.AllocationItem> assetClasses = null;
+        List<AllocationResponse.AllocationItem> marketCaps = null;
+        List<AllocationResponse.AllocationItem> stocks = null;
 
         if (entity.getHoldings() != null && !entity.getHoldings().isEmpty()) {
-            
-            // Group by Sector
-            Map<String, List<AnalysisHolding>> sectorMap = entity.getHoldings().stream()
-                    .filter(h -> h.getClassification() != null && h.getClassification().getSector() != null)
-                    .collect(Collectors.groupingBy(h -> h.getClassification().getSector()));
-            sectors = buildAllocationItems(sectorMap, totalValue);
+            if (groupBy == null || groupBy == AnalysisGroupBy.SECTOR) {
+                Map<String, List<AnalysisHolding>> sectorMap = entity.getHoldings().stream()
+                        .filter(h -> h.getClassification() != null && h.getClassification().getSector() != null)
+                        .collect(Collectors.groupingBy(h -> h.getClassification().getSector()));
+                sectors = buildAllocationItems(sectorMap, totalValue);
+            }
 
-            // Group by Asset Class
-            Map<String, List<AnalysisHolding>> assetMap = entity.getHoldings().stream()
-                    .filter(h -> h.getIdentity() != null && h.getIdentity().getAssetClass() != null)
-                    .collect(Collectors.groupingBy(h -> h.getIdentity().getAssetClass()));
-            assetClasses = buildAllocationItems(assetMap, totalValue);
+            if (groupBy == null || groupBy == AnalysisGroupBy.ASSET_CLASS) {
+                Map<String, List<AnalysisHolding>> assetMap = entity.getHoldings().stream()
+                        .filter(h -> h.getIdentity() != null && h.getIdentity().getAssetClass() != null)
+                        .collect(Collectors.groupingBy(h -> h.getIdentity().getAssetClass()));
+                assetClasses = buildAllocationItems(assetMap, totalValue);
+            }
 
-            // Group by Market Cap
-            Map<String, List<AnalysisHolding>> marketCapMap = entity.getHoldings().stream()
-                    .filter(h -> h.getClassification() != null && h.getClassification().getMarketCapType() != null)
-                    .collect(Collectors.groupingBy(h -> h.getClassification().getMarketCapType()));
-            marketCaps = buildAllocationItems(marketCapMap, totalValue);
-        } else {
-             // Fallback
-             assetClasses.add(AllocationResponse.AllocationItem.builder()
-                    .name("Unknown")
-                    .value(BigDecimal.valueOf(totalValue).setScale(2, java.math.RoundingMode.HALF_UP))
-                    .percentage(100.0)
-                    .holdings(Collections.emptyList())
-                    .build());
+            if (groupBy == null || groupBy == AnalysisGroupBy.MARKET_CAP) {
+                Map<String, List<AnalysisHolding>> marketCapMap = entity.getHoldings().stream()
+                        .filter(h -> h.getClassification() != null && h.getClassification().getMarketCapType() != null)
+                        .collect(Collectors.groupingBy(h -> h.getClassification().getMarketCapType()));
+                marketCaps = buildAllocationItems(marketCapMap, totalValue);
+            }
+
+            if (groupBy == null || groupBy == AnalysisGroupBy.STOCK) {
+                Map<String, List<AnalysisHolding>> stockMap = entity.getHoldings().stream()
+                        .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
+                        .collect(Collectors.groupingBy(h -> h.getIdentity().getSymbol()));
+                stocks = buildAllocationItems(stockMap, totalValue);
+            }
         }
 
         return AllocationResponse.builder()
@@ -70,6 +73,7 @@ public class AnalysisCalculationService {
                 .sectors(sectors)
                 .assetClasses(assetClasses)
                 .marketCaps(marketCaps)
+                .stocks(stocks)
                 .build();
     }
     
@@ -83,6 +87,27 @@ public class AnalysisCalculationService {
             double groupTotal = holdings.stream()
                 .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
                 .sum();
+            
+            double groupInceptionValue = holdings.stream()
+                .mapToDouble(h -> {
+                    double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
+                    double pnl = (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
+                    return val - pnl;
+                })
+                .sum();
+
+            double groupDayPreviousValue = holdings.stream()
+                .mapToDouble(h -> {
+                    double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
+                    double dayChange = (h.getMarket() != null && h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
+                    return val - dayChange;
+                })
+                .sum();
+
+            double dayAmt = groupTotal - groupDayPreviousValue;
+            double dayPct = groupDayPreviousValue != 0 ? (dayAmt / groupDayPreviousValue) * 100 : 0.0;
+            double totalAmt = groupTotal - groupInceptionValue;
+            double totalPct = groupInceptionValue != 0 ? (totalAmt / groupInceptionValue) * 100 : 0.0;
                 
             double groupPercentage = totalPortfolioValue != 0 ? (groupTotal / totalPortfolioValue) * 100 : 0.0;
             
@@ -92,12 +117,21 @@ public class AnalysisCalculationService {
                     double hPctInGroup = groupTotal != 0 ? (hValue / groupTotal) * 100 : 0.0;
                     double hPctInPortfolio = totalPortfolioValue != 0 ? (hValue / totalPortfolioValue) * 100 : 0.0;
                     
+                    double hDayPct = (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) ? h.getMarket().getDayChangePercentage() : 0.0;
+                    double hDayAmt = (h.getMarket() != null && h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
+                    double hTotalPct = (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
+                    double hTotalAmt = (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
+
                     return AllocationResponse.AllocationHolding.builder()
                         .symbol(h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN")
                         .name(h.getIdentity() != null && h.getIdentity().getName() != null ? h.getIdentity().getName() : (h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN"))
                         .value(BigDecimal.valueOf(hValue).setScale(2, java.math.RoundingMode.HALF_UP))
                         .percentage(BigDecimal.valueOf(hPctInGroup).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
                         .portfolioPercentage(BigDecimal.valueOf(hPctInPortfolio).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                        .dayChangePercentage(BigDecimal.valueOf(hDayPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                        .dayChangeAmount(BigDecimal.valueOf(hDayAmt).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .totalChangePercentage(BigDecimal.valueOf(hTotalPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                        .totalChangeAmount(BigDecimal.valueOf(hTotalAmt).setScale(2, java.math.RoundingMode.HALF_UP))
                         .build();
                 })
                 .sorted((h1, h2) -> h2.getValue().compareTo(h1.getValue()))
@@ -108,6 +142,10 @@ public class AnalysisCalculationService {
                     .value(BigDecimal.valueOf(groupTotal).setScale(2, java.math.RoundingMode.HALF_UP))
                     .percentage(BigDecimal.valueOf(groupPercentage).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
                     .holdings(itemHoldings)
+                    .dayChangePercentage(BigDecimal.valueOf(dayPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                    .dayChangeAmount(BigDecimal.valueOf(dayAmt).setScale(2, java.math.RoundingMode.HALF_UP))
+                    .totalChangePercentage(BigDecimal.valueOf(totalPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                    .totalChangeAmount(BigDecimal.valueOf(totalAmt).setScale(2, java.math.RoundingMode.HALF_UP))
                     .build());
         });
         
@@ -148,9 +186,7 @@ public class AnalysisCalculationService {
             fromDate = startDate;
         } else {
             fromDate = calculateFromDate(timeFrame, toDate);
-            if (startDate != null && fromDate.isBefore(startDate)) {
-                fromDate = startDate;
-            }
+            // Removed clamping to startDate to allow broader historical context even if portfolio started late
         }
         log.info("[PerfCalc] Date Range for {}: {} to {}", entityId, fromDate, toDate);
 

@@ -79,7 +79,7 @@ public class AnalysisEventMapper {
                             .classification(AssetClassification.builder()
                                     .sector(equity.getSector())
                                     .industry(equity.getIndustry())
-                                    // Market Cap Type could be mapped here if available in EquityModel
+                                    .marketCapType(equity.getMarketCap())
                                     .build())
                             .transactions(mapTransactions(equity.getTransactions()))
                             .build();

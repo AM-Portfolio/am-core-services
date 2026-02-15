@@ -44,6 +44,7 @@ public class EquityModel {
     // Sector/Industry Classification
     private String sector;
     private String industry;
+    private String marketCap;
     private String exchange;
 
     @Builder.Default

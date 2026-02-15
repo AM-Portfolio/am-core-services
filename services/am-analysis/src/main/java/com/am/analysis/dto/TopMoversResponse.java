@@ -19,5 +19,15 @@ public class TopMoversResponse {
         private BigDecimal price;
         private double changePercentage;
         private BigDecimal changeAmount;
+        
+        // Advanced Fields
+        private String sector;
+        private String assetClass;
+        private String marketCapType;
+        private Double quantity;
+        private BigDecimal currentValue;
+        private BigDecimal investedValue;
+        private Double allocationPercentage;
+        private Double pnlPercentage;
     }
 }

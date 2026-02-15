@@ -1,6 +1,7 @@
 package com.am.analysis.service.impl;
 
 import com.am.analysis.adapter.model.AnalysisEntityType;
+import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.dto.PerformanceResponse;
 import com.am.analysis.dto.TopMoversResponse;
@@ -19,9 +20,9 @@ public class AnalysisServiceImpl implements AnalysisService {
     private final TopMoversAnalysisService topMoversService;
 
     @Override
-    public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId) {
-        log.info("Request received: Get Allocation - ID: {}, Type: {}, User: {}", id, type, userId);
-        return allocationService.getAllocation(id, type, userId);
+    public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy) {
+        log.info("Request received: Get Allocation - ID: {}, Type: {}, User: {}, GroupBy: {}", id, type, userId, groupBy);
+        return allocationService.getAllocation(id, type, userId, groupBy);
     }
 
     @Override
@@ -31,9 +32,9 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId) {
-        log.info("Request received: Get Top Movers - ID: {}, Type: {}, TimeFrame: {}, User: {}", id, type, timeFrame, userId);
-        return topMoversService.getTopMovers(id, type, timeFrame, userId);
+    public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
+        log.info("Request received: Get Top Movers - ID: {}, Type: {}, TimeFrame: {}, User: {}, GroupBy: {}", id, type, timeFrame, userId, groupBy);
+        return topMoversService.getTopMovers(id, type, timeFrame, userId, groupBy);
     }
 }
 

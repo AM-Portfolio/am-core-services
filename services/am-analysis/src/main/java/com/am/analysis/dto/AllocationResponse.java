@@ -14,6 +14,7 @@ public class AllocationResponse {
     private List<AllocationItem> sectors;
     private List<AllocationItem> assetClasses;
     private List<AllocationItem> marketCaps;
+    private List<AllocationItem> stocks;
 
     @Data
     @Builder
@@ -23,6 +24,12 @@ public class AllocationResponse {
         private BigDecimal value;
         private double percentage;
         private List<AllocationHolding> holdings;
+
+        // Performance Metrics
+        private Double dayChangePercentage;
+        private BigDecimal dayChangeAmount;
+        private Double totalChangePercentage;
+        private BigDecimal totalChangeAmount;
     }
 
     @Data
@@ -34,5 +41,11 @@ public class AllocationResponse {
         private BigDecimal value;
         private double percentage; // Weight within the category (e.g., % of this Sector)
         private double portfolioPercentage; // Weight within total portfolio
+
+        // Performance Metrics
+        private Double dayChangePercentage;
+        private BigDecimal dayChangeAmount;
+        private Double totalChangePercentage;
+        private BigDecimal totalChangeAmount;
     }
 }

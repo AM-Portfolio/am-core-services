@@ -1,6 +1,7 @@
 package com.am.analysis.controller;
 
 import com.am.analysis.adapter.model.AnalysisEntityType;
+import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.dto.PerformanceResponse;
 import com.am.analysis.dto.TopMoversResponse;
@@ -21,11 +22,14 @@ public class AnalysisController {
     public ResponseEntity<AllocationResponse> getAllocation(
             @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
-            @PathVariable("id") String id) {
+            @PathVariable("id") String id,
+            @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
+            @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
         try {
+            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : headerGroupBy;
             String userId = com.am.security.util.TokenExtractor.extractUserId(token);
             AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getAllocation(id, entityType, userId));
+            return ResponseEntity.ok(analysisService.getAllocation(id, entityType, userId, groupBy));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (SecurityException e) {
@@ -60,11 +64,14 @@ public class AnalysisController {
     public ResponseEntity<TopMoversResponse> getTopMoversByCategory(
             @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
-            @RequestParam(value = "timeFrame", required = false) String timeFrame) {
+            @RequestParam(value = "timeFrame", required = false) String timeFrame,
+            @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
+            @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
         try {
+            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
             String userId = com.am.security.util.TokenExtractor.extractUserId(token);
             AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getTopMovers(null, entityType, timeFrame, userId));
+            return ResponseEntity.ok(analysisService.getTopMovers(null, entityType, timeFrame, userId, groupBy));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (SecurityException e) {
@@ -80,11 +87,14 @@ public class AnalysisController {
             @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
             @PathVariable("id") String id,
-            @RequestParam(value = "timeFrame", required = false) String timeFrame) {
+            @RequestParam(value = "timeFrame", required = false) String timeFrame,
+            @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
+            @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
         try {
+            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
             String userId = com.am.security.util.TokenExtractor.extractUserId(token);
             AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getTopMovers(id, entityType, timeFrame, userId));
+            return ResponseEntity.ok(analysisService.getTopMovers(id, entityType, timeFrame, userId, groupBy));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (SecurityException e) {

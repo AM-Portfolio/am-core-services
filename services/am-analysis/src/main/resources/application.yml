@@ -32,6 +32,7 @@ logging:
     com.am.analysis: DEBUG
     com.am.feign: DEBUG
     am.trade: DEBUG
+    com.am.portfolio.client.market.invoker: DEBUG
 
 am:
   analysis:

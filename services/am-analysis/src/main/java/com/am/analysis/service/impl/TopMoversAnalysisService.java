@@ -2,6 +2,7 @@ package com.am.analysis.service.impl;
 
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
+import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
@@ -21,31 +22,40 @@ public class TopMoversAnalysisService {
 
     private final AnalysisRepository repository;
     private final AnalysisAccessValidator accessValidator;
+    private final com.am.market.client.service.MarketDataClientService marketDataClientService;
 
-    public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId) {
+    public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
         if (id == null) {
-            log.info("Processing Top Movers by Category: Type={}, TimeFrame={}, User={}", type, timeFrame, userId);
-            return getTopMoversByCategory(type, timeFrame, userId);
+            log.info("Processing Top Movers by Category: Type={}, TimeFrame={}, User={}, GroupBy={}", type, timeFrame, userId, groupBy);
+            return getTopMoversByCategory(type, timeFrame, userId, groupBy);
         } else {
-            log.info("Processing Top Movers within Entity: ID={}, Type={}, TimeFrame={}, User={}", id, type, timeFrame, userId);
-            return getTopMoversWithinEntity(id, type, timeFrame, userId);
+            log.info("Processing Top Movers within Entity: ID={}, Type={}, TimeFrame={}, User={}, GroupBy={}", id, type, timeFrame, userId, groupBy);
+            return getTopMoversWithinEntity(id, type, timeFrame, userId, groupBy);
         }
     }
 
-    private TopMoversResponse getTopMoversByCategory(AnalysisEntityType type, String timeFrame, String userId) {
+    private TopMoversResponse getTopMoversByCategory(AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
         if (type == AnalysisEntityType.PORTFOLIO && userId != null) {
             log.debug("Aggregating portfolio holdings for user: {}", userId);
-            // Aggregate all holdings from all user portfolios
             List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
             
             List<com.am.analysis.adapter.model.AnalysisHolding> allHoldings = portfolios.stream()
                 .filter(p -> p.getHoldings() != null)
                 .flatMap(p -> p.getHoldings().stream())
                 .collect(java.util.stream.Collectors.toList());
+
+            double totalPortfolioValue = portfolios.stream()
+                .filter(p -> p.getPerformance() != null && p.getPerformance().getTotalValue() != null)
+                .mapToDouble(p -> p.getPerformance().getTotalValue())
+                .sum();
+
+            if (groupBy != null && groupBy != AnalysisGroupBy.STOCK) {
+                return getTopMoversByGroup(allHoldings, timeFrame, totalPortfolioValue, groupBy);
+            }
             
             log.debug("Found {} total holdings from {} portfolios", allHoldings.size(), portfolios.size());
 
-            // Deduplicate by symbol
+            // Deduplicate by symbol for STOCK view
             Map<String, com.am.analysis.adapter.model.AnalysisHolding> uniqueHoldings = allHoldings.stream()
                 .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
                 .collect(java.util.stream.Collectors.toMap(
@@ -68,7 +78,7 @@ public class TopMoversAnalysisService {
                     .limit(10)
                     .toList();
 
-            return buildTopMoversResponseFromHoldings(gainers, losers, useDaily);
+            return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue);
         }
 
         // Fallback for non-portfolio types or public types (if any)
@@ -77,15 +87,24 @@ public class TopMoversAnalysisService {
         return buildTopMoversResponse(gainers, losers);
     }
 
-    private TopMoversResponse getTopMoversWithinEntity(String id, AnalysisEntityType type, String timeFrame, String userId) {
+    private TopMoversResponse getTopMoversWithinEntity(String id, AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
         String compositeId = type.name() + "_" + id;
         Optional<AnalysisEntity> entityOpt = repository.findById(compositeId);
 
         if (entityOpt.isPresent()) {
-            accessValidator.verifyAccess(entityOpt.get(), userId);
+            AnalysisEntity entity = entityOpt.get();
+            accessValidator.verifyAccess(entity, userId);
 
-            if (entityOpt.get().getHoldings() != null) {
-                List<com.am.analysis.adapter.model.AnalysisHolding> holdings = entityOpt.get().getHoldings();
+            if (entity.getHoldings() != null) {
+                double totalPortfolioValue = entity.getHoldings().stream()
+                    .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
+                    .sum();
+
+                if (groupBy != null && groupBy != AnalysisGroupBy.STOCK) {
+                    return getTopMoversByGroup(entity.getHoldings(), timeFrame, totalPortfolioValue, groupBy);
+                }
+
+                List<com.am.analysis.adapter.model.AnalysisHolding> holdings = entity.getHoldings();
 
                 boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
 
@@ -99,7 +118,7 @@ public class TopMoversAnalysisService {
                         .limit(10)
                         .toList();
 
-                return buildTopMoversResponseFromHoldings(gainers, losers, useDaily);
+                return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue);
             }
         }
         
@@ -124,10 +143,11 @@ public class TopMoversAnalysisService {
     private TopMoversResponse buildTopMoversResponseFromHoldings(
             List<com.am.analysis.adapter.model.AnalysisHolding> gainers, 
             List<com.am.analysis.adapter.model.AnalysisHolding> losers,
-            boolean useDaily) {
+            boolean useDaily,
+            double totalPortfolioValue) {
         return TopMoversResponse.builder()
-                .gainers(gainers.stream().map(h -> mapToMoverItem(h, useDaily)).toList())
-                .losers(losers.stream().map(h -> mapToMoverItem(h, useDaily)).toList())
+                .gainers(gainers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
+                .losers(losers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
                 .build();
     }
 
@@ -149,7 +169,7 @@ public class TopMoversAnalysisService {
                 .build();
     }
 
-    private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
+    private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily, double totalPortfolioValue) {
         String symbol = h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN";
         String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
         Double currentPrice = (h.getMarket() != null) ? h.getMarket().getCurrentPrice() : 0.0;
@@ -171,12 +191,168 @@ public class TopMoversAnalysisService {
              amt = (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
         }
 
+        double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
+        double invested = (h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null) ? h.getInvestment().getInvestmentValue() : 0.0;
+        double allocPct = totalPortfolioValue != 0 ? (val / totalPortfolioValue) * 100 : 0.0;
+        double pnlPct = (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
+
         return TopMoversResponse.MoverItem.builder()
                 .symbol(symbol)
                 .name(name)
                 .price(BigDecimal.valueOf(currentPrice != null ? currentPrice : 0.0).setScale(2, java.math.RoundingMode.HALF_UP))
                 .changePercentage(BigDecimal.valueOf(pct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
                 .changeAmount(BigDecimal.valueOf(amt).setScale(2, java.math.RoundingMode.HALF_UP))
+                .sector(h.getClassification() != null ? h.getClassification().getSector() : "Unknown")
+                .assetClass(h.getIdentity() != null ? h.getIdentity().getAssetClass() : "Unknown")
+                .marketCapType(h.getClassification() != null ? h.getClassification().getMarketCapType() : "Unknown")
+                .quantity(h.getInvestment() != null ? h.getInvestment().getQuantity() : 0.0)
+                .currentValue(BigDecimal.valueOf(val).setScale(2, java.math.RoundingMode.HALF_UP))
+                .investedValue(BigDecimal.valueOf(invested).setScale(2, java.math.RoundingMode.HALF_UP))
+                .allocationPercentage(BigDecimal.valueOf(allocPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                .pnlPercentage(BigDecimal.valueOf(pnlPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
                 .build();
+    }
+    private TopMoversResponse getTopMoversByGroup(List<com.am.analysis.adapter.model.AnalysisHolding> holdings, String timeFrame, double totalPortfolioValue, AnalysisGroupBy groupBy) {
+        // Enrich holdings with market data if grouping by classification
+        if (groupBy == AnalysisGroupBy.SECTOR || groupBy == AnalysisGroupBy.MARKET_CAP || groupBy == AnalysisGroupBy.ASSET_CLASS) {
+            enrichHoldingsWithClassification(holdings);
+        }
+
+        boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
+        
+        java.util.function.Function<com.am.analysis.adapter.model.AnalysisHolding, String> classifier = h -> {
+            switch (groupBy) {
+                case SECTOR: 
+                    return (h.getClassification() != null && h.getClassification().getSector() != null) 
+                        ? h.getClassification().getSector() : "Unknown";
+                case ASSET_CLASS: 
+                    return (h.getIdentity() != null && h.getIdentity().getAssetClass() != null) 
+                        ? h.getIdentity().getAssetClass() : "Unknown";
+                case MARKET_CAP: 
+                    return (h.getClassification() != null && h.getClassification().getMarketCapType() != null) 
+                        ? h.getClassification().getMarketCapType() : "Unknown";
+                default: return "Unknown";
+            }
+        };
+
+        Map<String, List<com.am.analysis.adapter.model.AnalysisHolding>> groupMap = holdings.stream()
+                .collect(java.util.stream.Collectors.groupingBy(classifier));
+
+        List<TopMoversResponse.MoverItem> items = groupMap.entrySet().stream()
+            .filter(entry -> !"Unknown".equalsIgnoreCase(entry.getKey()))
+            .map(entry -> {
+                String groupName = entry.getKey();
+                List<com.am.analysis.adapter.model.AnalysisHolding> groupHoldings = entry.getValue();
+                
+                double groupInceptionValue = groupHoldings.stream()
+                    .mapToDouble(h -> {
+                        double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
+                        double pnl = (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
+                        return val - pnl; // Cost basis
+                    })
+                    .sum();
+                
+                double groupCurrentValue = groupHoldings.stream()
+                    .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
+                    .sum();
+                
+                double groupDayPreviousValue = groupHoldings.stream()
+                    .mapToDouble(h -> {
+                        double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
+                        double dayChange = (h.getMarket() != null && h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
+                        return val - dayChange;
+                    })
+                    .sum();
+
+                double pct = 0.0;
+                double amt = 0.0;
+
+                if (useDaily) {
+                    amt = groupCurrentValue - groupDayPreviousValue;
+                    if (groupDayPreviousValue != 0) {
+                        pct = (amt / groupDayPreviousValue) * 100;
+                    }
+                } else {
+                    amt = groupCurrentValue - groupInceptionValue;
+                    if (groupInceptionValue != 0) {
+                        pct = (amt / groupInceptionValue) * 100;
+                    }
+                }
+
+                double allocPct = totalPortfolioValue != 0 ? (groupCurrentValue / totalPortfolioValue) * 100 : 0.0;
+
+                return TopMoversResponse.MoverItem.builder()
+                        .symbol(groupName)
+                        .name(groupName)
+                        .price(BigDecimal.valueOf(groupCurrentValue).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .changePercentage(BigDecimal.valueOf(pct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                        .changeAmount(BigDecimal.valueOf(amt).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .sector(groupBy == AnalysisGroupBy.SECTOR ? groupName : "Multiple")
+                        .currentValue(BigDecimal.valueOf(groupCurrentValue).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .investedValue(BigDecimal.valueOf(groupInceptionValue).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .allocationPercentage(BigDecimal.valueOf(allocPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
+                        .pnlPercentage(groupInceptionValue != 0 ? ( (groupCurrentValue - groupInceptionValue) / groupInceptionValue * 100 ) : 0.0)
+                        .build();
+            })
+            .collect(java.util.stream.Collectors.toList());
+
+        List<TopMoversResponse.MoverItem> gainers = items.stream()
+                .sorted((i1, i2) -> Double.compare(i2.getChangePercentage(), i1.getChangePercentage()))
+                .limit(10)
+                .toList();
+
+        List<TopMoversResponse.MoverItem> losers = items.stream()
+                .sorted((i1, i2) -> Double.compare(i1.getChangePercentage(), i2.getChangePercentage()))
+                .limit(10)
+                .toList();
+
+        return TopMoversResponse.builder()
+                .gainers(gainers)
+                .losers(losers)
+                .build();
+    }
+
+    private void enrichHoldingsWithClassification(List<com.am.analysis.adapter.model.AnalysisHolding> holdings) {
+        List<String> symbols = holdings.stream()
+                .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
+                .map(h -> h.getIdentity().getSymbol())
+                .distinct()
+                .toList();
+
+        if (symbols.isEmpty()) {
+            return;
+        }
+
+        try {
+            Map<String, com.am.portfolio.client.market.model.SecurityMetadata> metadataMap = marketDataClientService.searchSecurities(symbols);
+
+            for (com.am.analysis.adapter.model.AnalysisHolding h : holdings) {
+                if (h.getIdentity() != null && h.getIdentity().getSymbol() != null) {
+                    com.am.portfolio.client.market.model.SecurityMetadata meta = metadataMap.get(h.getIdentity().getSymbol());
+                    if (meta != null) {
+                        if (h.getClassification() == null) {
+                            h.setClassification(com.am.analysis.adapter.model.components.AssetClassification.builder().build());
+                        }
+                        
+                        // Update Sector if missing or unknown
+                        if (h.getClassification().getSector() == null || "Unknown".equalsIgnoreCase(h.getClassification().getSector())) {
+                            h.getClassification().setSector(meta.getSector());
+                        }
+                        
+                        // Update Industry if missing or unknown
+                        if (h.getClassification().getIndustry() == null || "Unknown".equalsIgnoreCase(h.getClassification().getIndustry())) {
+                            h.getClassification().setIndustry(meta.getIndustry());
+                        }
+
+                        // Update Market Cap Type if missing or unknown
+                        if (h.getClassification().getMarketCapType() == null || "Unknown".equalsIgnoreCase(h.getClassification().getMarketCapType())) {
+                            h.getClassification().setMarketCapType(meta.getMarketCapType());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to enrich holdings with market data classification", e);
+        }
     }
 }

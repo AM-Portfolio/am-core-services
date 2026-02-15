@@ -2,6 +2,7 @@ package com.am.analysis.service.impl;
 
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
+import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
@@ -23,16 +24,16 @@ public class AllocationAnalysisService {
     private final com.am.market.client.service.MarketDataClientService marketDataClientService;
     private final AnalysisAccessValidator accessValidator;
 
-    public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId) {
+    public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy) {
         String compositeId = type.name() + "_" + id;
         Optional<AnalysisEntity> entityOpt = repository.findById(compositeId);
 
         if (entityOpt.isPresent()) {
             accessValidator.verifyAccess(entityOpt.get(), userId);
             AnalysisEntity entity = entityOpt.get();
-            log.debug("Entity found for Allocation: ID={}, Type={}, User={}", id, type, userId);
+            log.debug("Entity found for Allocation: ID={}, Type={}, User={}, GroupBy={}", id, type, userId, groupBy);
             enrichWithMarketData(entity);
-            return calculationService.calculateAllocation(entity);
+            return calculationService.calculateAllocation(entity, groupBy);
         }
         
         log.warn("Entity not found for Analysis: ID={}, Type={}, User={}", id, type, userId);

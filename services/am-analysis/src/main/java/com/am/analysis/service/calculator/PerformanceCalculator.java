@@ -17,12 +17,15 @@ public class PerformanceCalculator {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PerformanceCalculator.class);
 
     public PerformanceResponse calculate(AnalysisEntity entity, String timeFrame, Map<String, HistoricalData> marketDataMap, LocalDate fromDate, LocalDate toDate) {
+        log.info("[PerfCalc] Starting Performance Calculation: Portfolio={}, TimeFrame={}, Range=[{} to {}]", 
+                entity.getSourceId(), timeFrame, fromDate, toDate);
         
         // 1. Process Market Data into efficient lookup map
-        log.debug("[PerfCalc] Building price history map from {} market data entries.", marketDataMap != null ? marketDataMap.size() : 0);
+        log.debug("[PerfCalc] Processing market data for {} symbols.", marketDataMap != null ? marketDataMap.size() : 0);
         Map<String, NavigableMap<LocalDate, Double>> priceHistoryMap = buildPriceHistoryMap(marketDataMap);
 
         // 2. Iterate and Calculate Daily Values
+        log.info("[PerfCalc] Iterating through dates [{} to {}]", fromDate, toDate);
         List<PerformanceResponse.DataPoint> chartData = new ArrayList<>();
         LocalDate currentDate = fromDate;
         
@@ -34,19 +37,23 @@ public class PerformanceCalculator {
         int missingDataCount = 0;
 
         while (!currentDate.isAfter(toDate)) {
+            log.trace("[PerfCalc] Processing Date: {}", currentDate);
             double dailyTotalValue = 0.0;
             double dailyInvestedValue = 0.0;
             boolean hasData = false;
 
             for (AnalysisHolding holding : entity.getHoldings()) {
-                if (holding.getIdentity() == null) continue;
+                if (holding.getIdentity() == null || holding.getIdentity().getSymbol() == null) continue;
 
                 String sym = holding.getIdentity().getSymbol();
                 
-                // User Suggestion: Use transactions for quantity for better exactness
                 Double qtyAtDate = calculateQuantityAtDate(holding, currentDate, entity);
-                if (qtyAtDate <= 0) continue;
+                if (qtyAtDate <= 0) {
+                    log.trace("[PerfCalc] Symbol={} - Qty is 0 at {}", sym, currentDate);
+                    continue;
+                }
 
+                log.trace("[PerfCalc] Symbol={} - Qty={} at {}", sym, qtyAtDate, currentDate);
                 Double avgPrice = (holding.getInvestment() != null) ? holding.getInvestment().getAveragePrice() : null;
                 
                 NavigableMap<LocalDate, Double> history = priceHistoryMap.get(sym);
@@ -91,6 +98,11 @@ public class PerformanceCalculator {
                 lastValue = val;
                 lastInvestedValue = dailyInvestedValue;
             } else {
+                // Guaranteed data points for full chart visibility
+                chartData.add(PerformanceResponse.DataPoint.builder()
+                        .date(currentDate)
+                        .value(BigDecimal.ZERO)
+                        .build());
                 missingDataCount++;
             }
             
@@ -193,6 +205,9 @@ public class PerformanceCalculator {
         double totalReturnVal = 0.0;
 
         if (firstValue != null && lastValue != null) {
+            log.info("[PerfCalc] Summarizing Result: FirstValue={}, LastValue={}, FirstInvested={}, LastInvested={}", 
+                    firstValue, lastValue, firstInvested, lastInvested);
+            
             double marketValueChange = lastValue.doubleValue() - firstValue.doubleValue();
             double investedChange = lastInvested - firstInvested;
             
@@ -203,6 +218,9 @@ public class PerformanceCalculator {
                 totalReturnPct = (totalReturnVal / denominator) * 100.0;
             }
         }
+
+        log.info("[PerfCalc] Calculation Finished: Return={}%, ReturnVal={}, Points={}", 
+                totalReturnPct, totalReturnVal, chartData.size());
 
         return PerformanceResponse.builder()
                 .portfolioId(entity.getSourceId())
