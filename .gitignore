@@ -1,11 +1,37 @@
+# Maven
 target/
 *.log
+*.txt
+
+# IDE
 .idea/
 .vscode/
 *.iml
+
+# OS
 .DS_Store
-build_log.txt
-security_build_log.txt
+
+# Environment
+.env
+
+# Generated SDKs (regenerated from OpenAPI specs)
+**/am-analysis-sdk/java-sdk/
+**/am-analysis-sdk/flutter-sdk/
+
+# Test Reports (generated at runtime)
+**/surefire-reports/
+**/test-results/
+
+# JVM Crash Logs
 hs_err_pid*.log
 replay_pid*.log
-.env
+
+# Flutter/Dart
+**/.dart_tool/
+**/pubspec.lock
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+
+# Gradle (if used)
+.gradle/
+build/

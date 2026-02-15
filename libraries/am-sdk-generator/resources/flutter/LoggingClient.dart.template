@@ -1,0 +1,66 @@
+
+class LoggingClient extends BaseClient {
+  final Client _inner;
+
+  LoggingClient(this._inner);
+
+  @override
+  Future<StreamedResponse> send(BaseRequest request) async {
+    final startTime = DateTime.now();
+    _logRequest(request);
+
+    try {
+      final response = await _inner.send(request);
+      final duration = DateTime.now().difference(startTime);
+      return _logResponse(response, duration);
+    } catch (e) {
+      print('[ERROR] Request failed: $e');
+      rethrow;
+    }
+  }
+
+  void _logRequest(BaseRequest request) {
+    print('--> ${request.method} ${request.url}');
+    request.headers.forEach((k, v) => print('$k: $v'));
+    
+    // Attempt to log body if available
+    // Note: Logging full body for streamed requests or multipart requests can consume the stream.
+    if (request is Request && request.body.isNotEmpty) {
+      print('Body: ${request.body}');
+    }
+    
+    // cURL logging
+    final curl = StringBuffer();
+    curl.write('curl -v -X ${request.method}');
+    request.headers.forEach((k, v) => curl.write(" -H '$k: $v'"));
+    if (request is Request && request.body.isNotEmpty) {
+      curl.write(" --data '${request.body}'");
+    }
+    curl.write(" '${request.url}'");
+    print('cURL: $curl');
+    print('--> END ${request.method}');
+  }
+
+  Future<StreamedResponse> _logResponse(StreamedResponse response, Duration duration) async {
+    print('<-- ${response.statusCode} ${response.request?.url} (${duration.inMilliseconds}ms)');
+    response.headers.forEach((k, v) => print('$k: $v'));
+    
+    // To log response body, we need to read the stream and create a new one.
+    // This is heavy, so use with caution.
+    final bytes = await response.stream.toBytes();
+    final body = utf8.decode(bytes);
+    print('Body: $body');
+    print('<-- END HTTP');
+
+    return StreamedResponse(
+      ByteStream.fromBytes(bytes),
+      response.statusCode,
+      contentLength: response.contentLength,
+      request: response.request,
+      headers: response.headers,
+      isRedirect: response.isRedirect,
+      persistentConnection: response.persistentConnection,
+      reasonPhrase: response.reasonPhrase,
+    );
+  }
+}

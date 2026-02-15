@@ -1,0 +1,13 @@
+name: am_sdk_verifier_flutter
+description: A test suite to verify the generated Flutter SDK.
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+
+dependencies:
+  # The SDK under test (path relative to where this pubspec is located)
+  am_analysis_client:
+    path: ../../../services/am-analysis/am-analysis-sdk/flutter-sdk
+  test: ^1.21.0
