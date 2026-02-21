@@ -11,6 +11,14 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  # Redis - Stateless Interest Registry (subscription tracking across gateway instances)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+      connect-timeout: 2s
 
 logging:
   level:
@@ -18,9 +26,3 @@ logging:
     org.springframework.web.socket: DEBUG
     org.springframework.messaging: DEBUG
     com.am.gateway: INFO
-
-# Portfolio Calculation Scheduler Configuration
-portfolio:
-  calculation:
-    interval-seconds: 10 # Trigger calculation every 10 seconds for subscribed users
-    max-concurrent-users: 100 # Maximum number of concurrent subscribed users

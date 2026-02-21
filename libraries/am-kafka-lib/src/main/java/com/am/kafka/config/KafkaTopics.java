@@ -21,4 +21,16 @@ public final class KafkaTopics {
 
     // Calculation Triggers
     public static final String TRIGGER_CALCULATION = "am-trigger-calculation";
+
+    // Dashboard Updates
+    public static final String DASHBOARD_UPDATE = "dashboard-update";
+
+    // User Watching (emitted by Gateway on subscription)
+    public static final String USER_WATCHING = "am-user-watching";
+
+    // Dead Letter Queues (DLQ) - Failed events land here for inspection/retry
+    public static final String TRIGGER_CALCULATION_DLQ = "am-trigger-calculation.DLQ";
+    public static final String PORTFOLIO_UPDATE_DLQ   = "am-portfolio-stream.DLQ";
+    public static final String USER_WATCHING_DLQ      = "am-user-watching.DLQ";
+    public static final String TRADE_UPDATE_DLQ       = "am-trade-update.DLQ";
 }

@@ -16,6 +16,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @ComponentScan(basePackages = {
         "com.am.analysis",
         "com.am.market.client",
+        "com.am.trade.client",
         "com.am.feign"
 })
 public class AmAnalysisApplication {

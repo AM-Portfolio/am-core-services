@@ -47,10 +47,12 @@
         <module>libraries/am-cache-lib</module>
         <module>libraries/am-feign-lib</module>
         <module>libraries/am-market-client-lib</module>
+        <module>libraries/am-trade-client-lib</module>
         
         <!-- Domain Layer -->
         <module>domain/am-market-domain</module>
         <module>domain/am-portfolio-domain</module>
+        <module>domain/am-trade-domain</module>
         
         <!-- Services Layer -->
         <module>services/am-gateway</module>

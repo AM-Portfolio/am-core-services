@@ -1,193 +1,108 @@
 package com.am.gateway.service;
 
+import com.am.kafka.config.KafkaTopics;
+import com.am.kafka.schema.UserWatchingEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.scheduling.TaskScheduler;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.messaging.SessionSubscribeEvent;
-import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import org.springframework.web.socket.messaging.SessionSubscribeEvent;
-import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.security.Principal;
-import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
+import java.time.Instant;
+import java.util.UUID;
 
 /**
- * Manages WebSocket subscriptions for portfolio updates and triggers
- * periodic portfolio calculations only when users are actively subscribed.
- * 
- * Flow:
- * 1. User subscribes to /user/queue/portfolio -> Start 10-second scheduler
- * 2. Every 10 seconds -> Send calculation trigger to Kafka
- * 3. User unsubscribes/disconnects -> Stop scheduler
+ * Stateless Portfolio Subscription Manager.
+ *
+ * Responsibilities:
+ *   1. Register user subscription in Redis Interest Registry (with TTL).
+ *   2. Emit USER_WATCHING event to Kafka so the Orchestrator can decide to trigger calculation.
+ *   3. Refresh TTL on heartbeat to prevent ghost-user staleness.
+ *   4. Deregister on disconnect.
+ *
+ * What was REMOVED:
+ *   - TaskScheduler: No more periodic per-user schedulers (was a SPOF and resource leak).
+ *   - In-memory activeSchedulers map (was stateful, incompatible with horizontal scaling).
+ *   - in-memory userPortfolios map (moved to Redis).
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class PortfolioSubscriptionManager {
 
-    private final TaskScheduler taskScheduler;
-    private final GatewayKafkaProducer gatewayKafkaProducer;
+    private final InterestRegistryService interestRegistry;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
-    public PortfolioSubscriptionManager(
-            @Qualifier("portfolioTaskScheduler") TaskScheduler taskScheduler,
-            GatewayKafkaProducer gatewayKafkaProducer) {
-        this.taskScheduler = taskScheduler;
-        this.gatewayKafkaProducer = gatewayKafkaProducer;
-    }
-
-    @Value("${portfolio.calculation.interval-seconds:10}")
-    private int calculationIntervalSeconds;
-
-    @Value("${portfolio.calculation.max-concurrent-users:100}")
-    private int maxConcurrentUsers;
-
-    // Track active schedulers: userId -> ScheduledFuture
-    private final ConcurrentHashMap<String, ScheduledFuture<?>> activeSchedulers = new ConcurrentHashMap<>();
-
-    // Track selected portfolio per user: userId -> portfolioId
-    private final ConcurrentHashMap<String, String> userPortfolios = new ConcurrentHashMap<>();
+    // ────────────────────────────────────────────────────────────────────────
+    // Subscription Lifecycle
+    // ────────────────────────────────────────────────────────────────────────
 
     /**
-     * Handle user subscription to portfolio updates.
-     * Starts a periodic scheduler if subscribing to /user/queue/portfolio.
+     * Called when a user subscribes to the portfolio WebSocket channel.
+     * Registers interest in Redis and emits USER_WATCHING to Kafka.
+     *
+     * @param userId      Authenticated user ID.
+     * @param portfolioId Specific portfolio UUID, or null for all portfolios.
+     * @param sessionId   WebSocket session ID.
      */
-    @EventListener
-    public void handleSubscribe(SessionSubscribeEvent event) {
-        StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
-        String destination = headers.getDestination();
-        Principal user = headers.getUser();
+    public void onSubscribe(String userId, String portfolioId, String sessionId) {
+        log.info("[Subscription] User: {} subscribed (Portfolio: {}, Session: {})",
+                userId, portfolioId != null ? portfolioId : "ALL", sessionId);
 
-        if (destination == null || user == null) {
-            return;
-        }
-
-        // Only handle portfolio queue subscriptions
-        if (destination.contains("/queue/portfolio")) {
-            String userId = user.getName();
-
-            // Check if we've hit the concurrent user limit
-            if (activeSchedulers.size() >= maxConcurrentUsers && !activeSchedulers.containsKey(userId)) {
-                log.warn("Max concurrent users ({}) reached. Cannot start scheduler for user: {}",
-                        maxConcurrentUsers, userId);
-                return;
-            }
-
-            startSchedulerForUser(userId);
-        }
+        interestRegistry.register(userId, portfolioId, sessionId);
+        emitUserWatchingEvent(userId, portfolioId, sessionId, "SUBSCRIBE");
     }
 
     /**
-     * Handle user unsubscription from portfolio updates.
-     * Stops the periodic scheduler if it exists.
+     * Called periodically (every 30s) from the WebSocket heartbeat.
+     * Keeps the Redis TTL alive so the user isn't treated as disconnected.
+     *
+     * @param userId    Authenticated user ID.
+     * @param sessionId WebSocket session ID.
      */
-    @EventListener
-    public void handleUnsubscribe(SessionUnsubscribeEvent event) {
-        StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
-        Principal user = headers.getUser();
-
-        if (user != null) {
-            String userId = user.getName();
-            stopSchedulerForUser(userId);
-        }
+    public void onHeartbeat(String userId, String sessionId) {
+        log.debug("[Heartbeat] User: {}", userId);
+        interestRegistry.heartbeat(userId);
+        emitUserWatchingEvent(userId, null, sessionId, "HEARTBEAT");
     }
 
     /**
-     * Handle WebSocket session disconnect.
-     * Ensures cleanup of any active schedulers for the disconnected user.
+     * Called when a user explicitly unsubscribes or their WebSocket session disconnects.
+     *
+     * @param userId    Authenticated user ID.
+     * @param sessionId WebSocket session ID.
      */
-    @EventListener
-    public void handleDisconnect(SessionDisconnectEvent event) {
-        StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
-        Principal user = headers.getUser();
-
-        if (user != null) {
-            String userId = user.getName();
-            stopSchedulerForUser(userId);
-        }
+    public void onDisconnect(String userId, String sessionId) {
+        log.info("[Subscription] User: {} disconnected (Session: {})", userId, sessionId);
+        interestRegistry.deregister(userId);
+        emitUserWatchingEvent(userId, null, sessionId, "UNSUBSCRIBE");
     }
 
-    /**
-     * Start a periodic scheduler for the given user.
-     * The scheduler sends calculation trigger events to Kafka every N seconds.
-     */
-    private void startSchedulerForUser(String userId) {
-        // If scheduler already exists, don't create a duplicate
-        if (activeSchedulers.containsKey(userId)) {
-            log.debug("Scheduler already active for user: {}", userId);
-            return;
-        }
+    // ────────────────────────────────────────────────────────────────────────
+    // Kafka Event
+    // ────────────────────────────────────────────────────────────────────────
 
-        String currentPortfolioId = userPortfolios.get(userId);
-        log.info("🚀 Starting portfolio calculation scheduler for user: {} (Interval: {}s, Current Portfolio: {})",
-                userId, calculationIntervalSeconds, currentPortfolioId != null ? currentPortfolioId : "ALL");
-
-        // Create the scheduled task
-        ScheduledFuture<?> scheduledFuture = taskScheduler.scheduleAtFixedRate(
-                () -> triggerCalculation(userId),
-                Duration.ofSeconds(calculationIntervalSeconds));
-
-        // Store the future for later cancellation
-        activeSchedulers.put(userId, scheduledFuture);
-
-        log.info("✅ Scheduler started successfully for user: {}. Total active schedulers: {}",
-                userId, activeSchedulers.size());
-    }
-
-    /**
-     * Stop the periodic scheduler for the given user.
-     */
-    private void stopSchedulerForUser(String userId) {
-        ScheduledFuture<?> scheduledFuture = activeSchedulers.remove(userId);
-
-        if (scheduledFuture != null) {
-            scheduledFuture.cancel(false);
-            log.info("🛑 Stopped portfolio calculation scheduler for user: {}. Total active schedulers: {}",
-                    userId, activeSchedulers.size());
-        } else {
-            log.debug("No active scheduler found for user: {}", userId);
-        }
-    }
-
-    /**
-     * Trigger a portfolio calculation by sending a message to Kafka.
-     * Uses the user's selected portfolioId if available.
-     */
-    private void triggerCalculation(String userId) {
+    private void emitUserWatchingEvent(String userId, String portfolioId, String sessionId, String action) {
         try {
-            String portfolioId = userPortfolios.get(userId);
-            gatewayKafkaProducer.sendCalculationTrigger(userId, portfolioId, "AUTOMATED_SCHEDULER");
-        } catch (Exception e) {
-            log.error("❌ Failed to trigger calculation for user: {}", userId, e);
-            // Don't crash the scheduler - just log and continue
-        }
-    }
+            UserWatchingEvent event = UserWatchingEvent.builder()
+                    .traceId(UUID.randomUUID().toString())
+                    .spanId(UUID.randomUUID().toString())
+                    .userId(userId)
+                    .portfolioId(portfolioId)
+                    .action(action)
+                    .sessionId(sessionId)
+                    .timestamp(Instant.now())
+                    .build();
 
-    /**
-     * Update the selected portfolio for a user.
-     * Called externally when user explicitly selects a portfolio.
-     */
-    public void setUserPortfolio(String userId, String portfolioId) {
-        if (portfolioId != null && !portfolioId.isEmpty()) {
-            userPortfolios.put(userId, portfolioId);
-            log.info("💾 Portfolio Selection Updated → User: {} | PortfolioID: {}", userId, portfolioId);
-        } else {
-            userPortfolios.remove(userId);
-            log.info("🗑️ Portfolio Selection Cleared → User: {} (will trigger ALL portfolios)", userId);
-        }
-    }
+            String payload = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send(KafkaTopics.USER_WATCHING, userId, payload);
+            log.debug("[Subscription] Emitted {} event for User: {}", action, userId);
 
-    /**
-     * Get the count of currently active schedulers.
-     * Useful for monitoring and metrics.
-     */
-    public int getActiveSchedulerCount() {
-        return activeSchedulers.size();
+        } catch (JsonProcessingException e) {
+            log.error("[Subscription] Failed to serialize UserWatchingEvent for User: {}", userId, e);
+        }
     }
 }

@@ -2,13 +2,21 @@ package com.am.analysis.controller;
 
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisGroupBy;
+import com.am.analysis.dto.ActivityFilter;
+import com.am.analysis.dto.ActivityItem;
 import com.am.analysis.dto.AllocationResponse;
+import com.am.analysis.dto.DashboardSummary;
 import com.am.analysis.dto.PerformanceResponse;
+import com.am.analysis.dto.RecentActivityResponse;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.AnalysisService;
+import com.am.analysis.service.DashboardAnalysisService;
+import com.am.domain.trade.PortfolioOverview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/analysis")
@@ -17,6 +25,82 @@ import org.springframework.web.bind.annotation.*;
 public class AnalysisController {
 
     private final AnalysisService analysisService;
+    private final DashboardAnalysisService dashboardService;
+
+    @GetMapping("/dashboard/summary")
+    public ResponseEntity<DashboardSummary> getDashboardSummary(@RequestParam String userId) {
+        return ResponseEntity.ok(dashboardService.getSummary(userId));
+    }
+
+    /**
+     * Returns portfolio overview cards.
+     *   - portfolioId omitted → ALL portfolios (one card per portfolio)
+     *   - portfolioId provided → single portfolio detail view
+     */
+    @GetMapping("/dashboard/portfolio-overviews")
+    public ResponseEntity<List<PortfolioOverview>> getPortfolioOverviews(
+            @RequestParam String userId,
+            @RequestParam(required = false) String portfolioId) {
+        List<PortfolioOverview> overviews = dashboardService.getPortfolioOverviews(userId);
+        if (portfolioId != null && !portfolioId.isBlank()) {
+            overviews = overviews.stream()
+                    .filter(p -> portfolioId.equals(p.getPortfolioId()))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        return ResponseEntity.ok(overviews);
+    }
+
+    @PostMapping("/dashboard/publish-update")
+    public ResponseEntity<Void> publishDashboardUpdate(@RequestParam String userId) {
+        dashboardService.publishDashboardUpdate(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/dashboard/top-movers")
+    public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
+            @RequestParam String userId,
+            @RequestParam(required = false, defaultValue = "1D") String timeFrame) {
+        return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId, AnalysisGroupBy.STOCK));
+    }
+
+    @GetMapping("/dashboard/performance")
+    public ResponseEntity<PerformanceResponse> getDashboardPerformance(
+            @RequestParam String userId,
+            @RequestParam(required = false, defaultValue = "1M") String timeFrame) {
+        return ResponseEntity.ok(analysisService.getPerformance(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId));
+    }
+
+    /**
+     * Paginated + filtered recent activity.
+     * Supports: type, status (WIN/LOSS/NEUTRAL), sector, portfolioName, sortBy, page, size.
+     *
+     * Example:
+     *   GET /api/v1/analysis/dashboard/recent-activity
+     *       ?userId=xxx&status=WIN&sortBy=PROFIT_LOSS&page=0&size=20
+     */
+    @GetMapping("/dashboard/recent-activity")
+    public ResponseEntity<RecentActivityResponse> getRecentActivity(
+            @RequestParam String userId,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String sector,
+            @RequestParam(required = false) String portfolioName,
+            @RequestParam(required = false, defaultValue = "TIMESTAMP") String sortBy,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size) {
+
+        ActivityFilter filter = ActivityFilter.builder()
+                .type(type)
+                .status(status)
+                .sector(sector)
+                .portfolioName(portfolioName)
+                .sortBy(sortBy)
+                .page(page)
+                .size(size)
+                .build();
+
+        return ResponseEntity.ok(dashboardService.getRecentActivity(userId, filter));
+    }
 
     @GetMapping("/{type}/{id}/allocation")
     public ResponseEntity<AllocationResponse> getAllocation(

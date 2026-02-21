@@ -71,6 +71,11 @@
             <artifactId>am-market-client-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-trade-client-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <!-- Feign Client -->
         <dependency>
@@ -113,6 +118,23 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- Resilience4j - Circuit Breaker & Retry -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot3</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- Redis - Used by Orchestrator to check InterestRegistry for active watchers -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 

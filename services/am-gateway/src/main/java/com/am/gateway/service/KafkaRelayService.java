@@ -109,4 +109,21 @@ public class KafkaRelayService {
             log.error("Failed to parse Trade Update: {}", message, e);
         }
     }
+
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.DASHBOARD_UPDATE, groupId = "am-websocket-gateway-group")
+    public void handleDashboardUpdate(String message) {
+        try {
+            JsonNode node = objectMapper.readTree(message);
+            if (node.has("userId")) {
+                String userId = node.get("userId").asText();
+                log.info("[Relay] Received Dashboard Update for User: {}", userId);
+                // Broadcast to user-specific topic
+                messagingTemplate.convertAndSend("/topic/dashboard/" + userId, message);
+            } else {
+                log.warn("Invalid Dashboard Update: Missing 'userId' field");
+            }
+        } catch (Exception e) {
+            log.error("Failed to parse Dashboard Update", e);
+        }
+    }
 }

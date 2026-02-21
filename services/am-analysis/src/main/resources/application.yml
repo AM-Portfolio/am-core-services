@@ -49,3 +49,36 @@ am:
   services:
     market-data:
       url: ${MARKET_DATA_URL:http://localhost:8092} # Default to standard port, can be overridden
+
+# Resilience4j Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      portfolioService:
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 70
+        slow-call-duration-threshold: 2s
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 10
+        permitted-number-of-calls-in-half-open-state: 3
+      tradeService:
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 70
+        slow-call-duration-threshold: 2s
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 10
+        permitted-number-of-calls-in-half-open-state: 3
+  timelimiter:
+    instances:
+      portfolioService:
+        timeout-duration: 3s
+      tradeService:
+        timeout-duration: 3s
+  retry:
+    instances:
+      portfolioService:
+        max-attempts: 3
+        wait-duration: 500ms
+      tradeService:
+        max-attempts: 3
+        wait-duration: 500ms
