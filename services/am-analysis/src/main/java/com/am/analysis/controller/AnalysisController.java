@@ -28,7 +28,7 @@ public class AnalysisController {
     private final DashboardAnalysisService dashboardService;
 
     @GetMapping("/dashboard/summary")
-    public ResponseEntity<DashboardSummary> getDashboardSummary(@RequestParam String userId) {
+    public ResponseEntity<DashboardSummary> getDashboardSummary(@RequestParam("userId") String userId) {
         return ResponseEntity.ok(dashboardService.getSummary(userId));
     }
 
@@ -39,8 +39,8 @@ public class AnalysisController {
      */
     @GetMapping("/dashboard/portfolio-overviews")
     public ResponseEntity<List<PortfolioOverview>> getPortfolioOverviews(
-            @RequestParam String userId,
-            @RequestParam(required = false) String portfolioId) {
+            @RequestParam("userId") String userId,
+            @RequestParam(name = "portfolioId", required = false) String portfolioId) {
         List<PortfolioOverview> overviews = dashboardService.getPortfolioOverviews(userId);
         if (portfolioId != null && !portfolioId.isBlank()) {
             overviews = overviews.stream()
@@ -51,22 +51,22 @@ public class AnalysisController {
     }
 
     @PostMapping("/dashboard/publish-update")
-    public ResponseEntity<Void> publishDashboardUpdate(@RequestParam String userId) {
+    public ResponseEntity<Void> publishDashboardUpdate(@RequestParam("userId") String userId) {
         dashboardService.publishDashboardUpdate(userId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/dashboard/top-movers")
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
-            @RequestParam String userId,
-            @RequestParam(required = false, defaultValue = "1D") String timeFrame) {
+            @RequestParam("userId") String userId,
+            @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
         return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId, AnalysisGroupBy.STOCK));
     }
 
     @GetMapping("/dashboard/performance")
     public ResponseEntity<PerformanceResponse> getDashboardPerformance(
-            @RequestParam String userId,
-            @RequestParam(required = false, defaultValue = "1M") String timeFrame) {
+            @RequestParam("userId") String userId,
+            @RequestParam(name = "timeFrame", required = false, defaultValue = "1M") String timeFrame) {
         return ResponseEntity.ok(analysisService.getPerformance(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId));
     }
 
@@ -80,14 +80,14 @@ public class AnalysisController {
      */
     @GetMapping("/dashboard/recent-activity")
     public ResponseEntity<RecentActivityResponse> getRecentActivity(
-            @RequestParam String userId,
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String sector,
-            @RequestParam(required = false) String portfolioName,
-            @RequestParam(required = false, defaultValue = "TIMESTAMP") String sortBy,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "20") int size) {
+            @RequestParam("userId") String userId,
+            @RequestParam(name = "type", required = false) String type,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "sector", required = false) String sector,
+            @RequestParam(name = "portfolioName", required = false) String portfolioName,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "TIMESTAMP") String sortBy,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
 
         ActivityFilter filter = ActivityFilter.builder()
                 .type(type)

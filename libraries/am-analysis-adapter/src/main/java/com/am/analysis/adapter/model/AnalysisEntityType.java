@@ -6,5 +6,6 @@ public enum AnalysisEntityType {
     ETF,
     MUTUAL_FUND,
     TRADE,
-    MARKET_INDEX
+    MARKET_INDEX,
+    HOLDING
 }

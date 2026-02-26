@@ -48,6 +48,8 @@
         <module>libraries/am-feign-lib</module>
         <module>libraries/am-market-client-lib</module>
         <module>libraries/am-trade-client-lib</module>
+        <module>libraries/am-portfolio-client-lib</module>
+        <module>libraries/am-analysis-client-lib</module>
         
         <!-- Domain Layer -->
         <module>domain/am-market-domain</module>
@@ -57,6 +59,7 @@
         <!-- Services Layer -->
         <module>services/am-gateway</module>
         <module>services/am-analysis</module>
+        <module>services/am-mcp-server</module>
     </modules>
 
     <dependencyManagement>
@@ -177,6 +180,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
             </plugins>

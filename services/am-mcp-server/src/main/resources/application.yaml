@@ -1,0 +1,115 @@
+spring:
+  application:
+    name: am-mcp-server
+  main:
+    web-application-type: none # MCP uses stdio, no HTTP server needed
+
+# ── MCP Server ────────────────────────────────────────────────────────────────
+spring.ai.mcp.server:
+  name: am-platform
+  version: 1.0.0
+  transport-type: STDIO
+
+# ── AM Platform Config (all runtime values here — override via env vars) ──────
+am:
+  defaults:
+    user-id: ${AM_DEFAULT_USER:user1}
+
+  auth:
+    url: ${AM_AUTH_URL:http://localhost:8001}
+    static-token: ${AM_STATIC_TOKEN:} # Leave empty → auto-login via username/password below
+    username: ${AM_AUTH_USER:ssd2658@gmail.com}
+    password: ${AM_AUTH_PASS:@M1unish}
+    refresh-buffer-sec: 60
+
+  services:
+    ai-agent-url: ${AM_AI_AGENT_URL:http://localhost:8100}
+    portfolio-url: ${AM_PORTFOLIO_URL:http://localhost:8060}
+
+  # ── Tool Group Toggles ── set false to disable a group without recompiling ──
+  tools:
+    portfolio:
+      enabled: ${AM_TOOLS_PORTFOLIO_ENABLED:true}
+    trade:
+      enabled: ${AM_TOOLS_TRADE_ENABLED:true}
+    market:
+      enabled: ${AM_TOOLS_MARKET_ENABLED:true}
+    analysis:
+      enabled: ${AM_TOOLS_ANALYSIS_ENABLED:true}
+    ai-agent:
+      enabled: ${AM_TOOLS_AI_AGENT_ENABLED:true}
+
+  timeouts:
+    connect-ms: 3000
+    read-ms: 15000
+    ai-agent-read-ms: 90000
+
+  mcp:
+    max-response-chars: 8000 # Truncate tool responses — LLMs have context limits
+    tool-timeout-ms: 20000 # Hard kill for any tool taking > 20s
+
+# ── Connection Pool ───────────────────────────────────────────────────────────
+am.http.pool:
+  max-total: 50
+  max-per-route: 20
+  ttl-seconds: 30
+
+# ── Resilience4j — Circuit Breaker per domain ─────────────────────────────────
+resilience4j:
+  circuitbreaker:
+    instances:
+      am-analysis:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      am-market:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+      am-trade:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+      am-ai-agent:
+        slidingWindowSize: 5
+        failureRateThreshold: 60
+        waitDurationInOpenState: 60s
+  retry:
+    instances:
+      am-analysis:
+        maxAttempts: 2
+        waitDuration: 500ms
+      am-market:
+        maxAttempts: 2
+        waitDuration: 300ms
+
+# ── Actuator ──────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+logging:
+  level:
+    com.am.mcp: INFO
+    org.springframework.ai.mcp: WARN
+  pattern:
+    console: "%d{HH:mm:ss} [%level] %logger{36} - %msg%n"
+
+---
+# ── DEV profile ───────────────────────────────────────────────────────────────
+spring:
+  config:
+    activate:
+      on-profile: dev
+logging:
+  level:
+    com.am.mcp: DEBUG
+    org.springframework.ai.mcp: DEBUG
