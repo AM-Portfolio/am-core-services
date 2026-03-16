@@ -1,0 +1,8 @@
+{
+    "name": "am-mcp-server-inspector",
+    "version": "1.0.0",
+    "description": "Inspector scripts for AM MCP Server",
+    "scripts": {
+        "inspect": "npx -y @modelcontextprotocol/inspector java -jar target/am-mcp-server-1.0.0-SNAPSHOT.jar --spring.main.banner-mode=off --logging.level.root=OFF --server.port=8096"
+    }
+}

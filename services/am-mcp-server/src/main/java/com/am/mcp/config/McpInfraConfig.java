@@ -12,6 +12,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -74,5 +76,14 @@ public class McpInfraConfig {
                                 .setConnectTimeout(Duration.ofMillis(props.getTimeouts().getConnectMs()))
                                 .setReadTimeout(Duration.ofMillis(props.getTimeouts().getAiAgentReadMs()))
                                 .build();
+        }
+
+        /**
+         * Configure Jackson to ignore unknown properties (like 'elicitation') sent by
+         * newer MCP clients/inspectors.
+         */
+        @Bean
+        public Jackson2ObjectMapperBuilderCustomizer mcpJacksonCustomizer() {
+                return builder -> builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         }
 }

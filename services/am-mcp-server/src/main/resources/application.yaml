@@ -1,9 +1,9 @@
 spring:
   application:
     name: am-mcp-server
-  main:
-    web-application-type: none # MCP uses stdio, no HTTP server needed
-
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
 # ── MCP Server ────────────────────────────────────────────────────────────────
 spring.ai.mcp.server:
   name: am-platform
