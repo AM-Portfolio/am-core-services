@@ -1,0 +1,716 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- description: Generated server url
+  url: http://localhost:8090
+paths:
+  /api/v1/analysis/{type}/{id}/top-movers:
+    get:
+      operationId: getTopMoversByEntity
+      parameters:
+      - explode: false
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: type
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: timeFrame
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: header
+        name: groupBy
+        required: false
+        schema:
+          enum:
+          - STOCK
+          - SECTOR
+          - ASSET_CLASS
+          - MARKET_CAP
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: groupBy
+        required: false
+        schema:
+          enum:
+          - STOCK
+          - SECTOR
+          - ASSET_CLASS
+          - MARKET_CAP
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TopMoversResponse"
+          description: OK
+      tags:
+      - analysis-controller
+      x-accepts:
+      - '*/*'
+  /api/v1/analysis/{type}/{id}/performance:
+    get:
+      operationId: getPerformance
+      parameters:
+      - explode: false
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: type
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: timeFrame
+        required: false
+        schema:
+          default: 1M
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PerformanceResponse"
+          description: OK
+      tags:
+      - analysis-controller
+      x-accepts:
+      - '*/*'
+  /api/v1/analysis/{type}/{id}/allocation:
+    get:
+      operationId: getAllocation
+      parameters:
+      - explode: false
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: type
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: groupBy
+        required: false
+        schema:
+          enum:
+          - STOCK
+          - SECTOR
+          - ASSET_CLASS
+          - MARKET_CAP
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: groupBy
+        required: false
+        schema:
+          enum:
+          - STOCK
+          - SECTOR
+          - ASSET_CLASS
+          - MARKET_CAP
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AllocationResponse"
+          description: OK
+      tags:
+      - analysis-controller
+      x-accepts:
+      - '*/*'
+  /api/v1/analysis/{type}/top-movers:
+    get:
+      operationId: getTopMoversByCategory
+      parameters:
+      - explode: false
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: type
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: timeFrame
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: header
+        name: groupBy
+        required: false
+        schema:
+          enum:
+          - STOCK
+          - SECTOR
+          - ASSET_CLASS
+          - MARKET_CAP
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: groupBy
+        required: false
+        schema:
+          enum:
+          - STOCK
+          - SECTOR
+          - ASSET_CLASS
+          - MARKET_CAP
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TopMoversResponse"
+          description: OK
+      tags:
+      - analysis-controller
+      x-accepts:
+      - '*/*'
+components:
+  schemas:
+    MoverItem:
+      example:
+        allocationPercentage: 7.061401241503109
+        symbol: symbol
+        quantity: 5.962133916683182
+        assetClass: assetClass
+        pnlPercentage: 9.301444243932576
+        changeAmount: 1.4658129805029452
+        marketCapType: marketCapType
+        price: 0.8008281904610115
+        name: name
+        changePercentage: 6.027456183070403
+        sector: sector
+        investedValue: 2.3021358869347655
+        currentValue: 5.637376656633329
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        changePercentage:
+          format: double
+          type: number
+        changeAmount:
+          type: number
+        sector:
+          type: string
+        assetClass:
+          type: string
+        marketCapType:
+          type: string
+        quantity:
+          format: double
+          type: number
+        currentValue:
+          type: number
+        investedValue:
+          type: number
+        allocationPercentage:
+          format: double
+          type: number
+        pnlPercentage:
+          format: double
+          type: number
+      type: object
+    TopMoversResponse:
+      example:
+        gainers:
+        - allocationPercentage: 7.061401241503109
+          symbol: symbol
+          quantity: 5.962133916683182
+          assetClass: assetClass
+          pnlPercentage: 9.301444243932576
+          changeAmount: 1.4658129805029452
+          marketCapType: marketCapType
+          price: 0.8008281904610115
+          name: name
+          changePercentage: 6.027456183070403
+          sector: sector
+          investedValue: 2.3021358869347655
+          currentValue: 5.637376656633329
+        - allocationPercentage: 7.061401241503109
+          symbol: symbol
+          quantity: 5.962133916683182
+          assetClass: assetClass
+          pnlPercentage: 9.301444243932576
+          changeAmount: 1.4658129805029452
+          marketCapType: marketCapType
+          price: 0.8008281904610115
+          name: name
+          changePercentage: 6.027456183070403
+          sector: sector
+          investedValue: 2.3021358869347655
+          currentValue: 5.637376656633329
+        losers:
+        - allocationPercentage: 7.061401241503109
+          symbol: symbol
+          quantity: 5.962133916683182
+          assetClass: assetClass
+          pnlPercentage: 9.301444243932576
+          changeAmount: 1.4658129805029452
+          marketCapType: marketCapType
+          price: 0.8008281904610115
+          name: name
+          changePercentage: 6.027456183070403
+          sector: sector
+          investedValue: 2.3021358869347655
+          currentValue: 5.637376656633329
+        - allocationPercentage: 7.061401241503109
+          symbol: symbol
+          quantity: 5.962133916683182
+          assetClass: assetClass
+          pnlPercentage: 9.301444243932576
+          changeAmount: 1.4658129805029452
+          marketCapType: marketCapType
+          price: 0.8008281904610115
+          name: name
+          changePercentage: 6.027456183070403
+          sector: sector
+          investedValue: 2.3021358869347655
+          currentValue: 5.637376656633329
+      properties:
+        gainers:
+          items:
+            $ref: "#/components/schemas/MoverItem"
+          type: array
+        losers:
+          items:
+            $ref: "#/components/schemas/MoverItem"
+          type: array
+      type: object
+    DataPoint:
+      example:
+        date: 2000-01-23
+        value: 1.4658129805029452
+      properties:
+        date:
+          format: date
+          type: string
+        value:
+          type: number
+      type: object
+    PerformanceResponse:
+      example:
+        totalReturnValue: 6.027456183070403
+        chartData:
+        - date: 2000-01-23
+          value: 1.4658129805029452
+        - date: 2000-01-23
+          value: 1.4658129805029452
+        portfolioId: portfolioId
+        totalReturnPercentage: 0.8008281904610115
+        errorMessage: errorMessage
+        timeFrame: timeFrame
+      properties:
+        portfolioId:
+          type: string
+        timeFrame:
+          type: string
+        totalReturnPercentage:
+          format: double
+          type: number
+        totalReturnValue:
+          type: number
+        chartData:
+          items:
+            $ref: "#/components/schemas/DataPoint"
+          type: array
+        errorMessage:
+          type: string
+      type: object
+    AllocationHolding:
+      example:
+        symbol: symbol
+        totalChangePercentage: 9.301444243932576
+        percentage: 5.962133916683182
+        name: name
+        totalChangeAmount: 3.616076749251911
+        dayChangeAmount: 7.061401241503109
+        value: 1.4658129805029452
+        portfolioPercentage: 5.637376656633329
+        dayChangePercentage: 2.3021358869347655
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        value:
+          type: number
+        percentage:
+          format: double
+          type: number
+        portfolioPercentage:
+          format: double
+          type: number
+        dayChangePercentage:
+          format: double
+          type: number
+        dayChangeAmount:
+          type: number
+        totalChangePercentage:
+          format: double
+          type: number
+        totalChangeAmount:
+          type: number
+      type: object
+    AllocationItem:
+      example:
+        totalChangePercentage: 7.386281948385884
+        percentage: 6.027456183070403
+        name: name
+        totalChangeAmount: 1.2315135367772556
+        dayChangeAmount: 4.145608029883936
+        holdings:
+        - symbol: symbol
+          totalChangePercentage: 9.301444243932576
+          percentage: 5.962133916683182
+          name: name
+          totalChangeAmount: 3.616076749251911
+          dayChangeAmount: 7.061401241503109
+          value: 1.4658129805029452
+          portfolioPercentage: 5.637376656633329
+          dayChangePercentage: 2.3021358869347655
+        - symbol: symbol
+          totalChangePercentage: 9.301444243932576
+          percentage: 5.962133916683182
+          name: name
+          totalChangeAmount: 3.616076749251911
+          dayChangeAmount: 7.061401241503109
+          value: 1.4658129805029452
+          portfolioPercentage: 5.637376656633329
+          dayChangePercentage: 2.3021358869347655
+        value: 0.8008281904610115
+        dayChangePercentage: 2.027123023002322
+      properties:
+        name:
+          type: string
+        value:
+          type: number
+        percentage:
+          format: double
+          type: number
+        holdings:
+          items:
+            $ref: "#/components/schemas/AllocationHolding"
+          type: array
+        dayChangePercentage:
+          format: double
+          type: number
+        dayChangeAmount:
+          type: number
+        totalChangePercentage:
+          format: double
+          type: number
+        totalChangeAmount:
+          type: number
+      type: object
+    AllocationResponse:
+      example:
+        sectors:
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        portfolioId: portfolioId
+        assetClasses:
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        marketCaps:
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        stocks:
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+        - totalChangePercentage: 7.386281948385884
+          percentage: 6.027456183070403
+          name: name
+          totalChangeAmount: 1.2315135367772556
+          dayChangeAmount: 4.145608029883936
+          holdings:
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          - symbol: symbol
+            totalChangePercentage: 9.301444243932576
+            percentage: 5.962133916683182
+            name: name
+            totalChangeAmount: 3.616076749251911
+            dayChangeAmount: 7.061401241503109
+            value: 1.4658129805029452
+            portfolioPercentage: 5.637376656633329
+            dayChangePercentage: 2.3021358869347655
+          value: 0.8008281904610115
+          dayChangePercentage: 2.027123023002322
+      properties:
+        portfolioId:
+          type: string
+        sectors:
+          items:
+            $ref: "#/components/schemas/AllocationItem"
+          type: array
+        assetClasses:
+          items:
+            $ref: "#/components/schemas/AllocationItem"
+          type: array
+        marketCaps:
+          items:
+            $ref: "#/components/schemas/AllocationItem"
+          type: array
+        stocks:
+          items:
+            $ref: "#/components/schemas/AllocationItem"
+          type: array
+      type: object
+

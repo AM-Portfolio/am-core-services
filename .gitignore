@@ -14,10 +14,6 @@ target/
 # Environment
 .env
 
-# Generated SDKs (regenerated from OpenAPI specs)
-**/am-analysis-sdk/java-sdk/
-**/am-analysis-sdk/flutter-sdk/
-
 # Test Reports (generated at runtime)
 **/surefire-reports/
 **/test-results/
