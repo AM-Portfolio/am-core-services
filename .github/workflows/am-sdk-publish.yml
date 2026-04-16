@@ -24,8 +24,6 @@ jobs:
       kafka-lib: ${{ steps.check.outputs.kafka-lib }}
       market-client-lib: ${{ steps.check.outputs.market-client-lib }}
       portfolio-client-lib: ${{ steps.check.outputs.portfolio-client-lib }}
-      sdk-generator: ${{ steps.check.outputs.sdk-generator }}
-      sdk-verifier: ${{ steps.check.outputs.sdk-verifier }}
       security-lib: ${{ steps.check.outputs.security-lib }}
       trade-client-lib: ${{ steps.check.outputs.trade-client-lib }}
       market-domain: ${{ steps.check.outputs.market-domain }}
@@ -72,8 +70,6 @@ jobs:
           echo "kafka-lib=$(check 'libraries/am-kafka-lib/')" >> $GITHUB_OUTPUT
           echo "market-client-lib=$(check 'libraries/am-market-client-lib/')" >> $GITHUB_OUTPUT
           echo "portfolio-client-lib=$(check 'libraries/am-portfolio-client-lib/')" >> $GITHUB_OUTPUT
-          echo "sdk-generator=$(check 'libraries/am-sdk-generator/')" >> $GITHUB_OUTPUT
-          echo "sdk-verifier=$(check 'libraries/am-sdk-verifier/')" >> $GITHUB_OUTPUT
           echo "security-lib=$(check 'libraries/am-security-lib/')" >> $GITHUB_OUTPUT
           echo "trade-client-lib=$(check 'libraries/am-trade-client-lib/')" >> $GITHUB_OUTPUT
 
@@ -321,30 +317,4 @@ jobs:
       sdk_name: "am-analysis-client-lib"
     secrets: inherit
 
-  publish-sdk-generator:
-    name: Publish SDK Generator
-    needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-sdk-generator"
-      sdk_name: "am-sdk-generator"
-    secrets: inherit
 
-  publish-sdk-verifier:
-    name: Publish SDK Verifier
-    needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-sdk-verifier"
-      sdk_name: "am-sdk-verifier"
-    secrets: inherit
