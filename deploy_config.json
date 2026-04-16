@@ -1,0 +1,31 @@
+{
+  "project_name": "am-core-services",
+  "namespace_prefix": "am",
+  "helm_chart_name": "universal-chart",
+  "services": [
+    {
+      "name": "am-analysis",
+      "path": "services/am-analysis",
+      "type": "maven",
+      "port_env": "ANALYSIS_PORT",
+      "container_port": 8090,
+      "host_port": 8090
+    },
+    {
+      "name": "am-gateway",
+      "path": "services/am-gateway",
+      "type": "maven",
+      "port_env": "GATEWAY_PORT",
+      "container_port": 8091,
+      "host_port": 8091
+    },
+    {
+      "name": "am-mcp-server",
+      "path": "services/am-mcp-server",
+      "type": "maven",
+      "port_env": "MCP_PORT",
+      "container_port": 8080,
+      "host_port": 8080
+    }
+  ]
+}

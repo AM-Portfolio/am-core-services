@@ -67,6 +67,7 @@ jobs:
       language: 'java'
       working_directory: 'services/am-analysis'
       image_name: 'am-analysis'
+      build_context: '../..'
       preprod_namespace: 'am-apps-preprod'
       prod_namespace: 'am-apps-prod'
       deploy_prod: true
@@ -85,6 +86,7 @@ jobs:
       language: 'java'
       working_directory: 'services/am-gateway'
       image_name: 'am-gateway'
+      build_context: '../..'
       preprod_namespace: 'am-apps-preprod'
       prod_namespace: 'am-apps-prod'
       deploy_prod: true
@@ -103,6 +105,7 @@ jobs:
       language: 'java'
       working_directory: 'services/am-mcp-server'
       image_name: 'am-mcp-server'
+      build_context: '../..'
       preprod_namespace: 'am-apps-preprod'
       prod_namespace: 'am-apps-prod'
       deploy_prod: true
