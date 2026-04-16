@@ -103,6 +103,7 @@ jobs:
       - name: Publish Parent POM (Non-Recursive)
         run: |
             mvn -B clean deploy -DskipTests -N \
+            -s $GITHUB_WORKSPACE/settings.xml \
             -DaltDeploymentRepository=github::https://maven.pkg.github.com/AM-Portfolio/am-core-services
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
