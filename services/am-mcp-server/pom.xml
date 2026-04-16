@@ -116,9 +116,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.am</groupId>
+            <groupId>com.am.libraries</groupId>
             <artifactId>am-portfolio-client-lib</artifactId>
-            <version>v1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
