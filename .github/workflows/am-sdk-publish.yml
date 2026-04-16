@@ -82,14 +82,11 @@ jobs:
           echo "portfolio-domain=$(check 'domain/am-portfolio-domain/')" >> $GITHUB_OUTPUT
           echo "trade-domain=$(check 'domain/am-trade-domain/')" >> $GITHUB_OUTPUT
 
-  # ── Root POM (Parent) ──────────────────────────────────────────────────────
+  # ── LEVEL 1: Core Foundation ──────────────────────────────────────────
   publish-root-pom:
     name: Publish Root POM (am-core-services)
     needs: detect-changes
-    # Always run if manually triggered OR if pom.xml changed
-    if: |
-      needs.detect-changes.outputs.common-lib == 'true' || 
-      github.event_name == 'workflow_dispatch'
+    if: always() && needs.detect-changes.result == 'success'
     permissions:
       contents: write
       packages: write
@@ -100,14 +97,181 @@ jobs:
       sdk_name: "am-core-services"
     secrets: inherit
 
-  # ── Libraries ──────────────────────────────────────────────────────────────
+  publish-common-lib:
+    name: Publish Common Lib
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-common-lib"
+      sdk_name: "am-common-lib"
+    secrets: inherit
+
+  publish-common-event-model:
+    name: Publish Common Event Model
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-common-event-model"
+      sdk_name: "am-common-event-model"
+    secrets: inherit
+
+  # ── LEVEL 2: Infrastructure Libraries ──────────────────────────────────
+  publish-kafka-lib:
+    name: Publish Kafka Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-kafka-lib"
+      sdk_name: "am-kafka-lib"
+    secrets: inherit
+
+  publish-security-lib:
+    name: Publish Security Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-security-lib"
+      sdk_name: "am-security-lib"
+    secrets: inherit
+
+  publish-feign-lib:
+    name: Publish Feign Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-feign-lib"
+      sdk_name: "am-feign-lib"
+    secrets: inherit
+
+  publish-cache-lib:
+    name: Publish Cache Lib
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-cache-lib"
+      sdk_name: "am-cache-lib"
+    secrets: inherit
+
+  # ── LEVEL 3: Business Domains ──────────────────────────────────────────
+  publish-market-domain:
+    name: Publish Market Domain
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "domain/am-market-domain"
+      sdk_name: "am-market-domain"
+    secrets: inherit
+
+  publish-trade-domain:
+    name: Publish Trade Domain
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "domain/am-trade-domain"
+      sdk_name: "am-trade-domain"
+    secrets: inherit
+
+  publish-portfolio-domain:
+    name: Publish Portfolio Domain
+    needs: [publish-market-domain, publish-common-lib]
+    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "domain/am-portfolio-domain"
+      sdk_name: "am-portfolio-domain"
+    secrets: inherit
+
+  # ── LEVEL 4: Clients & Adapters ────────────────────────────────────────
+  publish-market-client-lib:
+    name: Publish Market Client Lib
+    needs: publish-market-domain
+    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-market-client-lib"
+      sdk_name: "am-market-client-lib"
+    secrets: inherit
+
+  publish-trade-client-lib:
+    name: Publish Trade Client Lib
+    needs: publish-trade-domain
+    if: always() && (needs.publish-trade-domain.result == 'success' || needs.publish-trade-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-trade-client-lib"
+      sdk_name: "am-trade-client-lib"
+    secrets: inherit
+
+  publish-portfolio-client-lib:
+    name: Publish Portfolio Client Lib
+    needs: publish-portfolio-domain
+    if: always() && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-portfolio-client-lib"
+      sdk_name: "am-portfolio-client-lib"
+    secrets: inherit
+
   publish-analysis-adapter:
     name: Publish Analysis Adapter
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.analysis-adapter == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -120,11 +284,8 @@ jobs:
 
   publish-analysis-client-lib:
     name: Publish Analysis Client Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.analysis-client-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -135,132 +296,10 @@ jobs:
       sdk_name: "am-analysis-client-lib"
     secrets: inherit
 
-  publish-cache-lib:
-    name: Publish Cache Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.cache-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-cache-lib"
-      sdk_name: "am-cache-lib"
-    secrets: inherit
-
-  publish-common-event-model:
-    name: Publish Common Event Model
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.common-event-model == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-common-event-model"
-      sdk_name: "am-common-event-model"
-    secrets: inherit
-
-  publish-common-lib:
-    name: Publish Common Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.common-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-common-lib"
-      sdk_name: "am-common-lib"
-    secrets: inherit
-
-  publish-feign-lib:
-    name: Publish Feign Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.feign-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-feign-lib"
-      sdk_name: "am-feign-lib"
-    secrets: inherit
-
-  publish-kafka-lib:
-    name: Publish Kafka Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.kafka-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-kafka-lib"
-      sdk_name: "am-kafka-lib"
-    secrets: inherit
-
-  publish-market-client-lib:
-    name: Publish Market Client Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.market-client-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-market-client-lib"
-      sdk_name: "am-market-client-lib"
-    secrets: inherit
-
-  publish-portfolio-client-lib:
-    name: Publish Portfolio Client Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.portfolio-client-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-portfolio-client-lib"
-      sdk_name: "am-portfolio-client-lib"
-    secrets: inherit
-
   publish-sdk-generator:
     name: Publish SDK Generator
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.sdk-generator == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -273,11 +312,8 @@ jobs:
 
   publish-sdk-verifier:
     name: Publish SDK Verifier
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.sdk-verifier == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -286,90 +322,4 @@ jobs:
       language: "java"
       working_directory: "libraries/am-sdk-verifier"
       sdk_name: "am-sdk-verifier"
-    secrets: inherit
-
-  publish-security-lib:
-    name: Publish Security Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.security-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-security-lib"
-      sdk_name: "am-security-lib"
-    secrets: inherit
-
-  publish-trade-client-lib:
-    name: Publish Trade Client Lib
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.trade-client-lib == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "libraries/am-trade-client-lib"
-      sdk_name: "am-trade-client-lib"
-    secrets: inherit
-
-  # ── Domains ────────────────────────────────────────────────────────────────
-  publish-market-domain:
-    name: Publish Market Domain
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.market-domain == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "domain/am-market-domain"
-      sdk_name: "am-market-domain"
-    secrets: inherit
-
-  publish-portfolio-domain:
-    name: Publish Portfolio Domain
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.portfolio-domain == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "domain/am-portfolio-domain"
-      sdk_name: "am-portfolio-domain"
-    secrets: inherit
-
-  publish-trade-domain:
-    name: Publish Trade Domain
-    needs: [detect-changes, publish-root-pom]
-    if: |
-      always() && 
-      needs.detect-changes.outputs.trade-domain == 'true' &&
-      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: "java"
-      working_directory: "domain/am-trade-domain"
-      sdk_name: "am-trade-domain"
     secrets: inherit
