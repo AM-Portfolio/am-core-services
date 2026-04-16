@@ -2,13 +2,9 @@ name: AM SDK Publish
 
 on:
   push:
-    paths:
-      - "libraries/**"
-      - "domain/**"
+    # Removed paths filter to run on every commit
   pull_request:
-    paths:
-      - "libraries/**"
-      - "domain/**"
+    # Removed paths filter to run on every commit
   workflow_dispatch: # Allows manual 'Force Build All' runs
 
 jobs:
@@ -62,11 +58,8 @@ jobs:
           echo "==================================="
 
           check() { 
-            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-              echo 'true'
-            else
-              echo "$CHANGED" | grep -q "^$1" && echo 'true' || echo 'false'
-            fi
+            # Forced to true for every commit as requested
+            echo 'true'
           }
 
           # Libraries
