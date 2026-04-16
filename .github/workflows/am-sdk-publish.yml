@@ -3,12 +3,13 @@ name: AM SDK Publish
 on:
   push:
     paths:
-      - 'libraries/**'
-      - 'domain/**'
+      - "libraries/**"
+      - "domain/**"
   pull_request:
     paths:
-      - 'libraries/**'
-      - 'domain/**'
+      - "libraries/**"
+      - "domain/**"
+  workflow_dispatch: # Allows manual 'Force Build All' runs
 
 jobs:
   # ── Detect which SDK paths changed ───────────────────────────────────────
@@ -60,7 +61,13 @@ jobs:
           echo "$CHANGED"
           echo "==================================="
 
-          check() { echo "$CHANGED" | grep -q "^$1" && echo 'true' || echo 'false'; }
+          check() { 
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo 'true'
+            else
+              echo "$CHANGED" | grep -q "^$1" && echo 'true' || echo 'false'
+            fi
+          }
 
           # Libraries
           echo "analysis-adapter=$(check 'libraries/am-analysis-adapter/')" >> $GITHUB_OUTPUT
@@ -92,9 +99,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-analysis-adapter'
-      sdk_name: 'am-analysis-adapter'
+      language: "java"
+      working_directory: "libraries/am-analysis-adapter"
+      sdk_name: "am-analysis-adapter"
     secrets: inherit
 
   publish-analysis-client-lib:
@@ -106,9 +113,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-analysis-client-lib'
-      sdk_name: 'am-analysis-client-lib'
+      language: "java"
+      working_directory: "libraries/am-analysis-client-lib"
+      sdk_name: "am-analysis-client-lib"
     secrets: inherit
 
   publish-cache-lib:
@@ -120,9 +127,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-cache-lib'
-      sdk_name: 'am-cache-lib'
+      language: "java"
+      working_directory: "libraries/am-cache-lib"
+      sdk_name: "am-cache-lib"
     secrets: inherit
 
   publish-common-event-model:
@@ -134,9 +141,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-common-event-model'
-      sdk_name: 'am-common-event-model'
+      language: "java"
+      working_directory: "libraries/am-common-event-model"
+      sdk_name: "am-common-event-model"
     secrets: inherit
 
   publish-common-lib:
@@ -148,9 +155,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-common-lib'
-      sdk_name: 'am-common-lib'
+      language: "java"
+      working_directory: "libraries/am-common-lib"
+      sdk_name: "am-common-lib"
     secrets: inherit
 
   publish-feign-lib:
@@ -162,9 +169,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-feign-lib'
-      sdk_name: 'am-feign-lib'
+      language: "java"
+      working_directory: "libraries/am-feign-lib"
+      sdk_name: "am-feign-lib"
     secrets: inherit
 
   publish-kafka-lib:
@@ -176,9 +183,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-kafka-lib'
-      sdk_name: 'am-kafka-lib'
+      language: "java"
+      working_directory: "libraries/am-kafka-lib"
+      sdk_name: "am-kafka-lib"
     secrets: inherit
 
   publish-market-client-lib:
@@ -190,9 +197,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-market-client-lib'
-      sdk_name: 'am-market-client-lib'
+      language: "java"
+      working_directory: "libraries/am-market-client-lib"
+      sdk_name: "am-market-client-lib"
     secrets: inherit
 
   publish-portfolio-client-lib:
@@ -204,9 +211,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-portfolio-client-lib'
-      sdk_name: 'am-portfolio-client-lib'
+      language: "java"
+      working_directory: "libraries/am-portfolio-client-lib"
+      sdk_name: "am-portfolio-client-lib"
     secrets: inherit
 
   publish-sdk-generator:
@@ -218,9 +225,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-sdk-generator'
-      sdk_name: 'am-sdk-generator'
+      language: "java"
+      working_directory: "libraries/am-sdk-generator"
+      sdk_name: "am-sdk-generator"
     secrets: inherit
 
   publish-sdk-verifier:
@@ -232,9 +239,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-sdk-verifier'
-      sdk_name: 'am-sdk-verifier'
+      language: "java"
+      working_directory: "libraries/am-sdk-verifier"
+      sdk_name: "am-sdk-verifier"
     secrets: inherit
 
   publish-security-lib:
@@ -246,9 +253,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-security-lib'
-      sdk_name: 'am-security-lib'
+      language: "java"
+      working_directory: "libraries/am-security-lib"
+      sdk_name: "am-security-lib"
     secrets: inherit
 
   publish-trade-client-lib:
@@ -260,9 +267,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'libraries/am-trade-client-lib'
-      sdk_name: 'am-trade-client-lib'
+      language: "java"
+      working_directory: "libraries/am-trade-client-lib"
+      sdk_name: "am-trade-client-lib"
     secrets: inherit
 
   # ── Domains ────────────────────────────────────────────────────────────────
@@ -275,9 +282,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'domain/am-market-domain'
-      sdk_name: 'am-market-domain'
+      language: "java"
+      working_directory: "domain/am-market-domain"
+      sdk_name: "am-market-domain"
     secrets: inherit
 
   publish-portfolio-domain:
@@ -289,9 +296,9 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'domain/am-portfolio-domain'
-      sdk_name: 'am-portfolio-domain'
+      language: "java"
+      working_directory: "domain/am-portfolio-domain"
+      sdk_name: "am-portfolio-domain"
     secrets: inherit
 
   publish-trade-domain:
@@ -303,7 +310,7 @@ jobs:
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
-      language: 'java'
-      working_directory: 'domain/am-trade-domain'
-      sdk_name: 'am-trade-domain'
+      language: "java"
+      working_directory: "domain/am-trade-domain"
+      sdk_name: "am-trade-domain"
     secrets: inherit
