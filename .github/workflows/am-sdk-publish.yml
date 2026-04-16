@@ -1,0 +1,309 @@
+name: AM SDK Publish
+
+on:
+  push:
+    paths:
+      - 'libraries/**'
+      - 'domain/**'
+  pull_request:
+    paths:
+      - 'libraries/**'
+      - 'domain/**'
+
+jobs:
+  # ── Detect which SDK paths changed ───────────────────────────────────────
+  detect-changes:
+    name: Detect Changed SDKs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      analysis-adapter: ${{ steps.check.outputs.analysis-adapter }}
+      analysis-client-lib: ${{ steps.check.outputs.analysis-client-lib }}
+      cache-lib: ${{ steps.check.outputs.cache-lib }}
+      common-event-model: ${{ steps.check.outputs.common-event-model }}
+      common-lib: ${{ steps.check.outputs.common-lib }}
+      feign-lib: ${{ steps.check.outputs.feign-lib }}
+      kafka-lib: ${{ steps.check.outputs.kafka-lib }}
+      market-client-lib: ${{ steps.check.outputs.market-client-lib }}
+      portfolio-client-lib: ${{ steps.check.outputs.portfolio-client-lib }}
+      sdk-generator: ${{ steps.check.outputs.sdk-generator }}
+      sdk-verifier: ${{ steps.check.outputs.sdk-verifier }}
+      security-lib: ${{ steps.check.outputs.security-lib }}
+      trade-client-lib: ${{ steps.check.outputs.trade-client-lib }}
+      market-domain: ${{ steps.check.outputs.market-domain }}
+      portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
+      trade-domain: ${{ steps.check.outputs.trade-domain }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect which SDK paths changed
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git ls-files)
+          else
+            CHANGED=$(git diff --name-only "$BASE" "$HEAD")
+          fi
+
+          echo "=== Files changed in this push ==="
+          echo "$CHANGED"
+          echo "==================================="
+
+          check() { echo "$CHANGED" | grep -q "^$1" && echo 'true' || echo 'false'; }
+
+          # Libraries
+          echo "analysis-adapter=$(check 'libraries/am-analysis-adapter/')" >> $GITHUB_OUTPUT
+          echo "analysis-client-lib=$(check 'libraries/am-analysis-client-lib/')" >> $GITHUB_OUTPUT
+          echo "cache-lib=$(check 'libraries/am-cache-lib/')" >> $GITHUB_OUTPUT
+          echo "common-event-model=$(check 'libraries/am-common-event-model/')" >> $GITHUB_OUTPUT
+          echo "common-lib=$(check 'libraries/am-common-lib/')" >> $GITHUB_OUTPUT
+          echo "feign-lib=$(check 'libraries/am-feign-lib/')" >> $GITHUB_OUTPUT
+          echo "kafka-lib=$(check 'libraries/am-kafka-lib/')" >> $GITHUB_OUTPUT
+          echo "market-client-lib=$(check 'libraries/am-market-client-lib/')" >> $GITHUB_OUTPUT
+          echo "portfolio-client-lib=$(check 'libraries/am-portfolio-client-lib/')" >> $GITHUB_OUTPUT
+          echo "sdk-generator=$(check 'libraries/am-sdk-generator/')" >> $GITHUB_OUTPUT
+          echo "sdk-verifier=$(check 'libraries/am-sdk-verifier/')" >> $GITHUB_OUTPUT
+          echo "security-lib=$(check 'libraries/am-security-lib/')" >> $GITHUB_OUTPUT
+          echo "trade-client-lib=$(check 'libraries/am-trade-client-lib/')" >> $GITHUB_OUTPUT
+
+          # Domains
+          echo "market-domain=$(check 'domain/am-market-domain/')" >> $GITHUB_OUTPUT
+          echo "portfolio-domain=$(check 'domain/am-portfolio-domain/')" >> $GITHUB_OUTPUT
+          echo "trade-domain=$(check 'domain/am-trade-domain/')" >> $GITHUB_OUTPUT
+
+  # ── Libraries ──────────────────────────────────────────────────────────────
+  publish-analysis-adapter:
+    name: Publish Analysis Adapter
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.analysis-adapter == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-analysis-adapter'
+      sdk_name: 'am-analysis-adapter'
+    secrets: inherit
+
+  publish-analysis-client-lib:
+    name: Publish Analysis Client Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.analysis-client-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-analysis-client-lib'
+      sdk_name: 'am-analysis-client-lib'
+    secrets: inherit
+
+  publish-cache-lib:
+    name: Publish Cache Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.cache-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-cache-lib'
+      sdk_name: 'am-cache-lib'
+    secrets: inherit
+
+  publish-common-event-model:
+    name: Publish Common Event Model
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.common-event-model == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-common-event-model'
+      sdk_name: 'am-common-event-model'
+    secrets: inherit
+
+  publish-common-lib:
+    name: Publish Common Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.common-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-common-lib'
+      sdk_name: 'am-common-lib'
+    secrets: inherit
+
+  publish-feign-lib:
+    name: Publish Feign Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.feign-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-feign-lib'
+      sdk_name: 'am-feign-lib'
+    secrets: inherit
+
+  publish-kafka-lib:
+    name: Publish Kafka Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.kafka-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-kafka-lib'
+      sdk_name: 'am-kafka-lib'
+    secrets: inherit
+
+  publish-market-client-lib:
+    name: Publish Market Client Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.market-client-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-market-client-lib'
+      sdk_name: 'am-market-client-lib'
+    secrets: inherit
+
+  publish-portfolio-client-lib:
+    name: Publish Portfolio Client Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.portfolio-client-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-portfolio-client-lib'
+      sdk_name: 'am-portfolio-client-lib'
+    secrets: inherit
+
+  publish-sdk-generator:
+    name: Publish SDK Generator
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.sdk-generator == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-sdk-generator'
+      sdk_name: 'am-sdk-generator'
+    secrets: inherit
+
+  publish-sdk-verifier:
+    name: Publish SDK Verifier
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.sdk-verifier == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-sdk-verifier'
+      sdk_name: 'am-sdk-verifier'
+    secrets: inherit
+
+  publish-security-lib:
+    name: Publish Security Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.security-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-security-lib'
+      sdk_name: 'am-security-lib'
+    secrets: inherit
+
+  publish-trade-client-lib:
+    name: Publish Trade Client Lib
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.trade-client-lib == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'libraries/am-trade-client-lib'
+      sdk_name: 'am-trade-client-lib'
+    secrets: inherit
+
+  # ── Domains ────────────────────────────────────────────────────────────────
+  publish-market-domain:
+    name: Publish Market Domain
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.market-domain == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'domain/am-market-domain'
+      sdk_name: 'am-market-domain'
+    secrets: inherit
+
+  publish-portfolio-domain:
+    name: Publish Portfolio Domain
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.portfolio-domain == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'domain/am-portfolio-domain'
+      sdk_name: 'am-portfolio-domain'
+    secrets: inherit
+
+  publish-trade-domain:
+    name: Publish Trade Domain
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.trade-domain == 'true' }}
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: 'java'
+      working_directory: 'domain/am-trade-domain'
+      sdk_name: 'am-trade-domain'
+    secrets: inherit

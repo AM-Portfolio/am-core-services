@@ -1,0 +1,109 @@
+name: AM Core Services Publish
+
+on:
+  push:
+    paths:
+      - 'services/am-analysis/**'
+      - 'services/am-gateway/**'
+      - 'services/am-mcp-server/**'
+  pull_request:
+    paths:
+      - 'services/am-analysis/**'
+      - 'services/am-gateway/**'
+      - 'services/am-mcp-server/**'
+
+jobs:
+  # ── Detect which App modules changed ───────────────────────────────────────
+  detect-changes:
+    name: Detect Changed Modules
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      analysis: ${{ steps.check.outputs.analysis }}
+      gateway: ${{ steps.check.outputs.gateway }}
+      mcp-server: ${{ steps.check.outputs.mcp-server }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect path changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git ls-files)
+          else
+            CHANGED=$(git diff --name-only "$BASE" "$HEAD")
+          fi
+
+          echo "=== Files changed in this push ==="
+          echo "$CHANGED"
+          echo "==================================="
+
+          # Check functions
+          echo "analysis=$(echo "$CHANGED" | grep -q "^services/am-analysis/" && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "gateway=$(echo "$CHANGED" | grep -q "^services/am-gateway/" && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "mcp-server=$(echo "$CHANGED" | grep -q "^services/am-mcp-server/" && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+  # ── AM Analysis (Service) ──────────────────────────────────────────────────
+  publish-analysis:
+    name: Publish AM Analysis
+    needs: detect-changes
+    if: needs.detect-changes.outputs.analysis == 'true'
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
+    with:
+      language: 'java'
+      working_directory: 'services/am-analysis'
+      image_name: 'am-analysis'
+      preprod_namespace: 'am-apps-preprod'
+      prod_namespace: 'am-apps-prod'
+      deploy_prod: true
+    secrets: inherit
+
+  # ── AM Gateway (Service) ───────────────────────────────────────────────────
+  publish-gateway:
+    name: Publish AM Gateway
+    needs: detect-changes
+    if: needs.detect-changes.outputs.gateway == 'true'
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
+    with:
+      language: 'java'
+      working_directory: 'services/am-gateway'
+      image_name: 'am-gateway'
+      preprod_namespace: 'am-apps-preprod'
+      prod_namespace: 'am-apps-prod'
+      deploy_prod: true
+    secrets: inherit
+
+  # ── AM MCP Server (Service) ────────────────────────────────────────────────
+  publish-mcp-server:
+    name: Publish AM MCP Server
+    needs: detect-changes
+    if: needs.detect-changes.outputs.mcp-server == 'true'
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
+    with:
+      language: 'java'
+      working_directory: 'services/am-mcp-server'
+      image_name: 'am-mcp-server'
+      preprod_namespace: 'am-apps-preprod'
+      prod_namespace: 'am-apps-prod'
+      deploy_prod: true
+    secrets: inherit
