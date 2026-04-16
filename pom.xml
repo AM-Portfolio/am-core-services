@@ -168,8 +168,13 @@
     <repositories>
         <repository>
             <id>github-investment</id>
-            <name>GitHub Packages</name>
+            <name>GitHub Packages - Core Services</name>
             <url>https://maven.pkg.github.com/AM-Portfolio/am-core-services</url>
+        </repository>
+        <repository>
+            <id>github-trade</id>
+            <name>GitHub Packages - Trade Services</name>
+            <url>https://maven.pkg.github.com/AM-Portfolio/am-trade-services</url>
         </repository>
     </repositories>
 

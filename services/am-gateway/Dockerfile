@@ -18,6 +18,11 @@ RUN mkdir -p /root/.m2 && \
     echo "      <password>${GITHUB_PACKAGES_TOKEN}</password>" >> /root/.m2/settings.xml && \
     echo '    </server>' >> /root/.m2/settings.xml && \
     echo '    <server>' >> /root/.m2/settings.xml && \
+    echo '      <id>github-trade</id>' >> /root/.m2/settings.xml && \
+    echo "      <username>${GITHUB_PACKAGES_USERNAME}</username>" >> /root/.m2/settings.xml && \
+    echo "      <password>${GITHUB_PACKAGES_TOKEN}</password>" >> /root/.m2/settings.xml && \
+    echo '    </server>' >> /root/.m2/settings.xml && \
+    echo '    <server>' >> /root/.m2/settings.xml && \
     echo '      <id>github</id>' >> /root/.m2/settings.xml && \
     echo "      <username>${GITHUB_PACKAGES_USERNAME}</username>" >> /root/.m2/settings.xml && \
     echo "      <password>${GITHUB_PACKAGES_TOKEN}</password>" >> /root/.m2/settings.xml && \
