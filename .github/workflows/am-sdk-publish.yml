@@ -89,11 +89,32 @@ jobs:
           echo "portfolio-domain=$(check 'domain/am-portfolio-domain/')" >> $GITHUB_OUTPUT
           echo "trade-domain=$(check 'domain/am-trade-domain/')" >> $GITHUB_OUTPUT
 
+  # ── Root POM (Parent) ──────────────────────────────────────────────────────
+  publish-root-pom:
+    name: Publish Root POM (am-core-services)
+    needs: detect-changes
+    # Always run if manually triggered OR if pom.xml changed
+    if: |
+      needs.detect-changes.outputs.common-lib == 'true' || 
+      github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "."
+      sdk_name: "am-core-services"
+    secrets: inherit
+
   # ── Libraries ──────────────────────────────────────────────────────────────
   publish-analysis-adapter:
     name: Publish Analysis Adapter
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.analysis-adapter == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.analysis-adapter == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -106,8 +127,11 @@ jobs:
 
   publish-analysis-client-lib:
     name: Publish Analysis Client Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.analysis-client-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.analysis-client-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -120,8 +144,11 @@ jobs:
 
   publish-cache-lib:
     name: Publish Cache Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.cache-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.cache-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -134,8 +161,11 @@ jobs:
 
   publish-common-event-model:
     name: Publish Common Event Model
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.common-event-model == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.common-event-model == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -148,8 +178,11 @@ jobs:
 
   publish-common-lib:
     name: Publish Common Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.common-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.common-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -162,8 +195,11 @@ jobs:
 
   publish-feign-lib:
     name: Publish Feign Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.feign-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.feign-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -176,8 +212,11 @@ jobs:
 
   publish-kafka-lib:
     name: Publish Kafka Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.kafka-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.kafka-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -190,8 +229,11 @@ jobs:
 
   publish-market-client-lib:
     name: Publish Market Client Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.market-client-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.market-client-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -204,8 +246,11 @@ jobs:
 
   publish-portfolio-client-lib:
     name: Publish Portfolio Client Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.portfolio-client-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.portfolio-client-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -218,8 +263,11 @@ jobs:
 
   publish-sdk-generator:
     name: Publish SDK Generator
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.sdk-generator == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.sdk-generator == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -232,8 +280,11 @@ jobs:
 
   publish-sdk-verifier:
     name: Publish SDK Verifier
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.sdk-verifier == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.sdk-verifier == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -246,8 +297,11 @@ jobs:
 
   publish-security-lib:
     name: Publish Security Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.security-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.security-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -260,8 +314,11 @@ jobs:
 
   publish-trade-client-lib:
     name: Publish Trade Client Lib
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.trade-client-lib == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.trade-client-lib == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -275,8 +332,11 @@ jobs:
   # ── Domains ────────────────────────────────────────────────────────────────
   publish-market-domain:
     name: Publish Market Domain
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.market-domain == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.market-domain == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -289,8 +349,11 @@ jobs:
 
   publish-portfolio-domain:
     name: Publish Portfolio Domain
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.portfolio-domain == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.portfolio-domain == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -303,8 +366,11 @@ jobs:
 
   publish-trade-domain:
     name: Publish Trade Domain
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.trade-domain == 'true' }}
+    needs: [detect-changes, publish-root-pom]
+    if: |
+      always() && 
+      needs.detect-changes.outputs.trade-domain == 'true' &&
+      (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
