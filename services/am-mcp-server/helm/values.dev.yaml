@@ -1,0 +1,24 @@
+# Dev environment overrides for am-mcp-server
+environment: dev
+
+replicaCount: 1
+
+# Minimal resources for shared dev namespace
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Vault disabled in dev — env vars used directly
+vault:
+  enabled: false
+
+# Dev-specific env vars (point to dev cluster services)
+env:
+  SPRING_PROFILES_ACTIVE: "dev"
+  AM_AUTH_URL: "http://am-auth.am-apps-dev.svc.cluster.local:8001"
+  AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-dev.svc.cluster.local:8100"
+  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-dev.svc.cluster.local:8060"

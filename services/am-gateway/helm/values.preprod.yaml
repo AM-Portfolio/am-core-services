@@ -1,0 +1,24 @@
+# Pre-production environment overrides for am-gateway
+environment: preprod
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Vault enabled — injects Kafka and Redis secrets at runtime
+vault:
+  enabled: true
+  role: "am-gateway-role"
+  secretPaths:
+    kafka: "kv/preprod/kafka"
+    redis: "kv/preprod/database/redis"
+
+# Non-secret env vars
+env:
+  SPRING_PROFILES_ACTIVE: "preprod"

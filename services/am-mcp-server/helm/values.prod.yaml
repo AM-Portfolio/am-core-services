@@ -1,0 +1,26 @@
+# Production environment overrides for am-mcp-server
+environment: prod
+
+replicaCount: 2
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Vault enabled — injects auth credentials at runtime
+vault:
+  enabled: true
+  role: "am-mcp-server-role"
+  secretPaths:
+    auth: "kv/prod/services/am-auth"
+
+# Non-secret env vars pointing to prod cluster services
+env:
+  SPRING_PROFILES_ACTIVE: "prod"
+  AM_AUTH_URL: "http://am-auth.am-apps-prod.svc.cluster.local:8001"
+  AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-prod.svc.cluster.local:8100"
+  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-prod.svc.cluster.local:8060"

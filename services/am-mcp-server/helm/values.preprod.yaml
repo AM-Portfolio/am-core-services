@@ -1,0 +1,26 @@
+# Pre-production environment overrides for am-mcp-server
+environment: preprod
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 384Mi
+  requests:
+    cpu: 150m
+    memory: 192Mi
+
+# Vault enabled — injects auth credentials (AM_AUTH_PASS, AM_STATIC_TOKEN) at runtime
+vault:
+  enabled: true
+  role: "am-mcp-server-role"
+  secretPaths:
+    auth: "kv/preprod/services/am-auth"
+
+# Non-secret env vars pointing to preprod cluster services
+env:
+  SPRING_PROFILES_ACTIVE: "preprod"
+  AM_AUTH_URL: "http://am-auth.am-apps-preprod.svc.cluster.local:8001"
+  AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-preprod.svc.cluster.local:8100"
+  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-preprod.svc.cluster.local:8060"

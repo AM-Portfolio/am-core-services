@@ -1,0 +1,68 @@
+## Base values for am-gateway service
+## All environment-specific overrides go in values.<env>.yaml
+
+replicaCount: 1
+port: 8091
+language: java
+
+image:
+  repository: am-gateway
+
+service:
+  type: ClusterIP
+  port: 8091
+
+# Health probe configuration (Spring Boot Actuator)
+probes:
+  port: 8091
+  liveness:
+    path: /actuator/health
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readiness:
+    path: /actuator/health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+# Ingress (disabled by default — WebSocket ingress needs special annotation in prod)
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  hosts:
+    - host: am-gateway.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Default resource limits (overridden per environment)
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+# Vault (disabled by default — enabled in preprod/prod)
+vault:
+  enabled: false
+
+# Environment label
+environment: "default"
+
+# Key application environment variables (non-secret defaults)
+env:
+  SPRING_PROFILES_ACTIVE: "default"
+  KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+  REDIS_HOST: "localhost"
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: ""

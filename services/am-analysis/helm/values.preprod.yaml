@@ -1,0 +1,26 @@
+# Pre-production environment overrides for am-analysis
+environment: preprod
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Vault enabled — injects Kafka and MongoDB secrets at runtime
+vault:
+  enabled: true
+  role: "am-analysis-role"
+  secretPaths:
+    kafka: "kv/preprod/kafka"
+    mongodb: "kv/preprod/database/mongo"
+
+# Non-secret env vars pointing to preprod cluster services
+env:
+  SPRING_PROFILES_ACTIVE: "preprod"
+  KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  MARKET_DATA_URL: "http://am-market-data.am-apps-preprod.svc.cluster.local:8092"
