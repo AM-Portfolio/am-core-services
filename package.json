@@ -1,0 +1,21 @@
+{
+  "name": "am-core-services",
+  "version": "1.0.0",
+  "description": "AM Core Services Orchestrator Root",
+  "scripts": {
+    "info": "echo 'AM Core Services Monorepo' && echo 'Layers: libraries, domain, services'",
+    "build:core": "mvn clean install -DskipTests",
+    "build:libs": "mvn clean install -pl libraries/* -am -DskipTests",
+    "build:domain": "mvn clean install -pl domain/* -am -DskipTests",
+    "run:gateway": "mvn spring-boot:run -pl services/am-gateway",
+    "run:analysis": "mvn spring-boot:run -pl services/am-analysis",
+    "run:mcp": "mvn spring-boot:run -pl services/am-mcp-server",
+    "run:mcp:inspect": "cd services/am-mcp-server && npm run inspect",
+    "dev": "npx -y concurrently -n \"gateway,analysis,mcp\" -c \"cyan,magenta,yellow\" \"npm run run:gateway\" \"npm run run:analysis\" \"npm run run:mcp\"",
+    "test": "mvn test",
+    "clean": "mvn clean"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

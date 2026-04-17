@@ -1,11 +1,20 @@
 name: AM SDK Publish
 
+# on:
+#   push:
+#     # Removed paths filter to run on every commit
+#   pull_request:
+#     # Removed paths filter to run on every commit
+#   workflow_dispatch: # Allows manual 'Force Build All' runs
 on:
   push:
-    # Removed paths filter to run on every commit
+    paths:
+      - "libraries/**"
+      - "domain/**"
   pull_request:
-    # Removed paths filter to run on every commit
-  workflow_dispatch: # Allows manual 'Force Build All' runs
+    paths:
+      - "libraries/**"
+      - "domain/**"
 
 jobs:
   # ── Detect which SDK paths changed ───────────────────────────────────────
@@ -92,15 +101,15 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
           server-id: github
           settings-path: ${{ github.workspace }}
       - name: Publish Parent POM (Non-Recursive)
         run: |
-            mvn -B clean deploy -DskipTests -N \
-            -s $GITHUB_WORKSPACE/settings.xml \
-            -DaltDeploymentRepository=github::https://maven.pkg.github.com/AM-Portfolio/am-core-services
+          mvn -B clean deploy -DskipTests -N \
+          -s $GITHUB_WORKSPACE/settings.xml \
+          -DaltDeploymentRepository=github::https://maven.pkg.github.com/AM-Portfolio/am-core-services
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -316,5 +325,3 @@ jobs:
       working_directory: "libraries/am-analysis-client-lib"
       sdk_name: "am-analysis-client-lib"
     secrets: inherit
-
-
