@@ -8,8 +8,8 @@
       "path": "services/am-analysis",
       "type": "maven",
       "port_env": "ANALYSIS_PORT",
-      "container_port": 8090,
-      "host_port": 8090
+      "container_port": 8093,
+      "host_port": 8093
     },
     {
       "name": "am-gateway",

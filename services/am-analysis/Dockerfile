@@ -47,6 +47,6 @@ COPY --from=build /app/services/am-analysis/target/*.jar app.jar
 RUN ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 ENV TZ=Asia/Kolkata
 
-EXPOSE 8090
+EXPOSE 8093
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

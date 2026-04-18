@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration Test to verify the generated SDK can communicate with the running API.
- * This runs against localhost:8090 by default.
+ * This runs against localhost:8093 by default.
  */
 public class AnalysisSdkTest {
     
@@ -24,9 +24,9 @@ public class AnalysisSdkTest {
 
     @BeforeEach
     public void setup() {
-        // Initialize client targeting localhost:8090 (default)
+        // Initialize client targeting localhost:8093 (default)
         ApiClient client = new ApiClient();
-        client.updateBaseUri("http://localhost:8090");
+        client.updateBaseUri("http://localhost:8093");
         client.setConnectTimeout(Duration.ofSeconds(5));
         client.setReadTimeout(Duration.ofSeconds(10));
         
@@ -41,7 +41,7 @@ public class AnalysisSdkTest {
         // OR a 200 OK if auth is disabled locally or we mock it.
         // The most important thing is that the SDK successfully makes the request structure.
         
-        log.info("Verifying SDK connectivity to http://localhost:8090...");
+        log.info("Verifying SDK connectivity to http://localhost:8093...");
         
         try {
             // Calling a valid endpoint: /api/v1/analysis/{type}/top-movers
@@ -67,7 +67,7 @@ public class AnalysisSdkTest {
                  log.warn("WARNING: Endpoint not found (404), maybe path changed? SDK structure verified though.");
             } else if (e.getCode() == 0) {
                  // Connection Refused means service is likely down
-                 fail("FAILED: Could not connect to API. Is 'am-analysis' running on port 8090?");
+                 fail("FAILED: Could not connect to API. Is 'am-analysis' running on port 8093?");
             } else {
                  // Some other error (500 etc) means connectivity is fine, logic might be failing
                  log.info("SUCCESS: Reached API with code {}", e.getCode());

@@ -10,6 +10,17 @@ spring.ai.mcp.server:
   version: 1.0.0
   transport-type: STDIO
 
+# ── Swagger / OpenAPI Documentation ───────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html
+    operationsSorter: alpha
+    tagsSorter: alpha
+    displayRequestDuration: true
+  show-actuator: true
+
 # ── AM Platform Config (all runtime values here — override via env vars) ──────
 am:
   defaults:
