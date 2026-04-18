@@ -1,0 +1,23 @@
+Variable,Current_Value_In_Vault,New_Value,Default_Found,Vault_Path
+AM_AI_AGENT_URL,,[OVERWRITE_THIS],http://localhost:8100,kv/prod/app
+AM_AUTH_PASS,,[OVERWRITE_THIS],@M1unish,kv/prod/app
+AM_AUTH_URL,,[OVERWRITE_THIS],http://localhost:8001,kv/prod/app
+AM_AUTH_USER,,[OVERWRITE_THIS],ssd2658@gmail.com,kv/prod/app
+AM_DEFAULT_USER,,[OVERWRITE_THIS],user1,kv/prod/app
+AM_PORTFOLIO_URL,,[OVERWRITE_THIS],http://localhost:8060,kv/prod/app
+AM_STATIC_TOKEN,,[OVERWRITE_THIS],,kv/prod/app
+AM_TOOLS_AI_AGENT_ENABLED,,[OVERWRITE_THIS],true,kv/prod/app
+AM_TOOLS_ANALYSIS_ENABLED,,[OVERWRITE_THIS],true,kv/prod/app
+AM_TOOLS_MARKET_ENABLED,,[OVERWRITE_THIS],true,kv/prod/app
+AM_TOOLS_PORTFOLIO_ENABLED,,[OVERWRITE_THIS],true,kv/prod/app
+AM_TOOLS_TRADE_ENABLED,,[OVERWRITE_THIS],true,kv/prod/app
+KAFKA_BOOTSTRAP_SERVERS,,[OVERWRITE_THIS],localhost:9092,kv/prod/kafka
+KAFKA_JAAS_CONFIG,,[OVERWRITE_THIS],"org.apache.kafka.common.security.plain.PlainLoginModule required username=""admin"" password=""password123"";",kv/prod/kafka
+KAFKA_SASL_MECHANISM,,[OVERWRITE_THIS],PLAIN,kv/prod/kafka
+KAFKA_SECURITY_PROTOCOL,,[OVERWRITE_THIS],PLAINTEXT,kv/prod/kafka
+KAFKA_TRADE_TOPIC,,[OVERWRITE_THIS],am-trade,kv/prod/kafka
+MARKET_DATA_URL,,[OVERWRITE_THIS],http://localhost:8092,kv/prod/app
+MONGODB_CONNECTION_URL,,[OVERWRITE_THIS],mongodb://admin:password123@localhost:27017/analysis?authSource=admin,kv/prod/database/mongodb
+REDIS_HOST,,[OVERWRITE_THIS],localhost,kv/prod/database/redis
+REDIS_PASSWORD,,[OVERWRITE_THIS],,kv/prod/database/redis
+REDIS_PORT,,[OVERWRITE_THIS],6379,kv/prod/database/redis
