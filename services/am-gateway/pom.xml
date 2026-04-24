@@ -12,6 +12,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+
     <groupId>com.am.services</groupId>
     <artifactId>am-gateway</artifactId>
     <packaging>jar</packaging>
