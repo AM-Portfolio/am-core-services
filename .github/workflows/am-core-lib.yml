@@ -1,0 +1,24 @@
+name: AM Core Library Publish
+
+on:
+  push:
+    paths:
+      - "libraries/am-core-lib/**"
+      - "pom.xml"
+  pull_request:
+    paths:
+      - "libraries/am-core-lib/**"
+      - "pom.xml"
+
+jobs:
+  publish-core-lib:
+    name: Publish Core Library
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-core-lib"
+      sdk_name: "am-core-lib"
+    secrets: inherit

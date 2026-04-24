@@ -1,0 +1,26 @@
+name: AM Client SDKs Publish
+
+on:
+  push:
+    paths:
+      - "libraries/am-client-sdks/**"
+      - "domain/**"
+      - "pom.xml"
+  pull_request:
+    paths:
+      - "libraries/am-client-sdks/**"
+      - "domain/**"
+      - "pom.xml"
+
+jobs:
+  publish-client-sdks:
+    name: Publish Client SDKs
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-client-sdks"
+      sdk_name: "am-client-sdks"
+    secrets: inherit

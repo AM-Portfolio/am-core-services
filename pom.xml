@@ -39,22 +39,10 @@
     </properties>
 
     <modules>
-        <!-- Libraries Layer -->
-        <module>libraries/am-common-lib</module>
-        <module>libraries/am-kafka-lib</module>
-        <module>libraries/am-analysis-adapter</module>
-        <module>libraries/am-security-lib</module>
-        <module>libraries/am-cache-lib</module>
-        <module>libraries/am-feign-lib</module>
-        <module>libraries/am-market-client-lib</module>
-        <module>libraries/am-trade-client-lib</module>
-        <module>libraries/am-portfolio-client-lib</module>
-        <module>libraries/am-analysis-client-lib</module>
-        
-        <!-- Domain Layer -->
-        <module>domain/am-market-domain</module>
-        <module>domain/am-portfolio-domain</module>
-        <module>domain/am-trade-domain</module>
+        <!-- Consolidated Libraries -->
+        <module>libraries/am-core-lib</module>
+        <module>libraries/am-client-sdks</module>
+        <module>libraries/am-sdk-tools</module>
         
         <!-- Services Layer -->
         <module>services/am-gateway</module>
@@ -89,35 +77,23 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+            <!-- Consolidated Libraries -->
+            <dependency>
                 <groupId>com.am.libraries</groupId>
-                <artifactId>am-kafka-lib</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.am.domain</groupId>
-                <artifactId>am-market-domain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.am.domain</groupId>
-                <artifactId>am-portfolio-domain</artifactId>
+                <artifactId>am-core-lib</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.am.libraries</groupId>
-                <artifactId>am-cache-lib</artifactId>
+                <artifactId>am-client-sdks</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.am.libraries</groupId>
-                <artifactId>am-feign-lib</artifactId>
+                <artifactId>am-sdk-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.am.libraries</groupId>
-                <artifactId>am-market-client-lib</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+
 
             <!-- Lombok -->
             <dependency>

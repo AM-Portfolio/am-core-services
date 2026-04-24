@@ -109,36 +109,14 @@
             <artifactId>httpclient5</artifactId>
         </dependency>
 
-        <!-- ── Internal SDKs (zero raw HTTP for internal services) ── -->
+        <!-- Consolidated Libraries -->
         <dependency>
             <groupId>com.am.libraries</groupId>
-            <artifactId>am-market-client-lib</artifactId>
-            <version>${project.version}</version>
+            <artifactId>am-core-lib</artifactId>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
-            <artifactId>am-trade-client-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-portfolio-client-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-analysis-client-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-security-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-analysis-adapter</artifactId>
-            <version>${project.version}</version>
+            <artifactId>am-client-sdks</artifactId>
         </dependency>
 
         <!-- ── Jackson ───────────────────────────────────────────── -->

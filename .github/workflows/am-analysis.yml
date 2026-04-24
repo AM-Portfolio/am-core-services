@@ -1,0 +1,33 @@
+name: AM Analysis Publish
+
+on:
+  push:
+    paths:
+      - "services/am-analysis/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+  pull_request:
+    paths:
+      - "services/am-analysis/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+
+jobs:
+  publish-analysis:
+    name: Publish AM Analysis
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@develop
+    with:
+      language: "java"
+      working_directory: "services/am-analysis"
+      image_name: "am-analysis"
+      build_context: "."
+      preprod_namespace: "am-apps-preprod"
+      prod_namespace: "am-apps-prod"
+      deploy_dev: false
+      deploy_prod: true
+    secrets: inherit

@@ -19,24 +19,16 @@
     <description>WebSocket Gateway with Kafka Message Relay</description>
 
     <dependencies>
-        <!-- Internal Dependencies -->
+        <!-- Consolidated Libraries -->
         <dependency>
             <groupId>com.am.libraries</groupId>
-            <artifactId>am-common-lib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-kafka-lib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.am.domain</groupId>
-            <artifactId>am-portfolio-domain</artifactId>
+            <artifactId>am-core-lib</artifactId>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
-            <artifactId>am-analysis-adapter</artifactId>
-            <version>${project.version}</version>
+            <artifactId>am-client-sdks</artifactId>
         </dependency>
+
 
         <!-- Spring Boot Starters -->
         <dependency>
