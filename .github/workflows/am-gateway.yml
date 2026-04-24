@@ -1,0 +1,29 @@
+name: AM Gateway Service Publish
+
+on:
+  push:
+    paths:
+      - "services/am-gateway/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+  pull_request:
+    paths:
+      - "services/am-gateway/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+
+jobs:
+  publish-gateway:
+    name: Publish Gateway
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/am-k8s-service-publish.yml@main
+    with:
+      service_name: "am-gateway"
+      context: "./"
+      dockerfile: "services/am-gateway/Dockerfile"
+      image_name: "am-gateway"
+    secrets: inherit

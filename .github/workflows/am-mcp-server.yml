@@ -1,0 +1,29 @@
+name: AM MCP Server Publish
+
+on:
+  push:
+    paths:
+      - "services/am-mcp-server/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+  pull_request:
+    paths:
+      - "services/am-mcp-server/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+
+jobs:
+  publish-mcp-server:
+    name: Publish MCP Server
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/am-k8s-service-publish.yml@main
+    with:
+      service_name: "am-mcp-server"
+      context: "./"
+      dockerfile: "services/am-mcp-server/Dockerfile"
+      image_name: "am-mcp-server"
+    secrets: inherit

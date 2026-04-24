@@ -1,0 +1,29 @@
+name: AM Analysis Service Publish
+
+on:
+  push:
+    paths:
+      - "services/am-analysis/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+  pull_request:
+    paths:
+      - "services/am-analysis/**"
+      - "libraries/**"
+      - "domain/**"
+      - "pom.xml"
+
+jobs:
+  publish-analysis:
+    name: Publish Analysis
+    permissions:
+      contents: read
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/am-k8s-service-publish.yml@main
+    with:
+      service_name: "am-analysis"
+      context: "./"
+      dockerfile: "services/am-analysis/Dockerfile"
+      image_name: "am-analysis"
+    secrets: inherit
