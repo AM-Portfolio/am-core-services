@@ -1,52 +1,27 @@
-# Stage 1: Build
-FROM maven:3.8.5-openjdk-17-slim AS build
-
-# Build arguments for GitHub authentication
-ARG GITHUB_PACKAGES_USERNAME
-ARG GITHUB_PACKAGES_TOKEN
+# Runtime Image
+FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-# Configure Maven settings for GitHub Packages
-RUN mkdir -p /root/.m2 && \
-    echo '<?xml version="1.0" encoding="UTF-8"?>' > /root/.m2/settings.xml && \
-    echo '<settings>' >> /root/.m2/settings.xml && \
-    echo '  <servers>' >> /root/.m2/settings.xml && \
-    echo '    <server>' >> /root/.m2/settings.xml && \
-    echo '      <id>github-investment</id>' >> /root/.m2/settings.xml && \
-    echo "      <username>${GITHUB_PACKAGES_USERNAME}</username>" >> /root/.m2/settings.xml && \
-    echo "      <password>${GITHUB_PACKAGES_TOKEN}</password>" >> /root/.m2/settings.xml && \
-    echo '    </server>' >> /root/.m2/settings.xml && \
-    echo '    <server>' >> /root/.m2/settings.xml && \
-    echo '      <id>github-trade</id>' >> /root/.m2/settings.xml && \
-    echo "      <username>${GITHUB_PACKAGES_USERNAME}</username>" >> /root/.m2/settings.xml && \
-    echo "      <password>${GITHUB_PACKAGES_TOKEN}</password>" >> /root/.m2/settings.xml && \
-    echo '    </server>' >> /root/.m2/settings.xml && \
-    echo '    <server>' >> /root/.m2/settings.xml && \
-    echo '      <id>github</id>' >> /root/.m2/settings.xml && \
-    echo "      <username>${GITHUB_PACKAGES_USERNAME}</username>" >> /root/.m2/settings.xml && \
-    echo "      <password>${GITHUB_PACKAGES_TOKEN}</password>" >> /root/.m2/settings.xml && \
-    echo '    </server>' >> /root/.m2/settings.xml && \
-    echo '  </servers>' >> /root/.m2/settings.xml && \
-    echo '</settings>' >> /root/.m2/settings.xml
+# Copy JAR pre-built by the CI runner
+COPY target/*.jar app.jar
 
-# Copy the entire monorepo to resolve internal dependencies
-COPY . .
+# Install curl for healthcheck
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 
-# Build only the am-analysis module and its dependencies
-RUN mvn clean package -pl services/am-analysis -am -DskipTests
-
-# Stage 2: Runtime
-FROM eclipse-temurin:17-jre-focal
-WORKDIR /app
-
-# Copy the built JAR for am-analysis
-COPY --from=build /app/services/am-analysis/target/*.jar app.jar
-
-# Set timezone
-RUN ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+# Environment variables
+ENV SPRING_PROFILES_ACTIVE=docker
 ENV TZ=Asia/Kolkata
 
-EXPOSE 8093
+EXPOSE 8092
+
+# Set permissions for /app
+RUN chown -R 1000:1000 /app
+
+# Switch to non-root user
+USER 1000
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
