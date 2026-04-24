@@ -11,13 +11,12 @@ resources:
     cpu: 250m
     memory: 256Mi
 
-# Vault enabled — injects Kafka and MongoDB secrets at runtime
+# Vault enabled — role and token management now handled centrally in universal-chart
 vault:
   enabled: true
-  role: "am-analysis-role"
   secretPaths:
-    kafka: "kv/preprod/kafka"
-    mongodb: "kv/preprod/database/mongo"
+    kafka: "apps/data/preprod/infra/kafka"
+    mongodb: "apps/data/preprod/infra/mongodb"
 
 # Non-secret env vars pointing to preprod cluster services
 env:
