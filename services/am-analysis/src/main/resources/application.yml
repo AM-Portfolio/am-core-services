@@ -3,7 +3,7 @@ KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 #mongo - connection is configured via environment variable or default below
 
 server:
-  port: 8093
+  port: 8080
 
 spring:
   main:

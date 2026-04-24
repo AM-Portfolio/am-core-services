@@ -2,7 +2,7 @@
 ## All environment-specific overrides go in values.<env>.yaml
 
 replicaCount: 1
-port: 8090
+port: 8080
 language: java
 
 image:
@@ -10,11 +10,11 @@ image:
 
 service:
   type: ClusterIP
-  port: 8090
+  port: 8080
 
 # Health probe configuration (Spring Boot Actuator)
 probes:
-  port: 8090
+  port: 8080
   liveness:
     path: /actuator/health
     initialDelaySeconds: 60

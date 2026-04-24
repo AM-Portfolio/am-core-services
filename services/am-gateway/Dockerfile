@@ -16,7 +16,7 @@ RUN apt-get update && \
 ENV SPRING_PROFILES_ACTIVE=docker
 ENV TZ=Asia/Kolkata
 
-EXPOSE 8091
+EXPOSE 8080
 
 # Set permissions for /app
 RUN chown -R 1000:1000 /app
