@@ -15,11 +15,24 @@ resources:
 vault:
   enabled: true
   secretPaths:
+    kafka: "apps/data/preprod/infra/kafka"
+    mongodb: "apps/data/preprod/infra/mongodb"
     auth: "apps/data/preprod/services/am-auth"
 
 # Non-secret env vars pointing to preprod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka.infra.svc.cluster.local:9092"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
   AM_AUTH_URL: "http://am-auth.am-apps-preprod.svc.cluster.local:8001"
   AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-preprod.svc.cluster.local:8100"
   AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-preprod.svc.cluster.local:8060"
+  AM_DEFAULT_USER: "user1"
+  AM_TOOLS_ANALYSIS_ENABLED: "true"
+  AM_TOOLS_MARKET_ENABLED: "true"
+  AM_TOOLS_PORTFOLIO_ENABLED: "true"
+  AM_TOOLS_TRADE_ENABLED: "true"
+  AM_TOOLS_AI_AGENT_ENABLED: "true"
+
