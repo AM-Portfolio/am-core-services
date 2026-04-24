@@ -20,10 +20,10 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/am-k8s-service-publish.yml@main
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
     with:
-      service_name: "am-gateway"
-      context: "./"
-      dockerfile: "services/am-gateway/Dockerfile"
+      language: "java"
+      working_directory: "services/am-gateway"
       image_name: "am-gateway"
+      build_context: "."
     secrets: inherit
