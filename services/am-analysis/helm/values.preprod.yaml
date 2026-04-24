@@ -26,3 +26,5 @@ env:
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MONGODB_CONNECTION_URL: "mongodb://mongodb.infra.svc.cluster.local:27017/analysis"
   MARKET_DATA_URL: "http://am-market-data.am-apps-preprod.svc.cluster.local:8092"
+  REDIS_HOST: "redis.infra.svc.cluster.local"
+  REDIS_PORT: "6379"

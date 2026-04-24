@@ -25,6 +25,10 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_CONNECTION_URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2s
 
 logging:
   level:
