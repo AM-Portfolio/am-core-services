@@ -27,11 +27,11 @@ on:
 jobs:
   deploy:
     name: Deploy Gateway to ${{ github.event.inputs.environment }}
-    uses: AM-Portfolio/am-pipelines/.github/workflows/central-deploy.yml@develop
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-deploy.yml@main
     with:
-      service_name: 'am-gateway'
-      working_directory: '.'
-      language: 'java'
+      service_name: "am-gateway"
+      working_directory: "."
+      language: "java"
       environment: ${{ github.event.inputs.environment }}
       image_tag: ${{ github.event.inputs.image_tag == 'custom' && github.event.inputs.custom_tag || github.event.inputs.image_tag }}
       namespace: ${{ github.event.inputs.environment == 'prod' && 'am-apps-prod' || 'am-apps-preprod' }}
