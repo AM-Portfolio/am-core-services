@@ -82,3 +82,13 @@ resilience4j:
       tradeService:
         max-attempts: 3
         wait-duration: 500ms
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

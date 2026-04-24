@@ -37,3 +37,13 @@ logging:
     org.springframework.web.socket: DEBUG
     org.springframework.messaging: DEBUG
     com.am.gateway: INFO
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
