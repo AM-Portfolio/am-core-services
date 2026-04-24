@@ -61,7 +61,4 @@ environment: "default"
 # Secrets (passwords, tokens) are injected by Vault in preprod/prod
 env:
   SPRING_PROFILES_ACTIVE: "default"
-  KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
-  KAFKA_SECURITY_PROTOCOL: "PLAINTEXT"
-  MONGODB_CONNECTION_URL: "mongodb://localhost:27017/analysis"
   MARKET_DATA_URL: "http://am-market-data:8092"
