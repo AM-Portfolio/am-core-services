@@ -36,3 +36,5 @@ public class AmMcpServerApplication {
         SpringApplication.run(AmMcpServerApplication.class, args);
     }
 }
+
+// testing trigger ---
