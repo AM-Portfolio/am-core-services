@@ -21,4 +21,5 @@ vault:
 # Non-secret env vars — standard infra URLs are now handled centrally
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
+  MONGODB_CONNECTION_URL: "mongodb://mongodb.infra.svc.cluster.local:27017/analysis"
   MARKET_DATA_URL: "http://am-market-data.am-apps-preprod.svc.cluster.local:8092"
