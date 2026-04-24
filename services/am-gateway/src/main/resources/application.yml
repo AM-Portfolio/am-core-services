@@ -25,7 +25,7 @@ spring:
   # Redis - Stateless Interest Registry (subscription tracking across gateway instances)
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
+      host: ${REDIS_HOSTNAME:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       timeout: 2s

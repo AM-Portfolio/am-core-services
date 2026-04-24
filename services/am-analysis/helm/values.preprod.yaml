@@ -17,6 +17,7 @@ vault:
   secretPaths:
     kafka: "apps/data/preprod/infra/kafka"
     mongodb: "apps/data/preprod/infra/mongodb"
+    redis: "apps/data/preprod/infra/redis"
 
 # Non-secret env vars pointing to preprod cluster services
 env:
@@ -26,5 +27,4 @@ env:
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MONGODB_CONNECTION_URL: "mongodb://mongodb.infra.svc.cluster.local:27017/analysis"
   MARKET_DATA_URL: "http://am-market-data.am-apps-preprod.svc.cluster.local:8092"
-  REDIS_HOST: "redis.infra.svc.cluster.local"
   REDIS_PORT: "6379"
