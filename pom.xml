@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Dummy commit to trigger centralized workflows: v1.0.1 -->
+<!-- Dummy commit to trigger centralized workflows: v1.0.2 -->
 <!-- Triggering workflows v3 - Simplified Docker builds -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
