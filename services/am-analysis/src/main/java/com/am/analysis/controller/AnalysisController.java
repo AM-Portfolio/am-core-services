@@ -34,8 +34,8 @@ public class AnalysisController {
 
     /**
      * Returns portfolio overview cards.
-     *   - portfolioId omitted → ALL portfolios (one card per portfolio)
-     *   - portfolioId provided → single portfolio detail view
+     * - portfolioId omitted → ALL portfolios (one card per portfolio)
+     * - portfolioId provided → single portfolio detail view
      */
     @GetMapping("/dashboard/portfolio-overviews")
     public ResponseEntity<List<PortfolioOverview>> getPortfolioOverviews(
@@ -60,7 +60,8 @@ public class AnalysisController {
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
             @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
-        return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId, AnalysisGroupBy.STOCK));
+        return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
+                AnalysisGroupBy.STOCK));
     }
 
     @GetMapping("/dashboard/performance")
@@ -72,11 +73,12 @@ public class AnalysisController {
 
     /**
      * Paginated + filtered recent activity.
-     * Supports: type, status (WIN/LOSS/NEUTRAL), sector, portfolioName, sortBy, page, size.
+     * Supports: type, status (WIN/LOSS/NEUTRAL), sector, portfolioName, sortBy,
+     * page, size.
      *
      * Example:
-     *   GET /api/v1/analysis/dashboard/recent-activity
-     *       ?userId=xxx&status=WIN&sortBy=PROFIT_LOSS&page=0&size=20
+     * GET /api/v1/analysis/dashboard/recent-activity
+     * ?userId=xxx&status=WIN&sortBy=PROFIT_LOSS&page=0&size=20
      */
     @GetMapping("/dashboard/recent-activity")
     public ResponseEntity<RecentActivityResponse> getRecentActivity(
@@ -152,7 +154,8 @@ public class AnalysisController {
             @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
         try {
-            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
+            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
+                    : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
             String userId = com.am.security.util.TokenExtractor.extractUserId(token);
             AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
             return ResponseEntity.ok(analysisService.getTopMovers(null, entityType, timeFrame, userId, groupBy));
@@ -175,7 +178,8 @@ public class AnalysisController {
             @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
         try {
-            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
+            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
+                    : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
             String userId = com.am.security.util.TokenExtractor.extractUserId(token);
             AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
             return ResponseEntity.ok(analysisService.getTopMovers(id, entityType, timeFrame, userId, groupBy));
@@ -189,3 +193,5 @@ public class AnalysisController {
         }
     }
 }
+
+// trigger -6

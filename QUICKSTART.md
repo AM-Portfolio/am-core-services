@@ -17,7 +17,7 @@ docker-compose -f docker-compose.dev.yml logs -f
 
 ## Access Services
 - Gateway: http://localhost:8091
-- Analysis: http://localhost:8090
+- Analysis: http://localhost:8093
 
 ## Stop Services
 ```bash

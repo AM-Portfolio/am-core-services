@@ -1,0 +1,52 @@
+# Pre-production environment overrides for am-gateway
+environment: preprod
+language: java
+
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+probes:
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"
+
+# Vault enabled — role and token management now handled centrally
+vault:
+  enabled: true
+  secretPaths:
+    kafka:
+      path: "apps/data/preprod/infra/kafka"
+      template: |
+        {{- with secret "apps/data/preprod/infra/kafka" -}}
+        export SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL="SASL_PLAINTEXT"
+        export SPRING_KAFKA_PROPERTIES_SASL_MECHANISM="SCRAM-SHA-256"
+        export SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG="org.apache.kafka.common.security.scram.ScramLoginModule required username=\"{{ .Data.data.username }}\" password=\"{{ .Data.data.password }}\";"
+        {{- end }}
+    redis:
+
+      path: "apps/data/preprod/infra/redis"
+      template: |
+        {{- with secret "apps/data/preprod/infra/redis" -}}
+        export REDIS_HOSTNAME="{{ .Data.data.host }}"
+        export REDIS_PASSWORD="{{ .Data.data.password }}"
+        {{- end }}
+
+# Non-secret env vars pointing to preprod cluster services
+env:
+  SPRING_PROFILES_ACTIVE: "preprod"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka.infra.svc.cluster.local:9092"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/gateway"
+  SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
+  REDIS_PORT: "6379"
+
+
+

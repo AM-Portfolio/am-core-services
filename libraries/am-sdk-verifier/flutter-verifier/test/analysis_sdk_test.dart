@@ -7,12 +7,12 @@ void main() {
     late AnalysisControllerApi api;
 
     setUp(() {
-      final client = ApiClient(basePath: 'http://localhost:8090');
+      final client = ApiClient(basePath: 'http://localhost:8093');
       api = AnalysisControllerApi(client);
     });
 
     test('getTopMoversByCategory connectivity check', () async {
-      print('Verifying Flutter SDK connectivity to http://localhost:8090...');
+      print('Verifying Flutter SDK connectivity to http://localhost:8093...');
       
       try {
         final response = await api.getTopMoversByCategory(
@@ -32,7 +32,7 @@ void main() {
           print('SUCCESS: Reached API (Auth Rejected as expected)');
         } else if (e.code == 0) {
           // Connection Refused / ClientException
-          fail('FAILED: Could not connect to API. Is "am-analysis" running on port 8090?');
+          fail('FAILED: Could not connect to API. Is "am-analysis" running on port 8093?');
         } else {
            print('SUCCESS: Reached API with code ${e.code}');
         }

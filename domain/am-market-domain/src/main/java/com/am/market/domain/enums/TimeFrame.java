@@ -26,3 +26,5 @@ public enum TimeFrame {
         throw new IllegalArgumentException("Unknown TimeFrame value: " + value);
     }
 }
+
+// event trigger

@@ -1,0 +1,327 @@
+name: AM SDK Publish
+
+# on:
+#   push:
+#     # Removed paths filter to run on every commit
+#   pull_request:
+#     # Removed paths filter to run on every commit
+#   workflow_dispatch: # Allows manual 'Force Build All' runs
+on:
+  push:
+    paths:
+      - "libraries/**"
+      - "domain/**"
+  pull_request:
+    paths:
+      - "libraries/**"
+      - "domain/**"
+
+jobs:
+  # ── Detect which SDK paths changed ───────────────────────────────────────
+  detect-changes:
+    name: Detect Changed SDKs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      analysis-adapter: ${{ steps.check.outputs.analysis-adapter }}
+      analysis-client-lib: ${{ steps.check.outputs.analysis-client-lib }}
+      cache-lib: ${{ steps.check.outputs.cache-lib }}
+      common-event-model: ${{ steps.check.outputs.common-event-model }}
+      common-lib: ${{ steps.check.outputs.common-lib }}
+      feign-lib: ${{ steps.check.outputs.feign-lib }}
+      kafka-lib: ${{ steps.check.outputs.kafka-lib }}
+      market-client-lib: ${{ steps.check.outputs.market-client-lib }}
+      portfolio-client-lib: ${{ steps.check.outputs.portfolio-client-lib }}
+      security-lib: ${{ steps.check.outputs.security-lib }}
+      trade-client-lib: ${{ steps.check.outputs.trade-client-lib }}
+      market-domain: ${{ steps.check.outputs.market-domain }}
+      portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
+      trade-domain: ${{ steps.check.outputs.trade-domain }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect which SDK paths changed
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git ls-files)
+          else
+            CHANGED=$(git diff --name-only "$BASE" "$HEAD")
+          fi
+
+          echo "=== Files changed in this push ==="
+          echo "$CHANGED"
+          echo "==================================="
+
+          check() { 
+            # Forced to true for every commit as requested
+            echo 'true'
+          }
+
+          # Libraries
+          echo "analysis-adapter=$(check 'libraries/am-analysis-adapter/')" >> $GITHUB_OUTPUT
+          echo "analysis-client-lib=$(check 'libraries/am-analysis-client-lib/')" >> $GITHUB_OUTPUT
+          echo "cache-lib=$(check 'libraries/am-cache-lib/')" >> $GITHUB_OUTPUT
+          echo "common-event-model=$(check 'libraries/am-common-event-model/')" >> $GITHUB_OUTPUT
+          echo "common-lib=$(check 'libraries/am-common-lib/')" >> $GITHUB_OUTPUT
+          echo "feign-lib=$(check 'libraries/am-feign-lib/')" >> $GITHUB_OUTPUT
+          echo "kafka-lib=$(check 'libraries/am-kafka-lib/')" >> $GITHUB_OUTPUT
+          echo "market-client-lib=$(check 'libraries/am-market-client-lib/')" >> $GITHUB_OUTPUT
+          echo "portfolio-client-lib=$(check 'libraries/am-portfolio-client-lib/')" >> $GITHUB_OUTPUT
+          echo "security-lib=$(check 'libraries/am-security-lib/')" >> $GITHUB_OUTPUT
+          echo "trade-client-lib=$(check 'libraries/am-trade-client-lib/')" >> $GITHUB_OUTPUT
+
+          # Domains
+          echo "market-domain=$(check 'domain/am-market-domain/')" >> $GITHUB_OUTPUT
+          echo "portfolio-domain=$(check 'domain/am-portfolio-domain/')" >> $GITHUB_OUTPUT
+          echo "trade-domain=$(check 'domain/am-trade-domain/')" >> $GITHUB_OUTPUT
+
+  # ── LEVEL 1: Core Foundation ──────────────────────────────────────────
+  publish-root-pom:
+    name: Publish Root POM (am-core-services)
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    if: always() && needs.detect-changes.result == 'success'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          server-id: github
+          settings-path: ${{ github.workspace }}
+      - name: Publish Parent POM (Non-Recursive)
+        run: |
+          mvn -B clean deploy -DskipTests -N \
+          -s $GITHUB_WORKSPACE/settings.xml \
+          -DaltDeploymentRepository=github::https://maven.pkg.github.com/AM-Portfolio/am-core-services
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-common-lib:
+    name: Publish Common Lib
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-common-lib"
+      sdk_name: "am-common-lib"
+    secrets: inherit
+
+  publish-common-event-model:
+    name: Publish Common Event Model
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-common-event-model"
+      sdk_name: "am-common-event-model"
+    secrets: inherit
+
+  # ── LEVEL 2: Infrastructure Libraries ──────────────────────────────────
+  publish-kafka-lib:
+    name: Publish Kafka Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-kafka-lib"
+      sdk_name: "am-kafka-lib"
+    secrets: inherit
+
+  publish-security-lib:
+    name: Publish Security Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-security-lib"
+      sdk_name: "am-security-lib"
+    secrets: inherit
+
+  publish-feign-lib:
+    name: Publish Feign Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-feign-lib"
+      sdk_name: "am-feign-lib"
+    secrets: inherit
+
+  publish-cache-lib:
+    name: Publish Cache Lib
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-cache-lib"
+      sdk_name: "am-cache-lib"
+    secrets: inherit
+
+  publish-analysis-client-sdk:
+    name: Publish Analysis Client SDK
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "services/am-analysis/am-analysis-sdk/java-sdk"
+      sdk_name: "am-analysis-client"
+    secrets: inherit
+
+  # ── LEVEL 3: Business Domains ──────────────────────────────────────────
+  publish-market-domain:
+    name: Publish Market Domain
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "domain/am-market-domain"
+      sdk_name: "am-market-domain"
+    secrets: inherit
+
+  publish-trade-domain:
+    name: Publish Trade Domain
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "domain/am-trade-domain"
+      sdk_name: "am-trade-domain"
+    secrets: inherit
+
+  publish-portfolio-domain:
+    name: Publish Portfolio Domain
+    needs: [publish-market-domain, publish-common-lib]
+    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "domain/am-portfolio-domain"
+      sdk_name: "am-portfolio-domain"
+    secrets: inherit
+
+  # ── LEVEL 4: Clients & Adapters ────────────────────────────────────────
+  publish-market-client-lib:
+    name: Publish Market Client Lib
+    needs: publish-market-domain
+    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-market-client-lib"
+      sdk_name: "am-market-client-lib"
+    secrets: inherit
+
+  publish-trade-client-lib:
+    name: Publish Trade Client Lib
+    needs: publish-trade-domain
+    if: always() && (needs.publish-trade-domain.result == 'success' || needs.publish-trade-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-trade-client-lib"
+      sdk_name: "am-trade-client-lib"
+    secrets: inherit
+
+  publish-portfolio-client-lib:
+    name: Publish Portfolio Client Lib
+    needs: publish-portfolio-domain
+    if: always() && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-portfolio-client-lib"
+      sdk_name: "am-portfolio-client-lib"
+    secrets: inherit
+
+  publish-analysis-adapter:
+    name: Publish Analysis Adapter
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-analysis-adapter"
+      sdk_name: "am-analysis-adapter"
+    secrets: inherit
+
+  publish-analysis-client-lib:
+    name: Publish Analysis Client Lib
+    needs: [publish-analysis-client-sdk, publish-common-lib]
+    if: always() && (needs.publish-analysis-client-sdk.result == 'success' || needs.publish-analysis-client-sdk.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-analysis-client-lib"
+      sdk_name: "am-analysis-client-lib"
+    secrets: inherit

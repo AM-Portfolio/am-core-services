@@ -1,0 +1,36 @@
+# Production environment overrides for am-analysis
+environment: prod
+
+replicaCount: 2
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+# Ingress enabled in prod
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: am-analysis.am-portfolio.io
+      paths:
+        - path: /
+          pathType: Prefix
+
+# Vault enabled — injects all secrets at runtime
+vault:
+  enabled: true
+  role: "am-analysis-role"
+  secretPaths:
+    kafka: "kv/prod/kafka"
+    mongodb: "kv/prod/database/mongo"
+
+# Non-secret env vars
+env:
+  SPRING_PROFILES_ACTIVE: "prod"
+  KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  MARKET_DATA_URL: "http://am-market-data.am-apps-prod.svc.cluster.local:8092"

@@ -52,3 +52,5 @@ public class Stock {
         this.updatedAt = LocalDateTime.now();
     }
 }
+
+// event trigger -2

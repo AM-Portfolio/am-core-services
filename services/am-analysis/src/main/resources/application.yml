@@ -3,7 +3,7 @@ KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 #mongo - connection is configured via environment variable or default below
 
 server:
-  port: 8090
+  port: 8080
 
 spring:
   main:
@@ -25,6 +25,11 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_CONNECTION_URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}
+    redis:
+      host: ${REDIS_HOSTNAME:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
 
 logging:
   level:
@@ -82,3 +87,13 @@ resilience4j:
       tradeService:
         max-attempts: 3
         wait-duration: 500ms
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Dummy commit to trigger centralized workflows: v1.0.2 -->
+<!-- Triggering workflows v3 - Simplified Docker builds -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
@@ -164,6 +166,27 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>github-investment</id>
+            <name>GitHub Packages - Core Services</name>
+            <url>https://maven.pkg.github.com/AM-Portfolio/am-core-services</url>
+        </repository>
+        <repository>
+            <id>github-trade</id>
+            <name>GitHub Packages - Trade Services</name>
+            <url>https://maven.pkg.github.com/AM-Portfolio/am-trade-services</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/AM-Portfolio/am-core-services</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <pluginManagement>
