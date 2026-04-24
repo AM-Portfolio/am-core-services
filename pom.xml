@@ -18,33 +18,21 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Spring Boot -->
         <spring-boot.version>3.2.3</spring-boot.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
-        
-        <!-- Spring -->
         <spring-kafka.version>3.1.2</spring-kafka.version>
         <spring-data-mongodb.version>4.2.2</spring-data-mongodb.version>
         
-        <!-- Kafka -->
         <kafka.version>3.6.1</kafka.version>
-        
-        <!-- Utilities -->
         <lombok.version>1.18.30</lombok.version>
         <jackson.version>2.19.2</jackson.version>
         <validation-api.version>3.0.2</validation-api.version>
-        
-        <!-- Testing -->
         <junit.version>5.10.1</junit.version>
     </properties>
 
     <modules>
-        <!-- Consolidated Libraries -->
         <module>libraries/am-core-lib</module>
         <module>libraries/am-client-sdks</module>
-        <module>libraries/am-sdk-tools</module>
-        
-        <!-- Services Layer -->
         <module>services/am-gateway</module>
         <module>services/am-analysis</module>
         <module>services/am-mcp-server</module>
@@ -52,7 +40,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Cloud BOM -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -61,7 +48,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring Boot BOM -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -70,14 +56,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Internal Modules -->
-            <dependency>
-                <groupId>com.am.libraries</groupId>
-                <artifactId>am-common-lib</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-            <!-- Consolidated Libraries -->
             <dependency>
                 <groupId>com.am.libraries</groupId>
                 <artifactId>am-core-lib</artifactId>
@@ -88,14 +66,7 @@
                 <artifactId>am-client-sdks</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.am.libraries</groupId>
-                <artifactId>am-sdk-tools</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
-
-            <!-- Lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -103,7 +74,6 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- Jackson -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -125,14 +95,12 @@
                 <version>${jackson.version}</version>
             </dependency>
 
-            <!-- Validation -->
             <dependency>
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
                 <version>${validation-api.version}</version>
             </dependency>
 
-            <!-- Kafka -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
