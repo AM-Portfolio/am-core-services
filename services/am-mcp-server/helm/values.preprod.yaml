@@ -1,5 +1,7 @@
 # Pre-production environment overrides for am-mcp-server
 environment: preprod
+language: java
+
 
 replicaCount: 1
 
@@ -18,6 +20,14 @@ vault:
     kafka: "apps/data/preprod/infra/kafka"
     mongodb: "apps/data/preprod/infra/mongodb"
     auth: "apps/data/preprod/services/am-auth"
+    redis:
+      path: "apps/data/preprod/infra/redis"
+      template: |
+        {{- with secret "apps/data/preprod/infra/redis" -}}
+        export REDIS_HOSTNAME="{{ .Data.data.host }}"
+        export REDIS_PASSWORD="{{ .Data.data.password }}"
+        {{- end }}
+
 
 # Non-secret env vars pointing to preprod cluster services
 env:
@@ -26,7 +36,9 @@ env:
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
+  REDIS_PORT: "6379"
   AM_AUTH_URL: "http://am-auth.am-apps-preprod.svc.cluster.local:8001"
+
   AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-preprod.svc.cluster.local:8100"
   AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-preprod.svc.cluster.local:8060"
   AM_DEFAULT_USER: "user1"

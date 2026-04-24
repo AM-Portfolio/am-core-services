@@ -23,11 +23,23 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.consumer.group-id:am-default-group}")
     private String groupId;
 
+    private final org.springframework.boot.autoconfigure.kafka.KafkaProperties kafkaProperties;
+
+    public KafkaConsumerConfig(org.springframework.boot.autoconfigure.kafka.KafkaProperties kafkaProperties) {
+        this.kafkaProperties = kafkaProperties;
+    }
+
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
+        // Explicit overrides if @Value is provided and different from properties
+        if (bootstrapServers != null && !bootstrapServers.equals("localhost:9092")) {
+            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        }
+        if (groupId != null && !groupId.equals("am-default-group")) {
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        }
+        
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
