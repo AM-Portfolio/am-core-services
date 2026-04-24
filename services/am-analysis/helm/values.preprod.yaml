@@ -18,8 +18,7 @@ vault:
     kafka: "apps/data/preprod/infra/kafka"
     mongodb: "apps/data/preprod/infra/mongodb"
 
-# Non-secret env vars pointing to preprod cluster services
+# Non-secret env vars — standard infra URLs are now handled centrally
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
-  KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
   MARKET_DATA_URL: "http://am-market-data.am-apps-preprod.svc.cluster.local:8092"

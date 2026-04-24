@@ -11,14 +11,13 @@ resources:
     cpu: 150m
     memory: 192Mi
 
-# Vault enabled — injects auth credentials (AM_AUTH_PASS, AM_STATIC_TOKEN) at runtime
+# Vault enabled — role and token management now handled centrally
 vault:
   enabled: true
-  role: "am-mcp-server-role"
   secretPaths:
-    auth: "kv/preprod/services/am-auth"
+    auth: "apps/data/preprod/services/am-auth"
 
-# Non-secret env vars pointing to preprod cluster services
+# Non-secret env vars — standard infra URLs are now handled centrally
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
   AM_AUTH_URL: "http://am-auth.am-apps-preprod.svc.cluster.local:8001"
