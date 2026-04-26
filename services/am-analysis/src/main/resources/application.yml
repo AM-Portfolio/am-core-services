@@ -25,8 +25,8 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_CONNECTION_URL:${URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}}
-      database: analysis
-      authentication-database: admin
+      database: ${MONGODB_DATABASE:analysis}
+      authentication-database: ${MONGODB_AUTH_DATABASE:admin}
     redis:
       host: ${REDIS_HOSTNAME:localhost}
       port: ${REDIS_PORT:6379}
@@ -103,7 +103,7 @@ management:
         enabled: true
       group:
         readiness:
-          include: mongo,redis,kafka,readinessState
+          include: mongo,redis,readinessState
         liveness:
           include: livenessState
   health:
