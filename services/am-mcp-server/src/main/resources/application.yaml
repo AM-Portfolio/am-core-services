@@ -124,16 +124,16 @@ management:
         enabled: true
       group:
         readiness:
-          include: mongo,readinessState
+          include: mongo,redis,kafka,readinessState
         liveness:
           include: livenessState
   health:
     mongo:
       enabled: true
     redis:
-      enabled: false
+      enabled: true
     kafka:
-      enabled: false
+      enabled: true
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging:
