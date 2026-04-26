@@ -12,7 +12,8 @@ spring:
       sasl.jaas.config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="password123";}
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb://admin:password123@localhost:27017/mcp?authSource=admin}
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://admin:password123@localhost:27017/?authSource=admin}
+      database: ${SPRING_DATA_MONGODB_DATABASE:mcp}
     redis:
       host: ${REDIS_HOSTNAME:localhost}
       port: ${REDIS_PORT:6379}
