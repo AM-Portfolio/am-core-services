@@ -30,8 +30,10 @@ vault:
   enabled: true
   role: "am-gateway-role"
   secretPaths:
-    kafka: "kv/prod/kafka"
-    redis: "kv/prod/database/redis"
+    kafka:
+      path: "kv/prod/kafka"
+    redis:
+      path: "kv/prod/database/redis"
 
 # Non-secret env vars
 env:
