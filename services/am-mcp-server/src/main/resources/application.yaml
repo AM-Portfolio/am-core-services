@@ -119,11 +119,25 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: mongo,readinessState
+        liveness:
+          include: livenessState
+  health:
+    mongo:
+      enabled: true
+    redis:
+      enabled: false
+    kafka:
+      enabled: false
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging:
   level:
-    com.am.mcp: INFO
+    com.am.mcp: DEBUG
     org.springframework.ai.mcp: WARN
   pattern:
     console: "%d{HH:mm:ss} [%level] %logger{36} - %msg%n"

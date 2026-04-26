@@ -51,8 +51,10 @@ public class PortfolioTools {
             @ToolParam(description = "User ID. Leave blank to use the configured default user.") String userId) {
         try {
             String uid = resolve(userId);
+            log.info("[MCP] get_portfolio_summary called for userId: {} (resolved: {})", userId, uid);
             // Fetch all portfolios for the user
             List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails(uid);
+            log.debug("[MCP] Found {} portfolios for user: {}", portfolios.size(), uid);
 
             // Fetch detailed model for each to get performance (this might be heavy, but
             // let's follow the pattern)
@@ -117,6 +119,7 @@ public class PortfolioTools {
             @ToolParam(description = "User ID. Leave blank for default user.") String userId) {
         try {
             String uid = resolve(userId);
+            log.info("[MCP] get_holdings called for userId: {} (resolved: {})", userId, uid);
             List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails(uid);
 
             // Aggregate holdings from all portfolios
@@ -205,10 +208,12 @@ public class PortfolioTools {
             @ToolParam(description = "User ID.") String userId) {
         try {
             String uid = resolve(userId);
+            log.info("[MCP] get_portfolio_overviews called for userId: {} (resolved: {})", userId, uid);
             List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails(uid);
             Map<String, Object> result = new java.util.LinkedHashMap<>();
             result.put("portfolios", portfolios);
             result.put("count", portfolios.size());
+            log.debug("[MCP] Returning {} portfolio overviews", portfolios.size());
             return response.toJson(result);
         } catch (Exception e) {
             log.error("Failed to fetch portfolio overviews for user {}", userId, e);

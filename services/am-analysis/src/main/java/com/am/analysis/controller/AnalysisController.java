@@ -13,6 +13,7 @@ import com.am.analysis.service.AnalysisService;
 import com.am.analysis.service.DashboardAnalysisService;
 import com.am.domain.trade.PortfolioOverview;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("/api/v1/analysis")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Slf4j
 public class AnalysisController {
 
     private final AnalysisService analysisService;
@@ -29,6 +31,7 @@ public class AnalysisController {
 
     @GetMapping("/dashboard/summary")
     public ResponseEntity<DashboardSummary> getDashboardSummary(@RequestParam("userId") String userId) {
+        log.info("[AnalysisController] GET /dashboard/summary for userId: {}", userId);
         return ResponseEntity.ok(dashboardService.getSummary(userId));
     }
 
@@ -41,6 +44,7 @@ public class AnalysisController {
     public ResponseEntity<List<PortfolioOverview>> getPortfolioOverviews(
             @RequestParam("userId") String userId,
             @RequestParam(name = "portfolioId", required = false) String portfolioId) {
+        log.info("[AnalysisController] GET /dashboard/portfolio-overviews for userId: {}, portfolioId: {}", userId, portfolioId);
         List<PortfolioOverview> overviews = dashboardService.getPortfolioOverviews(userId);
         if (portfolioId != null && !portfolioId.isBlank()) {
             overviews = overviews.stream()
@@ -52,6 +56,7 @@ public class AnalysisController {
 
     @PostMapping("/dashboard/publish-update")
     public ResponseEntity<Void> publishDashboardUpdate(@RequestParam("userId") String userId) {
+        log.info("[AnalysisController] POST /dashboard/publish-update for userId: {}", userId);
         dashboardService.publishDashboardUpdate(userId);
         return ResponseEntity.ok().build();
     }
@@ -60,6 +65,7 @@ public class AnalysisController {
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
             @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
+        log.info("[AnalysisController] GET /dashboard/top-movers for userId: {}, timeFrame: {}", userId, timeFrame);
         return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
                 AnalysisGroupBy.STOCK));
     }
@@ -91,6 +97,8 @@ public class AnalysisController {
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
 
+        log.info("[AnalysisController] GET /dashboard/recent-activity for userId: {}, page: {}, size: {}, sortBy: {}", 
+                userId, page, size, sortBy);
         ActivityFilter filter = ActivityFilter.builder()
                 .type(type)
                 .status(status)

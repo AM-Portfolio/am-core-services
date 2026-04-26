@@ -1,0 +1,125 @@
+{
+  "info": {
+    "_postman_id": "am-gateway-ws-collection",
+    "name": "AM Gateway (WebSocket)",
+    "description": "API & WebSocket collection for am-gateway service.\n\nThe Gateway is a dumb relay — it handles WebSocket subscriptions and heartbeats only. All REST requests pass through Traefik to backend services.\n\nSelect an environment from the Environment dropdown:\n- **Local**: Direct local service on port 8080\n- **Dev**: dev.am.asrax.in\n- **Preprod**: am.asrax.in\n- **Prod**: am.munish.org",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Infra",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/actuator/health",
+              "host": ["{{gateway_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Spring Actuator health endpoint. Returns UP/DOWN status."
+          }
+        },
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/swagger-ui/index.html",
+              "host": ["{{gateway_url}}"],
+              "path": ["swagger-ui", "index.html"]
+            },
+            "description": "Open the Swagger UI for the Gateway service."
+          }
+        },
+        {
+          "name": "OpenAPI Spec",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api-docs",
+              "host": ["{{gateway_url}}"],
+              "path": ["api-docs"]
+            },
+            "description": "Raw OpenAPI JSON spec."
+          }
+        }
+      ]
+    },
+    {
+      "name": "WebSocket (STOMP)",
+      "description": "The Gateway uses STOMP over WebSocket. These are NOT traditional HTTP requests — use Postman's WebSocket request type or a STOMP client.\n\nWebSocket endpoint: {{ws_url}}/ws-gateway-raw\n\nAfter connecting, send STOMP frames to the following destinations.",
+      "item": [
+        {
+          "name": "WS - Subscribe to Portfolio",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/ws-gateway-raw",
+              "host": ["{{gateway_url}}"],
+              "path": ["ws-gateway-raw"]
+            },
+            "description": "WebSocket upgrade endpoint.\n\nAfter connecting, send a STOMP SEND frame:\n\nDestination: /app/portfolio/subscribe\nBody: {\"userId\": \"{{user_id}}\", \"portfolioId\": \"{{portfolio_id}}\"}\n\nSubscribe to updates on: /user/queue/portfolio/dashboard"
+          }
+        },
+        {
+          "name": "WS - Heartbeat",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/ws-gateway-raw",
+              "host": ["{{gateway_url}}"],
+              "path": ["ws-gateway-raw"]
+            },
+            "description": "After connecting via WebSocket, send heartbeat to renew Redis TTL.\n\nSTOMP Destination: /app/portfolio/heartbeat\nBody: {\"userId\": \"{{user_id}}\"}"
+          }
+        },
+        {
+          "name": "WS - Unsubscribe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/ws-gateway-raw",
+              "host": ["{{gateway_url}}"],
+              "path": ["ws-gateway-raw"]
+            },
+            "description": "After connecting via WebSocket, send unsubscribe to remove from Redis.\n\nSTOMP Destination: /app/portfolio/unsubscribe\nBody: {\"userId\": \"{{user_id}}\"}"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "description": "Override per environment"
+    },
+    {
+      "key": "ws_url",
+      "value": "ws://localhost:8080",
+      "description": "WebSocket URL (ws:// or wss://)"
+    },
+    {
+      "key": "jwt_token",
+      "value": "paste-your-token-here"
+    },
+    {
+      "key": "user_id",
+      "value": "ssd2658"
+    },
+    {
+      "key": "portfolio_id",
+      "value": "163d0143-4fcb-480c-ac20-622f14e0e293"
+    }
+  ]
+}

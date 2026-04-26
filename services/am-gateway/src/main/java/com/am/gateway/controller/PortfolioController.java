@@ -43,8 +43,11 @@ public class PortfolioController {
         String portfolioId = payload.get("portfolioId");
         String sessionId = headerAccessor.getSessionId();
 
+        log.info("[PortfolioController] Received /subscribe for userId: {}, portfolioId: {}, sessionId: {}", 
+                userId, portfolioId, sessionId);
+
         if (userId == null) {
-            log.warn("[PortfolioController] Subscribe missing userId");
+            log.warn("[PortfolioController] Subscribe missing userId in payload: {}", payload);
             return;
         }
 
@@ -57,8 +60,11 @@ public class PortfolioController {
     public void heartbeat(@Payload Map<String, String> payload, SimpMessageHeaderAccessor headerAccessor) {
         String userId = payload.get("userId");
         String sessionId = headerAccessor.getSessionId();
+        log.debug("[PortfolioController] Received /heartbeat for userId: {}, sessionId: {}", userId, sessionId);
         if (userId != null) {
             subscriptionManager.onHeartbeat(userId, sessionId);
+        } else {
+            log.warn("[PortfolioController] Heartbeat missing userId");
         }
     }
 

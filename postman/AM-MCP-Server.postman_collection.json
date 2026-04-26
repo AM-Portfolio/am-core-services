@@ -1,0 +1,240 @@
+{
+  "info": {
+    "_postman_id": "am-mcp-server-collection",
+    "name": "AM MCP Server",
+    "description": "API collection for am-mcp-server.\n\nThe MCP Server exposes AI tool endpoints for the LLM agent layer. It calls downstream services (portfolio, analysis, market, trade) and returns structured JSON for AI consumption.\n\nTools are grouped by domain:\n- **Analysis**: top movers, sector allocation, market cap allocation\n- **Portfolio**: holdings, summary\n- **Market**: quotes, historical data\n- **Trade**: trade history\n- **AI Agent**: general agent invocation\n\nSelect an environment from the dropdown:\n- **Local**: Direct local service on port 8080\n- **Dev**: dev.am.asrax.in\n- **Preprod**: am.asrax.in\n- **Prod**: am.munish.org",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Infra",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mcp_url}}/actuator/health",
+              "host": ["{{mcp_url}}"],
+              "path": ["actuator", "health"]
+            }
+          }
+        },
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mcp_url}}/swagger-ui/index.html",
+              "host": ["{{mcp_url}}"],
+              "path": ["swagger-ui", "index.html"]
+            }
+          }
+        },
+        {
+          "name": "OpenAPI Spec",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mcp_url}}/api-docs",
+              "host": ["{{mcp_url}}"],
+              "path": ["api-docs"]
+            }
+          }
+        },
+        {
+          "name": "Circuit Breaker Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mcp_url}}/actuator/circuitbreakers",
+              "host": ["{{mcp_url}}"],
+              "path": ["actuator", "circuitbreakers"]
+            },
+            "description": "View state of all Resilience4j circuit breakers (am-analysis, am-market, am-trade, am-ai-agent)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis Tools (MCP)",
+      "description": "MCP tools for the analysis domain. These are called by the AI agent layer.",
+      "item": [
+        {
+          "name": "Get Top Movers",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"timeFrame\": \"1D\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_top_movers",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_top_movers"]
+            },
+            "description": "Returns top 5 gainers and top 5 losers in the user's portfolio by total P&L percentage.\n\nFields returned: symbol, gainLossPct, dayChangePct, totalValue"
+          }
+        },
+        {
+          "name": "Get Sector Allocation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_sector_allocation",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_sector_allocation"]
+            },
+            "description": "Returns sector-wise breakdown (IT, Banking, Pharma etc.) with holding count per sector."
+          }
+        },
+        {
+          "name": "Get Market Cap Allocation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_market_cap_allocation",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_market_cap_allocation"]
+            },
+            "description": "Returns large-cap, mid-cap, and small-cap distribution of the portfolio by holding count."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Portfolio Tools (MCP)",
+      "item": [
+        {
+          "name": "Get Portfolio Summary",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_portfolio_summary",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_portfolio_summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Holdings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_holdings",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_holdings"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Market Tools (MCP)",
+      "item": [
+        {
+          "name": "Get Stock Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"symbol\": \"RELIANCE\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_stock_quote",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_stock_quote"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trade Tools (MCP)",
+      "item": [
+        {
+          "name": "Get Trade History",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_trade_history",
+              "host": ["{{mcp_url}}"],
+              "path": ["api", "v1", "mcp", "tools", "get_trade_history"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "description": "Override per environment"
+    },
+    {
+      "key": "jwt_token",
+      "value": "paste-your-token-here"
+    },
+    {
+      "key": "user_id",
+      "value": "ssd2658"
+    },
+    {
+      "key": "portfolio_id",
+      "value": "163d0143-4fcb-480c-ac20-622f14e0e293"
+    }
+  ]
+}

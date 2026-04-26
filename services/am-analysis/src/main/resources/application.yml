@@ -24,7 +24,9 @@ spring:
       sasl.jaas.config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="password123";}
   data:
     mongodb:
-      uri: ${MONGODB_CONNECTION_URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}
+      uri: ${MONGODB_CONNECTION_URL:${URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}}
+      database: analysis
+      authentication-database: admin
     redis:
       host: ${REDIS_HOSTNAME:localhost}
       port: ${REDIS_PORT:6379}
@@ -93,7 +95,21 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: mongo,redis,kafka,readinessState
+        liveness:
+          include: livenessState
+  health:
+    mongo:
+      enabled: true
+    redis:
+      enabled: true
+    kafka:
+      enabled: true

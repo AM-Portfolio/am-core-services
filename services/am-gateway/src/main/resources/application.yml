@@ -41,14 +41,26 @@ logging:
     root: INFO
     org.springframework.web.socket: DEBUG
     org.springframework.messaging: DEBUG
-    com.am.gateway: INFO
+    com.am.gateway: DEBUG
 
 # Actuator Configuration
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: redis,kafka,readinessState
+        liveness:
+          include: livenessState
+  health:
+    redis:
+      enabled: true
+    kafka:
+      enabled: true

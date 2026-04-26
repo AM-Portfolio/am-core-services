@@ -99,7 +99,8 @@ public class PortfolioSubscriptionManager {
 
             String payload = objectMapper.writeValueAsString(event);
             kafkaTemplate.send(KafkaTopics.USER_WATCHING, userId, payload);
-            log.debug("[Subscription] Emitted {} event for User: {}", action, userId);
+            log.info("[Subscription] Emitted {} event to Kafka topic: {} for User: {} (sessionId: {})", 
+                    action, KafkaTopics.USER_WATCHING, userId, sessionId);
 
         } catch (JsonProcessingException e) {
             log.error("[Subscription] Failed to serialize UserWatchingEvent for User: {}", userId, e);
