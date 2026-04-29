@@ -16,7 +16,8 @@ vault:
   enabled: true
   role: "am-mcp-server-role"
   secretPaths:
-    auth: "kv/prod/services/am-auth"
+    auth:
+      path: "kv/prod/services/am-auth"
 
 # Non-secret env vars pointing to prod cluster services
 env:

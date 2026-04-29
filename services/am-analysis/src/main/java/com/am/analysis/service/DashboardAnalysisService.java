@@ -36,10 +36,12 @@ public class DashboardAnalysisService {
     private final ObjectMapper objectMapper;
 
     public DashboardSummary getSummary(String userId) {
+        log.info("[DashboardAnalysisService] Fetching summary for userId: {}", userId);
         return aggregator.getOverallSummary(userId);
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
+        log.info("[DashboardAnalysisService] Fetching portfolio overviews for userId: {}", userId);
         return aggregator.getPortfolioOverviews(userId);
     }
 
@@ -70,10 +72,11 @@ public class DashboardAnalysisService {
      * Pagination: page + size
      */
     public RecentActivityResponse getRecentActivity(String userId, ActivityFilter filter) {
-        log.debug("[RecentActivity] userId={} filter={}", userId, filter);
+        log.info("[DashboardAnalysisService] Processing recent activity request for userId: {} with filter: {}", userId, filter);
 
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
         List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
         // 2. Flatten all holdings across all portfolios → ActivityItems
         List<ActivityItem> allItems = new ArrayList<>();
@@ -93,6 +96,7 @@ public class DashboardAnalysisService {
 
         // 3. Apply filters
         List<ActivityItem> filtered = applyFilters(allItems, filter);
+        log.debug("[DashboardAnalysisService] Total holdings: {}, After filtering: {}", allItems.size(), filtered.size());
 
         // 4. Compute summary counters (on unfiltered by status so counts are always full)
         int totalWin     = (int) allItems.stream().filter(i -> "WIN".equals(i.getStatus())).count();
@@ -235,13 +239,14 @@ public class DashboardAnalysisService {
 
     public void publishDashboardUpdate(String userId) {
         try {
+            log.info("[DashboardAnalysisService] Preparing dashboard update event for userId: {}", userId);
             DashboardSummary summary = getSummary(userId);
             DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
             String payload = objectMapper.writeValueAsString(event);
             kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
-            log.debug("Published dashboard update for user: {}", userId);
+            log.info("[DashboardAnalysisService] Successfully published dashboard update for user: {} to topic: {}", userId, KafkaTopics.DASHBOARD_UPDATE);
         } catch (Exception e) {
-            log.error("Failed to publish dashboard update", e);
+            log.error("[DashboardAnalysisService] Failed to publish dashboard update for user: {}", userId, e);
         }
     }
 

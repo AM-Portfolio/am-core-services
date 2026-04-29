@@ -1,0 +1,33 @@
+# vault-mappings.yaml — am-analysis
+#
+# PURPOSE: Maps application environment variable names to Vault secret keys.
+# This file is ENVIRONMENT-AGNOSTIC — identical for dev, preprod, and prod.
+# Vault paths are defined in values.{env}.yaml.
+#
+# Format:
+#   <AppEnvVariable>: "<VaultKeyName>"    — direct key mapping
+#   <AppEnvVariable>: "__jaas__"          — special: auto-builds Kafka SCRAM login config
+#
+# Vault key names verified against: vps_vault_full_backup_20260422
+#   apps/*/infra/mongodb  → host, password, port, url, username
+#   apps/*/infra/kafka    → bootstrap_servers, password, username
+#   apps/*/infra/redis    → host, password, port, url
+
+vault:
+  secretPaths:
+    mongodb:
+      mappings:
+        MONGODB_CONNECTION_URL: "url"          # mongodb://admin:pass@host:27017
+
+    kafka:
+      mappings:
+        KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers"  # kafka.infra.svc.cluster.local:9092
+        KAFKA_SASL_USERNAME:     "username"
+        KAFKA_SASL_PASSWORD:     "password"
+        KAFKA_JAAS_CONFIG:       "__jaas__"    # Auto-generates SCRAM login module config
+
+    redis:
+      mappings:
+        REDIS_HOSTNAME: "host"
+        REDIS_PASSWORD: "password"
+        REDIS_PORT:     "port"

@@ -17,16 +17,14 @@ resources:
 vault:
   enabled: true
   secretPaths:
-    kafka: "apps/data/preprod/infra/kafka"
-    mongodb: "apps/data/preprod/infra/mongodb"
-    auth: "apps/data/preprod/services/am-auth"
+    kafka:
+      path: "apps/data/preprod/infra/kafka"
+    mongodb:
+      path: "apps/data/preprod/infra/mongodb"
+    auth:
+      path: "apps/data/preprod/services/am-auth"
     redis:
       path: "apps/data/preprod/infra/redis"
-      template: |
-        {{- with secret "apps/data/preprod/infra/redis" -}}
-        export REDIS_HOSTNAME="{{ .Data.data.host }}"
-        export REDIS_PASSWORD="{{ .Data.data.password }}"
-        {{- end }}
 
 
 # Non-secret env vars pointing to preprod cluster services

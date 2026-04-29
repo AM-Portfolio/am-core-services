@@ -25,20 +25,8 @@ vault:
   secretPaths:
     kafka:
       path: "apps/data/preprod/infra/kafka"
-      template: |
-        {{- with secret "apps/data/preprod/infra/kafka" -}}
-        export SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL="SASL_PLAINTEXT"
-        export SPRING_KAFKA_PROPERTIES_SASL_MECHANISM="SCRAM-SHA-256"
-        export SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG="org.apache.kafka.common.security.scram.ScramLoginModule required username=\"{{ .Data.data.username }}\" password=\"{{ .Data.data.password }}\";"
-        {{- end }}
     redis:
-
       path: "apps/data/preprod/infra/redis"
-      template: |
-        {{- with secret "apps/data/preprod/infra/redis" -}}
-        export REDIS_HOSTNAME="{{ .Data.data.host }}"
-        export REDIS_PASSWORD="{{ .Data.data.password }}"
-        {{- end }}
 
 # Non-secret env vars pointing to preprod cluster services
 env:
