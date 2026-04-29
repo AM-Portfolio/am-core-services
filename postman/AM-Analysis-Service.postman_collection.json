@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "am-analysis-collection",
     "name": "AM Analysis Service",
-    "description": "Full API collection for am-analysis service.\n\nBase path: /api/v1/analysis\n\nIncludes:\n- Dashboard endpoints (summary, overviews, performance, top movers, recent activity)\n- Entity-level endpoints (allocation, performance, top movers by type & id)\n\nSelect an environment from the Environment dropdown:\n- **Local**: Direct local service on port 8080\n- **Dev**: dev.am.asrax.in\n- **Preprod**: am.asrax.in\n- **Prod**: am.munish.org",
+    "description": "Full API collection for am-analysis service.\n\nBase path: /v1/analysis\n\nIncludes:\n- Dashboard endpoints (summary, overviews, performance, top movers, recent activity)\n- Entity-level endpoints (allocation, performance, top movers by type & id)\n\nSelect an environment from the Environment dropdown:\n- **Local**: Direct local service on port 8080\n- **Dev**: dev.am.asrax.in\n- **Preprod**: am.asrax.in\n- **Prod**: am.munish.org",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -46,9 +46,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/summary?userId={{user_id}}",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/summary?userId={{user_id}}",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "summary"],
+              "path": ["v1", "analysis", "dashboard", "summary"],
               "query": [{ "key": "userId", "value": "{{user_id}}" }]
             },
             "description": "Returns the top-level dashboard summary for a user (total invested, current value, P&L etc.)."
@@ -62,9 +62,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/portfolio-overviews?userId={{user_id}}",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/portfolio-overviews?userId={{user_id}}",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "portfolio-overviews"],
+              "path": ["v1", "analysis", "dashboard", "portfolio-overviews"],
               "query": [
                 { "key": "userId", "value": "{{user_id}}" },
                 { "key": "portfolioId", "value": "", "disabled": true, "description": "Optional. Filter to a single portfolio." }
@@ -81,9 +81,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/portfolio-overviews?userId={{user_id}}&portfolioId={{portfolio_id}}",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/portfolio-overviews?userId={{user_id}}&portfolioId={{portfolio_id}}",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "portfolio-overviews"],
+              "path": ["v1", "analysis", "dashboard", "portfolio-overviews"],
               "query": [
                 { "key": "userId", "value": "{{user_id}}" },
                 { "key": "portfolioId", "value": "{{portfolio_id}}" }
@@ -99,9 +99,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/top-movers?userId={{user_id}}&timeFrame=1D",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/top-movers?userId={{user_id}}&timeFrame=1D",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "top-movers"],
+              "path": ["v1", "analysis", "dashboard", "top-movers"],
               "query": [
                 { "key": "userId", "value": "{{user_id}}" },
                 { "key": "timeFrame", "value": "1D", "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL" }
@@ -117,9 +117,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/performance?userId={{user_id}}&timeFrame=1M",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/performance?userId={{user_id}}&timeFrame=1M",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "performance"],
+              "path": ["v1", "analysis", "dashboard", "performance"],
               "query": [
                 { "key": "userId", "value": "{{user_id}}" },
                 { "key": "timeFrame", "value": "1M", "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL" }
@@ -135,9 +135,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/recent-activity?userId={{user_id}}&page=0&size=20",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/recent-activity?userId={{user_id}}&page=0&size=20",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "recent-activity"],
+              "path": ["v1", "analysis", "dashboard", "recent-activity"],
               "query": [
                 { "key": "userId", "value": "{{user_id}}" },
                 { "key": "type", "value": "", "disabled": true, "description": "Optional: trade type filter" },
@@ -160,9 +160,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/dashboard/publish-update?userId={{user_id}}",
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/publish-update?userId={{user_id}}",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "dashboard", "publish-update"],
+              "path": ["v1", "analysis", "dashboard", "publish-update"],
               "query": [{ "key": "userId", "value": "{{user_id}}" }]
             },
             "description": "Manually trigger a dashboard recalculation and publish to WebSocket subscribers."
@@ -183,9 +183,9 @@
               { "key": "groupBy", "value": "STOCK", "description": "Optional: STOCK or SECTOR" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/allocation?groupBy=STOCK",
+              "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/allocation?groupBy=STOCK",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "portfolio", "{{portfolio_id}}", "allocation"],
+              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "allocation"],
               "query": [{ "key": "groupBy", "value": "STOCK", "description": "Options: STOCK, SECTOR" }]
             },
             "description": "Get allocation breakdown for a specific portfolio. type=portfolio | stock | holding"
@@ -199,9 +199,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/allocation?groupBy=SECTOR",
+              "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/allocation?groupBy=SECTOR",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "portfolio", "{{portfolio_id}}", "allocation"],
+              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "allocation"],
               "query": [{ "key": "groupBy", "value": "SECTOR" }]
             }
           }
@@ -214,9 +214,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/performance?timeFrame=1M",
+              "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/performance?timeFrame=1M",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "portfolio", "{{portfolio_id}}", "performance"],
+              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "performance"],
               "query": [{ "key": "timeFrame", "value": "1M", "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL" }]
             }
           }
@@ -229,9 +229,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/portfolio/top-movers?timeFrame=1D&groupBy=STOCK",
+              "raw": "{{analysis_url}}/v1/analysis/portfolio/top-movers?timeFrame=1D&groupBy=STOCK",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "portfolio", "top-movers"],
+              "path": ["v1", "analysis", "portfolio", "top-movers"],
               "query": [
                 { "key": "timeFrame", "value": "1D" },
                 { "key": "groupBy", "value": "STOCK" }
@@ -248,9 +248,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{analysis_url}}/api/v1/analysis/portfolio/{{portfolio_id}}/top-movers?timeFrame=1D&groupBy=STOCK",
+              "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/top-movers?timeFrame=1D&groupBy=STOCK",
               "host": ["{{analysis_url}}"],
-              "path": ["api", "v1", "analysis", "portfolio", "{{portfolio_id}}", "top-movers"],
+              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "top-movers"],
               "query": [
                 { "key": "timeFrame", "value": "1D" },
                 { "key": "groupBy", "value": "STOCK" }

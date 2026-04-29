@@ -77,9 +77,9 @@
               "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"timeFrame\": \"1D\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_top_movers",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_top_movers",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_top_movers"]
+              "path": ["v1", "mcp", "tools", "get_top_movers"]
             },
             "description": "Returns top 5 gainers and top 5 losers in the user's portfolio by total P&L percentage.\n\nFields returned: symbol, gainLossPct, dayChangePct, totalValue"
           }
@@ -97,9 +97,9 @@
               "raw": "{\n    \"userId\": \"{{user_id}}\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_sector_allocation",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_sector_allocation",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_sector_allocation"]
+              "path": ["v1", "mcp", "tools", "get_sector_allocation"]
             },
             "description": "Returns sector-wise breakdown (IT, Banking, Pharma etc.) with holding count per sector."
           }
@@ -117,9 +117,9 @@
               "raw": "{\n    \"userId\": \"{{user_id}}\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_market_cap_allocation",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_market_cap_allocation",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_market_cap_allocation"]
+              "path": ["v1", "mcp", "tools", "get_market_cap_allocation"]
             },
             "description": "Returns large-cap, mid-cap, and small-cap distribution of the portfolio by holding count."
           }
@@ -142,9 +142,9 @@
               "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_portfolio_summary",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_portfolio_summary",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_portfolio_summary"]
+              "path": ["v1", "mcp", "tools", "get_portfolio_summary"]
             }
           }
         },
@@ -161,9 +161,9 @@
               "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_holdings",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_holdings",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_holdings"]
+              "path": ["v1", "mcp", "tools", "get_holdings"]
             }
           }
         }
@@ -185,9 +185,9 @@
               "raw": "{\n    \"symbol\": \"RELIANCE\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_stock_quote",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_stock_quote",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_stock_quote"]
+              "path": ["v1", "mcp", "tools", "get_stock_quote"]
             }
           }
         }
@@ -209,9 +209,9 @@
               "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
             },
             "url": {
-              "raw": "{{mcp_url}}/api/v1/mcp/tools/get_trade_history",
+              "raw": "{{mcp_url}}/v1/mcp/tools/get_trade_history",
               "host": ["{{mcp_url}}"],
-              "path": ["api", "v1", "mcp", "tools", "get_trade_history"]
+              "path": ["v1", "mcp", "tools", "get_trade_history"]
             }
           }
         }
