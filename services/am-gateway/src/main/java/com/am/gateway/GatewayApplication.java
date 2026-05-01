@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication(exclude = {
         org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration.class
 })
 @Import(KafkaConsumerConfig.class)
 @org.springframework.context.annotation.ComponentScan(basePackages = {"com.am.gateway", "com.am.analysis.adapter.mapper"})

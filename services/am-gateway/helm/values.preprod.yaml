@@ -32,8 +32,8 @@ vault:
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
   KAFKA_BOOTSTRAP_SERVERS: "kafka.infra.svc.cluster.local:9092"
-  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/gateway"
   SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
+  REDIS_PORT: "6379"
   REDIS_PORT: "6379"
 
 
