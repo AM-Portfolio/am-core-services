@@ -18,12 +18,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // SockJS endpoint (fallback for browsers that don't support WebSocket)
-        registry.addEndpoint("/ws-gateway")
+        registry.addEndpoint("/v1/streams-fallback")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
 
-        // Raw WebSocket endpoint (for clients with SockJS compatibility issues)
-        registry.addEndpoint("/ws-gateway-raw")
+        // Raw WebSocket endpoint (enterprise standard)
+        registry.addEndpoint("/v1/streams")
                 .setAllowedOriginPatterns("*");
     }
 
