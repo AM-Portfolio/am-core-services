@@ -31,7 +31,6 @@ vault:
 # Non-secret env vars pointing to preprod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
-  KAFKA_BOOTSTRAP_SERVERS: "kafka.infra.svc.cluster.local:9092"
   SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
 
 
