@@ -25,20 +25,32 @@ public class AllocationAnalysisService {
     private final AnalysisAccessValidator accessValidator;
 
     public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy) {
-        if (id == null || id.isEmpty() || "ALL".equalsIgnoreCase(id)) {
-            log.info("Calculating GLOBAL allocation for user: {}", userId);
-            List<AnalysisEntity> allEntities = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
-            if (allEntities.isEmpty()) {
-                return emptyAllocation(userId);
-            }
+        if ("ALL".equals(id) && type == AnalysisEntityType.PORTFOLIO) {
+            // Try to find a pre-calculated GLOBAL entity first
+            String globalId = "PORTFOLIO_GLOBAL_" + userId;
+            Optional<AnalysisEntity> globalOpt = repository.findById(globalId);
             
-            // Merge all holdings into a single virtual entity for calculation
+            if (globalOpt.isPresent() && globalOpt.get().getOwnerId().equals(userId)) {
+                log.info("Found pre-calculated GLOBAL allocation for user: {}", userId);
+                enrichWithMarketData(globalOpt.get());
+                return calculationService.calculateAllocation(globalOpt.get(), groupBy);
+            }
+
+            log.info("Performing dynamic aggregation for all portfolios for user: {}", userId);
+            List<AnalysisEntity> allPortfolios = repository.findByOwnerIdAndType(userId, type)
+                    .stream()
+                    .filter(e -> !e.getId().endsWith("_GLOBAL")) // Exclude global to avoid double counting
+                    .collect(java.util.stream.Collectors.toList());
+            
+            if (allPortfolios.isEmpty()) return AllocationResponse.builder().build();
+
+            // Create a virtual aggregated entity
             AnalysisEntity globalEntity = AnalysisEntity.builder()
-                    .id("GLOBAL_" + userId)
-                    .type(AnalysisEntityType.PORTFOLIO)
+                    .id("VIRTUAL_ALL")
+                    .type(type)
                     .ownerId(userId)
-                    .holdings(allEntities.stream()
-                            .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
+                    .holdings(allPortfolios.stream()
+                            .flatMap(p -> p.getHoldings().stream())
                             .collect(java.util.stream.Collectors.toList()))
                     .build();
             
