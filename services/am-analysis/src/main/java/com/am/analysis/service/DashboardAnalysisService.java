@@ -244,7 +244,7 @@ public class DashboardAnalysisService {
             DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
             String payload = objectMapper.writeValueAsString(event);
             kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
-            log.info("[DashboardAnalysisService] Successfully published dashboard update for user: {} to topic: {}", userId, KafkaTopics.DASHBOARD_UPDATE);
+            log.info("[DashboardAnalysisService] 🚀 Dashboard Update published to Kafka! Payload: {}", payload);
         } catch (Exception e) {
             log.error("[DashboardAnalysisService] Failed to publish dashboard update for user: {}", userId, e);
         }

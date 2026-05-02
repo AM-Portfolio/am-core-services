@@ -20,16 +20,21 @@ public class KafkaRelayService {
     @KafkaListener(topics = com.am.kafka.config.KafkaTopics.STOCK_UPDATE, groupId = "am-websocket-gateway-group")
     public void handleStockUpdate(String message) {
         try {
-            JsonNode node = objectMapper.readTree(message);
-            if (node.has("symbol")) {
-                String symbol = node.get("symbol").asText();
-                // Route to specific stock topic: /topic/stock/{symbol}
-                messagingTemplate.convertAndSend("/topic/stock/" + symbol, message);
-            } else {
-                log.warn("Invalid Stock Update: Missing 'symbol' field. Message: {}", message);
+            com.am.common.investment.model.events.EquityPriceUpdateEvent event = 
+                objectMapper.readValue(message, com.am.common.investment.model.events.EquityPriceUpdateEvent.class);
+            
+            if (event.getEquityPrices() != null) {
+                for (var price : event.getEquityPrices()) {
+                    String symbol = price.getSymbol();
+                    // Route to specific stock topic: /topic/stock/{symbol}
+                    // We send the individual price update as a JSON string
+                    String priceJson = objectMapper.writeValueAsString(price);
+                    messagingTemplate.convertAndSend("/topic/stock/" + symbol, priceJson);
+                }
+                log.debug("Relayed {} stock updates to WebSockets", event.getEquityPrices().size());
             }
         } catch (Exception e) {
-            log.error("Failed to parse Stock Update: {}", message, e);
+            log.error("Failed to relay Stock Update: {}", message, e);
         }
     }
 
@@ -119,6 +124,7 @@ public class KafkaRelayService {
                 log.info("[Relay] Received Dashboard Update for User: {}", userId);
                 // Broadcast to user-specific topic
                 messagingTemplate.convertAndSend("/topic/dashboard/" + userId, message);
+                log.info("[Relay] ✅ Dashboard Update relayed to WebSocket: /topic/dashboard/{}", userId);
             } else {
                 log.warn("Invalid Dashboard Update: Missing 'userId' field");
             }

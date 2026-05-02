@@ -36,6 +36,12 @@
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

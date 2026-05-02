@@ -5,7 +5,7 @@ public final class KafkaTopics {
     }
 
     // Stock Updates
-    public static final String STOCK_UPDATE = "am-stock-update";
+    public static final String STOCK_UPDATE = "am-stock-price-update";
 
     // Portfolio Updates
     public static final String PORTFOLIO_UPDATE = "am-portfolio-stream";

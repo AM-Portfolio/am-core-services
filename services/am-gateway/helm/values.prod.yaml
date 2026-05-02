@@ -31,10 +31,12 @@ vault:
   role: "am-gateway-role"
   secretPaths:
     kafka:
-      path: "kv/prod/kafka"
+      path: "apps/data/prod/infra/kafka"
     redis:
-      path: "kv/prod/database/redis"
+      path: "apps/data/prod/infra/redis"
 
 # Non-secret env vars
 env:
   SPRING_PROFILES_ACTIVE: "prod"
+  KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"

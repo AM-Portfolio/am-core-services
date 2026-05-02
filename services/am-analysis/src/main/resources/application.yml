@@ -1,6 +1,4 @@
-INFRA_HOST: 100.72.208.15
-KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-#mongo - connection is configured via environment variable or default below
+#mongo - connection is configured via environment   variable or default below
 
 server:
   port: 8080
@@ -18,9 +16,9 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     properties:
-      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
-      sasl.jaas.config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="password123";}
+      security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
+      sasl-mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
+      sasl-jaas-config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:password123}";}
   data:
     mongodb:
       uri: ${MONGODB_CONNECTION_URL:${URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}}
@@ -35,22 +33,24 @@ spring:
 logging:
   level:
     root: INFO
-    com.am.analysis: DEBUG
-    com.am.feign: DEBUG
-    am.trade: DEBUG
-    com.am.portfolio.client.market.invoker: DEBUG
+    com.am.analysis: INFO
+    com.am.feign: INFO
+    am.trade: INFO
+    com.am.portfolio.client.market.invoker: INFO
+    org.springframework.kafka: INFO
+    org.apache.kafka: INFO
 
 am:
   analysis:
     adapter:
       market:
-        enabled: false # Enable/disable Market Event Listener
+        enabled: true # Enable/disable Market Event Listener
       portfolio:
-        enabled: false # Enable/disable Portfolio Event Listener
+        enabled: true # Enable/disable Portfolio Event Listener
       trade:
-        enabled: false # Enable/disable Trade Event Listener
+        enabled: true # Enable/disable Trade Event Listener
       ingestion:
-        enabled: false # Enable/disable Analysis Ingestion Service
+        enabled: true # Enable/disable Analysis Ingestion Service
 
   services:
     market-data:

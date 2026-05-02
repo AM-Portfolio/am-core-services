@@ -17,15 +17,17 @@ public class MarketEventListener {
 
     private final AnalysisEventMapper mapper;
     private final AnalysisIngestionService ingestionService;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "equity-price-updates", groupId = "am-analysis-group")
-    public void listen(EquityPriceUpdateEvent event) {
-        log.info("Received Market Event with {} updates", event.getEquityPrices().size());
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.STOCK_UPDATE, groupId = "am-analysis-group")
+    public void listen(String message) {
+        log.info("Received Market Event: {}", message);
         try {
+            var event = objectMapper.readValue(message, EquityPriceUpdateEvent.class);
             var entities = mapper.mapMarketEvent(event);
             entities.forEach(ingestionService::ingest);
         } catch (Exception e) {
-            log.error("Failed to process market event", e);
+            log.error("Failed to process market event: {}", message, e);
         }
     }
 }

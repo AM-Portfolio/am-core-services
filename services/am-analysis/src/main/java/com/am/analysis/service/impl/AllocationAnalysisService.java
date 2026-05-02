@@ -25,6 +25,39 @@ public class AllocationAnalysisService {
     private final AnalysisAccessValidator accessValidator;
 
     public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy) {
+        if ("ALL".equals(id) && type == AnalysisEntityType.PORTFOLIO) {
+            // Try to find a pre-calculated GLOBAL entity first
+            String globalId = "PORTFOLIO_GLOBAL_" + userId;
+            Optional<AnalysisEntity> globalOpt = repository.findById(globalId);
+            
+            if (globalOpt.isPresent() && globalOpt.get().getOwnerId().equals(userId)) {
+                log.info("Found pre-calculated GLOBAL allocation for user: {}", userId);
+                enrichWithMarketData(globalOpt.get());
+                return calculationService.calculateAllocation(globalOpt.get(), groupBy);
+            }
+
+            log.info("Performing dynamic aggregation for all portfolios for user: {}", userId);
+            List<AnalysisEntity> allPortfolios = repository.findByOwnerIdAndType(userId, type)
+                    .stream()
+                    .filter(e -> !e.getId().endsWith("_GLOBAL")) // Exclude global to avoid double counting
+                    .collect(java.util.stream.Collectors.toList());
+            
+            if (allPortfolios.isEmpty()) return AllocationResponse.builder().build();
+
+            // Create a virtual aggregated entity
+            AnalysisEntity globalEntity = AnalysisEntity.builder()
+                    .id("VIRTUAL_ALL")
+                    .type(type)
+                    .ownerId(userId)
+                    .holdings(allPortfolios.stream()
+                            .flatMap(p -> p.getHoldings().stream())
+                            .collect(java.util.stream.Collectors.toList()))
+                    .build();
+            
+            enrichWithMarketData(globalEntity);
+            return calculationService.calculateAllocation(globalEntity, groupBy);
+        }
+
         String compositeId = type.name() + "_" + id;
         Optional<AnalysisEntity> entityOpt = repository.findById(compositeId);
 
@@ -37,6 +70,10 @@ public class AllocationAnalysisService {
         }
         
         log.warn("Entity not found for Analysis: ID={}, Type={}, User={}", id, type, userId);
+        return emptyAllocation(id);
+    }
+
+    private AllocationResponse emptyAllocation(String id) {
         return AllocationResponse.builder()
                 .portfolioId(id)
                 .sectors(List.of())
@@ -49,13 +86,23 @@ public class AllocationAnalysisService {
             return;
         }
 
-        List<String> symbols = entity.getHoldings().stream()
+        // Only fetch metadata for symbols that don't have sector/industry info yet
+        List<String> symbolsToFetch = entity.getHoldings().stream()
+                .filter(h -> h.getClassification() == null || 
+                            h.getClassification().getSector() == null || 
+                            h.getClassification().getSector().isEmpty())
                 .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
                 .map(h -> h.getIdentity().getSymbol())
                 .distinct()
                 .toList();
 
-        Map<String, com.am.portfolio.client.market.model.SecurityMetadata> marketData = marketDataClientService.searchSecurities(symbols);
+        if (symbolsToFetch.isEmpty()) {
+            log.debug("All holdings already have metadata, skipping enrichment for entity: {}", entity.getId());
+            return;
+        }
+
+        log.info("Fetching missing market metadata for {} symbols in entity: {}", symbolsToFetch.size(), entity.getId());
+        Map<String, com.am.portfolio.client.market.model.SecurityMetadata> marketData = marketDataClientService.searchSecurities(symbolsToFetch);
 
         entity.getHoldings().forEach(h -> {
             if (h.getIdentity() != null && marketData.containsKey(h.getIdentity().getSymbol())) {

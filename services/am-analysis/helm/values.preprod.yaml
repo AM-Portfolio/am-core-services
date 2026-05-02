@@ -22,11 +22,11 @@ vault:
   enabled: true
   secretPaths:
     mongodb:
-      path: "apps/preprod/infra/mongodb"
+      path: "apps/data/preprod/infra/mongodb"
     kafka:
-      path: "apps/preprod/infra/kafka"
+      path: "apps/data/preprod/infra/kafka"
     redis:
-      path: "apps/preprod/infra/redis"
+      path: "apps/data/preprod/infra/redis"
 
 # Non-secret runtime config ONLY
 # Anything available in Vault must NOT appear here
