@@ -17,7 +17,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // SockJS endpoint (fallback for browsers that don't support WebSocket)
+        // SockJS endpoint (fallback for browsers that do not support WebSocket)
         registry.addEndpoint("/v1/streams-fallback")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
