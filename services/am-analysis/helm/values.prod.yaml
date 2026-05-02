@@ -26,11 +26,12 @@ vault:
   enabled: true
   role: "am-analysis-role"
   secretPaths:
-    kafka: "kv/prod/kafka"
-    mongodb: "kv/prod/database/mongo"
+    kafka: "apps/data/prod/infra/kafka"
+    mongodb: "apps/data/prod/infra/mongodb"
 
 # Non-secret env vars
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MARKET_DATA_URL: "http://am-market-data.am-apps-prod.svc.cluster.local:8092"

@@ -42,6 +42,19 @@ public class KafkaConsumerConfig {
         
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        
+        // Ensure security properties are correctly mapped if provided via spring.kafka.properties
+        Map<String, String> commonProps = kafkaProperties.getProperties();
+        if (commonProps.containsKey("security-protocol")) {
+            props.put("security.protocol", commonProps.get("security-protocol"));
+        }
+        if (commonProps.containsKey("sasl-mechanism")) {
+            props.put("sasl.mechanism", commonProps.get("sasl-mechanism"));
+        }
+        if (commonProps.containsKey("sasl-jaas-config")) {
+            props.put("sasl.jaas.config", commonProps.get("sasl-jaas-config"));
+        }
+
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return new DefaultKafkaConsumerFactory<>(props);
     }
