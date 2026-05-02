@@ -25,6 +25,27 @@ public class AllocationAnalysisService {
     private final AnalysisAccessValidator accessValidator;
 
     public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy) {
+        if (id == null || id.isEmpty() || "ALL".equalsIgnoreCase(id)) {
+            log.info("Calculating GLOBAL allocation for user: {}", userId);
+            List<AnalysisEntity> allEntities = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+            if (allEntities.isEmpty()) {
+                return emptyAllocation(userId);
+            }
+            
+            // Merge all holdings into a single virtual entity for calculation
+            AnalysisEntity globalEntity = AnalysisEntity.builder()
+                    .id("GLOBAL_" + userId)
+                    .type(AnalysisEntityType.PORTFOLIO)
+                    .ownerId(userId)
+                    .holdings(allEntities.stream()
+                            .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
+                            .collect(java.util.stream.Collectors.toList()))
+                    .build();
+            
+            enrichWithMarketData(globalEntity);
+            return calculationService.calculateAllocation(globalEntity, groupBy);
+        }
+
         String compositeId = type.name() + "_" + id;
         Optional<AnalysisEntity> entityOpt = repository.findById(compositeId);
 
@@ -37,6 +58,10 @@ public class AllocationAnalysisService {
         }
         
         log.warn("Entity not found for Analysis: ID={}, Type={}, User={}", id, type, userId);
+        return emptyAllocation(id);
+    }
+
+    private AllocationResponse emptyAllocation(String id) {
         return AllocationResponse.builder()
                 .portfolioId(id)
                 .sectors(List.of())
