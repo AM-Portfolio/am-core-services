@@ -43,20 +43,23 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         
-        // Ensure security properties are correctly mapped if provided via spring.kafka.properties
+        // Robustly map security properties from kebab-case (Spring) to dot-notation (Kafka)
         Map<String, String> commonProps = kafkaProperties.getProperties();
-        if (commonProps.containsKey("security-protocol")) {
-            props.put("security.protocol", commonProps.get("security-protocol"));
-        }
-        if (commonProps.containsKey("sasl-mechanism")) {
-            props.put("sasl.mechanism", commonProps.get("sasl-mechanism"));
-        }
-        if (commonProps.containsKey("sasl-jaas-config")) {
-            props.put("sasl.jaas.config", commonProps.get("sasl-jaas-config"));
-        }
+        mapSecurityProperty(commonProps, "security-protocol", "security.protocol", props);
+        mapSecurityProperty(commonProps, "security.protocol", "security.protocol", props);
+        mapSecurityProperty(commonProps, "sasl-mechanism", "sasl.mechanism", props);
+        mapSecurityProperty(commonProps, "sasl.mechanism", "sasl.mechanism", props);
+        mapSecurityProperty(commonProps, "sasl-jaas-config", "sasl.jaas.config", props);
+        mapSecurityProperty(commonProps, "sasl.jaas.config", "sasl.jaas.config", props);
 
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return new DefaultKafkaConsumerFactory<>(props);
+    }
+
+    private void mapSecurityProperty(Map<String, String> source, String sourceKey, String targetKey, Map<String, Object> target) {
+        if (source.containsKey(sourceKey)) {
+            target.put(targetKey, source.get(sourceKey));
+        }
     }
 
     @Bean
@@ -72,15 +75,12 @@ public class KafkaConsumerConfig {
         
         // Ensure security properties are correctly mapped if provided via spring.kafka.properties
         Map<String, String> commonProps = kafkaProperties.getProperties();
-        if (commonProps.containsKey("security-protocol")) {
-            props.put("security.protocol", commonProps.get("security-protocol"));
-        }
-        if (commonProps.containsKey("sasl-mechanism")) {
-            props.put("sasl.mechanism", commonProps.get("sasl-mechanism"));
-        }
-        if (commonProps.containsKey("sasl-jaas-config")) {
-            props.put("sasl.jaas.config", commonProps.get("sasl-jaas-config"));
-        }
+        mapSecurityProperty(commonProps, "security-protocol", "security.protocol", props);
+        mapSecurityProperty(commonProps, "security.protocol", "security.protocol", props);
+        mapSecurityProperty(commonProps, "sasl-mechanism", "sasl.mechanism", props);
+        mapSecurityProperty(commonProps, "sasl.mechanism", "sasl.mechanism", props);
+        mapSecurityProperty(commonProps, "sasl-jaas-config", "sasl.jaas.config", props);
+        mapSecurityProperty(commonProps, "sasl.jaas.config", "sasl.jaas.config", props);
 
         return new org.springframework.kafka.core.DefaultKafkaProducerFactory<>(props);
     }

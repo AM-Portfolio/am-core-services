@@ -39,10 +39,8 @@ spring:
 logging:
   level:
     root: INFO
-    org.springframework.web.socket: DEBUG
-    org.springframework.messaging: DEBUG
-    com.am.gateway: DEBUG
-    org.springframework.kafka: DEBUG
+    com.am.gateway: INFO
+    org.springframework.kafka: INFO
     org.apache.kafka: INFO
 
 # Actuator Configuration

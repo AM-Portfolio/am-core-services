@@ -36,11 +36,11 @@ spring:
 logging:
   level:
     root: INFO
-    com.am.analysis: DEBUG
-    com.am.feign: DEBUG
-    am.trade: DEBUG
-    com.am.portfolio.client.market.invoker: DEBUG
-    org.springframework.kafka: DEBUG
+    com.am.analysis: INFO
+    com.am.feign: INFO
+    am.trade: INFO
+    com.am.portfolio.client.market.invoker: INFO
+    org.springframework.kafka: INFO
     org.apache.kafka: INFO
 
 am:
