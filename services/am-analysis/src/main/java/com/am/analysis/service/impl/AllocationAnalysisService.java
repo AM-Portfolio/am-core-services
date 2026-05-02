@@ -86,13 +86,23 @@ public class AllocationAnalysisService {
             return;
         }
 
-        List<String> symbols = entity.getHoldings().stream()
+        // Only fetch metadata for symbols that don't have sector/industry info yet
+        List<String> symbolsToFetch = entity.getHoldings().stream()
+                .filter(h -> h.getClassification() == null || 
+                            h.getClassification().getSector() == null || 
+                            h.getClassification().getSector().isEmpty())
                 .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
                 .map(h -> h.getIdentity().getSymbol())
                 .distinct()
                 .toList();
 
-        Map<String, com.am.portfolio.client.market.model.SecurityMetadata> marketData = marketDataClientService.searchSecurities(symbols);
+        if (symbolsToFetch.isEmpty()) {
+            log.debug("All holdings already have metadata, skipping enrichment for entity: {}", entity.getId());
+            return;
+        }
+
+        log.info("Fetching missing market metadata for {} symbols in entity: {}", symbolsToFetch.size(), entity.getId());
+        Map<String, com.am.portfolio.client.market.model.SecurityMetadata> marketData = marketDataClientService.searchSecurities(symbolsToFetch);
 
         entity.getHoldings().forEach(h -> {
             if (h.getIdentity() != null && marketData.containsKey(h.getIdentity().getSymbol())) {
