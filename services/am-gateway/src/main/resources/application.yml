@@ -42,6 +42,8 @@ logging:
     org.springframework.web.socket: DEBUG
     org.springframework.messaging: DEBUG
     com.am.gateway: DEBUG
+    org.springframework.kafka: DEBUG
+    org.apache.kafka: INFO
 
 # Actuator Configuration
 management:

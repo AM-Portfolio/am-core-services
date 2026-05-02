@@ -40,6 +40,8 @@ logging:
     com.am.feign: DEBUG
     am.trade: DEBUG
     com.am.portfolio.client.market.invoker: DEBUG
+    org.springframework.kafka: DEBUG
+    org.apache.kafka: INFO
 
 am:
   analysis:

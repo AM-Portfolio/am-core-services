@@ -65,4 +65,28 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
+
+    @Bean
+    public org.springframework.kafka.core.ProducerFactory<String, String> producerFactory() {
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildProducerProperties());
+        
+        // Ensure security properties are correctly mapped if provided via spring.kafka.properties
+        Map<String, String> commonProps = kafkaProperties.getProperties();
+        if (commonProps.containsKey("security-protocol")) {
+            props.put("security.protocol", commonProps.get("security-protocol"));
+        }
+        if (commonProps.containsKey("sasl-mechanism")) {
+            props.put("sasl.mechanism", commonProps.get("sasl-mechanism"));
+        }
+        if (commonProps.containsKey("sasl-jaas-config")) {
+            props.put("sasl.jaas.config", commonProps.get("sasl-jaas-config"));
+        }
+
+        return new org.springframework.kafka.core.DefaultKafkaProducerFactory<>(props);
+    }
+
+    @Bean
+    public org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate() {
+        return new org.springframework.kafka.core.KafkaTemplate<>(producerFactory());
+    }
 }
