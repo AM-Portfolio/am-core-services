@@ -1,5 +1,3 @@
-INFRA_HOST: 100.72.208.15
-KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 #mongo - connection is configured via environment   variable or default below
 
 server:
@@ -47,13 +45,13 @@ am:
   analysis:
     adapter:
       market:
-        enabled: false # Enable/disable Market Event Listener
+        enabled: true # Enable/disable Market Event Listener
       portfolio:
-        enabled: false # Enable/disable Portfolio Event Listener
+        enabled: true # Enable/disable Portfolio Event Listener
       trade:
-        enabled: false # Enable/disable Trade Event Listener
+        enabled: true # Enable/disable Trade Event Listener
       ingestion:
-        enabled: false # Enable/disable Analysis Ingestion Service
+        enabled: true # Enable/disable Analysis Ingestion Service
 
   services:
     market-data:
