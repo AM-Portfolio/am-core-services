@@ -42,9 +42,9 @@ public class PortfolioController {
         String userId = payload.get("userId");
         String portfolioId = payload.get("portfolioId");
         String sessionId = headerAccessor.getSessionId();
-
-        log.info("[PortfolioController] Received /subscribe for userId: {}, portfolioId: {}, sessionId: {}", 
-                userId, portfolioId, sessionId);
+        
+        log.info("[PortfolioController] 📥 Received /subscribe message - Payload: {}, SessionId: {}", 
+                payload, headerAccessor.getSessionId());
 
         if (userId == null) {
             log.warn("[PortfolioController] Subscribe missing userId in payload: {}", payload);

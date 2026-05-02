@@ -119,6 +119,7 @@ public class KafkaRelayService {
                 log.info("[Relay] Received Dashboard Update for User: {}", userId);
                 // Broadcast to user-specific topic
                 messagingTemplate.convertAndSend("/topic/dashboard/" + userId, message);
+                log.info("[Relay] ✅ Dashboard Update relayed to WebSocket: /topic/dashboard/{}", userId);
             } else {
                 log.warn("Invalid Dashboard Update: Missing 'userId' field");
             }

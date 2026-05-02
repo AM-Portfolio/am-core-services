@@ -19,9 +19,9 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     properties:
-      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
-      sasl.jaas.config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="password123";}
+      security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
+      sasl-mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
+      sasl-jaas-config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:password123}";}
   data:
     mongodb:
       uri: ${MONGODB_CONNECTION_URL:${URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}}

@@ -18,7 +18,7 @@ public class MarketEventListener {
     private final AnalysisEventMapper mapper;
     private final AnalysisIngestionService ingestionService;
 
-    @KafkaListener(topics = "equity-price-updates", groupId = "am-analysis-group")
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.STOCK_UPDATE, groupId = "am-analysis-group")
     public void listen(EquityPriceUpdateEvent event) {
         log.info("Received Market Event with {} updates", event.getEquityPrices().size());
         try {

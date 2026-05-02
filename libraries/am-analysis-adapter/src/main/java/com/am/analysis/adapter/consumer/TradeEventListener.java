@@ -18,7 +18,7 @@ public class TradeEventListener {
     private final AnalysisEventMapper mapper;
     private final AnalysisIngestionService ingestionService;
 
-    @KafkaListener(topics = "trade-updates", groupId = "am-analysis-group")
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.TRADE_UPDATE, groupId = "am-analysis-group")
     public void listen(TradeEvent event) {
         log.info("Received Trade Event: {}", event.getTradeId());
         try {
