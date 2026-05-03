@@ -13,6 +13,8 @@
     "run:mcp:inspect": "cd services/am-mcp-server && npm run inspect",
     "dev": "npx -y concurrently -n \"gateway,analysis,mcp\" -c \"cyan,magenta,yellow\" \"npm run run:gateway\" \"npm run run:analysis\" \"npm run run:mcp\"",
     "vault:sync": "python3 scripts/vault_sync.py --sync",
+    "infra:up": "docker compose -f docker-compose-infra.yml up -d",
+    "infra:down": "docker compose -f docker-compose-infra.yml down",
     "test": "mvn test",
     "clean": "mvn clean"
   },

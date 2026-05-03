@@ -12,7 +12,7 @@ target/
 .DS_Store
 
 # Environment
-.env
+.env*
 
 # Test Reports (generated at runtime)
 **/surefire-reports/

@@ -65,9 +65,14 @@ public class AnalysisController {
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
             @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
-        log.info("[AnalysisController] GET /dashboard/top-movers for userId: {}, timeFrame: {}", userId, timeFrame);
-        return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
-                AnalysisGroupBy.STOCK));
+        try {
+            log.info("[AnalysisController] GET /dashboard/top-movers for userId: {}, timeFrame: {}", userId, timeFrame);
+            return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
+                    AnalysisGroupBy.STOCK));
+        } catch (Exception e) {
+            log.error("[AnalysisController] CRITICAL ERROR in getDashboardTopMovers for user: {}. Error: {}", userId, e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/dashboard/performance")

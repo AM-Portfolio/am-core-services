@@ -40,8 +40,10 @@ public class TopMoversAnalysisService {
             List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
             
             List<com.am.analysis.adapter.model.AnalysisHolding> allHoldings = portfolios.stream()
+                .filter(java.util.Objects::nonNull)
                 .filter(p -> p.getHoldings() != null)
                 .flatMap(p -> p.getHoldings().stream())
+                .filter(java.util.Objects::nonNull)
                 .collect(java.util.stream.Collectors.toList());
 
             double totalPortfolioValue = portfolios.stream()
@@ -69,15 +71,19 @@ public class TopMoversAnalysisService {
             boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
 
             List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
+                    .filter(java.util.Objects::nonNull)
                     .sorted((h1, h2) -> Double.compare(getPercentage(h2, useDaily), getPercentage(h1, useDaily))) // Descending
                     .limit(10)
                     .toList();
             
             List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
+                    .filter(java.util.Objects::nonNull)
                     .sorted((h1, h2) -> Double.compare(getPercentage(h1, useDaily), getPercentage(h2, useDaily))) // Ascending
                     .limit(10)
                     .toList();
 
+            log.debug("Top Movers - Found {} gainers and {} losers", gainers.size(), losers.size());
+            
             return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue);
         }
 
@@ -109,11 +115,13 @@ public class TopMoversAnalysisService {
                 boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
 
                 List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
+                        .filter(java.util.Objects::nonNull)
                         .sorted((h1, h2) -> Double.compare(getPercentage(h2, useDaily), getPercentage(h1, useDaily))) // Descending
                         .limit(10)
                         .toList();
                 
                 List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
+                        .filter(java.util.Objects::nonNull)
                         .sorted((h1, h2) -> Double.compare(getPercentage(h1, useDaily), getPercentage(h2, useDaily))) // Ascending
                         .limit(10)
                         .toList();
@@ -145,9 +153,22 @@ public class TopMoversAnalysisService {
             List<com.am.analysis.adapter.model.AnalysisHolding> losers,
             boolean useDaily,
             double totalPortfolioValue) {
+        
+        // Triple-Safety: Ensure lists are never null
+        List<com.am.analysis.adapter.model.AnalysisHolding> safeGainers = gainers != null ? gainers : List.of();
+        List<com.am.analysis.adapter.model.AnalysisHolding> safeLosers = losers != null ? losers : List.of();
+
         return TopMoversResponse.builder()
-                .gainers(gainers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
-                .losers(losers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
+                .gainers(safeGainers.stream()
+                        .filter(java.util.Objects::nonNull)
+                        .map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue))
+                        .filter(java.util.Objects::nonNull)
+                        .toList())
+                .losers(safeLosers.stream()
+                        .filter(java.util.Objects::nonNull)
+                        .map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue))
+                        .filter(java.util.Objects::nonNull)
+                        .toList())
                 .build();
     }
 
@@ -170,9 +191,13 @@ public class TopMoversAnalysisService {
     }
 
     private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily, double totalPortfolioValue) {
-        String symbol = h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN";
+        if (h == null) return null;
+
+        String symbol = (h.getIdentity() != null && h.getIdentity().getSymbol() != null) ? h.getIdentity().getSymbol() : "UNKNOWN";
         String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
-        Double currentPrice = (h.getMarket() != null) ? h.getMarket().getCurrentPrice() : 0.0;
+        
+        // Fix: Explicitly check for null before unboxing to avoid NPE
+        Double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
         double pct = 0.0;
         double amt = 0.0;
@@ -205,7 +230,7 @@ public class TopMoversAnalysisService {
                 .sector(h.getClassification() != null ? h.getClassification().getSector() : "Unknown")
                 .assetClass(h.getIdentity() != null ? h.getIdentity().getAssetClass() : "Unknown")
                 .marketCapType(h.getClassification() != null ? h.getClassification().getMarketCapType() : "Unknown")
-                .quantity(h.getInvestment() != null ? h.getInvestment().getQuantity() : 0.0)
+                .quantity(h.getInvestment() != null && h.getInvestment().getQuantity() != null ? h.getInvestment().getQuantity() : 0.0)
                 .currentValue(BigDecimal.valueOf(val).setScale(2, java.math.RoundingMode.HALF_UP))
                 .investedValue(BigDecimal.valueOf(invested).setScale(2, java.math.RoundingMode.HALF_UP))
                 .allocationPercentage(BigDecimal.valueOf(allocPct).setScale(2, java.math.RoundingMode.HALF_UP).doubleValue())
