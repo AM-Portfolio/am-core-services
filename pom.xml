@@ -43,6 +43,7 @@
     <modules>
         <!-- Libraries Layer -->
         <module>libraries/am-common-lib</module>
+        <module>libraries/am-common-event-model</module>
         <module>libraries/am-kafka-lib</module>
         <module>libraries/am-analysis-adapter</module>
         <module>libraries/am-security-lib</module>
@@ -52,6 +53,7 @@
         <module>libraries/am-trade-client-lib</module>
         <module>libraries/am-portfolio-client-lib</module>
         <module>libraries/am-analysis-client-lib</module>
+        <module>libraries/am-sdk-verifier/java-verifier</module>
         
         <!-- Domain Layer -->
         <module>domain/am-market-domain</module>

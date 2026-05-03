@@ -7,12 +7,14 @@
     "build:core": "mvn clean install -s maven-settings.xml -DskipTests",
     "build:libs": "mvn clean install -pl libraries/* -am -s maven-settings.xml -DskipTests",
     "build:domain": "mvn clean install -pl domain/* -am -s maven-settings.xml -DskipTests",
+    "build:lib": "bash -c 'mvn clean install -pl libraries/\"$1\" -am -s maven-settings.xml -DskipTests' --",
     "run:gateway": "mvn spring-boot:run -pl services/am-gateway -s maven-settings.xml",
     "run:analysis": "mvn spring-boot:run -pl services/am-analysis -s maven-settings.xml",
     "run:mcp": "mvn spring-boot:run -pl services/am-mcp-server -s maven-settings.xml",
     "run:mcp:inspect": "cd services/am-mcp-server && npm run inspect",
     "dev": "npx -y concurrently -n \"gateway,analysis,mcp\" -c \"cyan,magenta,yellow\" \"npm run run:gateway\" \"npm run run:analysis\" \"npm run run:mcp\"",
     "vault:sync": "python3 scripts/vault_sync.py --sync",
+    "infra:up": "docker compose -f docker-compose-infra.yml up -d",
     "test": "mvn test",
     "clean": "mvn clean"
   },
@@ -20,3 +22,4 @@
     "concurrently": "^8.2.2"
   }
 }
+

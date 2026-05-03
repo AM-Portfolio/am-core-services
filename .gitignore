@@ -2,6 +2,9 @@
 target/
 *.log
 *.txt
+reference.txt
+updation_reference.txt
+
 
 # IDE
 .idea/
@@ -32,3 +35,8 @@ replay_pid*.log
 .gradle/
 build/
 maven-settings.xml
+
+# Custom Ignores
+vault.txt
+testing_guide.md
+
