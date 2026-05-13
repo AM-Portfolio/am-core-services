@@ -1,6 +1,9 @@
 package com.am.gateway.config;
 
 import com.am.gateway.security.JwtUtilMock;
+import com.am.observability.flow.FlowLogger;
+import com.am.observability.flow.FlowSpan;
+import com.am.observability.stomp.StompTracingChannelInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +17,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.security.Principal;
 import java.util.List;
 
 @Configuration
@@ -23,47 +27,51 @@ import java.util.List;
 public class SecurityConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtUtilMock jwtUtil;
+    private final StompTracingChannelInterceptor stompTracingInterceptor;
+    private final FlowLogger flowLogger;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
+        // Tracing interceptor runs first so MDC is populated for the security check below.
+        registration.interceptors(stompTracingInterceptor, new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                // Defensive null check
-                if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    List<String> authHeader = accessor.getNativeHeader("Authorization");
-                    if (authHeader != null && !authHeader.isEmpty()) {
-                        String token = authHeader.get(0);
-                        // Strip 'Bearer ' prefix if present for cleaner validation
-                        if (token.startsWith("Bearer ")) {
-                            token = token.substring(7);
-                        }
-
-                        if (jwtUtil.validateToken(token)) {
-                            // Valid
-                            String userId = jwtUtil.getUserId(token);
-                            if (userId != null) {
-                                // Create a custom Principal without Spring Security dependency
-                                java.security.Principal userPrincipal = new java.security.Principal() {
-                                    @Override
-                                    public String getName() {
-                                        return userId;
-                                    }
-                                };
-                                accessor.setUser(userPrincipal);
-                                log.info("Client Connected: {} | User: {}", accessor.getSessionId(), userId);
-                            } else {
-                                log.warn("Token valid but no userId found. Session: {}", accessor.getSessionId());
-                            }
-                            return message;
-                        }
-                    }
-                    log.warn("Unauthorized WebSocket Connection Attempt: Session {}", accessor.getSessionId());
-                    throw new IllegalArgumentException("Unauthorized");
+                if (accessor == null || !StompCommand.CONNECT.equals(accessor.getCommand())) {
+                    return message;
                 }
-                return message;
+
+                String sessionId = accessor.getSessionId();
+                try (FlowSpan span = flowLogger.start("gateway.stomp.connect",
+                        "sessionId", sessionId)) {
+
+                    List<String> authHeader = accessor.getNativeHeader("Authorization");
+                    if (authHeader == null || authHeader.isEmpty()) {
+                        flowLogger.fail(span, null, "reason", "missing_authorization");
+                        throw new IllegalArgumentException("Unauthorized");
+                    }
+                    String token = authHeader.get(0);
+                    if (token.startsWith("Bearer ")) {
+                        token = token.substring(7);
+                    }
+
+                    if (!jwtUtil.validateToken(token)) {
+                        flowLogger.fail(span, null, "reason", "invalid_token");
+                        throw new IllegalArgumentException("Unauthorized");
+                    }
+
+                    String userId = jwtUtil.getUserId(token);
+                    if (userId == null) {
+                        flowLogger.fail(span, null, "reason", "token_missing_user");
+                        throw new IllegalArgumentException("Unauthorized");
+                    }
+
+                    Principal userPrincipal = () -> userId;
+                    accessor.setUser(userPrincipal);
+                    flowLogger.complete(span, "userId", userId);
+                    return message;
+                }
             }
         });
     }

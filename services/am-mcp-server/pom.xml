@@ -109,6 +109,12 @@
             <artifactId>httpclient5</artifactId>
         </dependency>
 
+        <!-- ── Observability (tracing + JSON logs) ── -->
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-observability-lib</artifactId>
+        </dependency>
+
         <!-- ── Internal SDKs (zero raw HTTP for internal services) ── -->
         <dependency>
             <groupId>com.am.libraries</groupId>

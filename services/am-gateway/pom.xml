@@ -26,6 +26,10 @@
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
+            <artifactId>am-observability-lib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.am.libraries</groupId>
             <artifactId>am-kafka-lib</artifactId>
         </dependency>
         <dependency>

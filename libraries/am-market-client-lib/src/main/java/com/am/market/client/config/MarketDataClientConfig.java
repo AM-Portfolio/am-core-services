@@ -3,17 +3,22 @@ package com.am.market.client.config;
 import com.am.portfolio.client.market.api.MarketDataApi;
 import com.am.portfolio.client.market.api.SecurityExplorerApi;
 import com.am.portfolio.client.market.invoker.ApiClient;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.http.HttpRequest;
+import java.util.function.Consumer;
 
 @Configuration
 public class MarketDataClientConfig {
 
     @Bean
     @ConditionalOnProperty(name = "am.services.market-data.url", matchIfMissing = false)
-    public ApiClient marketDataApiClient(@Value("${am.services.market-data.url}") String marketDataUrl) {
+    public ApiClient marketDataApiClient(@Value("${am.services.market-data.url}") String marketDataUrl,
+                                         ObjectProvider<Consumer<HttpRequest.Builder>> traceInterceptorProvider) {
         ApiClient apiClient = new ApiClient();
         apiClient.updateBaseUri(marketDataUrl);
 
@@ -24,6 +29,11 @@ public class MarketDataClientConfig {
         mapper.registerModule(mixinModule);
 
         apiClient.setObjectMapper(mapper);
+
+        Consumer<HttpRequest.Builder> traceInterceptor = traceInterceptorProvider.getIfAvailable();
+        if (traceInterceptor != null) {
+            apiClient.setRequestInterceptor(traceInterceptor);
+        }
 
         return apiClient;
     }

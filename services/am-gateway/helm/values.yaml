@@ -66,3 +66,5 @@ env:
   REDIS_HOST: "localhost"
   REDIS_PORT: "6379"
   REDIS_PASSWORD: ""
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces"
+  TRACING_SAMPLING_PROBABILITY: "0.1"
