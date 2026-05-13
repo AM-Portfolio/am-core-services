@@ -35,6 +35,7 @@ jobs:
       portfolio-client-lib: ${{ steps.check.outputs.portfolio-client-lib }}
       security-lib: ${{ steps.check.outputs.security-lib }}
       trade-client-lib: ${{ steps.check.outputs.trade-client-lib }}
+      observability-lib: ${{ steps.check.outputs.observability-lib }}
       market-domain: ${{ steps.check.outputs.market-domain }}
       portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
       trade-domain: ${{ steps.check.outputs.trade-domain }}
@@ -81,6 +82,7 @@ jobs:
           echo "portfolio-client-lib=$(check 'libraries/am-portfolio-client-lib/')" >> $GITHUB_OUTPUT
           echo "security-lib=$(check 'libraries/am-security-lib/')" >> $GITHUB_OUTPUT
           echo "trade-client-lib=$(check 'libraries/am-trade-client-lib/')" >> $GITHUB_OUTPUT
+          echo "observability-lib=$(check 'libraries/am-observability-lib/')" >> $GITHUB_OUTPUT
 
           # Domains
           echo "market-domain=$(check 'domain/am-market-domain/')" >> $GITHUB_OUTPUT
@@ -182,6 +184,20 @@ jobs:
       language: "java"
       working_directory: "libraries/am-feign-lib"
       sdk_name: "am-feign-lib"
+    secrets: inherit
+
+  publish-observability-lib:
+    name: Publish Observability Lib
+    needs: publish-common-lib
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-observability-lib"
+      sdk_name: "am-observability-lib"
     secrets: inherit
 
   publish-cache-lib:
