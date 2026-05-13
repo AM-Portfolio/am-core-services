@@ -28,18 +28,29 @@ public class TradeClientService {
      */
     public List<TradePortfolio> getPortfolios(String userId) {
         try {
-            // In a real implementation, we would filter by userId
-            // For now, we fetch all and map them
-            // Using getAllPortfolios with a large page size to get everything
-            Map<String, Object> response = tradeSdk.getPortfolioClient().getAllPortfolios(0, 100); 
-            // Parsing log here is complex without exact SDK return structure, 
-            // assuming we get a list or map that we can adapt.
-            // This is a placeholder for the actual mapping logic once SDK structure is confirmed.
-            return new ArrayList<>(); 
+            log.debug("Fetching portfolios for user: {}", userId);
+            List<Map<String, Object>> portfolioData = tradeSdk.getPortfolioClient().getPortfoliosByOwner(userId);
+            
+            if (portfolioData == null || portfolioData.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return portfolioData.stream()
+                .map(this::mapToTradePortfolio)
+                .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Failed to fetch trade portfolios for user: {}", userId, e);
             return Collections.emptyList();
         }
+    }
+
+    private TradePortfolio mapToTradePortfolio(Map<String, Object> data) {
+        return TradePortfolio.builder()
+            .id((String) data.get("portfolioId"))
+            .name((String) data.get("name"))
+            .type((String) data.get("type"))
+            .ownerId((String) data.get("ownerId"))
+            .build();
     }
 
     /**

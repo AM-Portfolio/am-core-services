@@ -65,8 +65,13 @@ public class AnalysisAggregator {
         for (AnalysisEntity entity : amPortfolios) {
             if (entity.getPerformance() == null) continue;
 
-            BigDecimal val  = BigDecimal.valueOf(entity.getPerformance().getTotalValue());
-            BigDecimal inv  = BigDecimal.valueOf(entity.getPerformance().getTotalInvestment());
+            Double valRaw = entity.getPerformance().getTotalValue();
+            Double invRaw = entity.getPerformance().getTotalInvestment();
+            
+            if (valRaw == null || invRaw == null) continue;
+
+            BigDecimal val  = BigDecimal.valueOf(valRaw);
+            BigDecimal inv  = BigDecimal.valueOf(invRaw);
             BigDecimal dc   = entity.getPerformance().getDayChange() != null
                     ? BigDecimal.valueOf(entity.getPerformance().getDayChange()) : BigDecimal.ZERO;
             BigDecimal gl   = val.subtract(inv);
