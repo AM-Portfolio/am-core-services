@@ -42,6 +42,12 @@ logging:
     org.apache.kafka: INFO
 
 am:
+  observability:
+    enabled: ${AM_OBSERVABILITY_ENABLED:true}
+    request-log:
+      enabled: ${AM_OBSERVABILITY_REQUEST_LOG_ENABLED:true}
+    sanitize:
+      preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
   analysis:
     adapter:
       market:
@@ -128,9 +134,3 @@ otel:
     name: ${spring.application.name}
     namespace: am-core-services
 
-  observability:
-    enabled: ${AM_OBSERVABILITY_ENABLED:true}
-    request-log:
-      enabled: ${AM_OBSERVABILITY_REQUEST_LOG_ENABLED:true}
-    sanitize:
-      preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
