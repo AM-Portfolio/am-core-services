@@ -10,6 +10,8 @@ spring:
     name: am-analysis
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      auto-startup: ${AM_KAFKA_ENABLED:true}
     trade-topic: ${KAFKA_TRADE_TOPIC:am-trade}
     consumer:
       group-id: am-analysis-group
@@ -42,6 +44,8 @@ logging:
     org.apache.kafka: INFO
 
 am:
+  kafka:
+    enabled: ${AM_KAFKA_ENABLED:true}
   observability:
     enabled: ${AM_OBSERVABILITY_ENABLED:true}
     request-log:

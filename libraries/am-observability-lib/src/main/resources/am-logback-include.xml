@@ -211,13 +211,13 @@
         </root>
     </springProfile>
 
-    <springProfile name="logback-text">
+    <springProfile name="logback-text | local">
         <root level="INFO">
             <appender-ref ref="TEXT_STDOUT"/>
         </root>
     </springProfile>
 
-    <springProfile name="!mcp-stdio &amp; !logback-text">
+    <springProfile name="!mcp-stdio &amp; !logback-text &amp; !local">
         <root level="INFO">
             <appender-ref ref="JSON_STDOUT"/>
             <appender-ref ref="JSON_FILE"/>

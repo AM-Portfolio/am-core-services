@@ -5,8 +5,9 @@
   "scripts": {
     "info": "echo 'AM Core Services Monorepo' && echo 'Layers: libraries, domain, services'",
     "build:core": "mvn clean install -s maven-settings.xml -DskipTests",
-    "build:libs": "mvn clean install -pl libraries/* -am -s maven-settings.xml -DskipTests",
-    "build:domain": "mvn clean install -pl domain/* -am -s maven-settings.xml -DskipTests",
+    "build:libs": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py libraries/",
+    "build:domain": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py domain/",
+    "build:services": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py services/",
     "run:gateway": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-gateway -s maven-settings.xml",
     "run:analysis": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-analysis -s maven-settings.xml",
     "run:mcp": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-mcp-server -s maven-settings.xml",
