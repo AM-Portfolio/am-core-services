@@ -12,7 +12,6 @@ resources:
     cpu: 250m
     memory: 256Mi
 
- proebs: # Renaming or removing the old block to avoid conflict旋
 
 # Vault enabled — role and token management now handled centrally
 vault:
@@ -52,7 +51,7 @@ ingress:
   enabled: true
   className: "traefik"
   annotations:
-    kubernetes.io/ingress.class: null
+    kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares: >-
       am-apps-dev-dev-global-cors@kubernetescrd,
