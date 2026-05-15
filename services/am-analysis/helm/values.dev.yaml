@@ -52,6 +52,7 @@ ingress:
   enabled: true
   className: "traefik"
   annotations:
+    kubernetes.io/ingress.class: null
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares: >-
       am-apps-dev-dev-global-cors@kubernetescrd,

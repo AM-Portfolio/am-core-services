@@ -12,11 +12,7 @@ resources:
     cpu: 250m
     memory: 256Mi
 
-probes:
-  liveness:
-    path: "/actuator/health"
-  readiness:
-    path: "/actuator/health"
+ proebs: # Renaming or removing the old block to avoid conflict旋
 
 # Vault enabled — role and token management now handled centrally
 vault:
@@ -56,6 +52,7 @@ ingress:
   enabled: true
   className: "traefik"
   annotations:
+    kubernetes.io/ingress.class: null
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares: >-
       am-apps-dev-dev-global-cors@kubernetescrd,
