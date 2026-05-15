@@ -16,6 +16,7 @@ RUN apt-get update && \
 ENV SPRING_PROFILES_ACTIVE=docker
 ENV TZ=Asia/Kolkata
 
+# Expose port 8080
 EXPOSE 8080
 
 # Set permissions for /app
