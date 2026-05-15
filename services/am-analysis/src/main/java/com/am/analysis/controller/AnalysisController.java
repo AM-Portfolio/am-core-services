@@ -3,7 +3,6 @@ package com.am.analysis.controller;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.dto.ActivityFilter;
-import com.am.analysis.dto.ActivityItem;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.dto.DashboardSummary;
 import com.am.analysis.dto.PerformanceResponse;
@@ -12,12 +11,22 @@ import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.AnalysisService;
 import com.am.analysis.service.DashboardAnalysisService;
 import com.am.domain.trade.PortfolioOverview;
+import com.am.observability.flow.FlowLogger;
+import com.am.observability.flow.FlowSpan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/analysis")
@@ -28,64 +37,71 @@ public class AnalysisController {
 
     private final AnalysisService analysisService;
     private final DashboardAnalysisService dashboardService;
+    private final FlowLogger flowLogger;
 
     @GetMapping("/dashboard/summary")
     public ResponseEntity<DashboardSummary> getDashboardSummary(@RequestParam("userId") String userId) {
-        log.info("[AnalysisController] GET /dashboard/summary for userId: {}", userId);
-        return ResponseEntity.ok(dashboardService.getSummary(userId));
+        try (FlowSpan span = flowLogger.start("analysis.http.dashboard.summary", "userId", userId)) {
+            DashboardSummary summary = dashboardService.getSummary(userId);
+            flowLogger.complete(span,
+                    "portfolios", summary == null ? 0 : summary.getTotalPortfolios(),
+                    "holdings", summary == null ? 0 : summary.getTotalHoldings(),
+                    "isComplete", summary != null && summary.isComplete());
+            return ResponseEntity.ok(summary);
+        }
     }
 
-    /**
-     * Returns portfolio overview cards.
-     * - portfolioId omitted → ALL portfolios (one card per portfolio)
-     * - portfolioId provided → single portfolio detail view
-     */
     @GetMapping("/dashboard/portfolio-overviews")
     public ResponseEntity<List<PortfolioOverview>> getPortfolioOverviews(
             @RequestParam("userId") String userId,
             @RequestParam(name = "portfolioId", required = false) String portfolioId) {
-        log.info("[AnalysisController] GET /dashboard/portfolio-overviews for userId: {}, portfolioId: {}", userId, portfolioId);
-        List<PortfolioOverview> overviews = dashboardService.getPortfolioOverviews(userId);
-        if (portfolioId != null && !portfolioId.isBlank()) {
-            overviews = overviews.stream()
-                    .filter(p -> portfolioId.equals(p.getPortfolioId()))
-                    .collect(java.util.stream.Collectors.toList());
+        try (FlowSpan span = flowLogger.start("analysis.http.dashboard.portfolio_overviews",
+                "userId", userId, "portfolioId", portfolioId == null ? "ALL" : portfolioId)) {
+            List<PortfolioOverview> overviews = dashboardService.getPortfolioOverviews(userId);
+            if (portfolioId != null && !portfolioId.isBlank()) {
+                overviews = overviews.stream()
+                        .filter(p -> portfolioId.equals(p.getPortfolioId()))
+                        .collect(Collectors.toList());
+            }
+            flowLogger.complete(span, "overviews", overviews.size());
+            return ResponseEntity.ok(overviews);
         }
-        return ResponseEntity.ok(overviews);
     }
 
     @PostMapping("/dashboard/publish-update")
     public ResponseEntity<Void> publishDashboardUpdate(@RequestParam("userId") String userId) {
-        log.info("[AnalysisController] POST /dashboard/publish-update for userId: {}", userId);
-        dashboardService.publishDashboardUpdate(userId);
-        return ResponseEntity.ok().build();
+        try (FlowSpan span = flowLogger.start("analysis.http.dashboard.publish_update", "userId", userId)) {
+            dashboardService.publishDashboardUpdate(userId);
+            flowLogger.complete(span);
+            return ResponseEntity.ok().build();
+        }
     }
 
     @GetMapping("/dashboard/top-movers")
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
             @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
-        log.info("[AnalysisController] GET /dashboard/top-movers for userId: {}, timeFrame: {}", userId, timeFrame);
-        return ResponseEntity.ok(analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
-                AnalysisGroupBy.STOCK));
+        try (FlowSpan span = flowLogger.start("analysis.http.dashboard.top_movers",
+                "userId", userId, "timeFrame", timeFrame)) {
+            TopMoversResponse response = analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
+                    AnalysisGroupBy.STOCK);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
+        }
     }
 
     @GetMapping("/dashboard/performance")
     public ResponseEntity<PerformanceResponse> getDashboardPerformance(
             @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1M") String timeFrame) {
-        return ResponseEntity.ok(analysisService.getPerformance(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId));
+        try (FlowSpan span = flowLogger.start("analysis.http.dashboard.performance",
+                "userId", userId, "timeFrame", timeFrame)) {
+            PerformanceResponse response = analysisService.getPerformance(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
+        }
     }
 
-    /**
-     * Paginated + filtered recent activity.
-     * Supports: type, status (WIN/LOSS/NEUTRAL), sector, portfolioName, sortBy,
-     * page, size.
-     *
-     * Example:
-     * GET /api/v1/analysis/dashboard/recent-activity
-     * ?userId=xxx&status=WIN&sortBy=PROFIT_LOSS&page=0&size=20
-     */
     @GetMapping("/dashboard/recent-activity")
     public ResponseEntity<RecentActivityResponse> getRecentActivity(
             @RequestParam("userId") String userId,
@@ -97,19 +113,27 @@ public class AnalysisController {
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
 
-        log.info("[AnalysisController] GET /dashboard/recent-activity for userId: {}, page: {}, size: {}, sortBy: {}", 
-                userId, page, size, sortBy);
-        ActivityFilter filter = ActivityFilter.builder()
-                .type(type)
-                .status(status)
-                .sector(sector)
-                .portfolioName(portfolioName)
-                .sortBy(sortBy)
-                .page(page)
-                .size(size)
-                .build();
-
-        return ResponseEntity.ok(dashboardService.getRecentActivity(userId, filter));
+        try (FlowSpan span = flowLogger.start("analysis.http.dashboard.recent_activity",
+                "userId", userId,
+                "page", page,
+                "size", size,
+                "sortBy", sortBy,
+                "type", type,
+                "status", status)) {
+            ActivityFilter filter = ActivityFilter.builder()
+                    .type(type)
+                    .status(status)
+                    .sector(sector)
+                    .portfolioName(portfolioName)
+                    .sortBy(sortBy)
+                    .page(page)
+                    .size(size)
+                    .build();
+            RecentActivityResponse response = dashboardService.getRecentActivity(userId, filter);
+            flowLogger.complete(span,
+                    "items", response == null || response.getItems() == null ? 0 : response.getItems().size());
+            return ResponseEntity.ok(response);
+        }
     }
 
     @GetMapping("/{type}/{id}/allocation")
@@ -119,18 +143,17 @@ public class AnalysisController {
             @PathVariable("id") String id,
             @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
-        try {
-            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : headerGroupBy;
-            String userId = com.am.security.util.TokenExtractor.extractUserId(token);
-            AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getAllocation(id, entityType, userId, groupBy));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (Exception e) {
-            e.printStackTrace(); // Log the full stack trace
-            return ResponseEntity.internalServerError().build();
+        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : headerGroupBy;
+        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
+        try (FlowSpan span = flowLogger.start("analysis.http.allocation",
+                "type", entityType.name(),
+                "id", id,
+                "userId", userId,
+                "groupBy", groupBy == null ? "DEFAULT" : groupBy.name())) {
+            AllocationResponse response = analysisService.getAllocation(id, entityType, userId, groupBy);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
         }
     }
 
@@ -140,17 +163,16 @@ public class AnalysisController {
             @PathVariable("type") String type,
             @PathVariable("id") String id,
             @RequestParam(value = "timeFrame", defaultValue = "1M") String timeFrame) {
-        try {
-            String userId = com.am.security.util.TokenExtractor.extractUserId(token);
-            AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getPerformance(id, entityType, timeFrame, userId));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
+        try (FlowSpan span = flowLogger.start("analysis.http.performance.entity",
+                "type", entityType.name(),
+                "id", id,
+                "userId", userId,
+                "timeFrame", timeFrame)) {
+            PerformanceResponse response = analysisService.getPerformance(id, entityType, timeFrame, userId);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
         }
     }
 
@@ -161,19 +183,18 @@ public class AnalysisController {
             @RequestParam(value = "timeFrame", required = false) String timeFrame,
             @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
-        try {
-            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
-                    : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
-            String userId = com.am.security.util.TokenExtractor.extractUserId(token);
-            AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getTopMovers(null, entityType, timeFrame, userId, groupBy));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
+                : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
+        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
+        try (FlowSpan span = flowLogger.start("analysis.http.top_movers.category",
+                "type", entityType.name(),
+                "userId", userId,
+                "groupBy", groupBy.name(),
+                "timeFrame", timeFrame)) {
+            TopMoversResponse response = analysisService.getTopMovers(null, entityType, timeFrame, userId, groupBy);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
         }
     }
 
@@ -185,21 +206,19 @@ public class AnalysisController {
             @RequestParam(value = "timeFrame", required = false) String timeFrame,
             @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
-        try {
-            AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
-                    : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
-            String userId = com.am.security.util.TokenExtractor.extractUserId(token);
-            AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
-            return ResponseEntity.ok(analysisService.getTopMovers(id, entityType, timeFrame, userId, groupBy));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
+                : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
+        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
+        try (FlowSpan span = flowLogger.start("analysis.http.top_movers.entity",
+                "type", entityType.name(),
+                "id", id,
+                "userId", userId,
+                "groupBy", groupBy.name(),
+                "timeFrame", timeFrame)) {
+            TopMoversResponse response = analysisService.getTopMovers(id, entityType, timeFrame, userId, groupBy);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
         }
     }
 }
-
-// trigger -6

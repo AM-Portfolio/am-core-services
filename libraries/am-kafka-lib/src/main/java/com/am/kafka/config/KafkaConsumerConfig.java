@@ -10,11 +10,13 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 @EnableKafka
+@ConditionalOnProperty(prefix = "am.kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfig {
 
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")

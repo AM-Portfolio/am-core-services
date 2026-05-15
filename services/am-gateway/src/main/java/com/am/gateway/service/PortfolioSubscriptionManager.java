@@ -2,16 +2,17 @@ package com.am.gateway.service;
 
 import com.am.kafka.config.KafkaTopics;
 import com.am.kafka.schema.UserWatchingEvent;
+import com.am.observability.flow.FlowLogger;
+import com.am.observability.flow.FlowSpan;
+import com.am.observability.trace.TracingHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.UUID;
 
 /**
  * Stateless Portfolio Subscription Manager.
@@ -21,11 +22,6 @@ import java.util.UUID;
  *   2. Emit USER_WATCHING event to Kafka so the Orchestrator can decide to trigger calculation.
  *   3. Refresh TTL on heartbeat to prevent ghost-user staleness.
  *   4. Deregister on disconnect.
- *
- * What was REMOVED:
- *   - TaskScheduler: No more periodic per-user schedulers (was a SPOF and resource leak).
- *   - In-memory activeSchedulers map (was stateful, incompatible with horizontal scaling).
- *   - in-memory userPortfolios map (moved to Redis).
  */
 @Service
 @RequiredArgsConstructor
@@ -35,61 +31,48 @@ public class PortfolioSubscriptionManager {
     private final InterestRegistryService interestRegistry;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final FlowLogger flowLogger;
+    private final TracingHelper tracingHelper;
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Subscription Lifecycle
-    // ────────────────────────────────────────────────────────────────────────
-
-    /**
-     * Called when a user subscribes to the portfolio WebSocket channel.
-     * Registers interest in Redis and emits USER_WATCHING to Kafka.
-     *
-     * @param userId      Authenticated user ID.
-     * @param portfolioId Specific portfolio UUID, or null for all portfolios.
-     * @param sessionId   WebSocket session ID.
-     */
     public void onSubscribe(String userId, String portfolioId, String sessionId) {
-        log.info("[Subscription] User: {} subscribed (Portfolio: {}, Session: {})",
-                userId, portfolioId != null ? portfolioId : "ALL", sessionId);
+        try (FlowSpan span = flowLogger.start("gateway.stomp.subscribe",
+                "userId", userId,
+                "portfolioId", portfolioId != null ? portfolioId : "ALL",
+                "sessionId", sessionId)) {
 
-        interestRegistry.register(userId, portfolioId, sessionId);
-        emitUserWatchingEvent(userId, portfolioId, sessionId, "SUBSCRIBE");
+            flowLogger.step("gateway.redis.register",
+                    "userId", userId, "sessionId", sessionId);
+            interestRegistry.register(userId, portfolioId, sessionId);
+
+            emitUserWatchingEvent(userId, portfolioId, sessionId, "SUBSCRIBE");
+            flowLogger.complete(span);
+        }
     }
 
-    /**
-     * Called periodically (every 30s) from the WebSocket heartbeat.
-     * Keeps the Redis TTL alive so the user isn't treated as disconnected.
-     *
-     * @param userId    Authenticated user ID.
-     * @param sessionId WebSocket session ID.
-     */
     public void onHeartbeat(String userId, String sessionId) {
-        log.debug("[Heartbeat] User: {}", userId);
-        interestRegistry.heartbeat(userId);
-        emitUserWatchingEvent(userId, null, sessionId, "HEARTBEAT");
+        try (FlowSpan span = flowLogger.start("gateway.stomp.heartbeat",
+                "userId", userId, "sessionId", sessionId)) {
+            interestRegistry.heartbeat(userId);
+            emitUserWatchingEvent(userId, null, sessionId, "HEARTBEAT");
+            flowLogger.complete(span);
+        }
     }
 
-    /**
-     * Called when a user explicitly unsubscribes or their WebSocket session disconnects.
-     *
-     * @param userId    Authenticated user ID.
-     * @param sessionId WebSocket session ID.
-     */
     public void onDisconnect(String userId, String sessionId) {
-        log.info("[Subscription] User: {} disconnected (Session: {})", userId, sessionId);
-        interestRegistry.deregister(userId);
-        emitUserWatchingEvent(userId, null, sessionId, "UNSUBSCRIBE");
+        try (FlowSpan span = flowLogger.start("gateway.stomp.unsubscribe",
+                "userId", userId, "sessionId", sessionId)) {
+            interestRegistry.deregister(userId);
+            emitUserWatchingEvent(userId, null, sessionId, "UNSUBSCRIBE");
+            flowLogger.complete(span);
+        }
     }
-
-    // ────────────────────────────────────────────────────────────────────────
-    // Kafka Event
-    // ────────────────────────────────────────────────────────────────────────
 
     private void emitUserWatchingEvent(String userId, String portfolioId, String sessionId, String action) {
-        try {
+        try (FlowSpan span = flowLogger.start("gateway.kafka.publish.user_watching",
+                "userId", userId, "action", action, "topic", KafkaTopics.USER_WATCHING)) {
             UserWatchingEvent event = UserWatchingEvent.builder()
-                    .traceId(UUID.randomUUID().toString())
-                    .spanId(UUID.randomUUID().toString())
+                    .traceId(tracingHelper.currentTraceIdOrNew())
+                    .spanId(tracingHelper.currentSpanIdOrNew())
                     .userId(userId)
                     .portfolioId(portfolioId)
                     .action(action)
@@ -99,11 +82,9 @@ public class PortfolioSubscriptionManager {
 
             String payload = objectMapper.writeValueAsString(event);
             kafkaTemplate.send(KafkaTopics.USER_WATCHING, userId, payload);
-            log.info("[Subscription] Emitted {} event to Kafka topic: {} for User: {} (sessionId: {})", 
-                    action, KafkaTopics.USER_WATCHING, userId, sessionId);
-
+            flowLogger.complete(span, "payload_bytes", payload.length());
         } catch (JsonProcessingException e) {
-            log.error("[Subscription] Failed to serialize UserWatchingEvent for User: {}", userId, e);
+            log.error("Failed to serialize UserWatchingEvent for User: {}", userId, e);
         }
     }
 }

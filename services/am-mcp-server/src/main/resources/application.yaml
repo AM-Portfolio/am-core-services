@@ -111,12 +111,12 @@ resilience4j:
         maxAttempts: 2
         waitDuration: 300ms
 
-# ── Actuator ──────────────────────────────────────────────────────────────────
+# ── Actuator + Tracing + OTLP ─────────────────────────────────────────────────
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,circuitbreakers
+        include: health,info,metrics,prometheus,circuitbreakers
   endpoint:
     health:
       show-details: always
@@ -134,14 +134,36 @@ management:
       enabled: true
     kafka:
       enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4318/v1/traces}
+
+otel:
+  service:
+    name: ${spring.application.name}
+    namespace: am-core-services
+
+am.observability:
+  enabled: ${AM_OBSERVABILITY_ENABLED:true}
+  request-log:
+    enabled: ${AM_OBSERVABILITY_REQUEST_LOG_ENABLED:true}
+  sanitize:
+    preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
 
 # ── Logging ───────────────────────────────────────────────────────────────────
+# Activate mcp-stdio profile to push JSON logs to STDERR (keeps STDOUT clean
+# for the MCP framing protocol). Override per environment.
+spring.profiles.include: mcp-stdio
 logging:
   level:
     com.am.mcp: DEBUG
     org.springframework.ai.mcp: WARN
-  pattern:
-    console: "%d{HH:mm:ss} [%level] %logger{36} - %msg%n"
 
 ---
 # ── DEV profile ───────────────────────────────────────────────────────────────

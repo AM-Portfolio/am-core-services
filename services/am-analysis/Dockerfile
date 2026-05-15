@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy JAR pre-built by the CI runner
 COPY target/*.jar app.jar
 
-# Install curl for healthcheck
+# Install curl for health check 
 RUN apt-get update && \
     apt-get install -y curl && \
     rm -rf /var/lib/apt/lists/* && \
@@ -16,6 +16,7 @@ RUN apt-get update && \
 ENV SPRING_PROFILES_ACTIVE=docker
 ENV TZ=Asia/Kolkata
 
+# Expose port 8080
 EXPOSE 8080
 
 # Set permissions for /app

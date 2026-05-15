@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Shared Logback include for am-observability-lib.
+
+    JSON structured logs via logstash-logback-encoder so every line has
+    traceId, spanId, service, userId, correlationId, flow.* MDC fields,
+    plus caller info (class / method / file / line) promoted to
+    top-level JSON fields. Loki / ELK can index any of these via LogQL /
+    Lucene without parsing the message.
+
+    Caller info note:
+      Logback resolves caller data by building a stack trace per event.
+      The cost is a few µs per line — acceptable for our volume.
+      To disable on a high-volume service, activate the "caller-off"
+      Spring profile (e.g. SPRING_PROFILES_ACTIVE=caller-off,...).
+
+    Profiles:
+      - default     : JSON to STDOUT + rolling JSON file (with caller info)
+      - mcp-stdio   : JSON to STDERR + rolling JSON file (keeps STDOUT clean for MCP framing)
+      - caller-off  : skips caller info in JSON encoders (composable with the above)
+      - logback-text: plain text to STDOUT (last-resort dev escape hatch)
+-->
+<included>
+
+    <springProperty scope="context" name="serviceName" source="spring.application.name" defaultValue="am-service"/>
+
+    <property name="LOG_FILE" value="${LOG_FILE:-logs/${serviceName}.log}"/>
+    <property name="LOG_FILE_MAX_HISTORY" value="${LOG_FILE_MAX_HISTORY:-7}"/>
+    <property name="LOG_FILE_MAX_SIZE" value="${LOG_FILE_MAX_SIZE:-100MB}"/>
+
+    <!-- JSON STDOUT -->
+    <appender name="JSON_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <fieldName>@timestamp</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                          "level": "%level",
+                          "service": "${serviceName}",
+                          "logger": "%logger{40}",
+                          "thread": "%thread",
+                          "traceId": "%mdc{traceId}",
+                          "spanId": "%mdc{spanId}",
+                          "userId": "%mdc{userId}",
+                          "correlationId": "%mdc{correlationId}",
+                          "flow.id": "%mdc{flow.id}",
+                          "flow.step": "%mdc{flow.step}",
+                          "flow.outcome": "%mdc{flow.outcome}",
+                          "flow.duration_ms": "%mdc{flow.duration_ms}",
+                          "request.method": "%mdc{request.method}",
+                          "request.path": "%mdc{request.path}",
+                          "http.status": "%mdc{http.status}",
+                          "tool.name": "%mdc{tool.name}"
+                        }
+                    </pattern>
+                </pattern>
+                <message/>
+                <loggerName/>
+                <mdc/>
+                <arguments/>
+                <logstashMarkers/>
+                <springProfile name="!caller-off">
+                    <callerData>
+                        <classFieldName>caller.class</classFieldName>
+                        <methodFieldName>caller.method</methodFieldName>
+                        <fileFieldName>caller.file</fileFieldName>
+                        <lineFieldName>caller.line</lineFieldName>
+                    </callerData>
+                </springProfile>
+                <stackTrace>
+                    <fieldName>stack_trace</fieldName>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <maxLength>4096</maxLength>
+                        <shortenedClassNameLength>40</shortenedClassNameLength>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- JSON STDERR (used by mcp-stdio profile) -->
+    <appender name="JSON_STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <fieldName>@timestamp</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                          "level": "%level",
+                          "service": "${serviceName}",
+                          "logger": "%logger{40}",
+                          "thread": "%thread",
+                          "traceId": "%mdc{traceId}",
+                          "spanId": "%mdc{spanId}",
+                          "userId": "%mdc{userId}",
+                          "correlationId": "%mdc{correlationId}",
+                          "flow.id": "%mdc{flow.id}",
+                          "flow.step": "%mdc{flow.step}",
+                          "flow.outcome": "%mdc{flow.outcome}",
+                          "flow.duration_ms": "%mdc{flow.duration_ms}"
+                        }
+                    </pattern>
+                </pattern>
+                <message/>
+                <loggerName/>
+                <mdc/>
+                <arguments/>
+                <logstashMarkers/>
+                <springProfile name="!caller-off">
+                    <callerData>
+                        <classFieldName>caller.class</classFieldName>
+                        <methodFieldName>caller.method</methodFieldName>
+                        <fileFieldName>caller.file</fileFieldName>
+                        <lineFieldName>caller.line</lineFieldName>
+                    </callerData>
+                </springProfile>
+                <stackTrace>
+                    <fieldName>stack_trace</fieldName>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <maxLength>4096</maxLength>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Rolling JSON file -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>${LOG_FILE_MAX_SIZE}</maxFileSize>
+            <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <fieldName>@timestamp</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                          "level": "%level",
+                          "service": "${serviceName}",
+                          "logger": "%logger{40}",
+                          "thread": "%thread",
+                          "traceId": "%mdc{traceId}",
+                          "spanId": "%mdc{spanId}",
+                          "userId": "%mdc{userId}",
+                          "correlationId": "%mdc{correlationId}",
+                          "flow.id": "%mdc{flow.id}",
+                          "flow.step": "%mdc{flow.step}",
+                          "flow.outcome": "%mdc{flow.outcome}",
+                          "flow.duration_ms": "%mdc{flow.duration_ms}",
+                          "request.method": "%mdc{request.method}",
+                          "request.path": "%mdc{request.path}",
+                          "http.status": "%mdc{http.status}",
+                          "tool.name": "%mdc{tool.name}"
+                        }
+                    </pattern>
+                </pattern>
+                <message/>
+                <loggerName/>
+                <mdc/>
+                <arguments/>
+                <logstashMarkers/>
+                <springProfile name="!caller-off">
+                    <callerData>
+                        <classFieldName>caller.class</classFieldName>
+                        <methodFieldName>caller.method</methodFieldName>
+                        <fileFieldName>caller.file</fileFieldName>
+                        <lineFieldName>caller.line</lineFieldName>
+                    </callerData>
+                </springProfile>
+                <stackTrace>
+                    <fieldName>stack_trace</fieldName>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>40</maxDepthPerThrowable>
+                        <maxLength>8192</maxLength>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Plain text appender — only used when the logback-text profile is active. -->
+    <appender name="TEXT_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${serviceName},%X{traceId:-},%X{spanId:-}] [%X{flow.step:-}] %logger{40} %F:%L#%M - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="mcp-stdio">
+        <root level="INFO">
+            <appender-ref ref="JSON_STDERR"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="logback-text | local">
+        <root level="INFO">
+            <appender-ref ref="TEXT_STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!mcp-stdio &amp; !logback-text &amp; !local">
+        <root level="INFO">
+            <appender-ref ref="JSON_STDOUT"/>
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- Tame noisy framework loggers; services can override in application.yml -->
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.apache.kafka.clients.NetworkClient" level="ERROR"/>
+    <logger name="org.springframework.kafka.KafkaListenerEndpointContainer" level="WARN"/>
+
+</included>

@@ -17,17 +17,21 @@ vault:
   secretPaths:
     mongodb:
       mappings:
-        MONGODB_CONNECTION_URL: "url"          # mongodb://admin:pass@host:27017
+        MONGODB_CONNECTION_URL: "url" # mongodb://admin:pass@host:27017
 
     kafka:
       mappings:
-        KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers"  # kafka.infra.svc.cluster.local:9092
-        KAFKA_USERNAME:          "username"
-        KAFKA_PASSWORD:          "password"
-        KAFKA_JAAS_CONFIG:       "__jaas__"    # Auto-generates SCRAM login module config
+        KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers" # kafka.infra.svc.cluster.local:9092
+        KAFKA_USERNAME: "username"
+        KAFKA_PASSWORD: "password"
+        KAFKA_JAAS_CONFIG: "__jaas__" # Auto-generates SCRAM login module config
 
     redis:
       mappings:
         REDIS_HOSTNAME: "host"
         REDIS_PASSWORD: "password"
-        REDIS_PORT:     "port"
+        REDIS_PORT: "port"
+
+    market-data:
+      mappings:
+        MARKET_DATA_URL: "URL"

@@ -14,6 +14,8 @@ import com.am.analysis.dto.RecentActivityResponse;
 import com.am.analysis.service.aggregator.AnalysisAggregator;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.kafka.config.KafkaTopics;
+import com.am.observability.flow.FlowLogger;
+import com.am.observability.flow.FlowSpan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +36,13 @@ public class DashboardAnalysisService {
     private final AnalysisRepository analysisRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final FlowLogger flowLogger;
 
     public DashboardSummary getSummary(String userId) {
-        log.info("[DashboardAnalysisService] Fetching summary for userId: {}", userId);
         return aggregator.getOverallSummary(userId);
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
-        log.info("[DashboardAnalysisService] Fetching portfolio overviews for userId: {}", userId);
         return aggregator.getPortfolioOverviews(userId);
     }
 
@@ -238,15 +239,20 @@ public class DashboardAnalysisService {
     // ─────────────────────────────────────────────────────────────────────
 
     public void publishDashboardUpdate(String userId) {
-        try {
-            log.info("[DashboardAnalysisService] Preparing dashboard update event for userId: {}", userId);
-            DashboardSummary summary = getSummary(userId);
-            DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
-            String payload = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
-            log.info("[DashboardAnalysisService] 🚀 Dashboard Update published to Kafka! Payload: {}", payload);
-        } catch (Exception e) {
-            log.error("[DashboardAnalysisService] Failed to publish dashboard update for user: {}", userId, e);
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_update",
+                "userId", userId, "topic", KafkaTopics.DASHBOARD_UPDATE)) {
+            try {
+                DashboardSummary summary = getSummary(userId);
+                DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
+                String payload = objectMapper.writeValueAsString(event);
+                kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
+                flowLogger.complete(span,
+                        "payload_bytes", payload.length(),
+                        "portfolios", summary == null ? 0 : summary.getTotalPortfolios(),
+                        "holdings", summary == null ? 0 : summary.getTotalHoldings());
+            } catch (Exception e) {
+                flowLogger.fail(span, e);
+            }
         }
     }
 

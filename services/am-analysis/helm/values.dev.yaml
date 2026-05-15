@@ -6,20 +6,59 @@ replicaCount: 1
 # Minimal resources for shared dev namespace
 resources:
   limits:
-    cpu: 300m
-    memory: 384Mi
+    cpu: 500m
+    memory: 512Mi
   requests:
-    cpu: 100m
-    memory: 192Mi
+    cpu: 250m
+    memory: 256Mi
 
-# Vault disabled in dev — env vars used directly
 vault:
-  enabled: false
+  enabled: true
+  secretPaths:
+    mongodb:
+      path: "apps/data/dev/infra/mongodb"
+    kafka:
+      path: "apps/data/dev/infra/kafka"
+    redis:
+      path: "apps/data/dev/infra/redis"
+    market-data:
+      path: "apps/data/dev/services/am-market-data"
 
 # Dev-specific env vars (point to dev cluster services)
 env:
   SPRING_PROFILES_ACTIVE: "dev"
-  KAFKA_BOOTSTRAP_SERVERS: "kafka.am-infra-dev.svc.cluster.local:9092"
-  KAFKA_SECURITY_PROTOCOL: "PLAINTEXT"
-  MONGODB_CONNECTION_URL: "mongodb://am-mongo.am-infra-dev.svc.cluster.local:27017/analysis"
-  MARKET_DATA_URL: "http://am-market-data.am-apps-dev.svc.cluster.local:8092"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT" # Protocol setting, not a secret
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256" # Mechanism setting, not a secret
+
+hostAliases:
+  - ip: "203.174.22.129"
+    hostnames:
+      - "redis.asrax.in"
+      - "mongodb.asrax.in"
+      - "kafka.asrax.in"
+
+probes:
+  port: 8080
+  startup:
+    path: "/actuator/health"
+    failureThreshold: 30 # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
+    periodSeconds: 10
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-dev-dev-global-cors@kubernetescrd,
+      am-apps-dev-dev-strip-prefix@kubernetescrd
+  hosts:
+    - host: am-dev.asrax.in
+      paths:
+        - path: /analysis
+          pathType: Prefix

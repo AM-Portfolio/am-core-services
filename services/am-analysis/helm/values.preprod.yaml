@@ -27,11 +27,13 @@ vault:
       path: "apps/data/preprod/infra/kafka"
     redis:
       path: "apps/data/preprod/infra/redis"
+    market-data:
+      path: "apps/data/preprod/services/am-market-data"
 
 # Non-secret runtime config ONLY
 # Anything available in Vault must NOT appear here
 env:
-  SPRING_PROFILES_ACTIVE:  "preprod"
-  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"   # Protocol setting, not a secret
-  KAFKA_SASL_MECHANISM:    "SCRAM-SHA-256"    # Mechanism setting, not a secret
-  MARKET_DATA_URL:         "http://am-market-data.am-apps-preprod.svc.cluster.local:8092"
+  SPRING_PROFILES_ACTIVE: "preprod"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT" # Protocol setting, not a secret
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256" # Mechanism setting, not a secret
+  #MARKET_DATA_URL:         "http://am-market-data.am-apps-preprod.svc.cluster.local:8080"
