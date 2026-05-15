@@ -41,9 +41,24 @@ probes:
   port: 8080
   startup:
     path: "/actuator/health"
-    failureThreshold: 30  # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
+    failureThreshold: 30 # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
     periodSeconds: 10
   liveness:
     path: "/actuator/health"
   readiness:
     path: "/actuator/health"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-dev-dev-global-cors@kubernetescrd,
+      am-apps-dev-dev-redirect-to-https@kubernetescrd,
+      am-apps-dev-dev-strip-prefix@kubernetescrd
+  hosts:
+    - host: am.dev.asrax.in
+      paths:
+        - path: /analysis
+          pathType: Prefix

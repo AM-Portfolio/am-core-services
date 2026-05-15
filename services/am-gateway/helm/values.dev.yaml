@@ -51,3 +51,18 @@ probes:
     path: "/actuator/health"
   readiness:
     path: "/actuator/health"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-dev-dev-global-cors@kubernetescrd,
+      am-apps-dev-dev-redirect-to-https@kubernetescrd,
+      am-apps-dev-dev-strip-prefix@kubernetescrd
+  hosts:
+    - host: am.dev.asrax.in
+      paths:
+        - path: /v1/streams
+          pathType: Prefix
