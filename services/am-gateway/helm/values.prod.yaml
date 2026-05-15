@@ -1,42 +1,35 @@
-# Production environment overrides for am-gateway
+# Pre-production environment overrides for am-gateway
 environment: prod
+language: java
 
-replicaCount: 2
+replicaCount: 1
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 1024Mi
-  requests:
     cpu: 500m
     memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
 
-# Ingress enabled with WebSocket-specific annotations
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-  hosts:
-    - host: am-gateway.am-portfolio.io
-      paths:
-        - path: /
-          pathType: Prefix
+probes:
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"
 
-# Vault enabled — injects Kafka and Redis secrets at runtime
+# Vault enabled — role and token management now handled centrally
 vault:
   enabled: true
-  role: "am-gateway-role"
   secretPaths:
     kafka:
       path: "apps/data/prod/infra/kafka"
     redis:
       path: "apps/data/prod/infra/redis"
 
-# Non-secret env vars
+# Non-secret env vars pointing to preprod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "prod"
-  KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"

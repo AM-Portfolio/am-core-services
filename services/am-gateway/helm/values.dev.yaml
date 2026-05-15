@@ -1,25 +1,35 @@
-# Dev environment overrides for am-gateway
+# Pre-production environment overrides for am-gateway
 environment: dev
+language: java
 
 replicaCount: 1
 
-# Minimal resources for shared dev namespace
 resources:
   limits:
-    cpu: 300m
-    memory: 384Mi
+    cpu: 500m
+    memory: 512Mi
   requests:
-    cpu: 100m
-    memory: 192Mi
+    cpu: 250m
+    memory: 256Mi
 
-# Vault disabled in dev — env vars used directly
+probes:
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"
+
+# Vault enabled — role and token management now handled centrally
 vault:
-  enabled: false
+  enabled: true
+  secretPaths:
+    kafka:
+      path: "apps/data/dev/infra/kafka"
+    redis:
+      path: "apps/data/dev/infra/redis"
 
-# Dev-specific env vars (point to dev cluster services)
+# Non-secret env vars pointing to preprod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "dev"
-  KAFKA_BOOTSTRAP_SERVERS: "kafka.am-infra-dev.svc.cluster.local:9092"
-  REDIS_HOST: "redis.am-infra-dev.svc.cluster.local"
-  REDIS_PORT: "6379"
-  REDIS_PASSWORD: ""
+  SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
