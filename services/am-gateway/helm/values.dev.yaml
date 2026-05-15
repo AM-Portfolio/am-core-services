@@ -33,3 +33,21 @@ env:
   SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+
+hostAliases:
+  - ip: "203.174.22.129"
+    hostnames:
+      - "redis.asrax.in"
+      - "mongodb.asrax.in"
+      - "kafka.asrax.in"
+
+probes:
+  port: 8080
+  startup:
+    path: "/actuator/health"
+    failureThreshold: 30
+    periodSeconds: 10
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"

@@ -29,3 +29,21 @@ env:
   SPRING_PROFILES_ACTIVE: "dev"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT" # Protocol setting, not a secret
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256" # Mechanism setting, not a secret
+
+hostAliases:
+  - ip: "203.174.22.129"
+    hostnames:
+      - "redis.asrax.in"
+      - "mongodb.asrax.in"
+      - "kafka.asrax.in"
+
+probes:
+  port: 8080
+  startup:
+    path: "/actuator/health"
+    failureThreshold: 30  # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
+    periodSeconds: 10
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"
