@@ -165,6 +165,14 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>github-core</id>
+            <name>GitHub Packages — AM Core Services</name>
+            <url>https://maven.pkg.github.com/AM-Portfolio/am-core-services</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <pluginManagement>
             <plugins>
