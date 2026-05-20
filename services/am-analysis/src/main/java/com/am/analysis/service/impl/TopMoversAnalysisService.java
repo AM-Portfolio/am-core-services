@@ -172,7 +172,7 @@ public class TopMoversAnalysisService {
     private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily, double totalPortfolioValue) {
         String symbol = h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN";
         String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
-        Double currentPrice = (h.getMarket() != null) ? h.getMarket().getCurrentPrice() : 0.0;
+        Double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
         double pct = 0.0;
         double amt = 0.0;

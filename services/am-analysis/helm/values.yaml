@@ -2,7 +2,8 @@
 ## All environment-specific overrides go in values.<env>.yaml
 
 replicaCount: 1
-port: 8080
+service:
+  port: 8080
 language: java
 
 image:
