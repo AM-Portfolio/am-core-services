@@ -1,20 +1,36 @@
 server:
-  port: 8091
+  port: 8080
+
+# ── Swagger / OpenAPI Documentation  ───────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html
+    operationsSorter: alpha
+    tagsSorter: alpha
+    displayRequestDuration: true
+  show-actuator: true
 
 spring:
   application:
     name: am-websocket-gateway
   kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: am-websocket-gateway-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    properties:
+      security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
+      sasl-mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
+      sasl-jaas-config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:password123}";}
+
   # Redis - Stateless Interest Registry (subscription tracking across gateway instances)
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
+      host: ${REDIS_HOSTNAME:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       timeout: 2s
@@ -23,6 +39,50 @@ spring:
 logging:
   level:
     root: INFO
-    org.springframework.web.socket: DEBUG
-    org.springframework.messaging: DEBUG
     com.am.gateway: INFO
+    org.springframework.kafka: INFO
+    org.apache.kafka: INFO
+
+# Actuator + Tracing + OTLP Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: redis,readinessState
+        liveness:
+          include: livenessState
+  health:
+    redis:
+      enabled: true
+    kafka:
+      enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4318/v1/traces}
+
+otel:
+  service:
+    name: ${spring.application.name}
+    namespace: am-core-services
+
+am:
+  observability:
+    enabled: ${AM_OBSERVABILITY_ENABLED:true}
+    request-log:
+      enabled: ${AM_OBSERVABILITY_REQUEST_LOG_ENABLED:true}
+    sanitize:
+      preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}

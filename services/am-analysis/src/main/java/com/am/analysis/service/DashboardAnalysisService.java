@@ -14,6 +14,8 @@ import com.am.analysis.dto.RecentActivityResponse;
 import com.am.analysis.service.aggregator.AnalysisAggregator;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.kafka.config.KafkaTopics;
+import com.am.observability.flow.FlowLogger;
+import com.am.observability.flow.FlowSpan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class DashboardAnalysisService {
     private final AnalysisRepository analysisRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final FlowLogger flowLogger;
 
     public DashboardSummary getSummary(String userId) {
         return aggregator.getOverallSummary(userId);
@@ -70,10 +73,11 @@ public class DashboardAnalysisService {
      * Pagination: page + size
      */
     public RecentActivityResponse getRecentActivity(String userId, ActivityFilter filter) {
-        log.debug("[RecentActivity] userId={} filter={}", userId, filter);
+        log.info("[DashboardAnalysisService] Processing recent activity request for userId: {} with filter: {}", userId, filter);
 
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
         List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
         // 2. Flatten all holdings across all portfolios → ActivityItems
         List<ActivityItem> allItems = new ArrayList<>();
@@ -93,6 +97,7 @@ public class DashboardAnalysisService {
 
         // 3. Apply filters
         List<ActivityItem> filtered = applyFilters(allItems, filter);
+        log.debug("[DashboardAnalysisService] Total holdings: {}, After filtering: {}", allItems.size(), filtered.size());
 
         // 4. Compute summary counters (on unfiltered by status so counts are always full)
         int totalWin     = (int) allItems.stream().filter(i -> "WIN".equals(i.getStatus())).count();
@@ -234,14 +239,20 @@ public class DashboardAnalysisService {
     // ─────────────────────────────────────────────────────────────────────
 
     public void publishDashboardUpdate(String userId) {
-        try {
-            DashboardSummary summary = getSummary(userId);
-            DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
-            String payload = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
-            log.debug("Published dashboard update for user: {}", userId);
-        } catch (Exception e) {
-            log.error("Failed to publish dashboard update", e);
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_update",
+                "userId", userId, "topic", KafkaTopics.DASHBOARD_UPDATE)) {
+            try {
+                DashboardSummary summary = getSummary(userId);
+                DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
+                String payload = objectMapper.writeValueAsString(event);
+                kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
+                flowLogger.complete(span,
+                        "payload_bytes", payload.length(),
+                        "portfolios", summary == null ? 0 : summary.getTotalPortfolios(),
+                        "holdings", summary == null ? 0 : summary.getTotalHoldings());
+            } catch (Exception e) {
+                flowLogger.fail(span, e);
+            }
         }
     }
 

@@ -1,10 +1,7 @@
-INFRA_HOST: 100.72.208.15
-KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-#mongo - connection is configured via environment variable or default below
+#mongo - connection is configured via environment   variable or default below
 
 server:
-  port: 8090
-
+  port: 8080
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -12,6 +9,8 @@ spring:
     name: am-analysis
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      auto-startup: ${AM_KAFKA_ENABLED:true}
     trade-topic: ${KAFKA_TRADE_TOPIC:am-trade}
     consumer:
       group-id: am-analysis-group
@@ -19,32 +18,49 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     properties:
-      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
-      sasl.jaas.config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="password123";}
+      security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
+      sasl-mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
+      sasl-jaas-config: ${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:password123}";}
   data:
     mongodb:
-      uri: ${MONGODB_CONNECTION_URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}
+      uri: ${MONGODB_CONNECTION_URL:${URL:mongodb://admin:password123@localhost:27017/analysis?authSource=admin}}
+      database: ${MONGODB_DATABASE:analysis}
+      authentication-database: ${MONGODB_AUTH_DATABASE:admin}
+    redis:
+      host: ${REDIS_HOSTNAME:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
 
 logging:
   level:
     root: INFO
-    com.am.analysis: DEBUG
-    com.am.feign: DEBUG
-    am.trade: DEBUG
-    com.am.portfolio.client.market.invoker: DEBUG
+    com.am.analysis: INFO
+    com.am.feign: INFO
+    am.trade: INFO
+    com.am.portfolio.client.market.invoker: INFO
+    org.springframework.kafka: INFO
+    org.apache.kafka: INFO
 
 am:
+  kafka:
+    enabled: ${AM_KAFKA_ENABLED:true}
+  observability:
+    enabled: ${AM_OBSERVABILITY_ENABLED:true}
+    request-log:
+      enabled: ${AM_OBSERVABILITY_REQUEST_LOG_ENABLED:true}
+    sanitize:
+      preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
   analysis:
     adapter:
       market:
-        enabled: false # Enable/disable Market Event Listener
+        enabled: true # Enable/disable Market Event Listener
       portfolio:
-        enabled: false # Enable/disable Portfolio Event Listener
+        enabled: true # Enable/disable Portfolio Event Listener
       trade:
-        enabled: false # Enable/disable Trade Event Listener
+        enabled: true # Enable/disable Trade Event Listener
       ingestion:
-        enabled: false # Enable/disable Analysis Ingestion Service
+        enabled: true # Enable/disable Analysis Ingestion Service
 
   services:
     market-data:
@@ -82,3 +98,42 @@ resilience4j:
       tradeService:
         max-attempts: 3
         wait-duration: 500ms
+
+# Actuator + Tracing + OTLP Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: mongo,redis,readinessState
+        liveness:
+          include: livenessState
+  health:
+    mongo:
+      enabled: true
+    redis:
+      enabled: true
+    kafka:
+      enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4318/v1/traces}
+
+otel:
+  service:
+    name: ${spring.application.name}
+    namespace: am-core-services
+

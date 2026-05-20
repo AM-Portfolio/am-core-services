@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+management:
+  tracing:
+    enabled: false
+  otlp:
+    tracing:
+      endpoint: ""
+
+am:
+  observability:
+    enabled: true

@@ -6,7 +6,7 @@ This guide explains how to run the **AM Gateway** and **AM Analysis** services i
 
 The `docker-compose.dev.yml` configuration runs two services:
 1. **am-gateway** - WebSocket Gateway Service (Port 8091)
-2. **am-analysis** - Analysis Service (Port 8090)
+2. **am-analysis** - Analysis Service (Port 8093)
 
 Both services:
 - Use the same base image (`eclipse-temurin:17-jre-focal`)
@@ -75,11 +75,11 @@ docker-compose -f docker-compose.dev.yml down
 
 ### AM Analysis
 - **Container Name**: `am-analysis-dev`
-- **Port**: 8090
+- **Port**: 8093
 - **JAR Path**: `./services/am-analysis/target/am-analysis-1.0.0-SNAPSHOT.jar`
 - **Purpose**: Trade analysis and processing
 - **MongoDB Database**: `analysis`
-- **Health Check**: `http://localhost:8090/actuator/health`
+- **Health Check**: `http://localhost:8093/actuator/health`
 
 ## Environment Configuration
 
@@ -141,7 +141,7 @@ The volume mount ensures the new JAR is immediately available in the container.
 │  │                           │      │
 │  │  ┌─────────────────┐     │      │
 │  │  │  AM Analysis    │     │      │
-│  │  │  :8090          │     │      │
+│  │  │  :8093          │     │      │
 │  │  └─────────────────┘     │      │
 │  │                           │      │
 │  └───────────────────────────┘      │
@@ -153,7 +153,7 @@ The volume mount ensures the new JAR is immediately available in the container.
 | Service | Container Port | Host Port | Access URL |
 |---------|---------------|-----------|------------|
 | Gateway | 8091 | 8091 | http://localhost:8091 |
-| Analysis | 8090 | 8090 | http://localhost:8090 |
+| Analysis | 8093 | 8093 | http://localhost:8093 |
 
 ## Troubleshooting
 
@@ -191,7 +191,7 @@ docker exec -it am_mongodb mongosh -u admin -p password123
 Check service health:
 ```bash
 curl http://localhost:8091/actuator/health
-curl http://localhost:8090/actuator/health
+curl http://localhost:8093/actuator/health
 ```
 
 ## Next Steps

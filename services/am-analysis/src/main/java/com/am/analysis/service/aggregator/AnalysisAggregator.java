@@ -7,6 +7,7 @@ import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.DashboardSummary;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.domain.trade.TradePortfolio;
+import com.am.observability.flow.FlowLogger;
 import com.am.trade.client.service.TradeClientService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -35,6 +36,7 @@ public class AnalysisAggregator {
 
     private final AnalysisRepository analysisRepository;
     private final TradeClientService tradeClientService;
+    private final FlowLogger flowLogger;
 
     // ─────────────────────────────────────────────────────────────────────
     // Dashboard Summary (header-level aggregate)
@@ -268,24 +270,40 @@ public class AnalysisAggregator {
     @CircuitBreaker(name = "portfolioService", fallbackMethod = "portfolioFallback")
     @Retry(name = "portfolioService")
     List<AnalysisEntity> fetchPortfolioEntities(String userId) {
-        log.debug("[Aggregator] Fetching portfolio entities for user: {}", userId);
-        return analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        long start = System.nanoTime();
+        List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        flowLogger.step("analysis.aggregator.fetch_portfolios",
+                "userId", userId,
+                "entities", entities == null ? 0 : entities.size(),
+                "duration_ms", (System.nanoTime() - start) / 1_000_000L);
+        return entities;
     }
 
     List<AnalysisEntity> portfolioFallback(String userId, Throwable ex) {
-        log.warn("[Aggregator][DEGRADED] Portfolio unavailable for user: {}. Cause: {}", userId, ex.getMessage());
+        flowLogger.step("analysis.aggregator.fallback.portfolio",
+                "userId", userId,
+                "cause", ex.getClass().getSimpleName(),
+                "cause.message", ex.getMessage());
         return null;
     }
 
     @CircuitBreaker(name = "tradeService", fallbackMethod = "tradeFallback")
     @Retry(name = "tradeService")
     List<TradePortfolio> fetchTradePortfolios(String userId) {
-        log.debug("[Aggregator] Fetching trade portfolios for user: {}", userId);
-        return tradeClientService.getPortfolios(userId);
+        long start = System.nanoTime();
+        List<TradePortfolio> trades = tradeClientService.getPortfolios(userId);
+        flowLogger.step("analysis.aggregator.fetch_trades",
+                "userId", userId,
+                "trades", trades == null ? 0 : trades.size(),
+                "duration_ms", (System.nanoTime() - start) / 1_000_000L);
+        return trades;
     }
 
     List<TradePortfolio> tradeFallback(String userId, Throwable ex) {
-        log.warn("[Aggregator][DEGRADED] Trade unavailable for user: {}. Cause: {}", userId, ex.getMessage());
+        flowLogger.step("analysis.aggregator.fallback.trade",
+                "userId", userId,
+                "cause", ex.getClass().getSimpleName(),
+                "cause.message", ex.getMessage());
         return null;
     }
 }

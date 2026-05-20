@@ -13,6 +13,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 })
 @EnableMongoRepositories(basePackages = "com.am.analysis.adapter.repository")
 @EnableFeignClients
+@org.springframework.context.annotation.Import(com.am.kafka.config.KafkaConsumerConfig.class)
 @ComponentScan(basePackages = {
         "com.am.analysis",
         "com.am.market.client",

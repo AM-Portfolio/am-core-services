@@ -1,0 +1,23 @@
+{
+  "name": "am-core-services",
+  "version": "1.0.0",
+  "description": "AM Core Services Orchestrator Root",
+  "scripts": {
+    "info": "echo 'AM Core Services Monorepo' && echo 'Layers: libraries, domain, services'",
+    "build:core": "mvn clean install -s maven-settings.xml -DskipTests",
+    "build:libs": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py libraries/",
+    "build:domain": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py domain/",
+    "build:services": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py services/",
+    "run:gateway": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-gateway -s maven-settings.xml",
+    "run:analysis": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-analysis -s maven-settings.xml",
+    "run:mcp": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-mcp-server -s maven-settings.xml",
+    "run:mcp:inspect": "cd services/am-mcp-server && npm run inspect",
+    "dev": "npx -y concurrently -n \"gateway,analysis,mcp\" -c \"cyan,magenta,yellow\" \"npm run run:gateway\" \"npm run run:analysis\" \"npm run run:mcp\"",
+    "vault:sync": "python3 scripts/vault_sync.py --sync",
+    "test": "mvn test",
+    "clean": "mvn clean"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

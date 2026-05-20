@@ -13,6 +13,9 @@ services:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
       - MONGODB_CONNECTION_URL=${MONGODB_CONNECTION_URL}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
+      - TRACING_SAMPLING_PROBABILITY=1.0
+      - AM_OBSERVABILITY_ENABLED=true
       - server.port=8091
     volumes:
       # Mount the LOCAL build artifact to the container
@@ -35,7 +38,7 @@ services:
     container_name: am-analysis-dev
     ports:
     
-      - "8090:8090"
+      - "8093:8093"
     env_file:
       - .env.dev
     environment:
@@ -43,7 +46,10 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
       - MONGODB_CONNECTION_URL=${MONGODB_CONNECTION_URL}
       - MARKET_DATA_URL=${MARKET_DATA_URL}
-      - server.port=8090
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
+      - TRACING_SAMPLING_PROBABILITY=1.0
+      - AM_OBSERVABILITY_ENABLED=true
+      - server.port=8093
     volumes:
       # Mount the LOCAL build artifact to the container
       # When you run `mvn package` locally, this file updates instantly in the container!
@@ -53,11 +59,40 @@ services:
       - am-net
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8093/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # ── Observability stack: OTel collector + Jaeger UI ─────────────────────────
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    container_name: am-otel-collector-dev
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./infra/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "13133:13133" # health_check extension
+    depends_on:
+      - jaeger
+    networks:
+      - am-net
+    restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.55
+    container_name: am-jaeger-dev
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # Jaeger UI
+      - "14250:14250" # collector gRPC
+    networks:
+      - am-net
+    restart: unless-stopped
 
 networks:
   am-net:

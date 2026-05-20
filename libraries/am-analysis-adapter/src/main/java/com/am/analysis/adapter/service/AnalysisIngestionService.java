@@ -18,5 +18,6 @@ public class AnalysisIngestionService {
         log.info("Ingesting analysis data for {} (Type: {})", entity.getSourceId(), entity.getType());
         // Upsert logic could be added here if ID is stable
         repository.save(entity);
+        log.info("[AnalysisIngestionService] ✅ Successfully persisted {} to MongoDB", entity.getSourceId());
     }
 }

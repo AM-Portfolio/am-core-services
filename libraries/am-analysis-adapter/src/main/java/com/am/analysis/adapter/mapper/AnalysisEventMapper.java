@@ -20,9 +20,12 @@ public class AnalysisEventMapper {
         // Map equities to holdings
         List<AnalysisHolding> holdings = mapEquitiesToHoldings(event.getEquities(), event.getTotalValue());
 
+        String effectivePortfolioId = event.getPortfolioId() != null ? event.getPortfolioId() : "GLOBAL";
+        String entityId = "PORTFOLIO_" + effectivePortfolioId + (event.getPortfolioId() == null ? "_" + event.getUserId() : "");
+        
         return AnalysisEntity.builder()
-                .id("PORTFOLIO_" + event.getPortfolioId())
-                .sourceId(event.getPortfolioId())
+                .id(entityId)
+                .sourceId(effectivePortfolioId)
                 .type(AnalysisEntityType.PORTFOLIO)
                 .ownerId(event.getUserId())
                 .holdings(holdings)

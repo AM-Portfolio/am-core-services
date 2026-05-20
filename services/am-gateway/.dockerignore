@@ -1,0 +1,10 @@
+# Maven
+target/
+!target/*.jar
+
+# Local config
+.env*
+*.log
+
+# Docker
+Dockerfile

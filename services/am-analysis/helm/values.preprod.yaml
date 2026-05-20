@@ -1,0 +1,39 @@
+# values.preprod.yaml — am-analysis
+#
+# PURPOSE: Environment-specific Vault paths and non-secret runtime config.
+#
+# RULE: Nothing in this file should duplicate what Vault already provides.
+#   - Secret values (passwords, URLs, credentials) → come from Vault via vault-mappings.yaml
+#   - Only non-secret protocol/mechanism settings and internal cluster URLs live here.
+
+environment: preprod
+
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+vault:
+  enabled: true
+  secretPaths:
+    mongodb:
+      path: "apps/data/preprod/infra/mongodb"
+    kafka:
+      path: "apps/data/preprod/infra/kafka"
+    redis:
+      path: "apps/data/preprod/infra/redis"
+    market-data:
+      path: "apps/data/preprod/services/am-market-data"
+
+# Non-secret runtime config ONLY
+# Anything available in Vault must NOT appear here
+env:
+  SPRING_PROFILES_ACTIVE: "preprod"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT" # Protocol setting, not a secret
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256" # Mechanism setting, not a secret
+  #MARKET_DATA_URL:         "http://am-market-data.am-apps-preprod.svc.cluster.local:8080"

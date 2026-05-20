@@ -14,7 +14,7 @@ covering the UI, Gateway, Kafka orchestration, and all backend services.
 |--------|------|------|
 | `Flutter UI` | Dashboard, live portfolio streaming | 9005 |
 | `am-gateway` | Stateless WebSocket relay, Redis interest tracking | 8091 |
-| `am-analysis` | DemandDrivenOrchestrator + AnalysisAggregator | 8090 |
+| `am-analysis` | DemandDrivenOrchestrator + AnalysisAggregator | 8093 |
 | `am-portfolio` | Live holdings, calculation engine | 8060 |
 | `am-trade` | Historical trades, identity linking | 8040 |
 | `am-market-data` | Real-time price data | 8020 |

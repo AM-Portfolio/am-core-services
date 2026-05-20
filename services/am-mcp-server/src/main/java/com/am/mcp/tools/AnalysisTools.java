@@ -50,6 +50,7 @@ public class AnalysisTools {
             @ToolParam(description = "User ID.") String userId,
             @ToolParam(description = "Ignored for now — returns all-time P&L ranking.") String timeFrame) {
         String uid = resolve(userId);
+        log.info("[MCP] get_top_movers called for userId: {} (resolved: {})", userId, uid);
         List<AnalysisEntity> all = analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING);
 
         List<Map<String, Object>> slim = all.stream()
@@ -76,6 +77,7 @@ public class AnalysisTools {
     }
 
     public String topMoversFallback(String u, String t, Exception e) {
+        log.error("[MCP] Fallback triggered for get_top_movers. User: {}, Error: {}", u, e.getMessage());
         return response.unavailable("am-analysis (top movers)");
     }
 
@@ -89,6 +91,7 @@ public class AnalysisTools {
     public String getSectorAllocation(
             @ToolParam(description = "User ID.") String userId) {
         String uid = resolve(userId);
+        log.info("[MCP] get_sector_allocation called for userId: {} (resolved: {})", userId, uid);
         List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING);
         Map<String, Long> sectorMap = entities.stream()
                 .filter(e -> e.getHoldings() != null)
