@@ -13,6 +13,7 @@ import com.am.analysis.service.DashboardAnalysisService;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
+import com.am.security.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,8 @@ public class AnalysisController {
     private final FlowLogger flowLogger;
 
     @GetMapping("/dashboard/summary")
-    public ResponseEntity<DashboardSummary> getDashboardSummary(@RequestParam("userId") String userId) {
+    public ResponseEntity<DashboardSummary> getDashboardSummary() {
+        String userId = UserContext.getUserIdOrThrow();
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.summary", "userId", userId)) {
             DashboardSummary summary = dashboardService.getSummary(userId);
             flowLogger.complete(span,
@@ -53,8 +55,8 @@ public class AnalysisController {
 
     @GetMapping("/dashboard/portfolio-overviews")
     public ResponseEntity<List<PortfolioOverview>> getPortfolioOverviews(
-            @RequestParam("userId") String userId,
             @RequestParam(name = "portfolioId", required = false) String portfolioId) {
+        String userId = UserContext.getUserIdOrThrow();
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.portfolio_overviews",
                 "userId", userId, "portfolioId", portfolioId == null ? "ALL" : portfolioId)) {
             List<PortfolioOverview> overviews = dashboardService.getPortfolioOverviews(userId);
@@ -69,7 +71,8 @@ public class AnalysisController {
     }
 
     @PostMapping("/dashboard/publish-update")
-    public ResponseEntity<Void> publishDashboardUpdate(@RequestParam("userId") String userId) {
+    public ResponseEntity<Void> publishDashboardUpdate() {
+        String userId = UserContext.getUserIdOrThrow();
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.publish_update", "userId", userId)) {
             dashboardService.publishDashboardUpdate(userId);
             flowLogger.complete(span);
@@ -79,8 +82,8 @@ public class AnalysisController {
 
     @GetMapping("/dashboard/top-movers")
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
-            @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
+        String userId = UserContext.getUserIdOrThrow();
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.top_movers",
                 "userId", userId, "timeFrame", timeFrame)) {
             TopMoversResponse response = analysisService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId,
@@ -92,8 +95,8 @@ public class AnalysisController {
 
     @GetMapping("/dashboard/performance")
     public ResponseEntity<PerformanceResponse> getDashboardPerformance(
-            @RequestParam("userId") String userId,
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1M") String timeFrame) {
+        String userId = UserContext.getUserIdOrThrow();
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.performance",
                 "userId", userId, "timeFrame", timeFrame)) {
             PerformanceResponse response = analysisService.getPerformance(null, AnalysisEntityType.PORTFOLIO, timeFrame, userId);
@@ -104,7 +107,6 @@ public class AnalysisController {
 
     @GetMapping("/dashboard/recent-activity")
     public ResponseEntity<RecentActivityResponse> getRecentActivity(
-            @RequestParam("userId") String userId,
             @RequestParam(name = "type", required = false) String type,
             @RequestParam(name = "status", required = false) String status,
             @RequestParam(name = "sector", required = false) String sector,
@@ -112,6 +114,7 @@ public class AnalysisController {
             @RequestParam(name = "sortBy", required = false, defaultValue = "TIMESTAMP") String sortBy,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
+        String userId = UserContext.getUserIdOrThrow();
 
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.recent_activity",
                 "userId", userId,
@@ -138,13 +141,11 @@ public class AnalysisController {
 
     @GetMapping("/{type}/{id}/allocation")
     public ResponseEntity<AllocationResponse> getAllocation(
-            @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
             @PathVariable("id") String id,
-            @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
-        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : headerGroupBy;
-        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisGroupBy groupBy = paramGroupBy;
+        String userId = UserContext.getUserIdOrThrow();
         AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
         try (FlowSpan span = flowLogger.start("analysis.http.allocation",
                 "type", entityType.name(),
@@ -159,11 +160,10 @@ public class AnalysisController {
 
     @GetMapping("/{type}/{id}/performance")
     public ResponseEntity<PerformanceResponse> getPerformance(
-            @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
             @PathVariable("id") String id,
             @RequestParam(value = "timeFrame", defaultValue = "1M") String timeFrame) {
-        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        String userId = UserContext.getUserIdOrThrow();
         AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
         try (FlowSpan span = flowLogger.start("analysis.http.performance.entity",
                 "type", entityType.name(),
@@ -178,14 +178,11 @@ public class AnalysisController {
 
     @GetMapping("/{type}/top-movers")
     public ResponseEntity<TopMoversResponse> getTopMoversByCategory(
-            @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
             @RequestParam(value = "timeFrame", required = false) String timeFrame,
-            @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
-        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
-                : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
-        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : AnalysisGroupBy.STOCK;
+        String userId = UserContext.getUserIdOrThrow();
         AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
         try (FlowSpan span = flowLogger.start("analysis.http.top_movers.category",
                 "type", entityType.name(),
@@ -200,15 +197,12 @@ public class AnalysisController {
 
     @GetMapping("/{type}/{id}/top-movers")
     public ResponseEntity<TopMoversResponse> getTopMoversByEntity(
-            @RequestHeader("Authorization") String token,
             @PathVariable("type") String type,
             @PathVariable("id") String id,
             @RequestParam(value = "timeFrame", required = false) String timeFrame,
-            @RequestHeader(value = "groupBy", required = false) AnalysisGroupBy headerGroupBy,
             @RequestParam(value = "groupBy", required = false) AnalysisGroupBy paramGroupBy) {
-        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy
-                : (headerGroupBy != null ? headerGroupBy : AnalysisGroupBy.STOCK);
-        String userId = com.am.security.util.TokenExtractor.extractUserId(token);
+        AnalysisGroupBy groupBy = paramGroupBy != null ? paramGroupBy : AnalysisGroupBy.STOCK;
+        String userId = UserContext.getUserIdOrThrow();
         AnalysisEntityType entityType = AnalysisEntityType.valueOf(type.toUpperCase());
         try (FlowSpan span = flowLogger.start("analysis.http.top_movers.entity",
                 "type", entityType.name(),
