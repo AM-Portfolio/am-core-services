@@ -43,6 +43,13 @@
             <scope>provided</scope>
         </dependency>
         
+        <!-- Spring Web (For Filters and Configurations) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <!-- Commons -->
          <dependency>
             <groupId>org.apache.commons</groupId>

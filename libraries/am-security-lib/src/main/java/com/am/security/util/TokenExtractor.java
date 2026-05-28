@@ -30,9 +30,17 @@ public class TokenExtractor {
     }
 
     public static String extractUserId(String token) {
-        // 'sub' is standard for User ID
         Claims claims = extractAllClaimsUnsafe(token);
-        return claims.getSubject();
+        // Try standard 'sub' claim first (RFC 7519)
+        String userId = claims.getSubject();
+        // Fallback to custom claim names — matches am-gateway JwtUtilMock behavior
+        if (userId == null) {
+            userId = claims.get("userId", String.class);
+        }
+        if (userId == null) {
+            userId = claims.get("id", String.class);
+        }
+        return userId;
     }
     
     public static String extractUsername(String token) {
