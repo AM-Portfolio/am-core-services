@@ -4,18 +4,40 @@
   "description": "AM Core Services Orchestrator Root",
   "scripts": {
     "info": "echo 'AM Core Services Monorepo' && echo 'Layers: libraries, domain, services'",
-    "build:core": "mvn clean install -s maven-settings.xml -DskipTests",
-    "build:libs": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py libraries/",
-    "build:domain": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py domain/",
-    "build:services": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py services/",
-    "run:gateway": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-gateway -s maven-settings.xml",
-    "run:analysis": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-analysis -s maven-settings.xml",
-    "run:mcp": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-mcp-server -s maven-settings.xml",
-    "run:mcp:inspect": "cd services/am-mcp-server && npm run inspect",
-    "dev": "npx -y concurrently -n \"gateway,analysis,mcp\" -c \"cyan,magenta,yellow\" \"npm run run:gateway\" \"npm run run:analysis\" \"npm run run:mcp\"",
-    "vault:sync": "python3 scripts/vault_sync.py --sync",
-    "test": "mvn test",
-    "clean": "mvn clean"
+    
+    "build:compile": "mvn clean compile -s maven-settings.xml",
+    "build:all": "mvn clean install -s maven-settings.xml -DskipTests",
+    "test": "mvn test -s maven-settings.xml",
+    "clean": "mvn clean",
+    
+    "core:dev": "npx -y concurrently -n \"gateway,analysis,mcp\" -c \"cyan,magenta,yellow\" \"npm run gateway:dev\" \"npm run analysis:dev\" \"npm run mcp:dev\"",
+    "core:start": "npm run core:dev",
+    
+    "libs:compile": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py libraries/",
+    "domain:compile": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py domain/",
+    "services:compile": "npx -y dotenv-cli -e .env -- python scripts/mvn_build.py services/",
+    
+    "gateway:dev": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-gateway -s maven-settings.xml",
+    "gateway:start": "npm run gateway:dev",
+    "gateway:compile": "mvn compile -pl services/am-gateway",
+    "gateway:test": "mvn test -pl services/am-gateway",
+    
+    "analysis:dev": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-analysis -s maven-settings.xml",
+    "analysis:start": "npm run analysis:dev",
+    "analysis:compile": "mvn compile -pl services/am-analysis",
+    "analysis:test": "mvn test -pl services/am-analysis",
+    
+    "mcp:dev": "npx -y dotenv-cli -- mvn spring-boot:run -pl services/am-mcp-server -s maven-settings.xml",
+    "mcp:start": "npm run mcp:dev",
+    "mcp:compile": "mvn compile -pl services/am-mcp-server",
+    "mcp:test": "mvn test -pl services/am-mcp-server",
+    "mcp:inspect": "cd services/am-mcp-server && npm run inspect",
+    
+    "infra:compose:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "infra:compose:down": "docker-compose -f docker-compose.dev.yml down",
+    "infra:compose:logs": "docker-compose -f docker-compose.dev.yml logs -f",
+    
+    "vault:sync": "python3 scripts/vault_sync.py --sync"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
