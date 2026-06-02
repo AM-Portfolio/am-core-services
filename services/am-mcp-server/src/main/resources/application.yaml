@@ -1,3 +1,6 @@
+server:
+  port: ${SERVICE_PORT:8080}
+
 spring:
   application:
     name: am-mcp-server
