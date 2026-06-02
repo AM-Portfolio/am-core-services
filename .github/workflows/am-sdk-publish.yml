@@ -65,9 +65,12 @@ jobs:
           echo "$CHANGED"
           echo "==================================="
 
-          check() { 
-            # Forced to true for every commit as requested
-            echo 'true'
+          check() {
+            if echo "$CHANGED" | grep -q "^$1"; then
+              echo 'true'
+            else
+              echo 'false'
+            fi
           }
 
           # Libraries
@@ -118,7 +121,7 @@ jobs:
   publish-common-lib:
     name: Publish Common Lib
     needs: publish-root-pom
-    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped') && needs.detect-changes.outputs.common-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -132,7 +135,7 @@ jobs:
   publish-common-event-model:
     name: Publish Common Event Model
     needs: publish-root-pom
-    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped') && needs.detect-changes.outputs.common-event-model == 'true'
     permissions:
       contents: write
       packages: write
@@ -147,7 +150,7 @@ jobs:
   publish-kafka-lib:
     name: Publish Kafka Lib
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.kafka-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -161,7 +164,7 @@ jobs:
   publish-security-lib:
     name: Publish Security Lib
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.security-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -175,7 +178,7 @@ jobs:
   publish-feign-lib:
     name: Publish Feign Lib
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.feign-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -189,7 +192,7 @@ jobs:
   publish-observability-lib:
     name: Publish Observability Lib
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.observability-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -203,7 +206,7 @@ jobs:
   publish-cache-lib:
     name: Publish Cache Lib
     needs: publish-root-pom
-    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped') && needs.detect-changes.outputs.cache-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -232,7 +235,7 @@ jobs:
   publish-market-domain:
     name: Publish Market Domain
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.market-domain == 'true'
     permissions:
       contents: write
       packages: write
@@ -246,7 +249,7 @@ jobs:
   publish-trade-domain:
     name: Publish Trade Domain
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.trade-domain == 'true'
     permissions:
       contents: write
       packages: write
@@ -260,7 +263,7 @@ jobs:
   publish-portfolio-domain:
     name: Publish Portfolio Domain
     needs: [publish-market-domain, publish-common-lib]
-    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
+    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped') && needs.detect-changes.outputs.portfolio-domain == 'true'
     permissions:
       contents: write
       packages: write
@@ -275,7 +278,7 @@ jobs:
   publish-market-client-lib:
     name: Publish Market Client Lib
     needs: publish-market-domain
-    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
+    if: always() && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped') && needs.detect-changes.outputs.market-client-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -289,7 +292,7 @@ jobs:
   publish-trade-client-lib:
     name: Publish Trade Client Lib
     needs: publish-trade-domain
-    if: always() && (needs.publish-trade-domain.result == 'success' || needs.publish-trade-domain.result == 'skipped')
+    if: always() && (needs.publish-trade-domain.result == 'success' || needs.publish-trade-domain.result == 'skipped') && needs.detect-changes.outputs.trade-client-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -303,7 +306,7 @@ jobs:
   publish-portfolio-client-lib:
     name: Publish Portfolio Client Lib
     needs: publish-portfolio-domain
-    if: always() && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped')
+    if: always() && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped') && needs.detect-changes.outputs.portfolio-client-lib == 'true'
     permissions:
       contents: write
       packages: write
@@ -317,7 +320,7 @@ jobs:
   publish-analysis-adapter:
     name: Publish Analysis Adapter
     needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.analysis-adapter == 'true'
     permissions:
       contents: write
       packages: write
@@ -331,7 +334,7 @@ jobs:
   publish-analysis-client-lib:
     name: Publish Analysis Client Lib
     needs: [publish-analysis-client-sdk, publish-common-lib]
-    if: always() && (needs.publish-analysis-client-sdk.result == 'success' || needs.publish-analysis-client-sdk.result == 'skipped')
+    if: always() && (needs.publish-analysis-client-sdk.result == 'success' || needs.publish-analysis-client-sdk.result == 'skipped') && needs.detect-changes.outputs.analysis-client-lib == 'true'
     permissions:
       contents: write
       packages: write
