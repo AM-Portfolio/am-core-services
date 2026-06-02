@@ -32,3 +32,6 @@ replay_pid*.log
 .gradle/
 build/
 maven-settings.xml
+
+# Logs
+logs/
