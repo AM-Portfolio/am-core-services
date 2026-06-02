@@ -25,6 +25,10 @@ vault:
       path: "apps/data/preprod/services/am-auth"
     redis:
       path: "apps/data/preprod/infra/redis"
+    identity-oidc:
+      path: "apps/data/preprod/services/am-identity"
+    service-oauth:
+      path: "apps/data/preprod/services/am-mcp-server"
 
 
 # Non-secret env vars pointing to preprod cluster services

@@ -62,6 +62,7 @@ am:
       ingestion:
         enabled: true # Enable/disable Analysis Ingestion Service
 
+
   services:
     market-data:
       url: ${MARKET_DATA_URL:http://localhost:8092} # Default to standard port, can be overridden

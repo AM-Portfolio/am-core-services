@@ -14,3 +14,13 @@ vault:
         REDIS_HOSTNAME: "host"
         REDIS_PASSWORD: "password"
         REDIS_PORT: "port"
+
+    identity-oidc:
+      mappings:
+        OIDC_JWKS_URI: "OIDC_JWKS_URL"
+        OIDC_ISSUER_URI: "OIDC_ISSUER"
+
+    service-oauth:
+      mappings:
+        OAUTH2_CLIENT_ID: "AM_MCP_CLIENT_ID"
+        OAUTH2_CLIENT_SECRET: "AM_MCP_CLIENT_SECRET"

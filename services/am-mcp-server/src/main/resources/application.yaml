@@ -156,6 +156,8 @@ am.observability:
   sanitize:
     preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
 
+
+
 # ── Logging ───────────────────────────────────────────────────────────────────
 # Activate mcp-stdio profile to push JSON logs to STDERR (keeps STDOUT clean
 # for the MCP framing protocol). Override per environment.

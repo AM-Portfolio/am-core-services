@@ -18,6 +18,10 @@ vault:
   secretPaths:
     auth:
       path: "kv/prod/services/am-auth"
+    identity-oidc:
+      path: "apps/data/prod/services/am-identity"
+    service-oauth:
+      path: "apps/data/prod/services/am-mcp-server"
 
 # Non-secret env vars pointing to prod cluster services
 env:

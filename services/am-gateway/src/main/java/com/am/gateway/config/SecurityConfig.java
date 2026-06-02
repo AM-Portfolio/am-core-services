@@ -1,6 +1,5 @@
 package com.am.gateway.config;
 
-import com.am.gateway.security.JwtUtilMock;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.stomp.StompTracingChannelInterceptor;
@@ -26,7 +25,6 @@ import java.util.List;
 @Slf4j
 public class SecurityConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtUtilMock jwtUtil;
     private final StompTracingChannelInterceptor stompTracingInterceptor;
     private final FlowLogger flowLogger;
 
@@ -56,12 +54,15 @@ public class SecurityConfig implements WebSocketMessageBrokerConfigurer {
                         token = token.substring(7);
                     }
 
-                    if (!jwtUtil.validateToken(token)) {
+                    io.jsonwebtoken.Claims claims;
+                    try {
+                        claims = com.am.security.util.TokenExtractor.extractClaims(token);
+                    } catch (Exception e) {
                         flowLogger.fail(span, null, "reason", "invalid_token");
                         throw new IllegalArgumentException("Unauthorized");
                     }
 
-                    String userId = jwtUtil.getUserId(token);
+                    String userId = com.am.security.util.TokenExtractor.extractUserId(token);
                     if (userId == null) {
                         flowLogger.fail(span, null, "reason", "token_missing_user");
                         throw new IllegalArgumentException("Unauthorized");

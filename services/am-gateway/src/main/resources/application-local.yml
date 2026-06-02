@@ -2,19 +2,8 @@ spring:
   config:
     activate:
       on-profile: local
-  elasticsearch:
-    uris: http://localhost:9200
-
-management:
-  tracing:
-    enabled: false
-  otlp:
-    tracing:
-      endpoint: ""
 
 am:
-  observability:
-    enabled: true
   security:
     local-mock:
       enabled: true

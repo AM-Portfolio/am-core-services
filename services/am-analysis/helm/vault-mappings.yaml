@@ -35,3 +35,13 @@ vault:
     market-data:
       mappings:
         MARKET_DATA_URL: "URL"
+
+    identity-oidc:
+      mappings:
+        OIDC_JWKS_URI: "OIDC_JWKS_URL"
+        OIDC_ISSUER_URI: "OIDC_ISSUER"
+
+    service-oauth:
+      mappings:
+        OAUTH2_CLIENT_ID: "AM_ANALYSIS_CLIENT_ID"
+        OAUTH2_CLIENT_SECRET: "AM_ANALYSIS_CLIENT_SECRET"

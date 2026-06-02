@@ -1,1 +1,2 @@
 com.am.security.config.UserContextAutoConfiguration
+com.am.security.config.SecurityAutoConfiguration

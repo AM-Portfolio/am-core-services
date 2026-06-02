@@ -18,10 +18,18 @@ public class UserContextFilter extends OncePerRequestFilter {
                 String token = authHeader.substring(7);
                 String userId = TokenExtractor.extractUserId(token);
                 String email = TokenExtractor.extractEmail(token);
+                String username = TokenExtractor.extractUsername(token);
+                java.util.List<String> roles = TokenExtractor.extractRoles(token);
                 
-                UserContext.setUserId(userId);
-                UserContext.setEmail(email);
-                UserContext.setToken(token);
+                AmUserProfile profile = AmUserProfile.builder()
+                        .userId(userId)
+                        .email(email)
+                        .username(username)
+                        .roles(roles)
+                        .token(token)
+                        .build();
+                        
+                UserContext.setUserProfile(profile);
             } catch (Exception e) {
                 // Log exception but let request proceed - downstream filters/security can block if needed
                 logger.warn("Failed to extract user context from token: " + e.getMessage());
