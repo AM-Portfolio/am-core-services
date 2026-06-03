@@ -10,7 +10,7 @@ name: Core Libraries Publish
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, 'feature/**']
     paths:
       - "libraries/**"
       - "domain/**"
@@ -178,7 +178,7 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.any == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -219,7 +219,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.common-lib == 'true'
       && needs.publish-root-pom.result == 'success'
     permissions:
@@ -240,7 +240,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.api-core-lib == 'true'
       && needs.publish-root-pom.result == 'success'
     permissions:
@@ -301,7 +301,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.security-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
       && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
