@@ -164,7 +164,7 @@ am.observability:
 # ── Logging ───────────────────────────────────────────────────────────────────
 # Activate mcp-stdio profile to push JSON logs to STDERR (keeps STDOUT clean
 # for the MCP framing protocol). Override per environment.
-spring.profiles.include: mcp-stdio
+spring.profiles.include: mcp-stdio, security
 logging:
   level:
     com.am.mcp: DEBUG
