@@ -11,6 +11,7 @@ public class AmApiCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "globalExceptionHandler")
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(prefix = "am.api.core.exception-handler", name = "enabled", havingValue = "true", matchIfMissing = false)
     public GlobalExceptionHandler globalExceptionHandler() {
         return new GlobalExceptionHandler();
     }

@@ -1,5 +1,8 @@
 package com.am.api.core.advice;
 
+import org.springframework.core.Ordered;
+import org.springframework.beans.factory.annotation.Value;
+
 import com.am.api.core.exception.BaseDomainException;
 import com.am.api.core.exception.CommonErrorCode;
 import com.am.api.core.model.ApiError;
@@ -27,7 +30,15 @@ import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler implements Ordered {
+
+    @Value("${am.api.core.exception-handler.order:" + Ordered.LOWEST_PRECEDENCE + "}")
+    private int order;
+
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
 
     @ExceptionHandler(BaseDomainException.class)
     public ResponseEntity<ApiResponse<Void>> handleDomainException(BaseDomainException ex) {
