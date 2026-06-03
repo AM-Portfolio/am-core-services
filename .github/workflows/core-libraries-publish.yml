@@ -36,6 +36,7 @@ jobs:
       any: ${{ steps.check.outputs.any }}
       root-pom: ${{ steps.check.outputs.root-pom }}
       analysis-adapter: ${{ steps.check.outputs.analysis-adapter }}
+      api-core-lib: ${{ steps.check.outputs.api-core-lib }}
       analysis-client-lib: ${{ steps.check.outputs.analysis-client-lib }}
       cache-lib: ${{ steps.check.outputs.cache-lib }}
       common-event-model: ${{ steps.check.outputs.common-event-model }}
@@ -95,6 +96,7 @@ jobs:
 
           lib "libraries/am-analysis-adapter" "analysis-adapter"
           lib "libraries/am-analysis-client-lib" "analysis-client-lib"
+          lib "libraries/am-api-core-lib" "api-core-lib"
           lib "libraries/am-cache-lib" "cache-lib"
           lib "libraries/am-common-event-model" "common-event-model"
           lib "libraries/am-common-lib" "common-lib"
@@ -119,6 +121,9 @@ jobs:
             || grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT" \
             || grep -q '^analysis-client-lib=true' "$GITHUB_OUTPUT"; then
             enable common-lib libraries/am-common-lib
+          fi
+          if grep -q '^security-lib=true' "$GITHUB_OUTPUT"; then
+            enable api-core-lib libraries/am-api-core-lib
           fi
           if grep -q '^market-client-lib=true' "$GITHUB_OUTPUT"; then
             enable market-domain domain/am-market-domain
@@ -229,6 +234,27 @@ jobs:
       use_release_version: true
     secrets: inherit
 
+  publish-api-core-lib:
+    name: Publish am-api-core-lib
+    needs: [detect-changes, publish-root-pom]
+    if: >-
+      always()
+      && github.event_name == 'push'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && needs.detect-changes.outputs.api-core-lib == 'true'
+      && needs.publish-root-pom.result == 'success'
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: java
+      working_directory: libraries/am-api-core-lib
+      sdk_name: am-api-core-lib
+      action: publish
+      use_release_version: true
+    secrets: inherit
+
   publish-common-event-model:
     name: Publish am-common-event-model
     needs: [detect-changes, publish-root-pom]
@@ -271,13 +297,14 @@ jobs:
 
   publish-security-lib:
     name: Publish am-security-lib
-    needs: [detect-changes, publish-common-lib]
+    needs: [detect-changes, publish-common-lib, publish-api-core-lib]
     if: >-
       always()
       && github.event_name == 'push'
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       && needs.detect-changes.outputs.security-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+      && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
