@@ -9,3 +9,4 @@ am:
       client-secret: ${OAUTH2_CLIENT_SECRET:secret}
     public-paths:
       - "/actuator/**"
+      - "/analysis/actuator/**"

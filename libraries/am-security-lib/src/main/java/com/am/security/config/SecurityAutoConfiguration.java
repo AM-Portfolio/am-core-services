@@ -1,6 +1,8 @@
 package com.am.security.config;
 
 import com.am.security.context.LocalMockUserContextFilter;
+import com.am.security.exception.AmAccessDeniedHandler;
+import com.am.security.exception.AmAuthenticationEntryPoint;
 import com.am.security.util.TokenExtractor;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
@@ -41,8 +43,15 @@ public class SecurityAutoConfiguration {
         
         boolean isMockEnabled = properties.getLocalMock() != null && properties.getLocalMock().isEnabled();
 
+        AmAuthenticationEntryPoint entryPoint = new AmAuthenticationEntryPoint();
+        AmAccessDeniedHandler accessDeniedHandler = new AmAccessDeniedHandler();
+
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(entryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+            )
             .authorizeHttpRequests(authorize -> {
                 // Configure public paths
                 if (properties.getPublicPaths() != null && !properties.getPublicPaths().isEmpty()) {
@@ -68,7 +77,11 @@ public class SecurityAutoConfiguration {
         } else {
             JwtDecoder jwtDecoder = jwtDecoderProvider.getIfAvailable();
             if (jwtDecoder != null) {
-                http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)));
+                http.oauth2ResourceServer(oauth2 -> oauth2
+                    .jwt(jwt -> jwt.decoder(jwtDecoder))
+                    .authenticationEntryPoint(entryPoint)
+                    .accessDeniedHandler(accessDeniedHandler)
+                );
             }
         }
 

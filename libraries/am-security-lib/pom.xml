@@ -69,5 +69,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+
+        <!-- AM API Core Library -->
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-api-core-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

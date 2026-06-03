@@ -43,6 +43,18 @@ logging:
     org.apache.kafka: INFO
 
 am:
+  security:
+    enabled: true
+    proxy-name: "analysis"
+    oidc:
+      jwk-set-uri: ${OIDC_JWKS_URI:http://localhost:8001/realms/am-realm/protocol/openid-connect/certs}
+      issuer-uri: ${OIDC_ISSUER_URI:http://localhost:8001/realms/am-realm}
+      client-id: ${OAUTH2_CLIENT_ID:am-analysis-client}
+      client-secret: ${OAUTH2_CLIENT_SECRET:secret}
+    public-paths:
+      - "/actuator/**"
+      - "/analysis/actuator/**"
+
   kafka:
     enabled: ${AM_KAFKA_ENABLED:true}
   observability:
@@ -61,7 +73,6 @@ am:
         enabled: true # Enable/disable Trade Event Listener
       ingestion:
         enabled: true # Enable/disable Analysis Ingestion Service
-
 
   services:
     market-data:
@@ -137,4 +148,3 @@ otel:
   service:
     name: ${spring.application.name}
     namespace: am-core-services
-

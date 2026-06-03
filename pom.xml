@@ -48,6 +48,7 @@
     <modules>
         <!-- Libraries Layer -->
         <module>libraries/am-common-lib</module>
+        <module>libraries/am-api-core-lib</module>
         <module>libraries/am-observability-lib</module>
         <module>libraries/am-kafka-lib</module>
         <module>libraries/am-analysis-adapter</module>
