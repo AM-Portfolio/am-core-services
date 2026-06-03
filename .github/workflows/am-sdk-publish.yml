@@ -26,6 +26,7 @@ jobs:
     outputs:
       analysis-adapter: ${{ steps.check.outputs.analysis-adapter }}
       analysis-client-lib: ${{ steps.check.outputs.analysis-client-lib }}
+      api-core-lib: ${{ steps.check.outputs.api-core-lib }}
       cache-lib: ${{ steps.check.outputs.cache-lib }}
       common-event-model: ${{ steps.check.outputs.common-event-model }}
       common-lib: ${{ steps.check.outputs.common-lib }}
@@ -76,6 +77,7 @@ jobs:
           # Libraries
           echo "analysis-adapter=$(check 'libraries/am-analysis-adapter/')" >> $GITHUB_OUTPUT
           echo "analysis-client-lib=$(check 'libraries/am-analysis-client-lib/')" >> $GITHUB_OUTPUT
+          echo "api-core-lib=$(check 'libraries/am-api-core-lib/')" >> $GITHUB_OUTPUT
           echo "cache-lib=$(check 'libraries/am-cache-lib/')" >> $GITHUB_OUTPUT
           echo "common-event-model=$(check 'libraries/am-common-event-model/')" >> $GITHUB_OUTPUT
           echo "common-lib=$(check 'libraries/am-common-lib/')" >> $GITHUB_OUTPUT
@@ -132,6 +134,20 @@ jobs:
       sdk_name: "am-common-lib"
     secrets: inherit
 
+  publish-api-core-lib:
+    name: Publish API Core Lib
+    needs: publish-root-pom
+    if: always() && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped') && needs.detect-changes.outputs.api-core-lib == 'true'
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: "java"
+      working_directory: "libraries/am-api-core-lib"
+      sdk_name: "am-api-core-lib"
+    secrets: inherit
+
   publish-common-event-model:
     name: Publish Common Event Model
     needs: publish-root-pom
@@ -163,8 +179,12 @@ jobs:
 
   publish-security-lib:
     name: Publish Security Lib
-    needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped') && needs.detect-changes.outputs.security-lib == 'true'
+    needs: [publish-common-lib, publish-api-core-lib]
+    if: >-
+      always()
+      && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+      && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
+      && needs.detect-changes.outputs.security-lib == 'true'
     permissions:
       contents: write
       packages: write
