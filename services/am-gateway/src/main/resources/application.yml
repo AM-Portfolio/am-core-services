@@ -1,3 +1,4 @@
+# Trigger CI/CD test for service-only change
 server:
   port: ${SERVICE_PORT:8080}
 
