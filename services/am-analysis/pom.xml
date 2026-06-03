@@ -64,11 +64,6 @@
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
-            <artifactId>am-api-core-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
             <artifactId>am-security-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
