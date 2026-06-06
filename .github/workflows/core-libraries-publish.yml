@@ -6,7 +6,7 @@
 # Reusable logic: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
 # Registry: https://maven.pkg.github.com/AM-Portfolio/am-core-services (parent pom distributionManagement)
 
-name: Core Services CI/CD
+name: Core Libraries Publish
 
 on:
   push:
@@ -14,13 +14,11 @@ on:
     paths:
       - "libraries/**"
       - "domain/**"
-      - "services/**"
       - "pom.xml"
   pull_request:
     paths:
       - "libraries/**"
       - "domain/**"
-      - "services/**"
       - "pom.xml"
   workflow_dispatch:
 
@@ -53,9 +51,6 @@ jobs:
       market-domain: ${{ steps.check.outputs.market-domain }}
       portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
       trade-domain: ${{ steps.check.outputs.trade-domain }}
-      gateway: ${{ steps.check.outputs.gateway }}
-      analysis: ${{ steps.check.outputs.analysis }}
-      mcp-server: ${{ steps.check.outputs.mcp-server }}
       maven-pl-list: ${{ steps.check.outputs.maven-pl-list }}
     steps:
       - uses: actions/checkout@v4
@@ -121,9 +116,6 @@ jobs:
           lib "domain/am-market-domain" "market-domain"
           lib "domain/am-portfolio-domain" "portfolio-domain"
           lib "domain/am-trade-domain" "trade-domain"
-          lib "services/am-gateway" "gateway"
-          lib "services/am-analysis" "analysis"
-          lib "services/am-mcp-server" "mcp-server"
 
           # Pull in build-order dependencies when a downstream module changed
           enable() {
@@ -540,95 +532,4 @@ jobs:
       action: publish
       use_release_version: true
     secrets: inherit
-  # ── SERVICE BUILDS (Monorepo CI/CD) ─────────────────────────
-  build-gateway:
-    name: Publish Gateway
-    needs:
-      - detect-changes
-      - publish-common-lib
-      - publish-api-core-lib
-      - publish-security-lib
-      - publish-feign-lib
-      - publish-cache-lib
-    if: >-
-      always()
-      && (github.event_name == 'push' || github.event_name == 'pull_request')
-      && (needs.detect-changes.outputs.gateway == 'true' || needs.detect-changes.outputs.any == 'true')
-      && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
-      && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
-      && (needs.publish-security-lib.result == 'success' || needs.publish-security-lib.result == 'skipped')
-      && (needs.publish-feign-lib.result == 'success' || needs.publish-feign-lib.result == 'skipped')
-      && (needs.publish-cache-lib.result == 'success' || needs.publish-cache-lib.result == 'skipped')
-    permissions:
-      contents: read
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
-    with:
-      language: "java"
-      working_directory: "services/am-gateway"
-      image_name: "am-gateway"
-      build_context: "."
-      preprod_namespace: "am-apps-preprod"
-      prod_namespace: "am-apps-prod"
-      deploy_prod: false
-    secrets: inherit
 
-  build-analysis:
-    name: Publish Analysis
-    needs:
-      - detect-changes
-      - publish-common-lib
-      - publish-api-core-lib
-      - publish-security-lib
-      - publish-analysis-adapter
-      - publish-analysis-client-lib
-    if: >-
-      always()
-      && (github.event_name == 'push' || github.event_name == 'pull_request')
-      && (needs.detect-changes.outputs.analysis == 'true' || needs.detect-changes.outputs.any == 'true')
-      && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
-      && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
-      && (needs.publish-security-lib.result == 'success' || needs.publish-security-lib.result == 'skipped')
-      && (needs.publish-analysis-adapter.result == 'success' || needs.publish-analysis-adapter.result == 'skipped')
-      && (needs.publish-analysis-client-lib.result == 'success' || needs.publish-analysis-client-lib.result == 'skipped')
-    permissions:
-      contents: read
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
-    with:
-      language: "java"
-      working_directory: "services/am-analysis"
-      image_name: "am-analysis"
-      build_context: "."
-      preprod_namespace: "am-apps-preprod"
-      prod_namespace: "am-apps-prod"
-      deploy_prod: false
-    secrets: inherit
-
-  build-mcp-server:
-    name: Publish MCP Server
-    needs:
-      - detect-changes
-      - publish-common-lib
-      - publish-api-core-lib
-      - publish-security-lib
-    if: >-
-      always()
-      && (github.event_name == 'push' || github.event_name == 'pull_request')
-      && (needs.detect-changes.outputs.mcp-server == 'true' || needs.detect-changes.outputs.any == 'true')
-      && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
-      && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
-      && (needs.publish-security-lib.result == 'success' || needs.publish-security-lib.result == 'skipped')
-    permissions:
-      contents: read
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/central-build-publish.yml@main
-    with:
-      language: "java"
-      working_directory: "services/am-mcp-server"
-      image_name: "am-mcp-server"
-      build_context: "."
-      preprod_namespace: "am-apps-preprod"
-      prod_namespace: "am-apps-prod"
-      deploy_prod: false
-    secrets: inherit
