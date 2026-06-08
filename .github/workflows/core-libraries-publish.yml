@@ -235,7 +235,18 @@ jobs:
             mvn -B org.codehaus.mojo:versions-maven-plugin:2.16.2:set -DremoveSnapshot -DgenerateBackupPoms=false
           fi
       - name: Deploy parent POM
-        run: mvn -B deploy -DskipTests -N
+        run: |
+          mvn -B deploy -DskipTests -N > deploy.log 2>&1 || {
+            status=$?
+            cat deploy.log
+            if grep -q "status code: 409" deploy.log || grep -q "Conflict (409)" deploy.log; then
+              echo "WARNING: Parent POM version already deployed (409 Conflict). Skipping deploy."
+              exit 0
+            else
+              exit $status
+            fi
+          }
+          cat deploy.log
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
