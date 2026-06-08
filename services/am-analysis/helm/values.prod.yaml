@@ -26,8 +26,16 @@ vault:
   enabled: true
   role: "am-analysis-role"
   secretPaths:
-    kafka: "apps/data/prod/infra/kafka"
-    mongodb: "apps/data/prod/infra/mongodb"
+    kafka:
+      path: "apps/data/prod/infra/kafka"
+    mongodb:
+      path: "apps/data/prod/infra/mongodb"
+    market-data:
+      path: "apps/data/prod/services/am-market-data"
+    identity-oidc:
+      path: "apps/data/prod/services/am-identity"
+    service-oauth:
+      path: "apps/data/prod/services/am-analysis"
 
 # Non-secret env vars
 env:

@@ -44,7 +44,51 @@ public class TokenExtractor {
     }
     
     public static String extractUsername(String token) {
-        return extractClaim(token, "username", String.class);
+        Claims claims = extractAllClaimsUnsafe(token);
+        String username = claims.get("preferred_username", String.class);
+        if (username == null) {
+            username = claims.get("username", String.class);
+        }
+        if (username == null) {
+            username = claims.get("name", String.class);
+        }
+        return username;
+    }
+
+    public static java.util.List<String> extractRoles(String token) {
+        Claims claims = extractAllClaimsUnsafe(token);
+        java.util.List<String> roles = new java.util.ArrayList<>();
+        
+        // Try common standard claims for roles/groups
+        extractListClaim(claims, "roles", roles);
+        if (roles.isEmpty()) {
+            extractListClaim(claims, "groups", roles);
+        }
+        
+        // Try Keycloak specific format
+        if (roles.isEmpty() && claims.containsKey("realm_access")) {
+            Object realmAccess = claims.get("realm_access");
+            if (realmAccess instanceof Map) {
+                Object realmRoles = ((Map<?, ?>) realmAccess).get("roles");
+                if (realmRoles instanceof java.util.List) {
+                    for (Object role : (java.util.List<?>) realmRoles) {
+                        roles.add(String.valueOf(role));
+                    }
+                }
+            }
+        }
+        return roles;
+    }
+
+    private static void extractListClaim(Claims claims, String key, java.util.List<String> outputList) {
+        Object claimObj = claims.get(key);
+        if (claimObj instanceof java.util.List) {
+            for (Object item : (java.util.List<?>) claimObj) {
+                outputList.add(String.valueOf(item));
+            }
+        } else if (claimObj instanceof String) {
+            outputList.add((String) claimObj);
+        }
     }
 
     public static <T> T extractClaim(String token, String claimKey, Class<T> type) {

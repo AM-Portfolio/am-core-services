@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+am:
+  security:
+    local-mock:
+      enabled: true
+      user-id: "local-dev-user"
+      username: "Local Developer"
+      email: "local-dev@am.com"
+      roles:
+        - "ROLE_USER"
+        - "ROLE_ADMIN"

@@ -21,6 +21,10 @@ vault:
       path: "apps/data/dev/infra/kafka"
     redis:
       path: "apps/data/dev/infra/redis"
+    identity-oidc:
+      path: "apps/data/dev/services/am-identity"
+    service-oauth:
+      path: "apps/data/dev/services/am-gateway"
 
 # Non-secret env vars pointing to preprod cluster services
 env:

@@ -13,6 +13,8 @@ target/
 
 # Environment
 .env
+.env.*
+*.env
 
 # Test Reports (generated at runtime)
 **/surefire-reports/
@@ -32,3 +34,6 @@ replay_pid*.log
 .gradle/
 build/
 maven-settings.xml
+
+# Logs
+logs/

@@ -10,7 +10,7 @@ name: Core Libraries Publish
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, 'feature/**']
     paths:
       - "libraries/**"
       - "domain/**"
@@ -35,7 +35,9 @@ jobs:
     outputs:
       any: ${{ steps.check.outputs.any }}
       root-pom: ${{ steps.check.outputs.root-pom }}
+      libs-changed: ${{ steps.check.outputs.libs-changed }}
       analysis-adapter: ${{ steps.check.outputs.analysis-adapter }}
+      api-core-lib: ${{ steps.check.outputs.api-core-lib }}
       analysis-client-lib: ${{ steps.check.outputs.analysis-client-lib }}
       cache-lib: ${{ steps.check.outputs.cache-lib }}
       common-event-model: ${{ steps.check.outputs.common-event-model }}
@@ -80,6 +82,12 @@ jobs:
           root_pom=false
           path_changed "pom.xml" && root_pom=true
 
+          libs_changed=false
+          if path_changed "libraries/" || path_changed "domain/" || [ "$root_pom" = true ]; then
+            libs_changed=true
+          fi
+          echo "libs-changed=${libs_changed}" >> "$GITHUB_OUTPUT"
+
           lib() {
             local prefix="$1"
             local key="$2"
@@ -95,6 +103,7 @@ jobs:
 
           lib "libraries/am-analysis-adapter" "analysis-adapter"
           lib "libraries/am-analysis-client-lib" "analysis-client-lib"
+          lib "libraries/am-api-core-lib" "api-core-lib"
           lib "libraries/am-cache-lib" "cache-lib"
           lib "libraries/am-common-event-model" "common-event-model"
           lib "libraries/am-common-lib" "common-lib"
@@ -119,6 +128,9 @@ jobs:
             || grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT" \
             || grep -q '^analysis-client-lib=true' "$GITHUB_OUTPUT"; then
             enable common-lib libraries/am-common-lib
+          fi
+          if grep -q '^security-lib=true' "$GITHUB_OUTPUT"; then
+            enable api-core-lib libraries/am-api-core-lib
           fi
           if grep -q '^market-client-lib=true' "$GITHUB_OUTPUT"; then
             enable market-domain domain/am-market-domain
@@ -173,8 +185,8 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      && needs.detect-changes.outputs.any == 'true'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && needs.detect-changes.outputs.libs-changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -197,6 +209,7 @@ jobs:
           </settings>
           EOF
       - name: Promote parent to release version
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
           CURRENT=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
           if echo "$CURRENT" | grep -q 'SNAPSHOT'; then
@@ -214,17 +227,38 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.common-lib == 'true'
-      && needs.publish-root-pom.result == 'success'
+      && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
       language: java
       working_directory: libraries/am-common-lib
       sdk_name: am-common-lib
+      action: publish
+      use_release_version: true
+    secrets: inherit
+
+  publish-api-core-lib:
+    name: Publish am-api-core-lib
+    needs: [detect-changes, publish-root-pom]
+    if: >-
+      always()
+      && github.event_name == 'push'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && needs.detect-changes.outputs.api-core-lib == 'true'
+      && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: java
+      working_directory: libraries/am-api-core-lib
+      sdk_name: am-api-core-lib
       action: publish
       use_release_version: true
     secrets: inherit
@@ -237,7 +271,7 @@ jobs:
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       && needs.detect-changes.outputs.common-event-model == 'true'
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -258,7 +292,7 @@ jobs:
       && needs.detect-changes.outputs.kafka-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -271,15 +305,16 @@ jobs:
 
   publish-security-lib:
     name: Publish am-security-lib
-    needs: [detect-changes, publish-common-lib]
+    needs: [detect-changes, publish-common-lib, publish-api-core-lib]
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.security-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+      && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -300,7 +335,7 @@ jobs:
       && needs.detect-changes.outputs.feign-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -319,7 +354,7 @@ jobs:
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       && needs.detect-changes.outputs.cache-lib == 'true'
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -340,7 +375,7 @@ jobs:
       && needs.detect-changes.outputs.market-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -361,7 +396,7 @@ jobs:
       && needs.detect-changes.outputs.trade-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -382,7 +417,7 @@ jobs:
       && needs.detect-changes.outputs.portfolio-domain == 'true'
       && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -403,7 +438,7 @@ jobs:
       && needs.detect-changes.outputs.market-client-lib == 'true'
       && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -424,7 +459,7 @@ jobs:
       && needs.detect-changes.outputs.trade-client-lib == 'true'
       && (needs.publish-trade-domain.result == 'success' || needs.publish-trade-domain.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -445,7 +480,7 @@ jobs:
       && needs.detect-changes.outputs.portfolio-client-lib == 'true'
       && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -466,7 +501,7 @@ jobs:
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -487,7 +522,7 @@ jobs:
       && needs.detect-changes.outputs.analysis-client-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
     with:
@@ -497,3 +532,4 @@ jobs:
       action: publish
       use_release_version: true
     secrets: inherit
+

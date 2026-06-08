@@ -23,6 +23,10 @@ vault:
       path: "apps/data/dev/infra/redis"
     market-data:
       path: "apps/data/dev/services/am-market-data"
+    identity-oidc:
+      path: "apps/data/dev/services/am-identity"
+    service-oauth:
+      path: "apps/data/dev/services/am-analysis"
 
 # Dev-specific env vars (point to dev cluster services)
 env:

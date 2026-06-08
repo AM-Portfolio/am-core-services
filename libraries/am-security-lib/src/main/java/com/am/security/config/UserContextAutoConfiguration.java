@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnWebApplication
 public class UserContextAutoConfiguration {
+    // Dummy comment to test CI/CD wait/dependencies logic
     @Bean
     public UserContextFilter userContextFilter() {
         return new UserContextFilter();

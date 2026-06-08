@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Dummy commit to trigger CI/CD: v1.0.0 -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
@@ -42,18 +44,39 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        
         <!-- Spring Web (For Filters and Configurations) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
+        <!-- Spring Boot AutoConfigure -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <!-- Spring Security & OAuth2 Resource Server -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>        
+
         <!-- Commons -->
          <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <!-- AM API Core Library -->
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-api-core-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

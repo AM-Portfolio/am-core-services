@@ -1,5 +1,6 @@
+# Trigger CI/CD test for service-only change
 server:
-  port: 8080
+  port: ${SERVICE_PORT:8080}
 
 # ── Swagger / OpenAPI Documentation  ───────────────────────────────────────────
 springdoc:
@@ -15,6 +16,8 @@ springdoc:
 spring:
   application:
     name: am-websocket-gateway
+  profiles:
+    include: security
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
@@ -86,3 +89,4 @@ am:
       enabled: ${AM_OBSERVABILITY_REQUEST_LOG_ENABLED:true}
     sanitize:
       preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
+

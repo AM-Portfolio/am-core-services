@@ -1,3 +1,6 @@
+server:
+  port: ${SERVICE_PORT:8080}
+
 spring:
   application:
     name: am-mcp-server
@@ -156,10 +159,12 @@ am.observability:
   sanitize:
     preview-bytes: ${AM_OBSERVABILITY_SANITIZE_PREVIEW_BYTES:256}
 
+
+
 # ── Logging ───────────────────────────────────────────────────────────────────
 # Activate mcp-stdio profile to push JSON logs to STDERR (keeps STDOUT clean
 # for the MCP framing protocol). Override per environment.
-spring.profiles.include: mcp-stdio
+spring.profiles.include: mcp-stdio, security
 logging:
   level:
     com.am.mcp: DEBUG

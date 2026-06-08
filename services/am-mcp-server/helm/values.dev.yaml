@@ -12,9 +12,14 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-# Vault disabled in dev — env vars used directly
+# Vault is enabled in dev
 vault:
-  enabled: false
+  enabled: true
+  secretPaths:
+    identity-oidc:
+      path: "apps/data/dev/services/am-identity"
+    service-oauth:
+      path: "apps/data/dev/services/am-mcp-server"
 
 # Dev-specific env vars (point to dev cluster services)
 env:
