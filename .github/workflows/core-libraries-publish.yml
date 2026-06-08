@@ -189,7 +189,7 @@ jobs:
       && needs.detect-changes.outputs.libs-changed == 'true'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v4
@@ -250,6 +250,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
+      - name: Advance parent to next snapshot and push
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: |
+          mvn -B org.codehaus.mojo:versions-maven-plugin:2.16.2:set -DnextSnapshot=true -DgenerateBackupPoms=false
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add pom.xml **/pom.xml
+            git commit -m "chore: bump parent and submodules to next snapshot version [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          else
+            echo "No version changes detected."
+          fi
 
   # ── main/master: library publish (release version, path-filtered) ─────────
   publish-common-lib:
