@@ -1,5 +1,5 @@
 # Core Services — shared libraries CI/CD
-#
+#Trigger Deployment 1
 # PR (any branch): build/verify only — SNAPSHOT versions, no GitHub Packages deploy
 # Push to main/master: publish release artifacts (strip -SNAPSHOT) to GitHub Packages / Releases
 #
