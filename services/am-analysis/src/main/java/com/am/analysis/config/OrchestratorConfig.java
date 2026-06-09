@@ -26,11 +26,12 @@ public class OrchestratorConfig {
     @Bean
     public DemandDrivenOrchestrator demandDrivenOrchestrator(
             InterestRegistryService interestRegistryService,
+            com.am.analysis.service.DashboardAnalysisService dashboardService,
             KafkaTemplate<String, String> kafkaTemplate,
             ObjectMapper objectMapper,
             FlowLogger flowLogger,
             TracingHelper tracingHelper) {
-        return new DemandDrivenOrchestrator(interestRegistryService, kafkaTemplate, objectMapper,
+        return new DemandDrivenOrchestrator(interestRegistryService, dashboardService, kafkaTemplate, objectMapper,
                 flowLogger, tracingHelper);
     }
 }

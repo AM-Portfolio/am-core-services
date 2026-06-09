@@ -30,7 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class DemandDrivenOrchestrator {
 
-    private final InterestRegistryService interestRegistry;
+    private final com.am.kafka.service.InterestRegistryService interestRegistry;
+    private final com.am.analysis.service.DashboardAnalysisService dashboardService;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final FlowLogger flowLogger;
@@ -61,12 +62,30 @@ public class DemandDrivenOrchestrator {
         }
     }
 
+    /**
+     * Listen for real-time stock price updates from Kafka.
+     * When a price changes, we:
+     *  1. Trigger a background calculation (debounced).
+     *  2. Proactively push updated dashboard summaries to all active users via WebSocket.
+     */
     @KafkaListener(topics = KafkaTopics.STOCK_UPDATE, groupId = "am-orchestrator-group")
     public void onMarketUpdate(String message) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.consume.stock_update",
                 "payload_bytes", message == null ? 0 : message.length())) {
+            
+            // 1. Start portfolio recalculation (debounced)
             triggerCalculationForActiveWatchers("MARKET_MOVE");
-            flowLogger.complete(span);
+            
+            // 2. Proactive Fan-out: Publish dashboard updates to all active users
+            // This eliminates the need for UI polling.
+            Set<String> activeUsers = interestRegistry.getAllActiveUsers();
+            log.debug("[Orchestrator] Market move detected. Pushing dashboard updates to {} active users.", activeUsers.size());
+            
+            for (String userId : activeUsers) {
+                dashboardService.publishDashboardUpdate(userId);
+            }
+            
+            flowLogger.complete(span, "activeUsers", activeUsers.size());
         }
     }
 

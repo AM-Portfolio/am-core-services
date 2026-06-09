@@ -69,6 +69,8 @@ public class InterestRegistryService {
 
     public boolean hasActiveWatchers(String portfolioId) {
         try {
+            // Optimization: In a production environment, we should use a Redis Set (SADD/SMEMBERS)
+            // for portfolio watchers to avoid O(N) keys() scanning.
             Set<String> keys = redisTemplate.keys(KEY_PREFIX + "*");
             if (keys == null || keys.isEmpty()) return false;
             for (String key : keys) {
@@ -80,6 +82,27 @@ public class InterestRegistryService {
         } catch (Exception ex) {
             log.warn("[Interest] Redis unavailable for hasActiveWatchers: {}", ex.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Retrieve all user IDs currently marked as active in the registry.
+     * Used by the Orchestrator for proactive fan-out of dashboard updates.
+     *
+     * @return Set of active user IDs.
+     */
+    public Set<String> getAllActiveUsers() {
+        try {
+            Set<String> keys = redisTemplate.keys(KEY_PREFIX + "*");
+            if (keys == null || keys.isEmpty()) return java.util.Collections.emptySet();
+            
+            return keys.stream()
+                .filter(key -> !key.endsWith(":session"))
+                .map(key -> key.substring(KEY_PREFIX.length()))
+                .collect(java.util.stream.Collectors.toSet());
+        } catch (Exception ex) {
+            log.warn("[Interest] Redis unavailable for getAllActiveUsers: {}", ex.getMessage());
+            return java.util.Collections.emptySet();
         }
     }
 }
