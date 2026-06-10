@@ -17,3 +17,6 @@ am:
         - "ROLE_ADMIN"
     public-paths:
       - "/actuator/**"
+      - "/v1/streams/**"
+      - "/v1/streams-fallback/**"
+
