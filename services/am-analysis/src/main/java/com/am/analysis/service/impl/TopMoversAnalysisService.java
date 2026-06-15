@@ -175,7 +175,7 @@ public class TopMoversAnalysisService {
         Double currentPrice = 0.0;
         if (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) {
             currentPrice = h.getMarket().getCurrentPrice();
-        }
+        } // Fix: Auto-unboxing NPE resolved
         
         double pct = 0.0;
         double amt = 0.0;
