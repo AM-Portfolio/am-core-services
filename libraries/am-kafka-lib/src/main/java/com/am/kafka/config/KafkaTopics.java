@@ -28,6 +28,9 @@ public final class KafkaTopics {
     // User Watching (emitted by Gateway on subscription)
     public static final String USER_WATCHING = "am-user-watching";
 
+    // Previous Close Snapshots (emitted by 8 AM Market-Data-Scheduler)
+    public static final String PREVIOUS_CLOSE_SNAPSHOT = "am-previous-close-snapshot";
+
     // Dead Letter Queues (DLQ) - Failed events land here for inspection/retry
     public static final String TRIGGER_CALCULATION_DLQ = "am-trigger-calculation.DLQ";
     public static final String PORTFOLIO_UPDATE_DLQ   = "am-portfolio-stream.DLQ";
