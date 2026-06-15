@@ -41,15 +41,16 @@ hostAliases:
       - "mongodb.asrax.in"
       - "kafka.asrax.in"
 
-probes:
-  startup:
-    path: "/actuator/health"
-    failureThreshold: 30 # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
-    periodSeconds: 10
-  liveness:
-    path: "/actuator/health"
-  readiness:
-    path: "/actuator/health"
+# probes:
+#   port: 8080
+#   startup:
+#     path: "/actuator/health"
+#     failureThreshold: 30 # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
+#     periodSeconds: 10
+#   liveness:
+#     path: "/actuator/health"
+#   readiness:
+#     path: "/actuator/health"
 
 ingress:
   enabled: true
