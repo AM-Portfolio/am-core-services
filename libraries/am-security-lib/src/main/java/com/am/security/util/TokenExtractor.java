@@ -31,15 +31,33 @@ public class TokenExtractor {
 
     public static String extractUserId(String token) {
         Claims claims = extractAllClaimsUnsafe(token);
-        // Try standard 'sub' claim first (RFC 7519)
-        String userId = claims.getSubject();
-        // Fallback to custom claim names — matches am-gateway JwtUtilMock behavior
+        
+        // 1. Try to extract email first as the primary identifier (NEW BEHAVIOR)
+        String userId = claims.get("email", String.class);
+        
+        // 2. Fallback to preferred_username or username
+        if (userId == null) {
+            userId = claims.get("preferred_username", String.class);
+        }
+        if (userId == null) {
+            userId = claims.get("username", String.class);
+        }
+        if (userId == null) {
+            userId = claims.get("name", String.class);
+        }
+        
+        // 3. Fallback to standard 'sub' claim (RFC 7519)
+        if (userId == null) {
+            userId = claims.getSubject();
+        }
+        // 4. Fallback to custom claim names — matches am-gateway JwtUtilMock behavior
         if (userId == null) {
             userId = claims.get("userId", String.class);
         }
         if (userId == null) {
             userId = claims.get("id", String.class);
         }
+        
         return userId;
     }
     
