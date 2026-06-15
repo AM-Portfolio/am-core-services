@@ -543,7 +543,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
