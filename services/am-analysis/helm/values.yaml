@@ -15,13 +15,14 @@ service:
 
 # Health probe configuration (Spring Boot Actuator)
 probes:
-  port: 8080
   liveness:
+    path: /actuator/health
     initialDelaySeconds: 60
     periodSeconds: 30
     timeoutSeconds: 10
     failureThreshold: 3
   readiness:
+    path: /actuator/health
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
