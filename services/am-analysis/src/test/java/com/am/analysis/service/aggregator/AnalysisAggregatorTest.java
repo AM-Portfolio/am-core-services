@@ -6,6 +6,7 @@ import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.DashboardSummary;
 import com.am.domain.trade.TradePortfolio;
+import com.am.observability.flow.FlowLogger;
 import com.am.trade.client.service.TradeClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ public class AnalysisAggregatorTest {
 
     @Mock
     private TradeClientService tradeClientService;
+
+    @Mock
+    private FlowLogger flowLogger;
 
     @InjectMocks
     private AnalysisAggregator aggregator;

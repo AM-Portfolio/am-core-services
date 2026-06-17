@@ -2,6 +2,7 @@ package com.am.gateway.service;
 
 import com.am.kafka.config.KafkaTopics;
 import com.am.kafka.schema.UserWatchingEvent;
+import com.am.kafka.service.InterestRegistryService;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.trace.TracingHelper;

@@ -25,6 +25,8 @@ vault:
       path: "apps/data/dev/services/am-identity"
     service-oauth:
       path: "apps/data/dev/services/am-gateway"
+    market-data:
+      path: "apps/data/dev/services/am-market-data"
 
 # Non-secret env vars pointing to preprod cluster services
 env:

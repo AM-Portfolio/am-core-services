@@ -41,10 +41,17 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-common-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-observability-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.am.libraries</groupId>
+            <artifactId>am-kafka-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.domain</groupId>
@@ -54,12 +61,6 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
-            <version>${project.version}</version>
-
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-api-core-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -99,6 +100,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- Spring Kafka (orchestrator + dashboard widget publishers) -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>

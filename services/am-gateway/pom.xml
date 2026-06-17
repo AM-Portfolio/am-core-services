@@ -23,14 +23,17 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-common-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-observability-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-kafka-lib</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.domain</groupId>
@@ -88,6 +91,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

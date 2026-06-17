@@ -29,8 +29,9 @@ public class OrchestratorConfig {
             KafkaTemplate<String, String> kafkaTemplate,
             ObjectMapper objectMapper,
             FlowLogger flowLogger,
-            TracingHelper tracingHelper) {
+            TracingHelper tracingHelper,
+            com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService) {
         return new DemandDrivenOrchestrator(interestRegistryService, kafkaTemplate, objectMapper,
-                flowLogger, tracingHelper);
+                flowLogger, tracingHelper, dashboardAnalysisService);
     }
 }

@@ -48,7 +48,12 @@ public class KafkaRelayService {
         }
     }
 
-    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE, groupId = "am-websocket-gateway-group")
+    @KafkaListener(
+            topics = {
+                    com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE,
+                    com.am.kafka.config.KafkaTopics.PORTFOLIO_STREAM
+            },
+            groupId = "am-websocket-gateway-group")
     public void handlePortfolioStreamUpdate(String message) {
         try (FlowSpan span = flowLogger.start("gateway.kafka.relay.portfolio_update",
                 "payload_bytes", message == null ? 0 : message.length())) {
@@ -118,6 +123,52 @@ public class KafkaRelayService {
                 flowLogger.complete(span, "userId", userId);
             } catch (Exception e) {
                 log.debug("Dashboard update parse failed, preview={}", sanitizer.preview(message));
+                flowLogger.fail(span, e);
+            }
+        }
+    }
+
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.DASHBOARD_SUMMARY_UPDATE, groupId = "am-websocket-gateway-group")
+    public void handleDashboardSummaryUpdate(String message) {
+        relayDashboardWidget(message, "/queue/dashboard/summary", "gateway.kafka.relay.dashboard_summary");
+    }
+
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.DASHBOARD_MOVERS_UPDATE, groupId = "am-websocket-gateway-group")
+    public void handleDashboardMoversUpdate(String message) {
+        relayDashboardWidget(message, "/queue/dashboard/movers", "gateway.kafka.relay.dashboard_movers");
+    }
+
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.DASHBOARD_ACTIVITY_UPDATE, groupId = "am-websocket-gateway-group")
+    public void handleDashboardActivityUpdate(String message) {
+        relayDashboardWidget(message, "/queue/dashboard/activity", "gateway.kafka.relay.dashboard_activity");
+    }
+
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.DASHBOARD_ALLOCATION_UPDATE, groupId = "am-websocket-gateway-group")
+    public void handleDashboardAllocationUpdate(String message) {
+        relayDashboardWidget(message, "/queue/dashboard/allocation", "gateway.kafka.relay.dashboard_allocation");
+    }
+
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.DASHBOARD_HISTORY_UPDATE, groupId = "am-websocket-gateway-group")
+    public void handleDashboardHistoryUpdate(String message) {
+        relayDashboardWidget(message, "/queue/dashboard/history", "gateway.kafka.relay.dashboard_history");
+    }
+
+    private void relayDashboardWidget(String message, String destination, String spanName) {
+        try (FlowSpan span = flowLogger.start(spanName, "payload_bytes", message == null ? 0 : message.length())) {
+            try {
+                JsonNode node = objectMapper.readTree(message);
+                if (!node.has("userId")) {
+                    flowLogger.fail(span, null, "reason", "missing_userId");
+                    return;
+                }
+                String userId = node.get("userId").asText();
+                JsonNode dataNode = node.get("data");
+
+                log.debug("[WebSocket] Relaying {} to user: {}", destination, userId);
+                messagingTemplate.convertAndSendToUser(userId, destination, dataNode);
+                flowLogger.complete(span, "userId", userId);
+            } catch (Exception e) {
+                log.error("Failed to relay dashboard widget to {}", destination, e);
                 flowLogger.fail(span, e);
             }
         }
