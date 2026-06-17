@@ -105,4 +105,6 @@ public class InterestRegistryService {
             return java.util.Collections.emptySet();
         }
     }
+    
+    // Trigger SDK publish to deploy am-kafka-lib
 }
