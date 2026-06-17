@@ -13,6 +13,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+
     <groupId>com.am.libraries</groupId>
     <artifactId>am-kafka-lib</artifactId>
     <packaging>jar</packaging>
