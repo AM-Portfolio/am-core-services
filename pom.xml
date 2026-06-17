@@ -207,11 +207,17 @@
             <id>github-investment</id>
             <name>GitHub Packages - Core Services</name>
             <url>https://maven.pkg.github.com/AM-Portfolio/am-core-services</url>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
         <repository>
             <id>github-trade</id>
             <name>GitHub Packages - Trade Services</name>
             <url>https://maven.pkg.github.com/AM-Portfolio/am-trade-services</url>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
     <distributionManagement>
