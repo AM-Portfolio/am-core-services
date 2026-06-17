@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!-- Trigger CI build: v1.1.0 -->
+    <!-- Trigger CI build: streaming v1.1.1 -->
 <!-- Dummy commit to trigger CI/CD: v1.0.0 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
