@@ -89,7 +89,7 @@ jobs:
           lib() {
             local prefix="$1"
             local key="$2"
-            if path_changed "${prefix}/" || [ "$root_pom" = true ]; then
+            if path_changed "${prefix}/"; then
               echo "${key}=true" >> "$GITHUB_OUTPUT"
               echo "$prefix" >> /tmp/pl_modules.txt
             else
@@ -123,6 +123,9 @@ jobs:
             || grep -q '^observability-lib=true' "$GITHUB_OUTPUT" \
             || grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT"; then
             enable common-lib libraries/am-common-lib
+          fi
+          if grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT"; then
+            enable kafka-lib libraries/am-kafka-lib
           fi
           if grep -q '^security-lib=true' "$GITHUB_OUTPUT"; then
             enable api-core-lib libraries/am-api-core-lib
@@ -345,7 +348,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.common-event-model == 'true'
     permissions:
       contents: write
@@ -365,7 +368,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.kafka-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -408,7 +411,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.feign-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -449,7 +452,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.cache-lib == 'true'
     permissions:
       contents: write
@@ -469,7 +472,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.market-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -490,7 +493,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.trade-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -511,7 +514,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.portfolio-domain == 'true'
       && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
     permissions:
@@ -530,13 +533,14 @@ jobs:
 
   publish-analysis-adapter:
     name: Publish am-analysis-adapter
-    needs: [detect-changes, publish-common-lib]
+    needs: [detect-changes, publish-common-lib, publish-kafka-lib]
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+      && (needs.publish-kafka-lib.result == 'success' || needs.publish-kafka-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
