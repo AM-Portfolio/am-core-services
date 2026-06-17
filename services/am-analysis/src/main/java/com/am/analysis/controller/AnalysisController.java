@@ -80,7 +80,7 @@ public class AnalysisController {
         }
     }
 
-    @GetMapping("/dashboard/top-movers")
+    @GetMapping({"/dashboard/top-movers", "/movers"})
     public ResponseEntity<TopMoversResponse> getDashboardTopMovers(
             @RequestParam(name = "timeFrame", required = false, defaultValue = "1D") String timeFrame) {
         String userId = UserContext.getUserIdOrThrow();

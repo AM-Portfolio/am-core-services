@@ -63,6 +63,7 @@ public class MarketDataClientService {
             sdkRequest.setFrom(fromDate);
             sdkRequest.setTo(toDate);
             sdkRequest.setInterval(mapInterval(interval));
+            sdkRequest.setIsIndexSymbol(true);
 
             HistoricalDataResponseV1 response = marketDataApi.getHistoricalData(sdkRequest);
 
