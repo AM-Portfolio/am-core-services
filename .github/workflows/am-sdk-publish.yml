@@ -239,8 +239,18 @@ jobs:
 
   publish-analysis-client-sdk:
     name: Publish Analysis Client SDK
-    needs: publish-common-lib
-    if: always() && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    needs: 
+      - publish-common-lib
+      - publish-kafka-lib
+      - publish-analysis-adapter
+      - publish-feign-lib
+      - publish-api-core-lib
+      - publish-security-lib
+      - publish-cache-lib
+      - publish-market-client-lib
+      - publish-trade-client-lib
+      - publish-portfolio-client-lib
+    if: always()
     permissions:
       contents: write
       packages: write
