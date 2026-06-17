@@ -527,6 +527,8 @@ jobs:
     secrets: inherit
 
   # Client SDKs (*-client-lib) are published by am-sdk-publish.yml
+
+  publish-analysis-adapter:
     name: Publish am-analysis-adapter
     needs: [detect-changes, publish-common-lib]
     if: >-
