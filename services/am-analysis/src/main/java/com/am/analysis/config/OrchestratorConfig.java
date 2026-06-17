@@ -2,6 +2,7 @@ package com.am.analysis.config;
 
 import com.am.analysis.service.orchestrator.DemandDrivenOrchestrator;
 import com.am.kafka.service.InterestRegistryService;
+import com.am.kafka.service.PreviousCloseRedisService;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.trace.TracingHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,11 @@ public class OrchestratorConfig {
     @Bean
     public InterestRegistryService interestRegistryService(StringRedisTemplate redisTemplate) {
         return new InterestRegistryService(redisTemplate);
+    }
+
+    @Bean
+    public PreviousCloseRedisService previousCloseRedisService(StringRedisTemplate redisTemplate) {
+        return new PreviousCloseRedisService(redisTemplate);
     }
 
     @Bean
