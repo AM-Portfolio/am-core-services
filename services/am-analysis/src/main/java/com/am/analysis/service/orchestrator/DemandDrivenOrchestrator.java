@@ -49,7 +49,7 @@ public class DemandDrivenOrchestrator {
     private final Map<String, Long> lastActivityTrigger = new ConcurrentHashMap<>();
     private final Map<String, Long> lastMoversTrigger = new ConcurrentHashMap<>();
 
-    @KafkaListener(topics = KafkaTopics.USER_WATCHING, groupId = "am-orchestrator-group")
+    @KafkaListener(topics = KafkaTopics.USER_WATCHING, groupId = "am-orchestrator-watching-group")
     public void onUserWatching(String message) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.consume.user_watching",
                 "payload_bytes", message == null ? 0 : message.length())) {
@@ -74,7 +74,7 @@ public class DemandDrivenOrchestrator {
         }
     }
 
-    @KafkaListener(topics = KafkaTopics.STOCK_UPDATE, groupId = "am-orchestrator-group")
+    @KafkaListener(topics = KafkaTopics.STOCK_UPDATE, groupId = "am-orchestrator-stock-group")
     public void onMarketUpdate(String message) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.consume.stock_update",
                 "payload_bytes", message == null ? 0 : message.length())) {
