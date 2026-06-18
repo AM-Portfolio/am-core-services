@@ -43,11 +43,13 @@ public class DemandDrivenOrchestrator {
     private static final long SUMMARY_DEBOUNCE_MS = 1_000;
     private static final long ACTIVITY_DEBOUNCE_MS = 5_000;
     private static final long MOVERS_DEBOUNCE_MS = 5_000;
+    private static final long ALLOCATION_DEBOUNCE_MS = 5_000;
 
     private final Map<String, Long> lastTriggerMap = new ConcurrentHashMap<>();
     private final Map<String, Long> lastSummaryTrigger = new ConcurrentHashMap<>();
     private final Map<String, Long> lastActivityTrigger = new ConcurrentHashMap<>();
     private final Map<String, Long> lastMoversTrigger = new ConcurrentHashMap<>();
+    private final Map<String, Long> lastAllocationTrigger = new ConcurrentHashMap<>();
 
     @KafkaListener(topics = KafkaTopics.USER_WATCHING, groupId = "am-orchestrator-watching-group")
     public void onUserWatching(String message) {
@@ -114,6 +116,7 @@ public class DemandDrivenOrchestrator {
                     triggerDashboardSummaryUpdate(userId, true);
                     triggerDashboardActivityUpdate(userId, true);
                     triggerDashboardMoversUpdate(userId, true);
+                    triggerDashboardAllocationUpdate(userId, true);
                 }
             }
             flowLogger.complete(span, "dashboard_users", dashboardUsers);
@@ -171,6 +174,20 @@ public class DemandDrivenOrchestrator {
         }
         lastMoversTrigger.put(userId, now);
         dashboardAnalysisService.publishDashboardMovers(userId);
+    }
+
+    private void triggerDashboardAllocationUpdate(String userId, boolean debounce) {
+        long now = System.currentTimeMillis();
+        if (debounce) {
+            Long lastAllocation = lastAllocationTrigger.get(userId);
+            if (lastAllocation != null && (now - lastAllocation) < ALLOCATION_DEBOUNCE_MS) {
+                flowLogger.step("analysis.orchestrator.dashboard_allocation_debounced",
+                        "userId", userId, "window_ms", ALLOCATION_DEBOUNCE_MS);
+                return;
+            }
+        }
+        lastAllocationTrigger.put(userId, now);
+        dashboardAnalysisService.publishDashboardAllocation(userId);
     }
 
     private static boolean isDashboardChannel(String watchTarget) {
