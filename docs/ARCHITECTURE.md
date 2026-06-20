@@ -24,25 +24,40 @@ covering the UI, Gateway, Kafka orchestration, and all backend services.
 
 | Topic | Producer | Consumer | Purpose |
 |-------|----------|----------|---------|
-| `am-user-watching` | am-gateway | am-analysis Orchestrator | Triggers demand-driven calc |
-| `am-trigger-calculation` | Orchestrator | am-portfolio | Starts live portfolio calc |
-| `am-portfolio-stream` | am-portfolio | am-gateway | Pushes results to UI |
-| `am-stock-update` | am-market-data | Orchestrator | Market-driven recalc |
-| `am-trade-update` | am-trade | Orchestrator | Trade-driven recalc |
+| `am-user-watching` | am-gateway | am-analysis Orchestrator | Triggers demand-driven stream |
+| `am-trigger-calculation` | Orchestrator (legacy) | am-portfolio | Legacy live calc rollback only |
+| `am-portfolio-stream` | am-analysis | am-gateway | Pushes portfolio snapshot to UI |
+| `am-portfolio-update` | am-portfolio | am-analysis adapter | Structural holdings → Mongo |
+| `am-stock-price-update` | am-market-data | am-gateway, am-analysis | Live prices to UI + ingest |
+| `am-trade-update` | am-trade | am-gateway, am-analysis | Trade events to UI + ingest |
+| `dashboard-*-update` (5) | am-analysis | am-gateway | Dashboard widget streaming |
+
+See **[gateway-streaming](./gateway-streaming/README.md)** for per-stream E2E flows, log grep checklist, and troubleshooting (portfolio, market, trade, dashboard).
 | `*.DLQ` | All failed events | Ops/Retry | Dead letter queue |
 
 ## Live Streaming Flow
+
+**Portfolio (demand-driven):**
 
 ```
 User Opens App
   → WS /portfolio/subscribe
   → Gateway registers in Redis (TTL 35s)
   → Emits USER_WATCHING → Kafka
-  → Orchestrator: checks Redis, debounces 2s → TRIGGER_CALC
-  → Portfolio Service calculates
-  → PORTFOLIO_UPDATE → Kafka
-  → Gateway relays → WS Push → UI updated live ✅
+  → Orchestrator → PortfolioStreamingService (Mongo AnalysisEntity)
+  → am-portfolio-stream → Gateway relay → WS Push → UI updated live
 ```
+
+On market ticks: same orchestrator path with live price overlay (2s debounce per portfolio).
+Structural holdings changes: am-portfolio → `am-portfolio-update` → adapter → Mongo → stream push if user is watching.
+
+**Market:** UI SUBSCRIBE `/topic/stock/{symbol}` + SEND `/app/market/subscribe` → gateway proxies am-market connect → `am-stock-price-update` → gateway relay.
+
+**Trade (passive):** UI SUBSCRIBE `/user/queue/trade` only → `am-trade-update` → gateway relay (no `/app/trade/*` controller).
+
+**Dashboard:** UI SUBSCRIBE 5 queues + SEND `/app/dashboard/subscribe` → orchestrator → 5× `dashboard-*-update` → gateway relay.
+
+Details: [gateway-streaming/streaming-guide.md](./gateway-streaming/streaming-guide.md)
 
 ## Resilience Patterns
 

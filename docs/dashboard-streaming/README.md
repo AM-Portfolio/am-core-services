@@ -23,5 +23,6 @@ Implementation plan and phased task tracker for live dashboard WebSocket streami
 
 ## Related docs
 
+- [gateway-streaming](../gateway-streaming/README.md) — portfolio, market, trade WebSocket relay + log checklist
 - [USER_CONTEXT_SECURITY_GUIDE.md](../USER_CONTEXT_SECURITY_GUIDE.md)
 - [observability/DEVELOPER_GUIDE.md](../observability/DEVELOPER_GUIDE.md)

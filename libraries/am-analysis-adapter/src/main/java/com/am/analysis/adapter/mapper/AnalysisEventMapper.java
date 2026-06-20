@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -159,6 +160,78 @@ public class AnalysisEventMapper {
                         .build())
                 .lastUpdated(event.getTimestamp() != null ? event.getTimestamp() : LocalDateTime.now())
                 .build()).collect(Collectors.toList());
+    }
+
+    public PortfolioUpdateEvent mapEntityToPortfolioUpdateEvent(AnalysisEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        List<EquityModel> equities = Collections.emptyList();
+        if (entity.getHoldings() != null) {
+            equities = entity.getHoldings().stream()
+                    .map(this::mapHoldingToEquity)
+                    .collect(Collectors.toList());
+        }
+
+        PerformanceSummary perf = entity.getPerformance();
+        PortfolioUpdateEvent event = PortfolioUpdateEvent.builder()
+                .id(UUID.randomUUID())
+                .userId(entity.getOwnerId())
+                .portfolioId(entity.getSourceId())
+                .equities(equities)
+                .timestamp(entity.getLastUpdated() != null ? entity.getLastUpdated() : LocalDateTime.now())
+                .build();
+
+        if (perf != null) {
+            event.setTotalValue(perf.getTotalValue());
+            event.setTotalInvestment(perf.getTotalInvestment());
+            event.setTotalGainLoss(perf.getTotalGainLoss());
+            event.setTotalGainLossPercentage(perf.getTotalGainLossPercentage());
+            event.setTodayGainLoss(perf.getDayChange());
+            event.setTodayGainLossPercentage(perf.getDayChangePercentage());
+        }
+
+        return event;
+    }
+
+    private EquityModel mapHoldingToEquity(AnalysisHolding holding) {
+        HoldingIdentity identity = holding.getIdentity();
+        InvestmentStats inv = holding.getInvestment();
+        MarketStats market = holding.getMarket();
+        AssetClassification cls = holding.getClassification();
+
+        EquityModel model = new EquityModel();
+        if (identity != null) {
+            model.setIsin(identity.getIsin());
+            model.setSymbol(identity.getSymbol());
+            model.setName(identity.getName());
+            model.setCompanyName(identity.getCompanyName());
+            model.setExchange(identity.getExchange());
+        }
+        if (inv != null) {
+            model.setQuantity(inv.getQuantity());
+            model.setAveragePrice(inv.getAveragePrice());
+            model.setInvestmentValue(inv.getInvestmentValue());
+            model.setCurrentValue(inv.getCurrentValue());
+            model.setProfitLoss(inv.getProfitLoss());
+            model.setProfitLossPercentage(inv.getProfitLossPercentage());
+        }
+        if (market != null) {
+            model.setCurrentPrice(market.getCurrentPrice());
+            model.setPreviousClose(market.getPreviousClose());
+            model.setDayChange(market.getDayChange());
+            model.setDayChangePercentage(market.getDayChangePercentage());
+            model.setLastUpdatedTime(market.getLastUpdatedTime());
+            model.setTodayProfitLoss(market.getDayChange());
+            model.setTodayProfitLossPercentage(market.getDayChangePercentage());
+        }
+        if (cls != null) {
+            model.setSector(cls.getSector());
+            model.setIndustry(cls.getIndustry());
+            model.setMarketCap(cls.getMarketCapType());
+        }
+        return model;
     }
 
     public com.am.portfolio.domain.dto.PortfolioUpdateDto mapToDto(PortfolioUpdateEvent event) {

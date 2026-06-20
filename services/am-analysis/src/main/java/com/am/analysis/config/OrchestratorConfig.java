@@ -36,8 +36,11 @@ public class OrchestratorConfig {
             ObjectMapper objectMapper,
             FlowLogger flowLogger,
             TracingHelper tracingHelper,
-            com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService) {
+            com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService,
+            com.am.analysis.service.PortfolioStreamingService portfolioStreamingService,
+            com.am.analysis.config.PortfolioStreamingProperties portfolioStreamingProperties) {
         return new DemandDrivenOrchestrator(interestRegistryService, kafkaTemplate, objectMapper,
-                flowLogger, tracingHelper, dashboardAnalysisService);
+                flowLogger, tracingHelper, dashboardAnalysisService,
+                portfolioStreamingService, portfolioStreamingProperties);
     }
 }
