@@ -5,6 +5,8 @@ import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.TopMoversResponse;
+import com.am.analysis.service.LivePriceOverlayHelper;
+import com.am.analysis.service.LivePriceTick;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,19 +27,28 @@ public class TopMoversAnalysisService {
     private final com.am.market.client.service.MarketDataClientService marketDataClientService;
 
     public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
+        return getTopMovers(id, type, timeFrame, userId, groupBy, Map.of());
+    }
+
+    public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId,
+                                          AnalysisGroupBy groupBy, Map<String, LivePriceTick> liveTicks) {
         if (id == null) {
             log.info("Processing Top Movers by Category: Type={}, TimeFrame={}, User={}, GroupBy={}", type, timeFrame, userId, groupBy);
-            return getTopMoversByCategory(type, timeFrame, userId, groupBy);
+            return getTopMoversByCategory(type, timeFrame, userId, groupBy, liveTicks);
         } else {
             log.info("Processing Top Movers within Entity: ID={}, Type={}, TimeFrame={}, User={}, GroupBy={}", id, type, timeFrame, userId, groupBy);
             return getTopMoversWithinEntity(id, type, timeFrame, userId, groupBy);
         }
     }
 
-    private TopMoversResponse getTopMoversByCategory(AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
+    private TopMoversResponse getTopMoversByCategory(AnalysisEntityType type, String timeFrame, String userId,
+                                                     AnalysisGroupBy groupBy, Map<String, LivePriceTick> liveTicks) {
         if (type == AnalysisEntityType.PORTFOLIO && userId != null) {
             log.debug("Aggregating portfolio holdings for user: {}", userId);
             List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+            if (liveTicks != null && !liveTicks.isEmpty()) {
+                LivePriceOverlayHelper.applyAll(portfolios, liveTicks);
+            }
             
             List<com.am.analysis.adapter.model.AnalysisHolding> allHoldings = portfolios.stream()
                 .filter(p -> p.getHoldings() != null)

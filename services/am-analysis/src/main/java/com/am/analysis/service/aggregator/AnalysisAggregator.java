@@ -5,6 +5,8 @@ import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.DashboardSummary;
+import com.am.analysis.service.LivePriceOverlayHelper;
+import com.am.analysis.service.LivePriceTick;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.domain.trade.TradePortfolio;
 import com.am.observability.flow.FlowLogger;
@@ -43,12 +45,27 @@ public class AnalysisAggregator {
     // ─────────────────────────────────────────────────────────────────────
 
     public DashboardSummary getOverallSummary(String userId) {
+        return getOverallSummary(userId, Map.of());
+    }
+
+    public DashboardSummary getOverallSummary(String userId, Map<String, LivePriceTick> liveTicks) {
         List<AnalysisEntity> amPortfolios     = fetchPortfolioEntities(userId);
         List<TradePortfolio>  tradePortfolios  = fetchTradePortfolios(userId);
 
         boolean isComplete = amPortfolios != null && tradePortfolios != null;
         if (amPortfolios  == null) amPortfolios  = Collections.emptyList();
         if (tradePortfolios == null) tradePortfolios = Collections.emptyList();
+
+        if (liveTicks != null && !liveTicks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(amPortfolios, liveTicks);
+        }
+
+        return buildOverallSummary(amPortfolios, tradePortfolios, isComplete);
+    }
+
+    private DashboardSummary buildOverallSummary(List<AnalysisEntity> amPortfolios,
+                                                 List<TradePortfolio> tradePortfolios,
+                                                 boolean isComplete) {
 
         // IDs already covered by am-portfolio (de-duplication guard)
         Set<String> coveredPortfolioIds = amPortfolios.stream()

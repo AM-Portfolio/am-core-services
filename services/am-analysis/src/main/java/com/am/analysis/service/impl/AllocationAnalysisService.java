@@ -5,6 +5,8 @@ import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.AllocationResponse;
+import com.am.analysis.service.LivePriceOverlayHelper;
+import com.am.analysis.service.LivePriceTick;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,11 @@ public class AllocationAnalysisService {
     private final AnalysisAccessValidator accessValidator;
 
     public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy) {
+        return getAllocation(id, type, userId, groupBy, Map.of());
+    }
+
+    public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy,
+                                            Map<String, LivePriceTick> liveTicks) {
         if ("ALL".equals(id) && type == AnalysisEntityType.PORTFOLIO) {
             // Try to find a pre-calculated GLOBAL entity first
             String globalId = "PORTFOLIO_GLOBAL_" + userId;
@@ -41,6 +48,10 @@ public class AllocationAnalysisService {
                     .stream()
                     .filter(e -> !e.getId().endsWith("_GLOBAL")) // Exclude global to avoid double counting
                     .collect(java.util.stream.Collectors.toList());
+
+            if (liveTicks != null && !liveTicks.isEmpty()) {
+                LivePriceOverlayHelper.applyAll(allPortfolios, liveTicks);
+            }
             
             if (allPortfolios.isEmpty()) return AllocationResponse.builder().build();
 

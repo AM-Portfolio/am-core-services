@@ -149,17 +149,23 @@ public class AnalysisEventMapper {
     }
 
     public List<AnalysisEntity> mapMarketEvent(com.am.common.investment.model.events.EquityPriceUpdateEvent event) {
-        return event.getEquityPrices().stream().map(price -> AnalysisEntity.builder()
+        return event.getEquityPrices().stream().map(price -> {
+            double last = price.getLastPrice() != null ? price.getLastPrice() : 0.0;
+            Double prevClose = price.getOhlcv() != null ? price.getOhlcv().getClose() : null;
+            double change = prevClose != null && prevClose > 0 ? last - prevClose : 0.0;
+            double changePct = prevClose != null && prevClose > 0 ? (change / prevClose) * 100.0 : 0.0;
+            return AnalysisEntity.builder()
                 .id("MARKET_" + price.getSymbol())
                 .sourceId(price.getSymbol())
                 .type(AnalysisEntityType.MARKET_INDEX)
                 .performance(PerformanceSummary.builder()
-                        .totalValue(price.getLastPrice() != null ? price.getLastPrice() : 0.0)
-                        .dayChange(0.0) // If available in PriceUpdate
-                        .dayChangePercentage(0.0)
+                        .totalValue(last)
+                        .dayChange(change)
+                        .dayChangePercentage(changePct)
                         .build())
                 .lastUpdated(event.getTimestamp() != null ? event.getTimestamp() : LocalDateTime.now())
-                .build()).collect(Collectors.toList());
+                .build();
+        }).collect(Collectors.toList());
     }
 
     public PortfolioUpdateEvent mapEntityToPortfolioUpdateEvent(AnalysisEntity entity) {

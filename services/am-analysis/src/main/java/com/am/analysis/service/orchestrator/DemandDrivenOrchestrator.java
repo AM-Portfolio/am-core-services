@@ -6,6 +6,8 @@ import com.am.analysis.config.PortfolioStreamingProperties;
 
 import com.am.analysis.service.DashboardAnalysisService;
 
+import com.am.analysis.service.LivePriceTick;
+
 import com.am.analysis.service.PortfolioStreamingService;
 
 import com.am.common.investment.model.equity.EquityPrice;
@@ -184,13 +186,13 @@ public class DemandDrivenOrchestrator {
 
                 "payload_bytes", message == null ? 0 : message.length())) {
 
-            Map<String, Double> livePrices = parseLivePrices(message);
+            Map<String, LivePriceTick> liveTicks = parseLivePriceTicks(message);
 
-            triggerPortfolioStreamForActiveWatchers("MARKET_MOVE", livePrices);
+            triggerPortfolioStreamForActiveWatchers("MARKET_MOVE", liveTicks);
 
-            triggerDashboardUpdatesForActiveWatchers();
+            triggerDashboardUpdatesForActiveWatchers(liveTicks);
 
-            flowLogger.complete(span, "symbols", livePrices.size());
+            flowLogger.complete(span, "symbols", liveTicks.size());
 
         }
 
@@ -202,7 +204,7 @@ public class DemandDrivenOrchestrator {
 
         if (useAnalysisStreaming()) {
 
-            boolean published = portfolioStreamingService.publishPortfolioStream(userId, portfolioId, null);
+            boolean published = portfolioStreamingService.publishPortfolioStream(userId, portfolioId, Map.of());
 
             if (!published) {
 
@@ -220,7 +222,7 @@ public class DemandDrivenOrchestrator {
 
 
 
-    private void triggerPortfolioStreamForActiveWatchers(String source, Map<String, Double> livePrices) {
+    private void triggerPortfolioStreamForActiveWatchers(String source, Map<String, LivePriceTick> liveTicks) {
 
         java.util.Set<String> activeUsers = interestRegistry.getAllActiveUserIds();
 
@@ -242,7 +244,7 @@ public class DemandDrivenOrchestrator {
 
                 if (useAnalysisStreaming()) {
 
-                    triggerDebouncedPortfolioStream(userId, target, livePrices);
+                    triggerDebouncedPortfolioStream(userId, target, liveTicks);
 
                 } else {
 
@@ -258,7 +260,7 @@ public class DemandDrivenOrchestrator {
 
 
 
-    private void triggerDebouncedPortfolioStream(String userId, String portfolioId, Map<String, Double> livePrices) {
+    private void triggerDebouncedPortfolioStream(String userId, String portfolioId, Map<String, LivePriceTick> liveTicks) {
 
         String debounceKey = portfolioId != null ? portfolioId : "global";
 
@@ -298,7 +300,7 @@ public class DemandDrivenOrchestrator {
 
         lastTriggerMap.put(debounceKey, now);
 
-        portfolioStreamingService.publishPortfolioStream(userId, portfolioId, livePrices);
+        portfolioStreamingService.publishPortfolioStream(userId, portfolioId, liveTicks);
 
     }
 
@@ -314,7 +316,7 @@ public class DemandDrivenOrchestrator {
 
 
 
-    private Map<String, Double> parseLivePrices(String message) {
+    private Map<String, LivePriceTick> parseLivePriceTicks(String message) {
 
         if (message == null || message.isBlank()) {
 
@@ -332,19 +334,26 @@ public class DemandDrivenOrchestrator {
 
             }
 
-            Map<String, Double> prices = new HashMap<>();
+            Map<String, LivePriceTick> ticks = new HashMap<>();
 
             for (EquityPrice price : event.getEquityPrices()) {
 
-                if (price.getSymbol() != null && price.getLastPrice() != null) {
+                if (price.getSymbol() == null || price.getLastPrice() == null) {
 
-                    prices.put(price.getSymbol(), price.getLastPrice());
+                    continue;
 
                 }
 
+                Double prevClose = null;
+                if (price.getOhlcv() != null) {
+                    prevClose = price.getOhlcv().getClose();
+                }
+
+                ticks.put(price.getSymbol(), new LivePriceTick(price.getLastPrice(), prevClose));
+
             }
 
-            return prices;
+            return ticks;
 
         } catch (Exception e) {
 
@@ -358,7 +367,7 @@ public class DemandDrivenOrchestrator {
 
 
 
-    private void triggerDashboardUpdatesForActiveWatchers() {
+    private void triggerDashboardUpdatesForActiveWatchers(Map<String, LivePriceTick> liveTicks) {
 
         java.util.Set<String> activeUsers = interestRegistry.getAllActiveUserIds();
 
@@ -382,13 +391,13 @@ public class DemandDrivenOrchestrator {
 
                     dashboardUsers++;
 
-                    triggerDashboardSummaryUpdate(userId, true);
+                    triggerDashboardSummaryUpdate(userId, true, liveTicks);
 
-                    triggerDashboardActivityUpdate(userId, true);
+                    triggerDashboardActivityUpdate(userId, true, liveTicks);
 
-                    triggerDashboardMoversUpdate(userId, true);
+                    triggerDashboardMoversUpdate(userId, true, liveTicks);
 
-                    triggerDashboardAllocationUpdate(userId, true);
+                    triggerDashboardAllocationUpdate(userId, true, liveTicks);
 
                 }
 
@@ -424,7 +433,7 @@ public class DemandDrivenOrchestrator {
 
 
 
-    private void triggerDashboardSummaryUpdate(String userId, boolean debounce) {
+    private void triggerDashboardSummaryUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
 
         long now = System.currentTimeMillis();
 
@@ -446,13 +455,13 @@ public class DemandDrivenOrchestrator {
 
         lastSummaryTrigger.put(userId, now);
 
-        dashboardAnalysisService.publishDashboardSummary(userId);
+        dashboardAnalysisService.publishDashboardSummary(userId, liveTicks);
 
     }
 
 
 
-    private void triggerDashboardActivityUpdate(String userId, boolean debounce) {
+    private void triggerDashboardActivityUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
 
         long now = System.currentTimeMillis();
 
@@ -474,13 +483,13 @@ public class DemandDrivenOrchestrator {
 
         lastActivityTrigger.put(userId, now);
 
-        dashboardAnalysisService.publishDashboardActivity(userId);
+        dashboardAnalysisService.publishDashboardActivity(userId, liveTicks);
 
     }
 
 
 
-    private void triggerDashboardMoversUpdate(String userId, boolean debounce) {
+    private void triggerDashboardMoversUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
 
         long now = System.currentTimeMillis();
 
@@ -502,13 +511,13 @@ public class DemandDrivenOrchestrator {
 
         lastMoversTrigger.put(userId, now);
 
-        dashboardAnalysisService.publishDashboardMovers(userId);
+        dashboardAnalysisService.publishDashboardMovers(userId, liveTicks);
 
     }
 
 
 
-    private void triggerDashboardAllocationUpdate(String userId, boolean debounce) {
+    private void triggerDashboardAllocationUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
 
         long now = System.currentTimeMillis();
 
@@ -530,7 +539,7 @@ public class DemandDrivenOrchestrator {
 
         lastAllocationTrigger.put(userId, now);
 
-        dashboardAnalysisService.publishDashboardAllocation(userId);
+        dashboardAnalysisService.publishDashboardAllocation(userId, liveTicks);
 
     }
 

@@ -114,10 +114,18 @@ public class DashboardAnalysisService {
     }
 
     private RecentActivityResponse getRecentActivityUncached(String userId, ActivityFilter filter) {
+        return getRecentActivityUncached(userId, filter, Map.of());
+    }
+
+    private RecentActivityResponse getRecentActivityUncached(String userId, ActivityFilter filter,
+                                                               Map<String, LivePriceTick> liveTicks) {
         log.info("[DashboardAnalysisService] Processing recent activity request for userId: {} with filter: {}", userId, filter);
 
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
         List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        if (liveTicks != null && !liveTicks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, liveTicks);
+        }
         log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
         // 2. Flatten all holdings across all portfolios → ActivityItems
@@ -323,10 +331,14 @@ public class DashboardAnalysisService {
     }
 
     public void publishDashboardSummary(String userId) {
+        publishDashboardSummary(userId, Map.of());
+    }
+
+    public void publishDashboardSummary(String userId, Map<String, LivePriceTick> liveTicks) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_summary",
                 "userId", userId, "topic", KafkaTopics.DASHBOARD_SUMMARY_UPDATE)) {
             try {
-                DashboardSummary summary = aggregator.getOverallSummary(userId);
+                DashboardSummary summary = aggregator.getOverallSummary(userId, liveTicks);
                 if (summary != null) {
                     snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
                     
@@ -345,10 +357,14 @@ public class DashboardAnalysisService {
     }
 
     public void publishDashboardActivity(String userId) {
+        publishDashboardActivity(userId, Map.of());
+    }
+
+    public void publishDashboardActivity(String userId, Map<String, LivePriceTick> liveTicks) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_activity",
                 "userId", userId, "topic", KafkaTopics.DASHBOARD_ACTIVITY_UPDATE)) {
             try {
-                RecentActivityResponse activity = getRecentActivityUncached(userId, ActivityFilter.builder().build());
+                RecentActivityResponse activity = getRecentActivityUncached(userId, ActivityFilter.builder().build(), liveTicks);
                 if (activity != null) {
                     snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, activity);
                     
@@ -367,10 +383,14 @@ public class DashboardAnalysisService {
     }
 
     public void publishDashboardAllocation(String userId) {
+        publishDashboardAllocation(userId, Map.of());
+    }
+
+    public void publishDashboardAllocation(String userId, Map<String, LivePriceTick> liveTicks) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_allocation",
                 "userId", userId, "topic", KafkaTopics.DASHBOARD_ALLOCATION_UPDATE)) {
             try {
-                AllocationResponse allocation = allocationService.getAllocation("ALL", AnalysisEntityType.PORTFOLIO, userId, AnalysisGroupBy.SECTOR);
+                AllocationResponse allocation = allocationService.getAllocation("ALL", AnalysisEntityType.PORTFOLIO, userId, AnalysisGroupBy.SECTOR, liveTicks);
                 if (allocation != null) {
                     snapshotService.persist(userId, DashboardWidgetType.ALLOCATION, allocation);
                     
@@ -389,10 +409,14 @@ public class DashboardAnalysisService {
     }
 
     public void publishDashboardMovers(String userId) {
+        publishDashboardMovers(userId, Map.of());
+    }
+
+    public void publishDashboardMovers(String userId, Map<String, LivePriceTick> liveTicks) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_movers",
                 "userId", userId, "topic", KafkaTopics.DASHBOARD_MOVERS_UPDATE)) {
             try {
-                TopMoversResponse movers = topMoversService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, "1D", userId, AnalysisGroupBy.STOCK);
+                TopMoversResponse movers = topMoversService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, "1D", userId, AnalysisGroupBy.STOCK, liveTicks);
                 if (movers != null) {
                     snapshotService.persist(userId, DashboardWidgetType.MOVERS, movers);
                     

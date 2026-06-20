@@ -10,6 +10,7 @@ import com.am.analysis.adapter.model.components.MarketStats;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.config.PortfolioStreamingProperties;
+import com.am.analysis.service.LivePriceTick;
 import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.kafka.config.KafkaTopics;
 import com.am.kafka.service.InterestRegistryService;
@@ -84,7 +85,7 @@ class PortfolioStreamingServiceTest {
         AnalysisEntity entity = buildEntity("user1", "P1", "RELIANCE", 10.0, 2500.0, 2400.0, 25000.0);
         when(analysisRepository.findById("PORTFOLIO_P1")).thenReturn(Optional.of(entity));
 
-        service.publishPortfolioStream("user1", "P1", Map.of("RELIANCE", 2600.0));
+        service.publishPortfolioStream("user1", "P1", Map.of("RELIANCE", new LivePriceTick(2600.0, 2400.0)));
 
         ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
         verify(kafkaTemplate).send(eq(KafkaTopics.PORTFOLIO_STREAM), eq("user1"), payloadCaptor.capture());
@@ -98,7 +99,7 @@ class PortfolioStreamingServiceTest {
     void publishPortfolioStream_entityNotFound_returnsFalse() {
         when(analysisRepository.findById("PORTFOLIO_P1")).thenReturn(Optional.empty());
 
-        assertFalse(service.publishPortfolioStream("user1", "P1", null));
+        assertFalse(service.publishPortfolioStream("user1", "P1", Map.of()));
         verify(kafkaTemplate, never()).send(any(), any(), any());
     }
 

@@ -3,16 +3,11 @@ package com.am.analysis.service;
 import com.am.analysis.adapter.mapper.AnalysisEventMapper;
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
-import com.am.analysis.adapter.model.AnalysisHolding;
-import com.am.analysis.adapter.model.components.InvestmentStats;
-import com.am.analysis.adapter.model.components.MarketStats;
-import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.config.PortfolioStreamingProperties;
 import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.kafka.config.InterestRegistryKeys;
 import com.am.kafka.config.KafkaTopics;
-import com.am.kafka.service.GainLossCalculator;
 import com.am.kafka.service.InterestRegistryService;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
@@ -50,7 +45,7 @@ public class PortfolioStreamingService {
      *
      * @return true if a stream message was published to Kafka
      */
-    public boolean publishPortfolioStream(String userId, String portfolioId, Map<String, Double> livePrices) {
+    public boolean publishPortfolioStream(String userId, String portfolioId, Map<String, LivePriceTick> liveTicks) {
         if (!properties.isEnabled()) {
             flowLogger.step("analysis.portfolio_stream.disabled", "userId", userId);
             return false;
@@ -76,7 +71,8 @@ public class PortfolioStreamingService {
             return false;
         }
 
-        applyLivePrices(entity, livePrices);
+        LivePriceOverlayHelper.apply(entity, liveTicks);
+        entity.setLastUpdated(LocalDateTime.now());
         PortfolioUpdateEvent event = analysisEventMapper.mapEntityToPortfolioUpdateEvent(entity);
         if (event == null) {
             return false;
@@ -111,7 +107,7 @@ public class PortfolioStreamingService {
             return;
         }
 
-        publishPortfolioStream(userId, watched, null);
+        publishPortfolioStream(userId, watched, Map.of());
     }
 
     static boolean matchesWatchTarget(String watchedPortfolioId, String entitySourceId) {
@@ -141,87 +137,4 @@ public class PortfolioStreamingService {
         }
     }
 
-    void applyLivePrices(AnalysisEntity entity, Map<String, Double> livePrices) {
-        if (entity.getHoldings() == null || entity.getHoldings().isEmpty()) {
-            return;
-        }
-
-        double totalValue = 0.0;
-        double totalInvestment = 0.0;
-        double totalGainLoss = 0.0;
-        double todayGainLoss = 0.0;
-
-        for (AnalysisHolding holding : entity.getHoldings()) {
-            recalculateHolding(holding, livePrices);
-
-            InvestmentStats inv = holding.getInvestment();
-            MarketStats market = holding.getMarket();
-            if (inv == null) {
-                continue;
-            }
-
-            double currentValue = inv.getCurrentValue() != null ? inv.getCurrentValue() : 0.0;
-            double investmentValue = inv.getInvestmentValue() != null ? inv.getInvestmentValue() : 0.0;
-            double pl = inv.getProfitLoss() != null ? inv.getProfitLoss() : 0.0;
-            double dayPl = market != null && market.getDayChange() != null ? market.getDayChange() : 0.0;
-
-            totalValue += currentValue;
-            totalInvestment += investmentValue;
-            totalGainLoss += pl;
-            todayGainLoss += dayPl;
-        }
-
-        double totalGlPct = GainLossCalculator.gainLossPercent(totalGainLoss, totalInvestment);
-        double todayGlPct = GainLossCalculator.gainLossPercent(todayGainLoss, totalInvestment);
-
-        PerformanceSummary perf = entity.getPerformance();
-        if (perf == null) {
-            perf = new PerformanceSummary();
-            entity.setPerformance(perf);
-        }
-        perf.setTotalValue(totalValue);
-        perf.setTotalInvestment(totalInvestment);
-        perf.setTotalGainLoss(totalGainLoss);
-        perf.setTotalGainLossPercentage(totalGlPct);
-        perf.setDayChange(todayGainLoss);
-        perf.setDayChangePercentage(todayGlPct);
-        entity.setLastUpdated(LocalDateTime.now());
-    }
-
-    private void recalculateHolding(AnalysisHolding holding, Map<String, Double> livePrices) {
-        if (holding.getIdentity() == null || holding.getInvestment() == null) {
-            return;
-        }
-
-        String symbol = holding.getIdentity().getSymbol();
-        InvestmentStats inv = holding.getInvestment();
-        MarketStats market = holding.getMarket();
-        if (market == null) {
-            market = new MarketStats();
-            holding.setMarket(market);
-        }
-
-        double qty = inv.getQuantity() != null ? inv.getQuantity() : 0.0;
-        double avgBuy = inv.getAveragePrice() != null ? inv.getAveragePrice() : 0.0;
-        double investmentValue = inv.getInvestmentValue() != null ? inv.getInvestmentValue() : 0.0;
-
-        double price = market.getCurrentPrice() != null ? market.getCurrentPrice() : 0.0;
-        if (livePrices != null && symbol != null && livePrices.containsKey(symbol)) {
-            price = livePrices.get(symbol);
-            market.setCurrentPrice(price);
-        }
-
-        double prevClose = market.getPreviousClose() != null ? market.getPreviousClose() : price;
-        double currentValue = GainLossCalculator.currentValue(qty, price);
-        double profitLoss = GainLossCalculator.totalGainLoss(qty, price, avgBuy);
-        double dayChange = GainLossCalculator.todayGainLoss(qty, price, prevClose);
-
-        inv.setCurrentValue(currentValue);
-        inv.setProfitLoss(profitLoss);
-        inv.setProfitLossPercentage(GainLossCalculator.gainLossPercent(profitLoss, investmentValue));
-        inv.setValue(currentValue);
-
-        market.setDayChange(dayChange);
-        market.setDayChangePercentage(GainLossCalculator.gainLossPercent(dayChange, investmentValue));
-    }
 }
