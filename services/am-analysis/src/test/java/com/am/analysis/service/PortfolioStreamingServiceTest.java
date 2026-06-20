@@ -95,6 +95,14 @@ class PortfolioStreamingServiceTest {
     }
 
     @Test
+    void publishPortfolioStream_entityNotFound_returnsFalse() {
+        when(analysisRepository.findById("PORTFOLIO_P1")).thenReturn(Optional.empty());
+
+        assertFalse(service.publishPortfolioStream("user1", "P1", null));
+        verify(kafkaTemplate, never()).send(any(), any(), any());
+    }
+
+    @Test
     void publishIfUserWatching_skipsWhenNotWatching() {
         AnalysisEntity entity = buildEntity("user1", "P1", "RELIANCE", 10.0, 2500.0, 2400.0, 100000.0);
         when(interestRegistry.getWatchedPortfolio("user1")).thenReturn(Optional.empty());

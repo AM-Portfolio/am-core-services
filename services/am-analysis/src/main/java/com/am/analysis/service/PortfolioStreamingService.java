@@ -48,15 +48,15 @@ public class PortfolioStreamingService {
     /**
      * Load entity, optionally overlay live tick prices, map to event, publish Kafka.
      *
-     * @param livePrices symbol → lastPrice from STOCK_UPDATE batch; may be null or empty
+     * @return true if a stream message was published to Kafka
      */
-    public void publishPortfolioStream(String userId, String portfolioId, Map<String, Double> livePrices) {
+    public boolean publishPortfolioStream(String userId, String portfolioId, Map<String, Double> livePrices) {
         if (!properties.isEnabled()) {
             flowLogger.step("analysis.portfolio_stream.disabled", "userId", userId);
-            return;
+            return false;
         }
         if (userId == null || userId.isBlank()) {
-            return;
+            return false;
         }
 
         String entityId = AnalysisEntityKeys.portfolioEntityId(portfolioId, userId);
@@ -66,23 +66,24 @@ public class PortfolioStreamingService {
                     "userId", userId,
                     "portfolioId", portfolioId != null ? portfolioId : "GLOBAL",
                     "entityId", entityId);
-            return;
+            return false;
         }
 
         AnalysisEntity entity = entityOpt.get();
         if (!userId.equals(entity.getOwnerId())) {
             flowLogger.step("analysis.portfolio_stream.owner_mismatch",
                     "userId", userId, "entityId", entityId);
-            return;
+            return false;
         }
 
         applyLivePrices(entity, livePrices);
         PortfolioUpdateEvent event = analysisEventMapper.mapEntityToPortfolioUpdateEvent(entity);
         if (event == null) {
-            return;
+            return false;
         }
 
         publishEvent(event, userId, portfolioId);
+        return true;
     }
 
     /**
