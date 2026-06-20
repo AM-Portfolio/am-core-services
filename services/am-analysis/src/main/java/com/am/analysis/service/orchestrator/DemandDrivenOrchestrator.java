@@ -118,6 +118,8 @@ public class DemandDrivenOrchestrator {
 
     private final Map<String, Long> lastMoversTrigger = new ConcurrentHashMap<>();
 
+    private final Map<String, Long> lastAllocationTrigger = new ConcurrentHashMap<>();
+
     private static final long BOOTSTRAP_DEBOUNCE_MS = 60_000;
 
 
