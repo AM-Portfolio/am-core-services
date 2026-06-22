@@ -132,7 +132,8 @@ public class PreviousCloseRedisService {
     }
 
     /**
-     * Same window for many symbols — pipelined {@code HGET} (one round-trip).
+     * Same window for many symbols — pipelined {@code HMGET} on HASH keys, then pipelined
+     * {@code GET} on {@code market:prev-close:*} for 1D HASH misses (two round-trips total).
      */
     public Map<String, Double> readWindowForSymbols(Collection<String> symbols, Timeframe window) {
         if (symbols == null || symbols.isEmpty() || window == null) {
@@ -148,13 +149,11 @@ public class PreviousCloseRedisService {
                         LinkedHashMap::new
                 ));
         if (window == Timeframe.ONE_DAY) {
-            for (String symbol : symbolList) {
-                if (!result.containsKey(symbol)) {
-                    Double marketValue = readMarketStringPrevClose(symbol);
-                    if (marketValue != null) {
-                        result.put(symbol, marketValue);
-                    }
-                }
+            List<String> hashMisses = symbolList.stream()
+                    .filter(symbol -> !result.containsKey(symbol))
+                    .toList();
+            if (!hashMisses.isEmpty()) {
+                result.putAll(readMarketStringPrevCloseForSymbols(hashMisses));
             }
         }
         return result;
@@ -261,19 +260,74 @@ public class PreviousCloseRedisService {
      * Tries symbol and NSE_EQ alias variants.
      */
     private Double readMarketStringPrevClose(String symbol) {
-        for (String key : marketRedisKeyCandidates(symbol)) {
-            try {
-                String value = redisTemplate.opsForValue().get(key);
-                Double parsed = parseDouble(value);
-                if (parsed != null) {
-                    log.debug("[Redis] Market STRING prev-close hit for {} via key {}", symbol, key);
-                    return parsed;
+        return readMarketStringPrevCloseForSymbols(List.of(symbol)).get(symbol);
+    }
+
+    /**
+     * Pipelined GET for {@code market:prev-close:*} keys — one round-trip for all HASH misses.
+     */
+    private Map<String, Double> readMarketStringPrevCloseForSymbols(Collection<String> symbols) {
+        List<String> symbolList = distinctSymbols(symbols);
+        if (symbolList.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, List<String>> candidatesBySymbol = new LinkedHashMap<>();
+        List<String> uniqueKeys = new ArrayList<>();
+        var keyIndex = new LinkedHashMap<String, Integer>();
+
+        for (String symbol : symbolList) {
+            List<String> candidates = marketRedisKeyCandidates(symbol);
+            candidatesBySymbol.put(symbol, candidates);
+            for (String key : candidates) {
+                if (!keyIndex.containsKey(key)) {
+                    keyIndex.put(key, uniqueKeys.size());
+                    uniqueKeys.add(key);
                 }
-            } catch (Exception ex) {
-                log.warn("[Redis] Failed GET market prev-close key {}: {}", key, ex.getMessage());
             }
         }
-        return null;
+        if (uniqueKeys.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, Double> valuesByKey;
+        try {
+            List<Object> pipelineResults = redisTemplate.executePipelined(new SessionCallback<>() {
+                @Override
+                @SuppressWarnings({"unchecked", "rawtypes"})
+                public Object execute(RedisOperations operations) throws DataAccessException {
+                    for (String key : uniqueKeys) {
+                        operations.opsForValue().get(key);
+                    }
+                    return null;
+                }
+            });
+
+            valuesByKey = new LinkedHashMap<>();
+            for (int i = 0; i < uniqueKeys.size(); i++) {
+                Double parsed = parseDouble(pipelineResults.get(i));
+                if (parsed != null) {
+                    valuesByKey.put(uniqueKeys.get(i), parsed);
+                }
+            }
+        } catch (Exception ex) {
+            log.warn("[Redis] Failed pipelined GET market prev-close for {} symbols ({} keys): {}",
+                    symbolList.size(), uniqueKeys.size(), ex.getMessage());
+            return Map.of();
+        }
+
+        Map<String, Double> result = new LinkedHashMap<>();
+        for (String symbol : symbolList) {
+            for (String key : candidatesBySymbol.get(symbol)) {
+                Double value = valuesByKey.get(key);
+                if (value != null) {
+                    log.debug("[Redis] Market STRING prev-close hit for {} via key {}", symbol, key);
+                    result.put(symbol, value);
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     static List<String> marketRedisKeyCandidates(String symbol) {
