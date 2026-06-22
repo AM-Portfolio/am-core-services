@@ -42,8 +42,12 @@ public class ActivityFilter {
      *   TIMESTAMP        → most recently updated first (default)
      *   PROFIT_LOSS      → biggest winners first
      *   PROFIT_LOSS_ASC  → biggest losers first
-     *   DAY_CHANGE       → best intraday performers first
-     *   CURRENT_VALUE    → highest value positions first
+     *   DAY_CHANGE            → best intraday performers first (by amount)
+     *   DAY_CHANGE_PERCENT      → best intraday performers first (by %)
+     *   CURRENT_VALUE           → highest value positions first
+     *   SYMBOL                  → alphabetical by ticker
+     *   PROFIT_LOSS_PERCENT     → biggest % gainers first
+     *   QUANTITY                → largest positions first
      */
     @Builder.Default
     private String sortBy = "TIMESTAMP";
@@ -52,7 +56,7 @@ public class ActivityFilter {
     @Builder.Default
     private int page = 0;
 
-    /** Max items per page (default 20, max 100) */
+    /** Max items per page (default 10, max 100) */
     @Builder.Default
-    private int size = 20;
+    private int size = 10;
 }

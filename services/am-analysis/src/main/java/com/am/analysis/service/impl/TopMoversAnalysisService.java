@@ -80,16 +80,18 @@ public class TopMoversAnalysisService {
             boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
 
             List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
-                    .sorted((h1, h2) -> Double.compare(getPercentage(h2, useDaily), getPercentage(h1, useDaily))) // Descending
+                    .filter(h -> resolveChangeMetric(h, useDaily) > 0)
+                    .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, useDaily), resolveChangeMetric(h1, useDaily)))
                     .limit(10)
                     .toList();
             
             List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
-                    .sorted((h1, h2) -> Double.compare(getPercentage(h1, useDaily), getPercentage(h2, useDaily))) // Ascending
+                    .filter(h -> resolveChangeMetric(h, useDaily) < 0)
+                    .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, useDaily), resolveChangeMetric(h2, useDaily)))
                     .limit(10)
                     .toList();
 
-            return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue);
+            return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue, timeFrame);
         }
 
         // Fallback for non-portfolio types or public types (if any)
@@ -120,28 +122,48 @@ public class TopMoversAnalysisService {
                 boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
 
                 List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
-                        .sorted((h1, h2) -> Double.compare(getPercentage(h2, useDaily), getPercentage(h1, useDaily))) // Descending
+                        .filter(h -> resolveChangeMetric(h, useDaily) > 0)
+                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, useDaily), resolveChangeMetric(h1, useDaily)))
                         .limit(10)
                         .toList();
                 
                 List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
-                        .sorted((h1, h2) -> Double.compare(getPercentage(h1, useDaily), getPercentage(h2, useDaily))) // Ascending
+                        .filter(h -> resolveChangeMetric(h, useDaily) < 0)
+                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, useDaily), resolveChangeMetric(h2, useDaily)))
                         .limit(10)
                         .toList();
 
-                return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue);
+                return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue, timeFrame);
             }
         }
         
         return TopMoversResponse.builder().gainers(List.of()).losers(List.of()).build();
     }
 
-    private double getPercentage(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
+    private double resolveChangeMetric(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
         if (useDaily) {
-            return (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) ? h.getMarket().getDayChangePercentage() : 0.0;
-        } else {
-            return (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
+            if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
+                return h.getMarket().getDayChangePercentage();
+            }
+            return 0.0;
         }
+        return (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null)
+                ? h.getInvestment().getProfitLossPercentage() : 0.0;
+    }
+
+    private double resolveChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
+        if (useDaily) {
+            if (h.getMarket() != null && h.getMarket().getDayChange() != null) {
+                return h.getMarket().getDayChange();
+            }
+            return 0.0;
+        }
+        return (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null)
+                ? h.getInvestment().getProfitLoss() : 0.0;
+    }
+
+    private double getPercentage(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
+        return resolveChangeMetric(h, useDaily);
     }
 
     private TopMoversResponse buildTopMoversResponse(List<AnalysisEntity> gainers, List<AnalysisEntity> losers) {
@@ -155,10 +177,12 @@ public class TopMoversAnalysisService {
             List<com.am.analysis.adapter.model.AnalysisHolding> gainers, 
             List<com.am.analysis.adapter.model.AnalysisHolding> losers,
             boolean useDaily,
-            double totalPortfolioValue) {
+            double totalPortfolioValue,
+            String timeFrame) {
         return TopMoversResponse.builder()
                 .gainers(gainers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
                 .losers(losers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
+                .timeFrame(timeFrame != null ? timeFrame : "1D")
                 .build();
     }
 
@@ -185,22 +209,8 @@ public class TopMoversAnalysisService {
         String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
         Double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
-        double pct = 0.0;
-        double amt = 0.0;
-        
-        if (useDaily) {
-            if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
-                pct = h.getMarket().getDayChangePercentage();
-                amt = (h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
-            } else if (h.getInvestment() != null) {
-                // Fallback to investment stats if market isn't updated
-                pct = (h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
-                amt = (h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
-            }
-        } else {
-             pct = (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
-             amt = (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null) ? h.getInvestment().getProfitLoss() : 0.0;
-        }
+        double pct = resolveChangeMetric(h, useDaily);
+        double amt = resolveChangeAmount(h, useDaily);
 
         double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
         double invested = (h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null) ? h.getInvestment().getInvestmentValue() : 0.0;
@@ -308,11 +318,13 @@ public class TopMoversAnalysisService {
             .collect(java.util.stream.Collectors.toList());
 
         List<TopMoversResponse.MoverItem> gainers = items.stream()
+                .filter(i -> i.getChangePercentage() > 0)
                 .sorted((i1, i2) -> Double.compare(i2.getChangePercentage(), i1.getChangePercentage()))
                 .limit(10)
                 .toList();
 
         List<TopMoversResponse.MoverItem> losers = items.stream()
+                .filter(i -> i.getChangePercentage() < 0)
                 .sorted((i1, i2) -> Double.compare(i1.getChangePercentage(), i2.getChangePercentage()))
                 .limit(10)
                 .toList();
@@ -320,6 +332,7 @@ public class TopMoversAnalysisService {
         return TopMoversResponse.builder()
                 .gainers(gainers)
                 .losers(losers)
+                .timeFrame(timeFrame != null ? timeFrame : "1D")
                 .build();
     }
 

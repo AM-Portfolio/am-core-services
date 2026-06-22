@@ -66,7 +66,10 @@ public final class LivePriceOverlayHelper {
         perf.setTotalGainLoss(totalGainLoss);
         perf.setTotalGainLossPercentage(GainLossCalculator.gainLossPercent(totalGainLoss, totalInvestment));
         perf.setDayChange(todayGainLoss);
-        perf.setDayChangePercentage(GainLossCalculator.gainLossPercent(todayGainLoss, totalInvestment));
+        double priorDayValue = totalValue - todayGainLoss;
+        perf.setDayChangePercentage(priorDayValue > 0
+                ? GainLossCalculator.gainLossPercent(todayGainLoss, priorDayValue)
+                : 0.0);
     }
 
     public static LivePriceTick resolveTick(String holdingSymbol, Map<String, LivePriceTick> ticks) {
@@ -156,6 +159,9 @@ public final class LivePriceOverlayHelper {
         inv.setValue(currentValue);
 
         market.setDayChange(dayChange);
-        market.setDayChangePercentage(GainLossCalculator.gainLossPercent(dayChange, investmentValue));
+        double priorCloseValue = qty * prevClose;
+        market.setDayChangePercentage(priorCloseValue > 0
+                ? GainLossCalculator.gainLossPercent(dayChange, priorCloseValue)
+                : 0.0);
     }
 }

@@ -113,7 +113,7 @@ public class AnalysisController {
             @RequestParam(name = "portfolioName", required = false) String portfolioName,
             @RequestParam(name = "sortBy", required = false, defaultValue = "TIMESTAMP") String sortBy,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
         String userId = UserContext.getUserIdOrThrow();
 
         try (FlowSpan span = flowLogger.start("analysis.http.dashboard.recent_activity",

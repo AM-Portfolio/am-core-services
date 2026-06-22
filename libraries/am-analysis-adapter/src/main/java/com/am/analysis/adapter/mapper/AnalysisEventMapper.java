@@ -76,8 +76,12 @@ public class AnalysisEventMapper {
                             .market(MarketStats.builder()
                                     .currentPrice(equity.getCurrentPrice())
                                     .previousClose(equity.getPreviousClose())
-                                    .dayChange(equity.getDayChange())
-                                    .dayChangePercentage(equity.getDayChangePercentage())
+                                    .dayChange(equity.getDayChange() != null
+                                            ? equity.getDayChange()
+                                            : equity.getTodayProfitLoss())
+                                    .dayChangePercentage(equity.getDayChangePercentage() != null
+                                            ? equity.getDayChangePercentage()
+                                            : equity.getTodayProfitLossPercentage())
                                     .lastUpdatedTime(equity.getLastUpdatedTime())
                                     .build())
                             .classification(AssetClassification.builder()

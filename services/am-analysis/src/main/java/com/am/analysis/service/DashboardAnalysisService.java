@@ -273,10 +273,19 @@ public class DashboardAnalysisService {
                     i.getProfitLoss() != null ? i.getProfitLoss() : 0.0).reversed();
             case "PROFIT_LOSS_ASC"  -> Comparator.comparingDouble((ActivityItem i) ->
                     i.getProfitLoss() != null ? i.getProfitLoss() : 0.0);
+            case "PROFIT_LOSS_PERCENT" -> Comparator.comparingDouble((ActivityItem i) ->
+                    i.getProfitLossPercent() != null ? i.getProfitLossPercent() : 0.0).reversed();
             case "DAY_CHANGE"       -> Comparator.comparingDouble((ActivityItem i) ->
                     i.getDayChange() != null ? i.getDayChange() : 0.0).reversed();
+            case "DAY_CHANGE_PERCENT" -> Comparator.comparingDouble((ActivityItem i) ->
+                    i.getDayChangePercent() != null ? i.getDayChangePercent() : 0.0).reversed();
             case "CURRENT_VALUE"    -> Comparator.comparingDouble((ActivityItem i) ->
                     i.getCurrentValue() != null ? i.getCurrentValue() : 0.0).reversed();
+            case "SYMBOL"           -> Comparator.comparing(
+                    (ActivityItem i) -> i.getSymbol() != null ? i.getSymbol() : "",
+                    String.CASE_INSENSITIVE_ORDER);
+            case "QUANTITY"         -> Comparator.comparingDouble((ActivityItem i) ->
+                    i.getQuantity() != null ? i.getQuantity() : 0.0).reversed();
             default /* TIMESTAMP */ -> Comparator.comparing(ActivityItem::getTimestamp,
                     Comparator.nullsLast(Comparator.reverseOrder()));
         };
@@ -364,7 +373,8 @@ public class DashboardAnalysisService {
         try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_activity",
                 "userId", userId, "topic", KafkaTopics.DASHBOARD_ACTIVITY_UPDATE)) {
             try {
-                RecentActivityResponse activity = getRecentActivityUncached(userId, ActivityFilter.builder().build(), liveTicks);
+                RecentActivityResponse activity = getRecentActivityUncached(userId,
+                        ActivityFilter.builder().size(10).sortBy("TIMESTAMP").build(), liveTicks);
                 if (activity != null) {
                     snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, activity);
                     
