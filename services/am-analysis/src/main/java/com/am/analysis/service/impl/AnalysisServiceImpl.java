@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -63,17 +65,24 @@ public class AnalysisServiceImpl implements AnalysisService {
         log.info("Request received: Get Top Movers - ID: {}, Type: {}, TimeFrame: {}, User: {}, GroupBy: {}", id, type, timeFrame, userId, groupBy);
         boolean isDashboardDefault = id == null && type == AnalysisEntityType.PORTFOLIO && "1D".equalsIgnoreCase(timeFrame) && groupBy == AnalysisGroupBy.STOCK;
         if (isDashboardDefault) {
-            return snapshotService.load(userId, DashboardWidgetType.MOVERS, TopMoversResponse.class)
-                    .orElseGet(() -> {
-                        log.info("[Movers] Snapshot miss for user {}, computing live", userId);
-                        TopMoversResponse response = topMoversService.getTopMovers(id, type, timeFrame, userId, groupBy);
-                        if (response != null) {
-                            snapshotService.persist(userId, DashboardWidgetType.MOVERS, response);
-                        }
-                        return response;
-                    });
+            Optional<TopMoversResponse> cached = snapshotService.load(userId, DashboardWidgetType.MOVERS, TopMoversResponse.class);
+            if (cached.isPresent() && hasMoverEntries(cached.get())) {
+                return cached.get();
+            }
+            log.info("[Movers] Snapshot miss or empty for user {}, computing live", userId);
+            TopMoversResponse response = topMoversService.getTopMovers(id, type, timeFrame, userId, groupBy);
+            if (response != null && hasMoverEntries(response)) {
+                snapshotService.persist(userId, DashboardWidgetType.MOVERS, response);
+            }
+            return response;
         }
         return topMoversService.getTopMovers(id, type, timeFrame, userId, groupBy);
+    }
+
+    private static boolean hasMoverEntries(TopMoversResponse response) {
+        return response != null
+                && ((response.getGainers() != null && !response.getGainers().isEmpty())
+                || (response.getLosers() != null && !response.getLosers().isEmpty()));
     }
 }
 

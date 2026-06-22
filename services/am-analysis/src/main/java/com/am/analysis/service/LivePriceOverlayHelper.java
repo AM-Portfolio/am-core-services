@@ -7,10 +7,13 @@ import com.am.analysis.adapter.model.components.MarketStats;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.kafka.service.GainLossCalculator;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Applies Kafka tick prices onto in-memory {@link AnalysisEntity} graphs for streaming publish.
@@ -105,6 +108,52 @@ public final class LivePriceOverlayHelper {
             normalized = normalized.substring(normalized.lastIndexOf(':') + 1);
         }
         return normalized.trim();
+    }
+
+    /** Expands holding symbols to Redis prev-close key variants (e.g. SAIL → NSE_EQ:SAIL). */
+    public static Set<String> expandRedisSymbolKeys(Collection<String> holdingSymbols) {
+        Set<String> keys = new LinkedHashSet<>();
+        if (holdingSymbols == null) {
+            return keys;
+        }
+        for (String symbol : holdingSymbols) {
+            if (symbol == null || symbol.isBlank()) {
+                continue;
+            }
+            String trimmed = symbol.trim();
+            keys.add(trimmed);
+            String base = baseSymbol(trimmed);
+            if (!base.isEmpty()) {
+                keys.add(base);
+                keys.add("NSE_EQ:" + base);
+                keys.add("NSE:" + base);
+            }
+        }
+        return keys;
+    }
+
+    /** Resolves prev-close for a holding symbol from a Redis batch result (exact key, then base-symbol match). */
+    public static Double resolvePrevClose(String holdingSymbol, Map<String, Double> prevCloseByRedisKey) {
+        if (holdingSymbol == null || prevCloseByRedisKey == null || prevCloseByRedisKey.isEmpty()) {
+            return null;
+        }
+        Double exact = prevCloseByRedisKey.get(holdingSymbol);
+        if (exact != null) {
+            return exact;
+        }
+        String base = baseSymbol(holdingSymbol);
+        if (!base.isEmpty()) {
+            Double baseHit = prevCloseByRedisKey.get(base);
+            if (baseHit != null) {
+                return baseHit;
+            }
+        }
+        for (Map.Entry<String, Double> entry : prevCloseByRedisKey.entrySet()) {
+            if (baseSymbol(entry.getKey()).equalsIgnoreCase(base)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     public static Map<String, LivePriceTick> indexByBaseSymbol(Map<String, LivePriceTick> ticks) {

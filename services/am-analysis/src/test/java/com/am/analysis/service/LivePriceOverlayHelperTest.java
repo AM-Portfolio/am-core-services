@@ -54,4 +54,48 @@ class LivePriceOverlayHelperTest {
         assertEquals(2910.0, entity.getPerformance().getTotalValue(), 0.01);
         assertEquals(110.0, entity.getPerformance().getTotalGainLoss(), 0.01);
     }
+
+    @Test
+    void apply_usesPriorCloseForDayChangePercent() {
+        AnalysisEntity entity = AnalysisEntity.builder()
+                .type(AnalysisEntityType.PORTFOLIO)
+                .holdings(List.of(AnalysisHolding.builder()
+                        .identity(HoldingIdentity.builder().symbol("ITC").build())
+                        .investment(InvestmentStats.builder()
+                                .quantity(10.0)
+                                .averagePrice(280.0)
+                                .investmentValue(2800.0)
+                                .build())
+                        .market(MarketStats.builder()
+                                .currentPrice(280.0)
+                                .previousClose(289.85)
+                                .build())
+                        .build()))
+                .performance(PerformanceSummary.builder()
+                        .totalValue(2800.0)
+                        .totalInvestment(2800.0)
+                        .build())
+                .build();
+
+        LivePriceOverlayHelper.apply(entity, Map.of("ITC", new LivePriceTick(291.0, 289.85)));
+
+        var market = entity.getHoldings().get(0).getMarket();
+        assertEquals(11.5, market.getDayChange(), 0.01);
+        assertEquals(0.40, market.getDayChangePercentage(), 0.05);
+    }
+
+    @Test
+    void resolvePrevClose_matchesNseEqAlias() {
+        Map<String, Double> redis = Map.of("NSE_EQ:SAIL", 180.05);
+
+        assertEquals(180.05, LivePriceOverlayHelper.resolvePrevClose("SAIL", redis), 0.001);
+    }
+
+    @Test
+    void expandRedisSymbolKeys_includesNseEqVariant() {
+        var keys = LivePriceOverlayHelper.expandRedisSymbolKeys(List.of("SAIL"));
+
+        org.junit.jupiter.api.Assertions.assertTrue(keys.contains("SAIL"));
+        org.junit.jupiter.api.Assertions.assertTrue(keys.contains("NSE_EQ:SAIL"));
+    }
 }

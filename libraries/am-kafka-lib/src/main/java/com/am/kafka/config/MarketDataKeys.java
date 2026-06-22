@@ -10,5 +10,7 @@ public final class MarketDataKeys {
     }
 
     public static final String PREV_CLOSE_PREFIX = "prev-close:";
+    /** Market-data STRING prev-close (1D only); written by am-market-data scheduler. */
+    public static final String MARKET_PREV_CLOSE_PREFIX = "market:prev-close:";
     public static final String DASHBOARD_SNAPSHOT_PREFIX = "dashboard:snapshot:";
 }

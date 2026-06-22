@@ -12,11 +12,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,7 +114,14 @@ public class PreviousCloseRedisService {
         if (symbol == null || window == null) {
             return null;
         }
-        return readWindows(symbol, List.of(window)).get(window);
+        Double fromHash = readWindows(symbol, List.of(window)).get(window);
+        if (fromHash != null) {
+            return fromHash;
+        }
+        if (window == Timeframe.ONE_DAY) {
+            return readMarketStringPrevClose(symbol);
+        }
+        return null;
     }
 
     public Double readWindow(String symbol, String window) {
@@ -128,7 +138,8 @@ public class PreviousCloseRedisService {
         if (symbols == null || symbols.isEmpty() || window == null) {
             return Map.of();
         }
-        return readWindowsForSymbols(symbols, List.of(window)).entrySet().stream()
+        List<String> symbolList = distinctSymbols(symbols);
+        Map<String, Double> result = readWindowsForSymbols(symbolList, List.of(window)).entrySet().stream()
                 .filter(e -> e.getValue().containsKey(window))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -136,6 +147,17 @@ public class PreviousCloseRedisService {
                         (a, b) -> a,
                         LinkedHashMap::new
                 ));
+        if (window == Timeframe.ONE_DAY) {
+            for (String symbol : symbolList) {
+                if (!result.containsKey(symbol)) {
+                    Double marketValue = readMarketStringPrevClose(symbol);
+                    if (marketValue != null) {
+                        result.put(symbol, marketValue);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -232,6 +254,54 @@ public class PreviousCloseRedisService {
 
     private static String redisKey(String symbol) {
         return MarketDataKeys.PREV_CLOSE_PREFIX + symbol;
+    }
+
+    /**
+     * Fallback: market-data stores 1D prev-close as a STRING at {@code market:prev-close:{symbol}}.
+     * Tries symbol and NSE_EQ alias variants.
+     */
+    private Double readMarketStringPrevClose(String symbol) {
+        for (String key : marketRedisKeyCandidates(symbol)) {
+            try {
+                String value = redisTemplate.opsForValue().get(key);
+                Double parsed = parseDouble(value);
+                if (parsed != null) {
+                    log.debug("[Redis] Market STRING prev-close hit for {} via key {}", symbol, key);
+                    return parsed;
+                }
+            } catch (Exception ex) {
+                log.warn("[Redis] Failed GET market prev-close key {}: {}", key, ex.getMessage());
+            }
+        }
+        return null;
+    }
+
+    static List<String> marketRedisKeyCandidates(String symbol) {
+        if (symbol == null || symbol.isBlank()) {
+            return List.of();
+        }
+        Set<String> keys = new LinkedHashSet<>();
+        String trimmed = symbol.trim();
+        keys.add(MarketDataKeys.MARKET_PREV_CLOSE_PREFIX + trimmed);
+        String base = baseSymbol(trimmed);
+        if (!base.isEmpty() && !base.equals(trimmed)) {
+            keys.add(MarketDataKeys.MARKET_PREV_CLOSE_PREFIX + base);
+        }
+        if (!trimmed.startsWith("NSE_EQ:") && !base.isEmpty()) {
+            keys.add(MarketDataKeys.MARKET_PREV_CLOSE_PREFIX + "NSE_EQ:" + base);
+        }
+        return new ArrayList<>(keys);
+    }
+
+    private static String baseSymbol(String symbol) {
+        String normalized = symbol.trim();
+        if (normalized.contains("|")) {
+            normalized = normalized.substring(normalized.lastIndexOf('|') + 1);
+        }
+        if (normalized.contains(":")) {
+            normalized = normalized.substring(normalized.lastIndexOf(':') + 1);
+        }
+        return normalized.trim();
     }
 
     private static List<String> distinctSymbols(Collection<String> symbols) {

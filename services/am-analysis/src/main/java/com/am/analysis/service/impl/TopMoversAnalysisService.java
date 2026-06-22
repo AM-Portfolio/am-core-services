@@ -3,19 +3,26 @@ package com.am.analysis.service.impl;
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisGroupBy;
+import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.LivePriceOverlayHelper;
 import com.am.analysis.service.LivePriceTick;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
+import com.am.kafka.config.Timeframe;
+import com.am.kafka.service.PreviousCloseRedisService;
+import com.am.market.client.service.MarketDataClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +31,8 @@ public class TopMoversAnalysisService {
 
     private final AnalysisRepository repository;
     private final AnalysisAccessValidator accessValidator;
-    private final com.am.market.client.service.MarketDataClientService marketDataClientService;
+    private final PreviousCloseRedisService previousCloseRedisService;
+    private final MarketDataClientService marketDataClientService;
 
     public TopMoversResponse getTopMovers(String id, AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
         return getTopMovers(id, type, timeFrame, userId, groupBy, Map.of());
@@ -45,10 +53,21 @@ public class TopMoversAnalysisService {
                                                      AnalysisGroupBy groupBy, Map<String, LivePriceTick> liveTicks) {
         if (type == AnalysisEntityType.PORTFOLIO && userId != null) {
             log.debug("Aggregating portfolio holdings for user: {}", userId);
-            List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
-            if (liveTicks != null && !liveTicks.isEmpty()) {
-                LivePriceOverlayHelper.applyAll(portfolios, liveTicks);
+            List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO)
+                    .stream()
+                    .filter(p -> !p.getId().endsWith("_GLOBAL"))
+                    .collect(Collectors.toList());
+
+            if (portfolios.isEmpty()) {
+                log.warn("[TopMovers] No portfolio analysis entities for userId={}", userId);
+                return TopMoversResponse.builder()
+                        .gainers(List.of())
+                        .losers(List.of())
+                        .timeFrame(timeFrame != null ? timeFrame : "1D")
+                        .build();
             }
+
+            applyLiveMarketData(portfolios, liveTicks, timeFrame);
             
             List<com.am.analysis.adapter.model.AnalysisHolding> allHoldings = portfolios.stream()
                 .filter(p -> p.getHoldings() != null)
@@ -90,6 +109,14 @@ public class TopMoversAnalysisService {
                     .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, useDaily), resolveChangeMetric(h2, useDaily)))
                     .limit(10)
                     .toList();
+
+            if (gainers.isEmpty() && losers.isEmpty()) {
+                long withDayChange = holdings.stream()
+                        .filter(h -> h.getMarket() != null && h.getMarket().getDayChangePercentage() != null)
+                        .count();
+                log.warn("[TopMovers] Empty gainers/losers for userId={}: portfolios={}, holdings={}, withDayChangePct={}",
+                        userId, portfolios.size(), holdings.size(), withDayChange);
+            }
 
             return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue, timeFrame);
         }
@@ -140,15 +167,99 @@ public class TopMoversAnalysisService {
         return TopMoversResponse.builder().gainers(List.of()).losers(List.of()).build();
     }
 
+    private void applyLiveMarketData(List<AnalysisEntity> portfolios, Map<String, LivePriceTick> liveTicks,
+                                     String timeFrame) {
+        if (liveTicks != null && !liveTicks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(portfolios, liveTicks);
+            return;
+        }
+
+        List<String> holdingSymbols = portfolios.stream()
+                .filter(p -> p.getHoldings() != null)
+                .flatMap(p -> p.getHoldings().stream())
+                .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
+                .map(h -> h.getIdentity().getSymbol())
+                .distinct()
+                .toList();
+        if (holdingSymbols.isEmpty()) {
+            return;
+        }
+
+        Timeframe window = Timeframe.tryFromCode(timeFrame != null ? timeFrame : "1D")
+                .orElse(Timeframe.ONE_DAY);
+        Set<String> redisKeys = LivePriceOverlayHelper.expandRedisSymbolKeys(holdingSymbols);
+        Map<String, Double> prevCloseByRedisKey =
+                previousCloseRedisService.readWindowForSymbols(redisKeys, window);
+        if (prevCloseByRedisKey.isEmpty()) {
+            log.warn("[TopMovers] No prev-close in Redis for {} symbols (window={})",
+                    holdingSymbols.size(), window.getCode());
+        }
+
+        Map<String, LivePriceTick> ticks = buildTicksFromHoldingsAndPrevClose(
+                portfolios, holdingSymbols, prevCloseByRedisKey);
+        if (ticks.isEmpty()) {
+            log.warn("[TopMovers] No ticks built: missing currentPrice on holdings for {} symbols",
+                    holdingSymbols.size());
+            return;
+        }
+        LivePriceOverlayHelper.applyAll(portfolios, ticks);
+    }
+
+    private Map<String, LivePriceTick> buildTicksFromHoldingsAndPrevClose(
+            List<AnalysisEntity> portfolios,
+            List<String> holdingSymbols,
+            Map<String, Double> prevCloseByRedisKey) {
+        Map<String, LivePriceTick> ticks = new HashMap<>();
+        for (String symbol : holdingSymbols) {
+            Double lastPrice = findCurrentPrice(portfolios, symbol);
+            if (lastPrice == null || lastPrice <= 0) {
+                continue;
+            }
+            Double prevClose = LivePriceOverlayHelper.resolvePrevClose(symbol, prevCloseByRedisKey);
+            ticks.put(symbol, new LivePriceTick(lastPrice, prevClose));
+        }
+        return ticks;
+    }
+
+    private static Double findCurrentPrice(List<AnalysisEntity> portfolios, String symbol) {
+        for (AnalysisEntity portfolio : portfolios) {
+            if (portfolio.getHoldings() == null) {
+                continue;
+            }
+            for (AnalysisHolding holding : portfolio.getHoldings()) {
+                if (holding.getIdentity() == null || !symbol.equals(holding.getIdentity().getSymbol())) {
+                    continue;
+                }
+                if (holding.getMarket() != null && holding.getMarket().getCurrentPrice() != null) {
+                    return holding.getMarket().getCurrentPrice();
+                }
+            }
+        }
+        return null;
+    }
+
     private double resolveChangeMetric(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
         if (useDaily) {
             if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
                 return h.getMarket().getDayChangePercentage();
             }
-            return 0.0;
+            Double computed = computeDayChangePercentage(h);
+            return computed != null ? computed : 0.0;
         }
         return (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null)
                 ? h.getInvestment().getProfitLossPercentage() : 0.0;
+    }
+
+    private Double computeDayChangePercentage(com.am.analysis.adapter.model.AnalysisHolding h) {
+        if (h.getMarket() == null) {
+            return null;
+        }
+        Double price = h.getMarket().getCurrentPrice();
+        Double prevClose = h.getMarket().getPreviousClose();
+        if (price == null || prevClose == null || prevClose <= 0) {
+            return null;
+        }
+        return ((price - prevClose) / prevClose) * 100.0;
     }
 
     private double resolveChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {

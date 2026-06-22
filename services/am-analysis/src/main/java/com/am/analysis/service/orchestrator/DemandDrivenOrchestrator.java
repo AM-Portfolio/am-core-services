@@ -18,9 +18,13 @@ import com.am.kafka.config.InterestRegistryKeys;
 
 import com.am.kafka.config.KafkaTopics;
 
+import com.am.kafka.config.Timeframe;
+
 import com.am.kafka.schema.TriggerCalcEvent;
 
 import com.am.kafka.service.InterestRegistryService;
+
+import com.am.kafka.service.PreviousCloseRedisService;
 
 import com.am.observability.flow.FlowLogger;
 
@@ -97,6 +101,8 @@ public class DemandDrivenOrchestrator {
     private final PortfolioStreamingService portfolioStreamingService;
 
     private final PortfolioStreamingProperties portfolioStreamingProperties;
+
+    private final PreviousCloseRedisService previousCloseRedisService;
 
 
 
@@ -347,6 +353,15 @@ public class DemandDrivenOrchestrator {
                 Double prevClose = null;
                 if (price.getOhlcv() != null) {
                     prevClose = price.getOhlcv().getClose();
+                }
+                if (prevClose == null || prevClose <= 0) {
+                    prevClose = previousCloseRedisService.readWindow(price.getSymbol(), Timeframe.ONE_DAY);
+                }
+                if ((prevClose == null || prevClose <= 0)) {
+                    String base = com.am.analysis.service.LivePriceOverlayHelper.baseSymbol(price.getSymbol());
+                    if (!base.isEmpty()) {
+                        prevClose = previousCloseRedisService.readWindow("NSE_EQ:" + base, Timeframe.ONE_DAY);
+                    }
                 }
 
                 ticks.put(price.getSymbol(), new LivePriceTick(price.getLastPrice(), prevClose));
