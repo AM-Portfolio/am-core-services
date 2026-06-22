@@ -8,13 +8,13 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.6-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>com.am.services</groupId>
     <artifactId>am-analysis</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM Analysis Service</name>
@@ -62,11 +62,6 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.am.libraries</groupId>
-            <artifactId>am-api-core-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

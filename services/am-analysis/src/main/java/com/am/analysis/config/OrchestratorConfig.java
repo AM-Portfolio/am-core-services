@@ -32,11 +32,11 @@ public class OrchestratorConfig {
     @Bean
     public DemandDrivenOrchestrator demandDrivenOrchestrator(
             InterestRegistryService interestRegistryService,
+            com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService,
             KafkaTemplate<String, String> kafkaTemplate,
             ObjectMapper objectMapper,
             FlowLogger flowLogger,
             TracingHelper tracingHelper,
-            com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService,
             com.am.analysis.service.PortfolioStreamingService portfolioStreamingService,
             com.am.analysis.config.PortfolioStreamingProperties portfolioStreamingProperties,
             PreviousCloseRedisService previousCloseRedisService) {
