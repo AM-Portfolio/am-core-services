@@ -38,9 +38,10 @@ public class OrchestratorConfig {
             TracingHelper tracingHelper,
             com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService,
             com.am.analysis.service.PortfolioStreamingService portfolioStreamingService,
-            com.am.analysis.config.PortfolioStreamingProperties portfolioStreamingProperties) {
+            com.am.analysis.config.PortfolioStreamingProperties portfolioStreamingProperties,
+            PreviousCloseRedisService previousCloseRedisService) {
         return new DemandDrivenOrchestrator(interestRegistryService, kafkaTemplate, objectMapper,
                 flowLogger, tracingHelper, dashboardAnalysisService,
-                portfolioStreamingService, portfolioStreamingProperties);
+                portfolioStreamingService, portfolioStreamingProperties, previousCloseRedisService);
     }
 }
