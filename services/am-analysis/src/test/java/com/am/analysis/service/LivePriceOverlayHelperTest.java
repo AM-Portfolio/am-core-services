@@ -56,6 +56,76 @@ class LivePriceOverlayHelperTest {
     }
 
     @Test
+    void apply_rejectsImplausiblePrevClose() {
+        AnalysisEntity entity = AnalysisEntity.builder()
+                .type(AnalysisEntityType.PORTFOLIO)
+                .holdings(List.of(AnalysisHolding.builder()
+                        .identity(HoldingIdentity.builder().symbol("IRB").build())
+                        .investment(InvestmentStats.builder()
+                                .quantity(50.0)
+                                .investmentValue(2663.50)
+                                .build())
+                        .market(MarketStats.builder()
+                                .currentPrice(55.93)
+                                .previousClose(21.44)
+                                .build())
+                        .build()))
+                .build();
+
+        // Redis prev-close also wrong — daily metrics should be cleared, not 160%+
+        LivePriceOverlayHelper.apply(entity, Map.of("IRB", new LivePriceTick(55.93, 21.44)));
+
+        var market = entity.getHoldings().get(0).getMarket();
+        assertEquals(null, market.getDayChangePercentage());
+        assertEquals(null, market.getPreviousClose());
+    }
+
+    @Test
+    void inferAveragePrice_fromInvestmentWhenAvgMissing() {
+        InvestmentStats inv = InvestmentStats.builder()
+                .quantity(50.0)
+                .investmentValue(2663.50)
+                .build();
+        assertEquals(53.27, LivePriceOverlayHelper.inferAveragePrice(inv), 0.01);
+    }
+
+    @Test
+    void computePeriodChangePercent_allowsLargeWeeklyMove() {
+        assertEquals(7.56, LivePriceOverlayHelper.computePeriodChangePercent(
+                55.93, 52.0, com.am.kafka.config.Timeframe.ONE_WEEK), 0.01);
+    }
+
+    @Test
+    void computePeriodChangePercent_rejectsImplausibleReference() {
+        assertEquals(null, LivePriceOverlayHelper.computePeriodChangePercent(
+                55.93, 21.44, com.am.kafka.config.Timeframe.ONE_WEEK));
+    }
+
+    @Test
+    void apply_usesPeriodReferenceForOneWeekWindow() {
+        AnalysisEntity entity = AnalysisEntity.builder()
+                .type(AnalysisEntityType.PORTFOLIO)
+                .holdings(List.of(AnalysisHolding.builder()
+                        .identity(HoldingIdentity.builder().symbol("IRB").build())
+                        .investment(InvestmentStats.builder()
+                                .quantity(50.0)
+                                .investmentValue(2663.50)
+                                .build())
+                        .market(MarketStats.builder().currentPrice(55.93).build())
+                        .build()))
+                .build();
+
+        LivePriceOverlayHelper.apply(entity,
+                Map.of("IRB", new LivePriceTick(55.93, 52.0)),
+                com.am.kafka.config.Timeframe.ONE_WEEK);
+
+        var market = entity.getHoldings().get(0).getMarket();
+        assertEquals(52.0, market.getPreviousClose(), 0.01);
+        assertEquals(7.56, market.getDayChangePercentage(), 0.05);
+        assertEquals(196.5, market.getDayChange(), 0.5);
+    }
+
+    @Test
     void apply_usesPriorCloseForDayChangePercent() {
         AnalysisEntity entity = AnalysisEntity.builder()
                 .type(AnalysisEntityType.PORTFOLIO)

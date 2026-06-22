@@ -45,7 +45,7 @@ public class TopMoversAnalysisService {
             return getTopMoversByCategory(type, timeFrame, userId, groupBy, liveTicks);
         } else {
             log.info("Processing Top Movers within Entity: ID={}, Type={}, TimeFrame={}, User={}, GroupBy={}", id, type, timeFrame, userId, groupBy);
-            return getTopMoversWithinEntity(id, type, timeFrame, userId, groupBy);
+            return getTopMoversWithinEntity(id, type, timeFrame, userId, groupBy, liveTicks);
         }
     }
 
@@ -96,29 +96,29 @@ public class TopMoversAnalysisService {
             
             List<com.am.analysis.adapter.model.AnalysisHolding> holdings = new java.util.ArrayList<>(uniqueHoldings.values());
             
-            boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
+            String normalizedTf = normalizeTimeFrame(timeFrame);
 
             List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
-                    .filter(h -> resolveChangeMetric(h, useDaily) > 0)
-                    .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, useDaily), resolveChangeMetric(h1, useDaily)))
+                    .filter(h -> resolveChangeMetric(h, normalizedTf) > 0)
+                    .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, normalizedTf), resolveChangeMetric(h1, normalizedTf)))
                     .limit(10)
                     .toList();
             
             List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
-                    .filter(h -> resolveChangeMetric(h, useDaily) < 0)
-                    .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, useDaily), resolveChangeMetric(h2, useDaily)))
+                    .filter(h -> resolveChangeMetric(h, normalizedTf) < 0)
+                    .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, normalizedTf), resolveChangeMetric(h2, normalizedTf)))
                     .limit(10)
                     .toList();
 
             if (gainers.isEmpty() && losers.isEmpty()) {
-                long withDayChange = holdings.stream()
-                        .filter(h -> h.getMarket() != null && h.getMarket().getDayChangePercentage() != null)
+                long withChange = holdings.stream()
+                        .filter(h -> computeChangePercentage(h, normalizedTf) != null)
                         .count();
-                log.warn("[TopMovers] Empty gainers/losers for userId={}: portfolios={}, holdings={}, withDayChangePct={}",
-                        userId, portfolios.size(), holdings.size(), withDayChange);
+                log.warn("[TopMovers] Empty gainers/losers for userId={} tf={}: portfolios={}, holdings={}, withChangePct={}",
+                        userId, normalizedTf, portfolios.size(), holdings.size(), withChange);
             }
 
-            return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue, timeFrame);
+            return buildTopMoversResponseFromHoldings(gainers, losers, normalizedTf, totalPortfolioValue);
         }
 
         // Fallback for non-portfolio types or public types (if any)
@@ -127,7 +127,9 @@ public class TopMoversAnalysisService {
         return buildTopMoversResponse(gainers, losers);
     }
 
-    private TopMoversResponse getTopMoversWithinEntity(String id, AnalysisEntityType type, String timeFrame, String userId, AnalysisGroupBy groupBy) {
+    private TopMoversResponse getTopMoversWithinEntity(String id, AnalysisEntityType type, String timeFrame,
+                                                       String userId, AnalysisGroupBy groupBy,
+                                                       Map<String, LivePriceTick> liveTicks) {
         String compositeId = type.name() + "_" + id;
         Optional<AnalysisEntity> entityOpt = repository.findById(compositeId);
 
@@ -136,6 +138,8 @@ public class TopMoversAnalysisService {
             accessValidator.verifyAccess(entity, userId);
 
             if (entity.getHoldings() != null) {
+                applyLiveMarketData(List.of(entity), liveTicks, timeFrame);
+
                 double totalPortfolioValue = entity.getHoldings().stream()
                     .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
                     .sum();
@@ -145,32 +149,33 @@ public class TopMoversAnalysisService {
                 }
 
                 List<com.am.analysis.adapter.model.AnalysisHolding> holdings = entity.getHoldings();
-
-                boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
+                String normalizedTf = normalizeTimeFrame(timeFrame);
 
                 List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
-                        .filter(h -> resolveChangeMetric(h, useDaily) > 0)
-                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, useDaily), resolveChangeMetric(h1, useDaily)))
+                        .filter(h -> resolveChangeMetric(h, normalizedTf) > 0)
+                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, normalizedTf), resolveChangeMetric(h1, normalizedTf)))
                         .limit(10)
                         .toList();
                 
                 List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
-                        .filter(h -> resolveChangeMetric(h, useDaily) < 0)
-                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, useDaily), resolveChangeMetric(h2, useDaily)))
+                        .filter(h -> resolveChangeMetric(h, normalizedTf) < 0)
+                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, normalizedTf), resolveChangeMetric(h2, normalizedTf)))
                         .limit(10)
                         .toList();
 
-                return buildTopMoversResponseFromHoldings(gainers, losers, useDaily, totalPortfolioValue, timeFrame);
+                return buildTopMoversResponseFromHoldings(gainers, losers, normalizedTf, totalPortfolioValue);
             }
         }
         
-        return TopMoversResponse.builder().gainers(List.of()).losers(List.of()).build();
+        return TopMoversResponse.builder().gainers(List.of()).losers(List.of())
+                .timeFrame(normalizeTimeFrame(timeFrame)).build();
     }
 
     private void applyLiveMarketData(List<AnalysisEntity> portfolios, Map<String, LivePriceTick> liveTicks,
                                      String timeFrame) {
+        Timeframe window = resolveTimeframe(timeFrame);
         if (liveTicks != null && !liveTicks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(portfolios, liveTicks);
+            LivePriceOverlayHelper.applyAll(portfolios, liveTicks, window);
             return;
         }
 
@@ -185,13 +190,11 @@ public class TopMoversAnalysisService {
             return;
         }
 
-        Timeframe window = Timeframe.tryFromCode(timeFrame != null ? timeFrame : "1D")
-                .orElse(Timeframe.ONE_DAY);
         Set<String> redisKeys = LivePriceOverlayHelper.expandRedisSymbolKeys(holdingSymbols);
         Map<String, Double> prevCloseByRedisKey =
                 previousCloseRedisService.readWindowForSymbols(redisKeys, window);
         if (prevCloseByRedisKey.isEmpty()) {
-            log.warn("[TopMovers] No prev-close in Redis for {} symbols (window={})",
+            log.warn("[TopMovers] No reference price in Redis for {} symbols (window={})",
                     holdingSymbols.size(), window.getCode());
         }
 
@@ -202,7 +205,20 @@ public class TopMoversAnalysisService {
                     holdingSymbols.size());
             return;
         }
-        LivePriceOverlayHelper.applyAll(portfolios, ticks);
+        LivePriceOverlayHelper.applyAll(portfolios, ticks, window);
+    }
+
+    private static Timeframe resolveTimeframe(String timeFrame) {
+        return Timeframe.tryFromCode(timeFrame != null ? timeFrame : "1D")
+                .orElse(Timeframe.ONE_DAY);
+    }
+
+    private static String normalizeTimeFrame(String timeFrame) {
+        return resolveTimeframe(timeFrame).getCode();
+    }
+
+    private static boolean isDailyTimeFrame(String timeFrame) {
+        return resolveTimeframe(timeFrame).isIntraday();
     }
 
     private Map<String, LivePriceTick> buildTicksFromHoldingsAndPrevClose(
@@ -238,43 +254,49 @@ public class TopMoversAnalysisService {
         return null;
     }
 
-    private double resolveChangeMetric(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
-        if (useDaily) {
-            if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
-                return h.getMarket().getDayChangePercentage();
-            }
-            Double computed = computeDayChangePercentage(h);
-            return computed != null ? computed : 0.0;
-        }
-        return (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null)
-                ? h.getInvestment().getProfitLossPercentage() : 0.0;
+    private double resolveChangeMetric(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
+        Double computed = computeChangePercentage(h, timeFrame);
+        return computed != null ? computed : 0.0;
     }
 
-    private Double computeDayChangePercentage(com.am.analysis.adapter.model.AnalysisHolding h) {
-        if (h.getMarket() == null) {
+    private Double computeChangePercentage(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
+        if (h.getMarket() == null || h.getInvestment() == null) {
             return null;
+        }
+        if (h.getMarket().getDayChangePercentage() != null) {
+            return h.getMarket().getDayChangePercentage();
         }
         Double price = h.getMarket().getCurrentPrice();
-        Double prevClose = h.getMarket().getPreviousClose();
-        if (price == null || prevClose == null || prevClose <= 0) {
+        Double reference = h.getMarket().getPreviousClose();
+        if (price == null || reference == null) {
             return null;
         }
-        return ((price - prevClose) / prevClose) * 100.0;
+        return isDailyTimeFrame(timeFrame)
+                ? LivePriceOverlayHelper.computeDailyChangePercent(price, reference)
+                : LivePriceOverlayHelper.computePeriodChangePercent(price, reference, resolveTimeframe(timeFrame));
     }
 
-    private double resolveChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
-        if (useDaily) {
-            if (h.getMarket() != null && h.getMarket().getDayChange() != null) {
-                return h.getMarket().getDayChange();
-            }
-            return 0.0;
+    private double resolveChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
+        Double computed = computeChangeAmount(h, timeFrame);
+        return computed != null ? computed : 0.0;
+    }
+
+    private Double computeChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
+        if (h.getMarket() == null || h.getInvestment() == null) {
+            return null;
         }
-        return (h.getInvestment() != null && h.getInvestment().getProfitLoss() != null)
-                ? h.getInvestment().getProfitLoss() : 0.0;
-    }
-
-    private double getPercentage(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily) {
-        return resolveChangeMetric(h, useDaily);
+        if (h.getMarket().getDayChange() != null) {
+            return h.getMarket().getDayChange();
+        }
+        Double price = h.getMarket().getCurrentPrice();
+        Double reference = h.getMarket().getPreviousClose();
+        double qty = h.getInvestment().getQuantity() != null ? h.getInvestment().getQuantity() : 0.0;
+        if (price == null || reference == null || qty <= 0) {
+            return null;
+        }
+        return isDailyTimeFrame(timeFrame)
+                ? LivePriceOverlayHelper.computeDailyChangeAmount(qty, price, reference)
+                : LivePriceOverlayHelper.computePeriodChangeAmount(qty, price, reference, resolveTimeframe(timeFrame));
     }
 
     private TopMoversResponse buildTopMoversResponse(List<AnalysisEntity> gainers, List<AnalysisEntity> losers) {
@@ -287,13 +309,12 @@ public class TopMoversAnalysisService {
     private TopMoversResponse buildTopMoversResponseFromHoldings(
             List<com.am.analysis.adapter.model.AnalysisHolding> gainers, 
             List<com.am.analysis.adapter.model.AnalysisHolding> losers,
-            boolean useDaily,
-            double totalPortfolioValue,
-            String timeFrame) {
+            String timeFrame,
+            double totalPortfolioValue) {
         return TopMoversResponse.builder()
-                .gainers(gainers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
-                .losers(losers.stream().map(h -> mapToMoverItem(h, useDaily, totalPortfolioValue)).toList())
-                .timeFrame(timeFrame != null ? timeFrame : "1D")
+                .gainers(gainers.stream().map(h -> mapToMoverItem(h, timeFrame, totalPortfolioValue)).toList())
+                .losers(losers.stream().map(h -> mapToMoverItem(h, timeFrame, totalPortfolioValue)).toList())
+                .timeFrame(timeFrame)
                 .build();
     }
 
@@ -315,18 +336,18 @@ public class TopMoversAnalysisService {
                 .build();
     }
 
-    private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, boolean useDaily, double totalPortfolioValue) {
+    private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame, double totalPortfolioValue) {
         String symbol = h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN";
         String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
         Double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
-        double pct = resolveChangeMetric(h, useDaily);
-        double amt = resolveChangeAmount(h, useDaily);
+        double pct = resolveChangeMetric(h, timeFrame);
+        double amt = resolveChangeAmount(h, timeFrame);
 
         double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
         double invested = (h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null) ? h.getInvestment().getInvestmentValue() : 0.0;
         double allocPct = totalPortfolioValue != 0 ? (val / totalPortfolioValue) * 100 : 0.0;
-        double pnlPct = (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) ? h.getInvestment().getProfitLossPercentage() : 0.0;
+        double pnlPct = invested > 0 ? ((val - invested) / invested) * 100.0 : 0.0;
 
         return TopMoversResponse.MoverItem.builder()
                 .symbol(symbol)
@@ -350,7 +371,7 @@ public class TopMoversAnalysisService {
             enrichHoldingsWithClassification(holdings);
         }
 
-        boolean useDaily = timeFrame == null || "1D".equalsIgnoreCase(timeFrame);
+        boolean usePeriodOverlay = !isDailyTimeFrame(timeFrame);
         
         java.util.function.Function<com.am.analysis.adapter.model.AnalysisHolding, String> classifier = h -> {
             switch (groupBy) {
@@ -388,27 +409,25 @@ public class TopMoversAnalysisService {
                     .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
                     .sum();
                 
-                double groupDayPreviousValue = groupHoldings.stream()
+                double groupPreviousValue = groupHoldings.stream()
                     .mapToDouble(h -> {
                         double val = (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0;
-                        double dayChange = (h.getMarket() != null && h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
-                        return val - dayChange;
+                        double periodChange = (h.getMarket() != null && h.getMarket().getDayChange() != null) ? h.getMarket().getDayChange() : 0.0;
+                        return val - periodChange;
                     })
                     .sum();
 
                 double pct = 0.0;
                 double amt = 0.0;
 
-                if (useDaily) {
-                    amt = groupCurrentValue - groupDayPreviousValue;
-                    if (groupDayPreviousValue != 0) {
-                        pct = (amt / groupDayPreviousValue) * 100;
-                    }
-                } else {
-                    amt = groupCurrentValue - groupInceptionValue;
-                    if (groupInceptionValue != 0) {
-                        pct = (amt / groupInceptionValue) * 100;
-                    }
+                amt = groupCurrentValue - groupPreviousValue;
+                if (groupPreviousValue != 0) {
+                    pct = (amt / groupPreviousValue) * 100;
+                }
+
+                if (usePeriodOverlay && groupPreviousValue <= 0) {
+                    pct = 0.0;
+                    amt = 0.0;
                 }
 
                 double allocPct = totalPortfolioValue != 0 ? (groupCurrentValue / totalPortfolioValue) * 100 : 0.0;
@@ -443,7 +462,7 @@ public class TopMoversAnalysisService {
         return TopMoversResponse.builder()
                 .gainers(gainers)
                 .losers(losers)
-                .timeFrame(timeFrame != null ? timeFrame : "1D")
+                .timeFrame(normalizeTimeFrame(timeFrame))
                 .build();
     }
 
