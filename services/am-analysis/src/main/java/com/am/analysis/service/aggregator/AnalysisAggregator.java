@@ -3,7 +3,9 @@ package com.am.analysis.service.aggregator;
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisHolding;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.BootstrapTrigger;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.dto.DashboardSummary;
 import com.am.analysis.service.LivePriceOverlayHelper;
 import com.am.analysis.service.LivePriceTick;
@@ -36,7 +38,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AnalysisAggregator {
 
-    private final AnalysisRepository analysisRepository;
+    private final AnalysisEntityLoadService entityLoadService;
     private final TradeClientService tradeClientService;
     private final FlowLogger flowLogger;
 
@@ -288,10 +290,12 @@ public class AnalysisAggregator {
     @Retry(name = "portfolioService")
     List<AnalysisEntity> fetchPortfolioEntities(String userId) {
         long start = System.nanoTime();
-        List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        EntityLoadResult result = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
+        List<AnalysisEntity> entities = result.entities();
         flowLogger.step("analysis.aggregator.fetch_portfolios",
                 "userId", userId,
-                "entities", entities == null ? 0 : entities.size(),
+                "entities", entities.size(),
+                "bootstrap_requested", result.bootstrapRequested(),
                 "duration_ms", (System.nanoTime() - start) / 1_000_000L);
         return entities;
     }

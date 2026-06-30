@@ -7,6 +7,7 @@ import com.am.analysis.adapter.model.components.HoldingIdentity;
 import com.am.analysis.adapter.model.components.InvestmentStats;
 import com.am.analysis.adapter.model.components.MarketStats;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
+import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.portfolio.domain.events.PortfolioUpdateEvent;
 import com.am.portfolio.domain.model.EquityModel;
 import org.junit.jupiter.api.Test;
@@ -75,5 +76,39 @@ class AnalysisEventMapperReverseTest {
         assertEquals("TCS", equity.getSymbol());
         assertEquals(5000.0, equity.getCurrentPrice());
         assertEquals(10000.0, equity.getProfitLoss());
+    }
+
+    @Test
+    void mapPortfolioEvent_globalUsesUserScopedEntityId() {
+        PortfolioUpdateEvent event = PortfolioUpdateEvent.builder()
+                .userId("user1")
+                .portfolioId("GLOBAL")
+                .totalValue(1000.0)
+                .equities(List.of(EquityModel.builder()
+                        .symbol("TCS")
+                        .averagePrice(100.0)
+                        .currentValue(1000.0)
+                        .build()))
+                .build();
+
+        AnalysisEntity entity = mapper.mapPortfolioEvent(event);
+
+        assertEquals(AnalysisEntityKeys.globalEntityId("user1"), entity.getId());
+        assertEquals(AnalysisEntityKeys.GLOBAL_SOURCE_ID, entity.getSourceId());
+        assertEquals(AnalysisEntityType.PORTFOLIO, entity.getType());
+    }
+
+    @Test
+    void mapPortfolioEvent_specificPortfolioUsesPortfolioEntityId() {
+        PortfolioUpdateEvent event = PortfolioUpdateEvent.builder()
+                .userId("user1")
+                .portfolioId("p1")
+                .totalValue(500.0)
+                .build();
+
+        AnalysisEntity entity = mapper.mapPortfolioEvent(event);
+
+        assertEquals("PORTFOLIO_p1", entity.getId());
+        assertEquals("p1", entity.getSourceId());
     }
 }

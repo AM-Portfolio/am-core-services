@@ -8,7 +8,8 @@ import com.am.analysis.adapter.model.components.AssetClassification;
 import com.am.analysis.adapter.model.components.HoldingIdentity;
 import com.am.analysis.adapter.model.components.InvestmentStats;
 import com.am.analysis.adapter.model.components.MarketStats;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import com.am.kafka.config.Timeframe;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,7 +36,7 @@ import static org.mockito.Mockito.*;
 public class TopMoversAnalysisServiceTest {
 
     @Mock
-    private AnalysisRepository repository;
+    private AnalysisEntityLoadService entityLoadService;
 
     @Mock
     private AnalysisAccessValidator accessValidator;
@@ -99,8 +101,7 @@ public class TopMoversAnalysisServiceTest {
 
     @Test
     void testGetTopMoversWithinEntity_GroupBySector_WithEnrichment() {
-        when(repository.findById(anyString())).thenReturn(Optional.of(testPortfolio));
-        doNothing().when(accessValidator).verifyAccess(any(), anyString());
+        when(entityLoadService.loadOne(any())).thenReturn(EntityLoadResult.of(List.of(testPortfolio), false));
         
         // Mock Market Data Client
         com.am.portfolio.client.market.model.SecurityMetadata meta = new com.am.portfolio.client.market.model.SecurityMetadata();
@@ -125,8 +126,7 @@ public class TopMoversAnalysisServiceTest {
 
     @Test
     void testGetTopMoversWithinEntity_GroupByMarketCap() {
-        when(repository.findById(anyString())).thenReturn(Optional.of(testPortfolio));
-        doNothing().when(accessValidator).verifyAccess(any(), anyString());
+        when(entityLoadService.loadOne(any())).thenReturn(EntityLoadResult.of(List.of(testPortfolio), false));
 
         TopMoversResponse response = topMoversAnalysisService.getTopMovers(
                 "test", AnalysisEntityType.PORTFOLIO, "1D", "user123", AnalysisGroupBy.MARKET_CAP);
@@ -155,8 +155,7 @@ public class TopMoversAnalysisServiceTest {
                 .market(MarketStats.builder().dayChange(0.0).dayChangePercentage(0.0).build())
                 .build());
 
-        when(repository.findById(anyString())).thenReturn(Optional.of(testPortfolio));
-        doNothing().when(accessValidator).verifyAccess(any(), anyString());
+        when(entityLoadService.loadOne(any())).thenReturn(EntityLoadResult.of(List.of(testPortfolio), false));
 
         // Should not throw NPE
         assertDoesNotThrow(() -> topMoversAnalysisService.getTopMovers(
@@ -187,8 +186,8 @@ public class TopMoversAnalysisServiceTest {
                         .build())
                 .build();
 
-        when(repository.findByOwnerIdAndType("user123", AnalysisEntityType.PORTFOLIO))
-                .thenReturn(List.of(portfolio));
+        when(entityLoadService.loadPortfoliosForUser(eq("user123"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(portfolio), false));
         when(previousCloseRedisService.readWindowForSymbols(anyCollection(), eq(Timeframe.ONE_DAY)))
                 .thenReturn(java.util.Map.of("NSE_EQ:SAIL", 180.05));
 

@@ -7,7 +7,9 @@ import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.model.components.InvestmentStats;
 import com.am.analysis.adapter.model.components.MarketStats;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.BootstrapTrigger;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.dto.ActivityFilter;
 import com.am.analysis.dto.ActivityItem;
 import com.am.analysis.dto.ActivityType;
@@ -42,7 +44,7 @@ import java.util.stream.Collectors;
 public class DashboardAnalysisService {
 
     private final AnalysisAggregator aggregator;
-    private final AnalysisRepository analysisRepository;
+    private final AnalysisEntityLoadService entityLoadService;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final FlowLogger flowLogger;
@@ -122,7 +124,8 @@ public class DashboardAnalysisService {
         log.info("[DashboardAnalysisService] Processing recent activity request for userId: {} with filter: {}", userId, filter);
 
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
-        List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
+        List<AnalysisEntity> entities = loadResult.entities();
         if (liveTicks != null && !liveTicks.isEmpty()) {
             LivePriceOverlayHelper.applyAll(entities, liveTicks);
         }

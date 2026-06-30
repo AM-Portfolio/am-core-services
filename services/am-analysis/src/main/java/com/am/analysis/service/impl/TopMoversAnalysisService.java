@@ -8,6 +8,10 @@ import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.LivePriceOverlayHelper;
 import com.am.analysis.service.LivePriceTick;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.BootstrapTrigger;
+import com.am.analysis.service.load.EntityLoadRequest;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import com.am.kafka.config.Timeframe;
 import com.am.kafka.service.PreviousCloseRedisService;
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
 public class TopMoversAnalysisService {
 
     private final AnalysisRepository repository;
+    private final AnalysisEntityLoadService entityLoadService;
     private final AnalysisAccessValidator accessValidator;
     private final PreviousCloseRedisService previousCloseRedisService;
     private final MarketDataClientService marketDataClientService;
@@ -53,18 +58,11 @@ public class TopMoversAnalysisService {
                                                      AnalysisGroupBy groupBy, Map<String, LivePriceTick> liveTicks) {
         if (type == AnalysisEntityType.PORTFOLIO && userId != null) {
             log.debug("Aggregating portfolio holdings for user: {}", userId);
-            List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO)
-                    .stream()
-                    .filter(p -> !p.getId().endsWith("_GLOBAL"))
-                    .collect(Collectors.toList());
+            EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.HTTP_READ);
+            List<AnalysisEntity> portfolios = loadResult.entities();
 
             if (portfolios.isEmpty()) {
-                log.warn("[TopMovers] No portfolio analysis entities for userId={}", userId);
-                return TopMoversResponse.builder()
-                        .gainers(List.of())
-                        .losers(List.of())
-                        .timeFrame(timeFrame != null ? timeFrame : "1D")
-                        .build();
+                return emptyTopMovers(timeFrame);
             }
 
             applyLiveMarketData(portfolios, liveTicks, timeFrame);
@@ -130,45 +128,67 @@ public class TopMoversAnalysisService {
     private TopMoversResponse getTopMoversWithinEntity(String id, AnalysisEntityType type, String timeFrame,
                                                        String userId, AnalysisGroupBy groupBy,
                                                        Map<String, LivePriceTick> liveTicks) {
+        if (type == AnalysisEntityType.PORTFOLIO) {
+            EntityLoadResult loadResult = entityLoadService.loadOne(
+                    EntityLoadRequest.onePortfolio(id, userId, BootstrapTrigger.HTTP_READ));
+            if (loadResult.empty() || loadResult.entities().isEmpty()) {
+                return emptyTopMovers(timeFrame);
+            }
+            return buildTopMoversForEntity(loadResult.entities().get(0), timeFrame, groupBy, liveTicks);
+        }
+
         String compositeId = type.name() + "_" + id;
         Optional<AnalysisEntity> entityOpt = repository.findById(compositeId);
 
         if (entityOpt.isPresent()) {
-            AnalysisEntity entity = entityOpt.get();
-            accessValidator.verifyAccess(entity, userId);
-
-            if (entity.getHoldings() != null) {
-                applyLiveMarketData(List.of(entity), liveTicks, timeFrame);
-
-                double totalPortfolioValue = entity.getHoldings().stream()
-                    .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null) ? h.getInvestment().getValue() : 0.0)
-                    .sum();
-
-                if (groupBy != null && groupBy != AnalysisGroupBy.STOCK) {
-                    return getTopMoversByGroup(entity.getHoldings(), timeFrame, totalPortfolioValue, groupBy);
-                }
-
-                List<com.am.analysis.adapter.model.AnalysisHolding> holdings = entity.getHoldings();
-                String normalizedTf = normalizeTimeFrame(timeFrame);
-
-                List<com.am.analysis.adapter.model.AnalysisHolding> gainers = holdings.stream()
-                        .filter(h -> resolveChangeMetric(h, normalizedTf) > 0)
-                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, normalizedTf), resolveChangeMetric(h1, normalizedTf)))
-                        .limit(10)
-                        .toList();
-                
-                List<com.am.analysis.adapter.model.AnalysisHolding> losers = holdings.stream()
-                        .filter(h -> resolveChangeMetric(h, normalizedTf) < 0)
-                        .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, normalizedTf), resolveChangeMetric(h2, normalizedTf)))
-                        .limit(10)
-                        .toList();
-
-                return buildTopMoversResponseFromHoldings(gainers, losers, normalizedTf, totalPortfolioValue);
-            }
+            accessValidator.verifyAccess(entityOpt.get(), userId);
+            return buildTopMoversForEntity(entityOpt.get(), timeFrame, groupBy, liveTicks);
         }
-        
-        return TopMoversResponse.builder().gainers(List.of()).losers(List.of())
-                .timeFrame(normalizeTimeFrame(timeFrame)).build();
+
+        return emptyTopMovers(timeFrame);
+    }
+
+    private TopMoversResponse buildTopMoversForEntity(AnalysisEntity entity, String timeFrame,
+                                                      AnalysisGroupBy groupBy, Map<String, LivePriceTick> liveTicks) {
+        if (entity.getHoldings() == null) {
+            return emptyTopMovers(timeFrame);
+        }
+
+        applyLiveMarketData(List.of(entity), liveTicks, timeFrame);
+
+        double totalPortfolioValue = entity.getHoldings().stream()
+                .mapToDouble(h -> (h.getInvestment() != null && h.getInvestment().getValue() != null)
+                        ? h.getInvestment().getValue() : 0.0)
+                .sum();
+
+        if (groupBy != null && groupBy != AnalysisGroupBy.STOCK) {
+            return getTopMoversByGroup(entity.getHoldings(), timeFrame, totalPortfolioValue, groupBy);
+        }
+
+        List<AnalysisHolding> holdings = entity.getHoldings();
+        String normalizedTf = normalizeTimeFrame(timeFrame);
+
+        List<AnalysisHolding> gainers = holdings.stream()
+                .filter(h -> resolveChangeMetric(h, normalizedTf) > 0)
+                .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h2, normalizedTf), resolveChangeMetric(h1, normalizedTf)))
+                .limit(10)
+                .toList();
+
+        List<AnalysisHolding> losers = holdings.stream()
+                .filter(h -> resolveChangeMetric(h, normalizedTf) < 0)
+                .sorted((h1, h2) -> Double.compare(resolveChangeMetric(h1, normalizedTf), resolveChangeMetric(h2, normalizedTf)))
+                .limit(10)
+                .toList();
+
+        return buildTopMoversResponseFromHoldings(gainers, losers, normalizedTf, totalPortfolioValue);
+    }
+
+    private TopMoversResponse emptyTopMovers(String timeFrame) {
+        return TopMoversResponse.builder()
+                .gainers(List.of())
+                .losers(List.of())
+                .timeFrame(timeFrame != null ? timeFrame : "1D")
+                .build();
     }
 
     private void applyLiveMarketData(List<AnalysisEntity> portfolios, Map<String, LivePriceTick> liveTicks,

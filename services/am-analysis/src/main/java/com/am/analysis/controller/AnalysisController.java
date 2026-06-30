@@ -175,6 +175,7 @@ public class AnalysisController {
             return ResponseEntity.ok(response);
         }
     }
+    
 
     @GetMapping("/{type}/top-movers")
     public ResponseEntity<TopMoversResponse> getTopMoversByCategory(

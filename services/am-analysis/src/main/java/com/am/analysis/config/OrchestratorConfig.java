@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
 
 /**
  * Wires the Demand-Driven Orchestrator and its Redis-based Interest Registry dependency.
@@ -33,14 +32,16 @@ public class OrchestratorConfig {
     public DemandDrivenOrchestrator demandDrivenOrchestrator(
             InterestRegistryService interestRegistryService,
             com.am.analysis.service.DashboardAnalysisService dashboardAnalysisService,
-            KafkaTemplate<String, String> kafkaTemplate,
             ObjectMapper objectMapper,
             FlowLogger flowLogger,
             TracingHelper tracingHelper,
             com.am.analysis.service.PortfolioStreamingService portfolioStreamingService,
             com.am.analysis.config.PortfolioStreamingProperties portfolioStreamingProperties,
-            PreviousCloseRedisService previousCloseRedisService) {
-        return new DemandDrivenOrchestrator(interestRegistryService, kafkaTemplate, objectMapper,
+            PreviousCloseRedisService previousCloseRedisService,
+            com.am.analysis.service.bootstrap.PortfolioBootstrapTrigger portfolioBootstrapTrigger,
+            com.am.analysis.service.bootstrap.TriggerCalculationPublisher triggerCalculationPublisher) {
+        return new DemandDrivenOrchestrator(interestRegistryService, objectMapper,
+                portfolioBootstrapTrigger, triggerCalculationPublisher,
                 flowLogger, tracingHelper, dashboardAnalysisService,
                 portfolioStreamingService, portfolioStreamingProperties, previousCloseRedisService);
     }

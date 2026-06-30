@@ -7,6 +7,10 @@ import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.service.LivePriceOverlayHelper;
 import com.am.analysis.service.LivePriceTick;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.BootstrapTrigger;
+import com.am.analysis.service.load.EntityLoadRequest;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ import java.util.Optional;
 public class AllocationAnalysisService {
 
     private final AnalysisRepository repository;
+    private final AnalysisEntityLoadService entityLoadService;
     private final AnalysisCalculationService calculationService;
     private final com.am.market.client.service.MarketDataClientService marketDataClientService;
     private final AnalysisAccessValidator accessValidator;
@@ -33,40 +38,49 @@ public class AllocationAnalysisService {
     public AllocationResponse getAllocation(String id, AnalysisEntityType type, String userId, AnalysisGroupBy groupBy,
                                             Map<String, LivePriceTick> liveTicks) {
         if ("ALL".equals(id) && type == AnalysisEntityType.PORTFOLIO) {
-            // Try to find a pre-calculated GLOBAL entity first
-            String globalId = "PORTFOLIO_GLOBAL_" + userId;
-            Optional<AnalysisEntity> globalOpt = repository.findById(globalId);
-            
-            if (globalOpt.isPresent() && globalOpt.get().getOwnerId().equals(userId)) {
+            Optional<AnalysisEntity> globalOpt = entityLoadService.loadGlobalPortfolio(userId);
+            if (globalOpt.isPresent()) {
                 log.info("Found pre-calculated GLOBAL allocation for user: {}", userId);
-                enrichWithMarketData(globalOpt.get());
-                return calculationService.calculateAllocation(globalOpt.get(), groupBy);
+                AnalysisEntity global = globalOpt.get();
+                enrichWithMarketData(global);
+                return calculationService.calculateAllocation(global, groupBy);
             }
 
             log.info("Performing dynamic aggregation for all portfolios for user: {}", userId);
-            List<AnalysisEntity> allPortfolios = repository.findByOwnerIdAndType(userId, type)
-                    .stream()
-                    .filter(e -> !e.getId().endsWith("_GLOBAL")) // Exclude global to avoid double counting
-                    .collect(java.util.stream.Collectors.toList());
+            EntityLoadResult result = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.HTTP_READ);
+            List<AnalysisEntity> allPortfolios = result.entities();
 
             if (liveTicks != null && !liveTicks.isEmpty()) {
                 LivePriceOverlayHelper.applyAll(allPortfolios, liveTicks);
             }
-            
-            if (allPortfolios.isEmpty()) return AllocationResponse.builder().build();
 
-            // Create a virtual aggregated entity
+            if (allPortfolios.isEmpty()) {
+                return emptyAllocation(id);
+            }
+
             AnalysisEntity globalEntity = AnalysisEntity.builder()
                     .id("VIRTUAL_ALL")
                     .type(type)
                     .ownerId(userId)
                     .holdings(allPortfolios.stream()
+                            .filter(p -> p.getHoldings() != null)
                             .flatMap(p -> p.getHoldings().stream())
-                            .collect(java.util.stream.Collectors.toList()))
+                            .toList())
                     .build();
-            
+
             enrichWithMarketData(globalEntity);
             return calculationService.calculateAllocation(globalEntity, groupBy);
+        }
+
+        if (type == AnalysisEntityType.PORTFOLIO) {
+            EntityLoadResult result = entityLoadService.loadOne(
+                    EntityLoadRequest.onePortfolio(id, userId, BootstrapTrigger.HTTP_READ));
+            if (result.empty()) {
+                return emptyAllocation(id);
+            }
+            AnalysisEntity entity = result.entities().get(0);
+            enrichWithMarketData(entity);
+            return calculationService.calculateAllocation(entity, groupBy);
         }
 
         String compositeId = type.name() + "_" + id;
@@ -79,7 +93,7 @@ public class AllocationAnalysisService {
             enrichWithMarketData(entity);
             return calculationService.calculateAllocation(entity, groupBy);
         }
-        
+
         log.warn("Entity not found for Analysis: ID={}, Type={}, User={}", id, type, userId);
         return emptyAllocation(id);
     }
@@ -97,10 +111,9 @@ public class AllocationAnalysisService {
             return;
         }
 
-        // Only fetch metadata for symbols that don't have sector/industry info yet
         List<String> symbolsToFetch = entity.getHoldings().stream()
-                .filter(h -> h.getClassification() == null || 
-                            h.getClassification().getSector() == null || 
+                .filter(h -> h.getClassification() == null ||
+                            h.getClassification().getSector() == null ||
                             h.getClassification().getSector().isEmpty())
                 .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
                 .map(h -> h.getIdentity().getSymbol())
@@ -118,11 +131,11 @@ public class AllocationAnalysisService {
         entity.getHoldings().forEach(h -> {
             if (h.getIdentity() != null && marketData.containsKey(h.getIdentity().getSymbol())) {
                 var metadata = marketData.get(h.getIdentity().getSymbol());
-                
+
                 if (h.getClassification() == null) {
                     h.setClassification(new com.am.analysis.adapter.model.components.AssetClassification());
                 }
-                
+
                 var cls = h.getClassification();
                 if (cls.getSector() == null || cls.getSector().isEmpty()) {
                     cls.setSector(metadata.getSector());

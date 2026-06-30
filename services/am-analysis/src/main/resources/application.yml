@@ -77,6 +77,9 @@ am:
       streaming:
         enabled: true
         legacy-trigger-calc: false
+    bootstrap:
+      enabled: true
+      debounce-ms: 60000
 
   services:
     market-data:

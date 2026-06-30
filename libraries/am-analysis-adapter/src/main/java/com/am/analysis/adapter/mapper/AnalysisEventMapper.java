@@ -4,6 +4,7 @@ import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.model.components.*;
+import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.portfolio.domain.events.PortfolioUpdateEvent;
 import com.am.portfolio.domain.model.EquityModel;
 import org.springframework.stereotype.Component;
@@ -18,12 +19,21 @@ import java.util.stream.Collectors;
 public class AnalysisEventMapper {
 
     public AnalysisEntity mapPortfolioEvent(PortfolioUpdateEvent event) {
-        // Map equities to holdings
         List<AnalysisHolding> holdings = mapEquitiesToHoldings(event.getEquities(), event.getTotalValue());
 
-        String effectivePortfolioId = event.getPortfolioId() != null ? event.getPortfolioId() : "GLOBAL";
-        String entityId = "PORTFOLIO_" + effectivePortfolioId + (event.getPortfolioId() == null ? "_" + event.getUserId() : "");
-        
+        String rawPortfolioId = event.getPortfolioId();
+        String effectivePortfolioId = rawPortfolioId != null && !rawPortfolioId.isBlank()
+                ? rawPortfolioId
+                : AnalysisEntityKeys.GLOBAL_SOURCE_ID;
+
+        String entityId;
+        if (AnalysisEntityKeys.isGlobalSourceId(effectivePortfolioId)) {
+            entityId = AnalysisEntityKeys.globalEntityId(event.getUserId());
+            effectivePortfolioId = AnalysisEntityKeys.GLOBAL_SOURCE_ID;
+        } else {
+            entityId = AnalysisEntityKeys.portfolioEntityId(effectivePortfolioId, event.getUserId());
+        }
+
         return AnalysisEntity.builder()
                 .id(entityId)
                 .sourceId(effectivePortfolioId)

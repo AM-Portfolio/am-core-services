@@ -1,7 +1,7 @@
 package com.am.analysis.service;
 
 import com.am.analysis.adapter.model.AnalysisEntity;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
 import com.am.kafka.config.AnalysisEntityKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GlobalPortfolioResolver {
 
-    private final AnalysisRepository analysisRepository;
+    private final AnalysisEntityLoadService entityLoadService;
 
     public Optional<AnalysisEntity> resolveGlobal(String userId) {
-        return analysisRepository.findById(AnalysisEntityKeys.globalEntityId(userId))
-                .filter(entity -> userId.equals(entity.getOwnerId()));
+        return entityLoadService.loadGlobalPortfolio(userId);
     }
 
     public String globalSourceId() {

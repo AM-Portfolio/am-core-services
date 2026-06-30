@@ -4,6 +4,10 @@ package com.am.analysis.service.orchestrator;
 
 import com.am.analysis.config.PortfolioStreamingProperties;
 
+import com.am.analysis.service.bootstrap.PortfolioBootstrapTrigger;
+
+import com.am.analysis.service.bootstrap.TriggerCalculationPublisher;
+
 import com.am.analysis.service.DashboardAnalysisService;
 
 import com.am.analysis.service.LivePriceTick;
@@ -20,8 +24,6 @@ import com.am.kafka.config.KafkaTopics;
 
 import com.am.kafka.config.Timeframe;
 
-import com.am.kafka.schema.TriggerCalcEvent;
-
 import com.am.kafka.service.InterestRegistryService;
 
 import com.am.kafka.service.PreviousCloseRedisService;
@@ -32,8 +34,6 @@ import com.am.observability.flow.FlowSpan;
 
 import com.am.observability.trace.TracingHelper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -41,12 +41,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.kafka.annotation.KafkaListener;
-
-import org.springframework.kafka.core.KafkaTemplate;
-
-
-
-import java.time.Instant;
 
 import java.util.Collections;
 
@@ -88,9 +82,11 @@ public class DemandDrivenOrchestrator {
 
     private final InterestRegistryService interestRegistry;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
-
     private final ObjectMapper objectMapper;
+
+    private final PortfolioBootstrapTrigger portfolioBootstrapTrigger;
+
+    private final TriggerCalculationPublisher triggerCalculationPublisher;
 
     private final FlowLogger flowLogger;
 
@@ -127,14 +123,6 @@ public class DemandDrivenOrchestrator {
     private final Map<String, Long> lastMoversTrigger = new ConcurrentHashMap<>();
 
     private final Map<String, Long> lastAllocationTrigger = new ConcurrentHashMap<>();
-
-    private static final long BOOTSTRAP_DEBOUNCE_MS = 60_000;
-
-
-
-    private final Map<String, Long> lastBootstrapTrigger = new ConcurrentHashMap<>();
-
-
 
     @KafkaListener(topics = KafkaTopics.USER_WATCHING, groupId = "am-orchestrator-watching-group")
 
@@ -570,29 +558,9 @@ public class DemandDrivenOrchestrator {
 
     private void triggerBootstrapCalculation(String userId, String portfolioId, String inheritedTraceId) {
 
-        String bootstrapKey = userId + ":" + (portfolioId != null ? portfolioId : "global");
+        portfolioBootstrapTrigger.requestBootstrap(
 
-        long now = System.currentTimeMillis();
-
-        Long last = lastBootstrapTrigger.get(bootstrapKey);
-
-        if (last != null && (now - last) < BOOTSTRAP_DEBOUNCE_MS) {
-
-            flowLogger.step("analysis.orchestrator.bootstrap_debounced",
-
-                    "userId", userId,
-
-                    "portfolioId", portfolioId != null ? portfolioId : "GLOBAL",
-
-                    "window_ms", BOOTSTRAP_DEBOUNCE_MS);
-
-            return;
-
-        }
-
-        lastBootstrapTrigger.put(bootstrapKey, now);
-
-        publishTriggerCalculation(userId, portfolioId, "BOOTSTRAP_ENTITY_MISSING", inheritedTraceId);
+                userId, portfolioId, "BOOTSTRAP_ENTITY_MISSING", inheritedTraceId);
 
     }
 
@@ -652,85 +620,9 @@ public class DemandDrivenOrchestrator {
 
 
 
-        publishTriggerCalculation(userId, portfolioId, source, inheritedTraceId);
+        triggerCalculationPublisher.publish(userId, portfolioId, source, inheritedTraceId);
 
     }
-
-
-
-    private void publishTriggerCalculation(String userId, String portfolioId, String source,
-
-                                           String inheritedTraceId) {
-
-        String debounceKey = portfolioId != null ? portfolioId : "global";
-
-
-
-        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.trigger_calculation",
-
-                "portfolioId", debounceKey,
-
-                "userId", userId,
-
-                "source", source,
-
-                "topic", KafkaTopics.TRIGGER_CALCULATION)) {
-
-            try {
-
-                String traceId = inheritedTraceId != null && !inheritedTraceId.isEmpty()
-
-                        ? inheritedTraceId
-
-                        : tracingHelper.currentTraceIdOrNew();
-
-                String spanId = tracingHelper.currentSpanIdOrNew();
-
-
-
-                TriggerCalcEvent event = TriggerCalcEvent.builder()
-
-                        .traceId(traceId)
-
-                        .spanId(spanId)
-
-                        .userId(userId)
-
-                        .portfolioId(portfolioId)
-
-                        .triggerSource(source)
-
-                        .timestamp(Instant.now())
-
-                        .build();
-
-
-
-                String payload = objectMapper.writeValueAsString(event);
-
-                String key = portfolioId != null ? portfolioId : (userId != null ? userId : "global");
-
-                kafkaTemplate.send(KafkaTopics.TRIGGER_CALCULATION, key, payload);
-
-
-
-                flowLogger.complete(span,
-
-                        "payload_bytes", payload.length(),
-
-                        "trace_id_used", traceId);
-
-            } catch (JsonProcessingException e) {
-
-                flowLogger.fail(span, e);
-
-            }
-
-        }
-
-    }
-
-
 
 }
 

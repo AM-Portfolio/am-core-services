@@ -1,5 +1,6 @@
 package com.am.portfolio.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ public class EquityModel {
 
     // Holding Information
     private Double quantity;
+    @JsonAlias("avgBuyingPrice")
     private Double averagePrice;
 
     // Current Market Data

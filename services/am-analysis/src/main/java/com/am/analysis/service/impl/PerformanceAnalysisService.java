@@ -5,6 +5,10 @@ import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.PerformanceResponse;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.BootstrapTrigger;
+import com.am.analysis.service.load.EntityLoadRequest;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +24,22 @@ import java.util.stream.Collectors;
 public class PerformanceAnalysisService {
 
     private final AnalysisRepository repository;
+    private final AnalysisEntityLoadService entityLoadService;
     private final AnalysisCalculationService calculationService;
     private final AnalysisAccessValidator accessValidator;
 
     public PerformanceResponse getPerformance(String id, AnalysisEntityType type, String timeFrame, String userId) {
-        // Dashboard calls pass id=null — aggregate across all portfolios for this user
         if (type == AnalysisEntityType.PORTFOLIO && (id == null || "ALL".equalsIgnoreCase(id) || "GLOBAL".equalsIgnoreCase(id))) {
             return getAggregatedPortfolioPerformance(userId, timeFrame);
+        }
+
+        if (type == AnalysisEntityType.PORTFOLIO) {
+            EntityLoadResult result = entityLoadService.loadOne(
+                    EntityLoadRequest.onePortfolio(id, userId, BootstrapTrigger.HTTP_READ));
+            if (result.empty()) {
+                return emptyPerformance(id, timeFrame);
+            }
+            return calculationService.calculatePerformance(result.entities().get(0), timeFrame);
         }
 
         String compositeId = type.name() + "_" + id;
@@ -39,33 +52,17 @@ public class PerformanceAnalysisService {
         }
 
         log.warn("Entity not found for Performance: ID={}, Type={}, User={}", id, type, userId);
-        return PerformanceResponse.builder()
-                .portfolioId(id)
-                .timeFrame(timeFrame)
-                .chartData(List.of())
-                .build();
+        return emptyPerformance(id, timeFrame);
     }
 
-    /**
-     * Aggregates performance across ALL portfolios owned by the user.
-     * Used by dashboard (id=null) so we never accidentally access another user's entity.
-     */
     private PerformanceResponse getAggregatedPortfolioPerformance(String userId, String timeFrame) {
-        List<AnalysisEntity> portfolios = repository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO)
-                .stream()
-                .filter(e -> !e.getId().endsWith("_GLOBAL")) // avoid double-counting pre-aggregated globals
-                .collect(Collectors.toList());
+        EntityLoadResult result = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.HTTP_READ);
+        List<AnalysisEntity> portfolios = result.entities();
 
         if (portfolios.isEmpty()) {
-            log.warn("No portfolio entities found for userId={} when computing dashboard performance", userId);
-            return PerformanceResponse.builder()
-                    .portfolioId("ALL")
-                    .timeFrame(timeFrame)
-                    .chartData(List.of())
-                    .build();
+            return emptyPerformance("ALL", timeFrame);
         }
 
-        // Build a virtual aggregated entity from all portfolios owned by this user
         double totalValue = portfolios.stream()
                 .filter(p -> p.getPerformance() != null && p.getPerformance().getTotalValue() != null)
                 .mapToDouble(p -> p.getPerformance().getTotalValue())
@@ -99,5 +96,13 @@ public class PerformanceAnalysisService {
         log.info("Aggregated performance for userId={}: portfolios={}, totalValue={}, timeFrame={}",
                 userId, portfolios.size(), totalValue, timeFrame);
         return calculationService.calculatePerformance(virtualEntity, timeFrame);
+    }
+
+    private PerformanceResponse emptyPerformance(String id, String timeFrame) {
+        return PerformanceResponse.builder()
+                .portfolioId(id)
+                .timeFrame(timeFrame)
+                .chartData(List.of())
+                .build();
     }
 }
