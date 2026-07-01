@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.83-SNAPSHOT</version>
+        <version>1.0.84-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.am.libraries</groupId>
     <artifactId>am-analysis-client-lib</artifactId>
-    <version>1.0.83-SNAPSHOT</version>
+    <version>1.0.84-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>AM Analysis Client Library</name>
     <description>Library for Analysis Data SDK Integration</description>
