@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.122-SNAPSHOT</version>
+        <version>1.0.123-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
