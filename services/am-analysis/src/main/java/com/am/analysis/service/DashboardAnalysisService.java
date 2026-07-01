@@ -2,18 +2,29 @@ package com.am.analysis.service;
 
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
+import com.am.analysis.adapter.model.DashboardWidgetType;
+import com.am.analysis.adapter.model.AnalysisGroupBy;
 import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.model.components.InvestmentStats;
 import com.am.analysis.adapter.model.components.MarketStats;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.BootstrapTrigger;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.dto.ActivityFilter;
 import com.am.analysis.dto.ActivityItem;
 import com.am.analysis.dto.ActivityType;
+import com.am.analysis.dto.AllocationResponse;
 import com.am.analysis.dto.DashboardSummary;
 import com.am.analysis.dto.RecentActivityResponse;
+import com.am.analysis.dto.PerformanceResponse;
+import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.aggregator.AnalysisAggregator;
+import com.am.analysis.service.impl.AllocationAnalysisService;
+import com.am.analysis.service.impl.PerformanceAnalysisService;
+import com.am.analysis.service.impl.TopMoversAnalysisService;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.kafka.config.KafkaTopics;
+import com.am.kafka.config.Timeframe;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,13 +44,26 @@ import java.util.stream.Collectors;
 public class DashboardAnalysisService {
 
     private final AnalysisAggregator aggregator;
-    private final AnalysisRepository analysisRepository;
+    private final AnalysisEntityLoadService entityLoadService;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final FlowLogger flowLogger;
+    private final DashboardSnapshotService snapshotService;
+    private final AllocationAnalysisService allocationService;
+    private final TopMoversAnalysisService topMoversService;
+    private final PerformanceAnalysisService performanceService;
+    private final GlobalPortfolioResolver globalPortfolioResolver;
 
     public DashboardSummary getSummary(String userId) {
-        return aggregator.getOverallSummary(userId);
+        return snapshotService.load(userId, DashboardWidgetType.SUMMARY, DashboardSummary.class)
+                .orElseGet(() -> {
+                    log.info("[Summary] Snapshot miss for user {}, computing live", userId);
+                    DashboardSummary summary = aggregator.getOverallSummary(userId);
+                    if (summary != null) {
+                        snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
+                    }
+                    return summary;
+                });
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
@@ -73,10 +97,38 @@ public class DashboardAnalysisService {
      * Pagination: page + size
      */
     public RecentActivityResponse getRecentActivity(String userId, ActivityFilter filter) {
+        boolean isDefaultFilter = filter.getPage() == 0 && filter.getSize() == 20 &&
+                !StringUtils.hasText(filter.getType()) && !StringUtils.hasText(filter.getStatus()) &&
+                !StringUtils.hasText(filter.getSector()) && !StringUtils.hasText(filter.getPortfolioName());
+
+        if (isDefaultFilter) {
+            return snapshotService.load(userId, DashboardWidgetType.ACTIVITY, RecentActivityResponse.class)
+                    .orElseGet(() -> {
+                        log.info("[Activity] Snapshot miss for user {}, computing live", userId);
+                        RecentActivityResponse response = getRecentActivityUncached(userId, filter);
+                        if (response != null) {
+                            snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, response);
+                        }
+                        return response;
+                    });
+        }
+        return getRecentActivityUncached(userId, filter);
+    }
+
+    private RecentActivityResponse getRecentActivityUncached(String userId, ActivityFilter filter) {
+        return getRecentActivityUncached(userId, filter, Map.of());
+    }
+
+    private RecentActivityResponse getRecentActivityUncached(String userId, ActivityFilter filter,
+                                                               Map<String, LivePriceTick> liveTicks) {
         log.info("[DashboardAnalysisService] Processing recent activity request for userId: {} with filter: {}", userId, filter);
 
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
-        List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(userId, AnalysisEntityType.PORTFOLIO);
+        EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
+        List<AnalysisEntity> entities = loadResult.entities();
+        if (liveTicks != null && !liveTicks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, liveTicks);
+        }
         log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
         // 2. Flatten all holdings across all portfolios → ActivityItems
@@ -224,10 +276,19 @@ public class DashboardAnalysisService {
                     i.getProfitLoss() != null ? i.getProfitLoss() : 0.0).reversed();
             case "PROFIT_LOSS_ASC"  -> Comparator.comparingDouble((ActivityItem i) ->
                     i.getProfitLoss() != null ? i.getProfitLoss() : 0.0);
+            case "PROFIT_LOSS_PERCENT" -> Comparator.comparingDouble((ActivityItem i) ->
+                    i.getProfitLossPercent() != null ? i.getProfitLossPercent() : 0.0).reversed();
             case "DAY_CHANGE"       -> Comparator.comparingDouble((ActivityItem i) ->
                     i.getDayChange() != null ? i.getDayChange() : 0.0).reversed();
+            case "DAY_CHANGE_PERCENT" -> Comparator.comparingDouble((ActivityItem i) ->
+                    i.getDayChangePercent() != null ? i.getDayChangePercent() : 0.0).reversed();
             case "CURRENT_VALUE"    -> Comparator.comparingDouble((ActivityItem i) ->
                     i.getCurrentValue() != null ? i.getCurrentValue() : 0.0).reversed();
+            case "SYMBOL"           -> Comparator.comparing(
+                    (ActivityItem i) -> i.getSymbol() != null ? i.getSymbol() : "",
+                    String.CASE_INSENSITIVE_ORDER);
+            case "QUANTITY"         -> Comparator.comparingDouble((ActivityItem i) ->
+                    i.getQuantity() != null ? i.getQuantity() : 0.0).reversed();
             default /* TIMESTAMP */ -> Comparator.comparing(ActivityItem::getTimestamp,
                     Comparator.nullsLast(Comparator.reverseOrder()));
         };
@@ -238,18 +299,148 @@ public class DashboardAnalysisService {
     // Dashboard Update Publisher
     // ─────────────────────────────────────────────────────────────────────
 
+    // ─────────────────────────────────────────────────────────────────────
+    // Dashboard Update Publisher
+    // ─────────────────────────────────────────────────────────────────────
+
     public void publishDashboardUpdate(String userId) {
-        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_update",
-                "userId", userId, "topic", KafkaTopics.DASHBOARD_UPDATE)) {
+        publishDashboardSummary(userId);
+        publishDashboardActivity(userId);
+        publishDashboardAllocation(userId);
+        publishDashboardMovers(userId);
+    }
+
+    /** Immediate push of all 5 dashboard widgets on subscribe (no debounce). */
+    public void publishDashboardSubscribeAll(String userId) {
+        publishDashboardUpdate(userId);
+        publishDashboardHistory(userId, Timeframe.ONE_DAY);
+    }
+
+    public void publishDashboardHistory(String userId, Timeframe window) {
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_history",
+                "userId", userId, "window", window.getCode(), "topic", KafkaTopics.DASHBOARD_HISTORY_UPDATE)) {
             try {
-                DashboardSummary summary = getSummary(userId);
-                DashboardUpdateEvent event = new DashboardUpdateEvent(userId, summary);
-                String payload = objectMapper.writeValueAsString(event);
-                kafkaTemplate.send(KafkaTopics.DASHBOARD_UPDATE, payload);
-                flowLogger.complete(span,
-                        "payload_bytes", payload.length(),
-                        "portfolios", summary == null ? 0 : summary.getTotalPortfolios(),
-                        "holdings", summary == null ? 0 : summary.getTotalHoldings());
+                PerformanceResponse history = performanceService.getPerformance(
+                        globalPortfolioResolver.globalSourceId(),
+                        AnalysisEntityType.PORTFOLIO,
+                        window.getCode(),
+                        userId);
+                if (history != null) {
+                    snapshotService.persist(userId, DashboardWidgetType.HISTORY, history);
+
+                    WidgetUpdateEvent event = new WidgetUpdateEvent(userId, history);
+                    String payload = objectMapper.writeValueAsString(event);
+                    kafkaTemplate.send(KafkaTopics.DASHBOARD_HISTORY_UPDATE, userId, payload);
+
+                    flowLogger.complete(span, "payload_bytes", payload.length());
+                } else {
+                    flowLogger.fail(span, null, "reason", "null_history");
+                }
+            } catch (Exception e) {
+                flowLogger.fail(span, e);
+            }
+        }
+    }
+
+    public void publishDashboardSummary(String userId) {
+        publishDashboardSummary(userId, Map.of());
+    }
+
+    public void publishDashboardSummary(String userId, Map<String, LivePriceTick> liveTicks) {
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_summary",
+                "userId", userId, "topic", KafkaTopics.DASHBOARD_SUMMARY_UPDATE)) {
+            try {
+                DashboardSummary summary = aggregator.getOverallSummary(userId, liveTicks);
+                if (summary != null) {
+                    snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
+                    
+                    WidgetUpdateEvent event = new WidgetUpdateEvent(userId, summary);
+                    String payload = objectMapper.writeValueAsString(event);
+                    kafkaTemplate.send(KafkaTopics.DASHBOARD_SUMMARY_UPDATE, userId, payload);
+                    
+                    flowLogger.complete(span, "payload_bytes", payload.length());
+                } else {
+                    flowLogger.fail(span, null, "reason", "null_summary");
+                }
+            } catch (Exception e) {
+                flowLogger.fail(span, e);
+            }
+        }
+    }
+
+    public void publishDashboardActivity(String userId) {
+        publishDashboardActivity(userId, Map.of());
+    }
+
+    public void publishDashboardActivity(String userId, Map<String, LivePriceTick> liveTicks) {
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_activity",
+                "userId", userId, "topic", KafkaTopics.DASHBOARD_ACTIVITY_UPDATE)) {
+            try {
+                RecentActivityResponse activity = getRecentActivityUncached(userId,
+                        ActivityFilter.builder().size(10).sortBy("TIMESTAMP").build(), liveTicks);
+                if (activity != null) {
+                    snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, activity);
+                    
+                    WidgetUpdateEvent event = new WidgetUpdateEvent(userId, activity);
+                    String payload = objectMapper.writeValueAsString(event);
+                    kafkaTemplate.send(KafkaTopics.DASHBOARD_ACTIVITY_UPDATE, userId, payload);
+                    
+                    flowLogger.complete(span, "payload_bytes", payload.length());
+                } else {
+                    flowLogger.fail(span, null, "reason", "null_activity");
+                }
+            } catch (Exception e) {
+                flowLogger.fail(span, e);
+            }
+        }
+    }
+
+    public void publishDashboardAllocation(String userId) {
+        publishDashboardAllocation(userId, Map.of());
+    }
+
+    public void publishDashboardAllocation(String userId, Map<String, LivePriceTick> liveTicks) {
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_allocation",
+                "userId", userId, "topic", KafkaTopics.DASHBOARD_ALLOCATION_UPDATE)) {
+            try {
+                AllocationResponse allocation = allocationService.getAllocation("ALL", AnalysisEntityType.PORTFOLIO, userId, AnalysisGroupBy.SECTOR, liveTicks);
+                if (allocation != null) {
+                    snapshotService.persist(userId, DashboardWidgetType.ALLOCATION, allocation);
+                    
+                    WidgetUpdateEvent event = new WidgetUpdateEvent(userId, allocation);
+                    String payload = objectMapper.writeValueAsString(event);
+                    kafkaTemplate.send(KafkaTopics.DASHBOARD_ALLOCATION_UPDATE, userId, payload);
+                    
+                    flowLogger.complete(span, "payload_bytes", payload.length());
+                } else {
+                    flowLogger.fail(span, null, "reason", "null_allocation");
+                }
+            } catch (Exception e) {
+                flowLogger.fail(span, e);
+            }
+        }
+    }
+
+    public void publishDashboardMovers(String userId) {
+        publishDashboardMovers(userId, Map.of());
+    }
+
+    public void publishDashboardMovers(String userId, Map<String, LivePriceTick> liveTicks) {
+        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.dashboard_movers",
+                "userId", userId, "topic", KafkaTopics.DASHBOARD_MOVERS_UPDATE)) {
+            try {
+                TopMoversResponse movers = topMoversService.getTopMovers(null, AnalysisEntityType.PORTFOLIO, "1D", userId, AnalysisGroupBy.STOCK, liveTicks);
+                if (movers != null) {
+                    snapshotService.persist(userId, DashboardWidgetType.MOVERS, movers);
+                    
+                    WidgetUpdateEvent event = new WidgetUpdateEvent(userId, movers);
+                    String payload = objectMapper.writeValueAsString(event);
+                    kafkaTemplate.send(KafkaTopics.DASHBOARD_MOVERS_UPDATE, userId, payload);
+                    
+                    flowLogger.complete(span, "payload_bytes", payload.length());
+                } else {
+                    flowLogger.fail(span, null, "reason", "null_movers");
+                }
             } catch (Exception e) {
                 flowLogger.fail(span, e);
             }
@@ -258,8 +449,9 @@ public class DashboardAnalysisService {
 
     @lombok.Data
     @lombok.AllArgsConstructor
-    public static class DashboardUpdateEvent {
+    @lombok.NoArgsConstructor
+    public static class WidgetUpdateEvent {
         private String userId;
-        private DashboardSummary summary;
+        private Object data;
     }
 }

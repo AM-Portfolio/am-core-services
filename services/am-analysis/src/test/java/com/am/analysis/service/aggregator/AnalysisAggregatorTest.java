@@ -3,9 +3,11 @@ package com.am.analysis.service.aggregator;
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.dto.DashboardSummary;
 import com.am.domain.trade.TradePortfolio;
+import com.am.observability.flow.FlowLogger;
 import com.am.trade.client.service.TradeClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +27,13 @@ import static org.mockito.Mockito.when;
 public class AnalysisAggregatorTest {
 
     @Mock
-    private AnalysisRepository analysisRepository;
+    private AnalysisEntityLoadService entityLoadService;
 
     @Mock
     private TradeClientService tradeClientService;
+
+    @Mock
+    private FlowLogger flowLogger;
 
     @InjectMocks
     private AnalysisAggregator aggregator;
@@ -37,6 +42,7 @@ public class AnalysisAggregatorTest {
     void testGetOverallSummary() {
         // Setup AM Portfolio
         AnalysisEntity amPortfolio = new AnalysisEntity();
+        amPortfolio.setSourceId("p1");
         amPortfolio.setPerformance(PerformanceSummary.builder()
                 .totalValue(10000.0)
                 .totalInvestment(8000.0)
@@ -50,8 +56,8 @@ public class AnalysisAggregatorTest {
                 .currentPnl(new BigDecimal("1000.0"))
                 .build();
 
-        when(analysisRepository.findByOwnerIdAndType(eq("user1"), any(AnalysisEntityType.class)))
-                .thenReturn(List.of(amPortfolio));
+        when(entityLoadService.loadPortfoliosForUser(eq("user1"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(amPortfolio), false));
         when(tradeClientService.getPortfolios("user1"))
                 .thenReturn(List.of(tradePortfolio));
 

@@ -17,3 +17,8 @@ am:
         - "ROLE_ADMIN"
     public-paths:
       - "/actuator/**"
+      # WebSocket upgrade is unauthenticated; JWT is validated on STOMP CONNECT (SecurityConfig).
+      - "/v1/streams"
+      - "/v1/streams/**"
+      - "/v1/streams-fallback"
+      - "/v1/streams-fallback/**"
