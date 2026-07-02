@@ -8,14 +8,14 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.287-SNAPSHOT</version>
+        <version>1.0.288-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
 
     <groupId>com.am.libraries</groupId>
     <artifactId>am-analysis-adapter</artifactId>
-    <version>1.0.287-SNAPSHOT</version>
+    <version>1.0.288-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM Analysis Adapter</name>
