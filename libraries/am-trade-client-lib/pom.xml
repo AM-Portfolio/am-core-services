@@ -8,13 +8,13 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.304-SNAPSHOT</version>
+        <version>1.0.305-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>com.am.libraries</groupId>
     <artifactId>am-trade-client-lib</artifactId>
-    <version>1.0.304-SNAPSHOT</version>
+    <version>1.0.305-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM Trade Client Library</name>
