@@ -10,6 +10,8 @@ import java.util.List;
 public class TopMoversResponse {
     private List<MoverItem> gainers;
     private List<MoverItem> losers;
+    /** Time period used for change metrics (e.g. 1D, 1W). */
+    private String timeFrame;
 
     @Data
     @Builder

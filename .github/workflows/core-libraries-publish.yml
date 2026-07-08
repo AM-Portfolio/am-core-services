@@ -1,10 +1,10 @@
-# Core Services — shared libraries CI/CD
+# Core Services — internal shared libraries CI/CD (NOT client SDKs)
 #
-# PR (any branch): build/verify only — SNAPSHOT versions, no GitHub Packages deploy
-# Push to main/master: publish release artifacts (strip -SNAPSHOT) to GitHub Packages / Releases
+# Publishes: common-lib, kafka-lib, analysis-adapter, domains, observability, etc.
+# Client SDKs (*-client-lib, am-analysis-sdk) → am-sdk-publish.yml
 #
-# Reusable logic: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-# Registry: https://maven.pkg.github.com/AM-Portfolio/am-core-services (parent pom distributionManagement)
+# PR: build/verify only — SNAPSHOT versions, no GitHub Packages deploy
+# Push to main/master/feature: publish release artifacts to GitHub Packages
 
 name: Core Libraries Publish
 
@@ -38,19 +38,17 @@ jobs:
       libs-changed: ${{ steps.check.outputs.libs-changed }}
       analysis-adapter: ${{ steps.check.outputs.analysis-adapter }}
       api-core-lib: ${{ steps.check.outputs.api-core-lib }}
-      analysis-client-lib: ${{ steps.check.outputs.analysis-client-lib }}
       cache-lib: ${{ steps.check.outputs.cache-lib }}
       common-event-model: ${{ steps.check.outputs.common-event-model }}
       common-lib: ${{ steps.check.outputs.common-lib }}
       feign-lib: ${{ steps.check.outputs.feign-lib }}
       kafka-lib: ${{ steps.check.outputs.kafka-lib }}
-      market-client-lib: ${{ steps.check.outputs.market-client-lib }}
-      portfolio-client-lib: ${{ steps.check.outputs.portfolio-client-lib }}
+      observability-lib: ${{ steps.check.outputs.observability-lib }}
       security-lib: ${{ steps.check.outputs.security-lib }}
-      trade-client-lib: ${{ steps.check.outputs.trade-client-lib }}
       market-domain: ${{ steps.check.outputs.market-domain }}
       portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
       trade-domain: ${{ steps.check.outputs.trade-domain }}
+      internal-changed: ${{ steps.check.outputs.internal-changed }}
       maven-pl-list: ${{ steps.check.outputs.maven-pl-list }}
     steps:
       - uses: actions/checkout@v4
@@ -91,7 +89,7 @@ jobs:
           lib() {
             local prefix="$1"
             local key="$2"
-            if path_changed "${prefix}/" || [ "$root_pom" = true ]; then
+            if path_changed "${prefix}/"; then
               echo "${key}=true" >> "$GITHUB_OUTPUT"
               echo "$prefix" >> /tmp/pl_modules.txt
             else
@@ -102,17 +100,14 @@ jobs:
           : > /tmp/pl_modules.txt
 
           lib "libraries/am-analysis-adapter" "analysis-adapter"
-          lib "libraries/am-analysis-client-lib" "analysis-client-lib"
           lib "libraries/am-api-core-lib" "api-core-lib"
           lib "libraries/am-cache-lib" "cache-lib"
           lib "libraries/am-common-event-model" "common-event-model"
           lib "libraries/am-common-lib" "common-lib"
           lib "libraries/am-feign-lib" "feign-lib"
           lib "libraries/am-kafka-lib" "kafka-lib"
-          lib "libraries/am-market-client-lib" "market-client-lib"
-          lib "libraries/am-portfolio-client-lib" "portfolio-client-lib"
+          lib "libraries/am-observability-lib" "observability-lib"
           lib "libraries/am-security-lib" "security-lib"
-          lib "libraries/am-trade-client-lib" "trade-client-lib"
           lib "domain/am-market-domain" "market-domain"
           lib "domain/am-portfolio-domain" "portfolio-domain"
           lib "domain/am-trade-domain" "trade-domain"
@@ -125,22 +120,15 @@ jobs:
           if grep -q '^kafka-lib=true' "$GITHUB_OUTPUT" \
             || grep -q '^feign-lib=true' "$GITHUB_OUTPUT" \
             || grep -q '^security-lib=true' "$GITHUB_OUTPUT" \
-            || grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT" \
-            || grep -q '^analysis-client-lib=true' "$GITHUB_OUTPUT"; then
+            || grep -q '^observability-lib=true' "$GITHUB_OUTPUT" \
+            || grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT"; then
             enable common-lib libraries/am-common-lib
+          fi
+          if grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT"; then
+            enable kafka-lib libraries/am-kafka-lib
           fi
           if grep -q '^security-lib=true' "$GITHUB_OUTPUT"; then
             enable api-core-lib libraries/am-api-core-lib
-          fi
-          if grep -q '^market-client-lib=true' "$GITHUB_OUTPUT"; then
-            enable market-domain domain/am-market-domain
-          fi
-          if grep -q '^trade-client-lib=true' "$GITHUB_OUTPUT"; then
-            enable trade-domain domain/am-trade-domain
-          fi
-          if grep -q '^portfolio-client-lib=true' "$GITHUB_OUTPUT"; then
-            enable portfolio-domain domain/am-portfolio-domain
-            enable market-domain domain/am-market-domain
           fi
 
           if [ -s /tmp/pl_modules.txt ]; then
@@ -151,6 +139,19 @@ jobs:
             echo "maven-pl-list=" >> "$GITHUB_OUTPUT"
             echo "any=false" >> "$GITHUB_OUTPUT"
           fi
+
+          internal=false
+          while IFS= read -r file; do
+            case "$file" in
+              libraries/am-analysis-client-lib/*|libraries/am-market-client-lib/*|libraries/am-portfolio-client-lib/*|libraries/am-trade-client-lib/*|services/am-analysis/am-analysis-sdk/*)
+                ;;
+              libraries/*|domain/*|pom.xml)
+                internal=true
+                break
+                ;;
+            esac
+          done <<< "$CHANGED"
+          echo "internal-changed=${internal}" >> "$GITHUB_OUTPUT"
 
           if [ "$root_pom" = true ]; then
             echo "root-pom=true" >> "$GITHUB_OUTPUT"
@@ -164,11 +165,12 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'pull_request'
-      && needs.detect-changes.outputs.any == 'true'
+      && needs.detect-changes.outputs.internal-changed == 'true'
       && needs.detect-changes.outputs.maven-pl-list != ''
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -176,8 +178,40 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
+      - name: Maven settings
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'EOF'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${env.GITHUB_ACTOR}</username>
+                <password>${env.GITHUB_TOKEN}</password>
+              </server>
+              <server>
+                <id>github-core</id>
+                <username>${env.GITHUB_ACTOR}</username>
+                <password>${env.GITHUB_TOKEN}</password>
+              </server>
+              <server>
+                <id>github-investment</id>
+                <username>${env.GITHUB_ACTOR}</username>
+                <password>${env.GITHUB_TOKEN}</password>
+              </server>
+              <server>
+                <id>github-trade</id>
+                <username>${env.GITHUB_ACTOR}</username>
+                <password>${env.GITHUB_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
       - name: Reactor verify (-pl -am)
         run: mvn -B clean verify -pl "${{ needs.detect-changes.outputs.maven-pl-list }}" -am -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
 
   # ── main/master: publish parent POM (non-recursive) ─────────────────────
   publish-root-pom:
@@ -186,7 +220,7 @@ jobs:
     if: >-
       github.event_name == 'push'
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
-      && needs.detect-changes.outputs.libs-changed == 'true'
+      && needs.detect-changes.outputs.internal-changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -314,7 +348,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.common-event-model == 'true'
     permissions:
       contents: write
@@ -334,7 +368,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.kafka-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -377,7 +411,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.feign-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -392,12 +426,33 @@ jobs:
       use_release_version: true
     secrets: inherit
 
+  publish-observability-lib:
+    name: Publish am-observability-lib
+    needs: [detect-changes, publish-common-lib]
+    if: >-
+      always()
+      && github.event_name == 'push'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && needs.detect-changes.outputs.observability-lib == 'true'
+      && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: java
+      working_directory: libraries/am-observability-lib
+      sdk_name: am-observability-lib
+      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
+      use_release_version: true
+    secrets: inherit
+
   publish-cache-lib:
     name: Publish am-cache-lib
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.cache-lib == 'true'
     permissions:
       contents: write
@@ -417,7 +472,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.market-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -438,7 +493,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.trade-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -459,7 +514,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.portfolio-domain == 'true'
       && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
     permissions:
@@ -474,78 +529,18 @@ jobs:
       use_release_version: true
     secrets: inherit
 
-  publish-market-client-lib:
-    name: Publish am-market-client-lib
-    needs: [detect-changes, publish-market-domain]
-    if: >-
-      always()
-      && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      && needs.detect-changes.outputs.market-client-lib == 'true'
-      && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: java
-      working_directory: libraries/am-market-client-lib
-      sdk_name: am-market-client-lib
-      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
-      use_release_version: true
-    secrets: inherit
-
-  publish-trade-client-lib:
-    name: Publish am-trade-client-lib
-    needs: [detect-changes, publish-trade-domain]
-    if: >-
-      always()
-      && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      && needs.detect-changes.outputs.trade-client-lib == 'true'
-      && (needs.publish-trade-domain.result == 'success' || needs.publish-trade-domain.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: java
-      working_directory: libraries/am-trade-client-lib
-      sdk_name: am-trade-client-lib
-      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
-      use_release_version: true
-    secrets: inherit
-
-  publish-portfolio-client-lib:
-    name: Publish am-portfolio-client-lib
-    needs: [detect-changes, publish-portfolio-domain]
-    if: >-
-      always()
-      && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      && needs.detect-changes.outputs.portfolio-client-lib == 'true'
-      && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: java
-      working_directory: libraries/am-portfolio-client-lib
-      sdk_name: am-portfolio-client-lib
-      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
-      use_release_version: true
-    secrets: inherit
+  # Client SDKs (*-client-lib) are published by am-sdk-publish.yml
 
   publish-analysis-adapter:
     name: Publish am-analysis-adapter
-    needs: [detect-changes, publish-common-lib]
+    needs: [detect-changes, publish-common-lib, publish-kafka-lib]
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
+      && (needs.publish-kafka-lib.result == 'success' || needs.publish-kafka-lib.result == 'skipped')
     permissions:
       contents: write
       packages: write
@@ -558,24 +553,4 @@ jobs:
       use_release_version: true
     secrets: inherit
 
-  publish-analysis-client-lib:
-    name: Publish am-analysis-client-lib
-    needs: [detect-changes, publish-common-lib]
-    if: >-
-      always()
-      && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      && needs.detect-changes.outputs.analysis-client-lib == 'true'
-      && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
-    permissions:
-      contents: write
-      packages: write
-    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
-    with:
-      language: java
-      working_directory: libraries/am-analysis-client-lib
-      sdk_name: am-analysis-client-lib
-      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
-      use_release_version: true
-    secrets: inherit
-
+  # am-analysis-client-lib → am-sdk-publish.yml

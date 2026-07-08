@@ -8,9 +8,12 @@ import com.am.analysis.adapter.model.components.AssetClassification;
 import com.am.analysis.adapter.model.components.HoldingIdentity;
 import com.am.analysis.adapter.model.components.InvestmentStats;
 import com.am.analysis.adapter.model.components.MarketStats;
-import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.service.load.AnalysisEntityLoadService;
+import com.am.analysis.service.load.EntityLoadResult;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
+import com.am.kafka.config.Timeframe;
+import com.am.kafka.service.PreviousCloseRedisService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,20 +26,26 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TopMoversAnalysisServiceTest {
 
     @Mock
-    private AnalysisRepository repository;
+    private AnalysisEntityLoadService entityLoadService;
 
     @Mock
     private AnalysisAccessValidator accessValidator;
 
     @Mock
     private com.am.market.client.service.MarketDataClientService marketDataClientService;
+
+    @Mock
+    private PreviousCloseRedisService previousCloseRedisService;
 
     @InjectMocks
     private TopMoversAnalysisService topMoversAnalysisService;
@@ -83,8 +92,8 @@ public class TopMoversAnalysisServiceTest {
         AnalysisHolding unknown = AnalysisHolding.builder()
                 .identity(HoldingIdentity.builder().symbol("UNK1").name("Unknown").assetClass("EQUITY").build())
                 .classification(AssetClassification.builder().sector(null).marketCapType(null).build())
-                .investment(InvestmentStats.builder().value(100.0).profitLoss(0.0).build())
-                .market(MarketStats.builder().dayChange(0.0).dayChangePercentage(0.0).currentPrice(100.0).build())
+                .investment(InvestmentStats.builder().value(100.0).profitLoss(5.0).build())
+                .market(MarketStats.builder().dayChange(5.0).dayChangePercentage(5.0).currentPrice(105.0).build())
                 .build();
 
         return new java.util.ArrayList<>(Arrays.asList(tech1, tech2, fin1, unknown));
@@ -92,8 +101,7 @@ public class TopMoversAnalysisServiceTest {
 
     @Test
     void testGetTopMoversWithinEntity_GroupBySector_WithEnrichment() {
-        when(repository.findById(anyString())).thenReturn(Optional.of(testPortfolio));
-        doNothing().when(accessValidator).verifyAccess(any(), anyString());
+        when(entityLoadService.loadOne(any())).thenReturn(EntityLoadResult.of(List.of(testPortfolio), false));
         
         // Mock Market Data Client
         com.am.portfolio.client.market.model.SecurityMetadata meta = new com.am.portfolio.client.market.model.SecurityMetadata();
@@ -118,8 +126,7 @@ public class TopMoversAnalysisServiceTest {
 
     @Test
     void testGetTopMoversWithinEntity_GroupByMarketCap() {
-        when(repository.findById(anyString())).thenReturn(Optional.of(testPortfolio));
-        doNothing().when(accessValidator).verifyAccess(any(), anyString());
+        when(entityLoadService.loadOne(any())).thenReturn(EntityLoadResult.of(List.of(testPortfolio), false));
 
         TopMoversResponse response = topMoversAnalysisService.getTopMovers(
                 "test", AnalysisEntityType.PORTFOLIO, "1D", "user123", AnalysisGroupBy.MARKET_CAP);
@@ -148,11 +155,49 @@ public class TopMoversAnalysisServiceTest {
                 .market(MarketStats.builder().dayChange(0.0).dayChangePercentage(0.0).build())
                 .build());
 
-        when(repository.findById(anyString())).thenReturn(Optional.of(testPortfolio));
-        doNothing().when(accessValidator).verifyAccess(any(), anyString());
+        when(entityLoadService.loadOne(any())).thenReturn(EntityLoadResult.of(List.of(testPortfolio), false));
 
         // Should not throw NPE
         assertDoesNotThrow(() -> topMoversAnalysisService.getTopMovers(
                 "test", AnalysisEntityType.PORTFOLIO, "1D", "user123", AnalysisGroupBy.SECTOR));
+    }
+
+    @Test
+    void testGetTopMoversByCategory_usesRedisPrevCloseAndMongoPrice() {
+        AnalysisHolding sail = AnalysisHolding.builder()
+                .identity(HoldingIdentity.builder().symbol("SAIL").name("SAIL").assetClass("EQUITY").build())
+                .investment(InvestmentStats.builder()
+                        .quantity(10.0)
+                        .averagePrice(170.0)
+                        .investmentValue(1700.0)
+                        .value(1820.0)
+                        .build())
+                .market(MarketStats.builder().currentPrice(182.0).build())
+                .build();
+
+        AnalysisEntity portfolio = AnalysisEntity.builder()
+                .id("PORTFOLIO_p1")
+                .sourceId("p1")
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("user123")
+                .holdings(List.of(sail))
+                .performance(com.am.analysis.adapter.model.components.PerformanceSummary.builder()
+                        .totalValue(1820.0)
+                        .build())
+                .build();
+
+        when(entityLoadService.loadPortfoliosForUser(eq("user123"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(portfolio), false));
+        when(previousCloseRedisService.readWindowForSymbols(anyCollection(), eq(Timeframe.ONE_DAY)))
+                .thenReturn(java.util.Map.of("NSE_EQ:SAIL", 180.05));
+
+        TopMoversResponse response = topMoversAnalysisService.getTopMovers(
+                null, AnalysisEntityType.PORTFOLIO, "1D", "user123", AnalysisGroupBy.STOCK);
+
+        assertNotNull(response);
+        assertEquals(1, response.getGainers().size());
+        assertEquals("SAIL", response.getGainers().get(0).getSymbol());
+        assertTrue(response.getGainers().get(0).getChangePercentage() > 0);
+        assertTrue(response.getLosers().isEmpty());
     }
 }

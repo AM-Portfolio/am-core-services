@@ -1,130 +1,628 @@
 package com.am.analysis.service.orchestrator;
 
-import com.am.kafka.config.KafkaTopics;
-import com.am.kafka.schema.TriggerCalcEvent;
-import com.am.kafka.service.InterestRegistryService;
-import com.am.observability.flow.FlowLogger;
-import com.am.observability.flow.FlowSpan;
-import com.am.observability.trace.TracingHelper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 
-import java.time.Instant;
+
+import com.am.analysis.config.PortfolioStreamingProperties;
+
+import com.am.analysis.service.bootstrap.PortfolioBootstrapTrigger;
+
+import com.am.analysis.service.bootstrap.TriggerCalculationPublisher;
+
+import com.am.analysis.service.DashboardAnalysisService;
+
+import com.am.analysis.service.LivePriceTick;
+
+import com.am.analysis.service.PortfolioStreamingService;
+
+import com.am.common.investment.model.equity.EquityPrice;
+
+import com.am.common.investment.model.events.EquityPriceUpdateEvent;
+
+import com.am.kafka.config.InterestRegistryKeys;
+
+import com.am.kafka.config.KafkaTopics;
+
+import com.am.kafka.config.Timeframe;
+
+import com.am.kafka.service.InterestRegistryService;
+
+import com.am.kafka.service.PreviousCloseRedisService;
+
+import com.am.observability.flow.FlowLogger;
+
+import com.am.observability.flow.FlowSpan;
+
+import com.am.observability.trace.TracingHelper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.kafka.annotation.KafkaListener;
+
+import java.util.Collections;
+
+import java.util.HashMap;
+
 import java.util.Map;
+
 import java.util.concurrent.ConcurrentHashMap;
 
+
+
 /**
+
  * Demand-Driven Orchestrator (Phase 3).
+
  *
+
  * Responsibilities:
+
  *   1. Listen for USER_WATCHING events from the Gateway.
- *   2. On first watcher for a portfolio, trigger an immediate calculation.
- *   3. Listen for STOCK_UPDATE events and throttle calculation triggers.
- *   4. Temporal Debouncing: max 1 calculation per portfolio per 2 seconds.
+
+ *   2. On portfolio subscribe, push an immediate portfolio stream snapshot from Mongo.
+
+ *   3. Listen for STOCK_UPDATE events and throttle portfolio / dashboard triggers.
+
+ *   4. Temporal Debouncing: max 1 portfolio stream per portfolio per 2 seconds on market ticks.
+
+ *   5. Dashboard widget pushes for users on {@link InterestRegistryKeys#CHANNEL_DASHBOARD_MAIN}.
+
  */
+
 @Slf4j
+
 @RequiredArgsConstructor
+
 public class DemandDrivenOrchestrator {
 
+
+
     private final InterestRegistryService interestRegistry;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+
     private final ObjectMapper objectMapper;
+
+    private final PortfolioBootstrapTrigger portfolioBootstrapTrigger;
+
+    private final TriggerCalculationPublisher triggerCalculationPublisher;
+
     private final FlowLogger flowLogger;
+
     private final TracingHelper tracingHelper;
+
+    private final DashboardAnalysisService dashboardAnalysisService;
+
+    private final PortfolioStreamingService portfolioStreamingService;
+
+    private final PortfolioStreamingProperties portfolioStreamingProperties;
+
+    private final PreviousCloseRedisService previousCloseRedisService;
+
+
 
     private static final long DEBOUNCE_WINDOW_MS = 2_000;
 
+    private static final long SUMMARY_DEBOUNCE_MS = 1_000;
+
+    private static final long ACTIVITY_DEBOUNCE_MS = 5_000;
+
+    private static final long MOVERS_DEBOUNCE_MS = 5_000;
+
+    private static final long ALLOCATION_DEBOUNCE_MS = 5_000;
+
+
+
     private final Map<String, Long> lastTriggerMap = new ConcurrentHashMap<>();
 
-    @KafkaListener(topics = KafkaTopics.USER_WATCHING, groupId = "am-orchestrator-group")
+    private final Map<String, Long> lastSummaryTrigger = new ConcurrentHashMap<>();
+
+    private final Map<String, Long> lastActivityTrigger = new ConcurrentHashMap<>();
+
+    private final Map<String, Long> lastMoversTrigger = new ConcurrentHashMap<>();
+
+    private final Map<String, Long> lastAllocationTrigger = new ConcurrentHashMap<>();
+
+    @KafkaListener(topics = KafkaTopics.USER_WATCHING, groupId = "am-orchestrator-watching-group")
+
     public void onUserWatching(String message) {
+
         try (FlowSpan span = flowLogger.start("analysis.kafka.consume.user_watching",
+
                 "payload_bytes", message == null ? 0 : message.length())) {
+
             try {
+
                 com.am.kafka.schema.UserWatchingEvent event =
+
                         objectMapper.readValue(message, com.am.kafka.schema.UserWatchingEvent.class);
 
+
+
                 if ("SUBSCRIBE".equals(event.getAction())) {
-                    triggerCalculation(event.getUserId(), event.getPortfolioId(),
-                            "USER_SUBSCRIPTION", event.getTraceId());
+
+                    if (isDashboardChannel(event.getPortfolioId())) {
+
+                        triggerDashboardSubscribePush(event.getUserId());
+
+                    } else {
+
+                        triggerPortfolioSubscribePush(event.getUserId(), event.getPortfolioId(), event.getTraceId());
+
+                    }
+
                 }
+
                 flowLogger.complete(span,
+
                         "action", event.getAction(),
+
                         "userId", event.getUserId());
+
             } catch (Exception e) {
+
                 flowLogger.fail(span, e);
+
             }
+
         }
+
     }
 
-    @KafkaListener(topics = KafkaTopics.STOCK_UPDATE, groupId = "am-orchestrator-group")
+
+
+    @KafkaListener(topics = KafkaTopics.STOCK_UPDATE, groupId = "am-orchestrator-stock-group")
+
     public void onMarketUpdate(String message) {
+
         try (FlowSpan span = flowLogger.start("analysis.kafka.consume.stock_update",
+
                 "payload_bytes", message == null ? 0 : message.length())) {
-            triggerCalculationForActiveWatchers("MARKET_MOVE");
-            flowLogger.complete(span);
+
+            Map<String, LivePriceTick> liveTicks = parseLivePriceTicks(message);
+
+            triggerPortfolioStreamForActiveWatchers("MARKET_MOVE", liveTicks);
+
+            triggerDashboardUpdatesForActiveWatchers(liveTicks);
+
+            flowLogger.complete(span, "symbols", liveTicks.size());
+
         }
+
     }
 
-    private void triggerCalculationForActiveWatchers(String source) {
-        triggerCalculation(null, null, source, tracingHelper.currentTraceIdOrNew());
+
+
+    private void triggerPortfolioSubscribePush(String userId, String portfolioId, String inheritedTraceId) {
+
+        if (useAnalysisStreaming()) {
+
+            boolean published = portfolioStreamingService.publishPortfolioStream(userId, portfolioId, Map.of());
+
+            if (!published) {
+
+                triggerBootstrapCalculation(userId, portfolioId, inheritedTraceId);
+
+            }
+
+            return;
+
+        }
+
+        triggerLegacyCalculation(userId, portfolioId, "USER_SUBSCRIPTION", inheritedTraceId, false);
+
     }
 
-    private void triggerCalculation(String userId, String portfolioId, String source, String inheritedTraceId) {
-        String debounceKey = portfolioId != null ? portfolioId : "ALL";
+
+
+    private void triggerPortfolioStreamForActiveWatchers(String source, Map<String, LivePriceTick> liveTicks) {
+
+        java.util.Set<String> activeUsers = interestRegistry.getAllActiveUserIds();
+
+        if (activeUsers.isEmpty()) {
+
+            flowLogger.step("analysis.orchestrator.no_active_watchers", "source", source);
+
+            return;
+
+        }
+
+        String traceId = tracingHelper.currentTraceIdOrNew();
+
+        for (String userId : activeUsers) {
+
+            String target = interestRegistry.getWatchedPortfolio(userId).orElse(null);
+
+            if (target != null && !target.isBlank() && !isDashboardChannel(target)) {
+
+                if (useAnalysisStreaming()) {
+
+                    triggerDebouncedPortfolioStream(userId, target, liveTicks);
+
+                } else {
+
+                    triggerLegacyCalculation(userId, target, source, traceId, true);
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+    private void triggerDebouncedPortfolioStream(String userId, String portfolioId, Map<String, LivePriceTick> liveTicks) {
+
+        String debounceKey = portfolioId != null ? portfolioId : "global";
+
+
 
         long now = System.currentTimeMillis();
+
         Long lastTrigger = lastTriggerMap.get(debounceKey);
 
+
+
         if (lastTrigger != null && (now - lastTrigger) < DEBOUNCE_WINDOW_MS) {
+
             flowLogger.step("analysis.orchestrator.debounced",
+
                     "portfolioId", debounceKey,
+
                     "window_ms", DEBOUNCE_WINDOW_MS);
+
             return;
+
         }
 
+
+
         if (portfolioId != null && !interestRegistry.hasActiveWatchers(portfolioId)) {
+
             flowLogger.step("analysis.orchestrator.no_watchers",
+
                     "portfolioId", portfolioId);
+
             return;
+
         }
+
+
 
         lastTriggerMap.put(debounceKey, now);
 
-        try (FlowSpan span = flowLogger.start("analysis.kafka.publish.trigger_calculation",
-                "portfolioId", debounceKey,
-                "userId", userId,
-                "source", source,
-                "topic", KafkaTopics.TRIGGER_CALCULATION)) {
-            try {
-                String traceId = inheritedTraceId != null && !inheritedTraceId.isEmpty()
-                        ? inheritedTraceId
-                        : tracingHelper.currentTraceIdOrNew();
-                String spanId = tracingHelper.currentSpanIdOrNew();
+        portfolioStreamingService.publishPortfolioStream(userId, portfolioId, liveTicks);
 
-                TriggerCalcEvent event = TriggerCalcEvent.builder()
-                        .traceId(traceId)
-                        .spanId(spanId)
-                        .userId(userId)
-                        .portfolioId(portfolioId)
-                        .triggerSource(source)
-                        .timestamp(Instant.now())
-                        .build();
-
-                String payload = objectMapper.writeValueAsString(event);
-                String key = portfolioId != null ? portfolioId : (userId != null ? userId : "global");
-                kafkaTemplate.send(KafkaTopics.TRIGGER_CALCULATION, key, payload);
-
-                flowLogger.complete(span,
-                        "payload_bytes", payload.length(),
-                        "trace_id_used", traceId);
-            } catch (JsonProcessingException e) {
-                flowLogger.fail(span, e);
-            }
-        }
     }
+
+
+
+    private boolean useAnalysisStreaming() {
+
+        return portfolioStreamingProperties.isEnabled()
+
+                && !portfolioStreamingProperties.isLegacyTriggerCalc();
+
+    }
+
+
+
+    private Map<String, LivePriceTick> parseLivePriceTicks(String message) {
+
+        if (message == null || message.isBlank()) {
+
+            return Collections.emptyMap();
+
+        }
+
+        try {
+
+            EquityPriceUpdateEvent event = objectMapper.readValue(message, EquityPriceUpdateEvent.class);
+
+            if (event.getEquityPrices() == null || event.getEquityPrices().isEmpty()) {
+
+                return Collections.emptyMap();
+
+            }
+
+            Map<String, LivePriceTick> ticks = new HashMap<>();
+
+            for (EquityPrice price : event.getEquityPrices()) {
+
+                if (price.getSymbol() == null || price.getLastPrice() == null) {
+
+                    continue;
+
+                }
+
+                Double prevClose = null;
+                if (price.getOhlcv() != null) {
+                    prevClose = price.getOhlcv().getClose();
+                }
+                if (prevClose == null || prevClose <= 0) {
+                    prevClose = previousCloseRedisService.readWindow(price.getSymbol(), Timeframe.ONE_DAY);
+                }
+                if ((prevClose == null || prevClose <= 0)) {
+                    String base = com.am.analysis.service.LivePriceOverlayHelper.baseSymbol(price.getSymbol());
+                    if (!base.isEmpty()) {
+                        prevClose = previousCloseRedisService.readWindow("NSE_EQ:" + base, Timeframe.ONE_DAY);
+                    }
+                }
+
+                ticks.put(price.getSymbol(), new LivePriceTick(price.getLastPrice(), prevClose));
+
+            }
+
+            return ticks;
+
+        } catch (Exception e) {
+
+            flowLogger.step("analysis.orchestrator.stock_parse_failed", "reason", e.getMessage());
+
+            return Collections.emptyMap();
+
+        }
+
+    }
+
+
+
+    private void triggerDashboardUpdatesForActiveWatchers(Map<String, LivePriceTick> liveTicks) {
+
+        java.util.Set<String> activeUsers = interestRegistry.getAllActiveUserIds();
+
+        if (activeUsers.isEmpty()) {
+
+            return;
+
+        }
+
+        try (FlowSpan span = flowLogger.start("analysis.orchestrator.dashboard_fanout",
+
+                "active_users", activeUsers.size())) {
+
+            int dashboardUsers = 0;
+
+            for (String userId : activeUsers) {
+
+                String target = interestRegistry.getWatchedPortfolio(userId).orElse(null);
+
+                if (isDashboardChannel(target)) {
+
+                    dashboardUsers++;
+
+                    triggerDashboardSummaryUpdate(userId, true, liveTicks);
+
+                    triggerDashboardActivityUpdate(userId, true, liveTicks);
+
+                    triggerDashboardMoversUpdate(userId, true, liveTicks);
+
+                    triggerDashboardAllocationUpdate(userId, true, liveTicks);
+
+                }
+
+            }
+
+            flowLogger.complete(span, "dashboard_users", dashboardUsers);
+
+        }
+
+    }
+
+
+
+    private void triggerDashboardSubscribePush(String userId) {
+
+        try (FlowSpan span = flowLogger.start("analysis.orchestrator.subscribe_dashboard_push",
+
+                "userId", userId)) {
+
+            long start = System.currentTimeMillis();
+
+            dashboardAnalysisService.publishDashboardSubscribeAll(userId);
+
+            flowLogger.complete(span,
+
+                    "widgets", 5,
+
+                    "duration_ms", System.currentTimeMillis() - start);
+
+        }
+
+    }
+
+
+
+    private void triggerDashboardSummaryUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
+
+        long now = System.currentTimeMillis();
+
+        if (debounce) {
+
+            Long lastSummary = lastSummaryTrigger.get(userId);
+
+            if (lastSummary != null && (now - lastSummary) < SUMMARY_DEBOUNCE_MS) {
+
+                flowLogger.step("analysis.orchestrator.dashboard_summary_debounced",
+
+                        "userId", userId, "window_ms", SUMMARY_DEBOUNCE_MS);
+
+                return;
+
+            }
+
+        }
+
+        lastSummaryTrigger.put(userId, now);
+
+        dashboardAnalysisService.publishDashboardSummary(userId, liveTicks);
+
+    }
+
+
+
+    private void triggerDashboardActivityUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
+
+        long now = System.currentTimeMillis();
+
+        if (debounce) {
+
+            Long lastActivity = lastActivityTrigger.get(userId);
+
+            if (lastActivity != null && (now - lastActivity) < ACTIVITY_DEBOUNCE_MS) {
+
+                flowLogger.step("analysis.orchestrator.dashboard_activity_debounced",
+
+                        "userId", userId, "window_ms", ACTIVITY_DEBOUNCE_MS);
+
+                return;
+
+            }
+
+        }
+
+        lastActivityTrigger.put(userId, now);
+
+        dashboardAnalysisService.publishDashboardActivity(userId, liveTicks);
+
+    }
+
+
+
+    private void triggerDashboardMoversUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
+
+        long now = System.currentTimeMillis();
+
+        if (debounce) {
+
+            Long lastMovers = lastMoversTrigger.get(userId);
+
+            if (lastMovers != null && (now - lastMovers) < MOVERS_DEBOUNCE_MS) {
+
+                flowLogger.step("analysis.orchestrator.dashboard_movers_debounced",
+
+                        "userId", userId, "window_ms", MOVERS_DEBOUNCE_MS);
+
+                return;
+
+            }
+
+        }
+
+        lastMoversTrigger.put(userId, now);
+
+        dashboardAnalysisService.publishDashboardMovers(userId, liveTicks);
+
+    }
+
+
+
+    private void triggerDashboardAllocationUpdate(String userId, boolean debounce, Map<String, LivePriceTick> liveTicks) {
+
+        long now = System.currentTimeMillis();
+
+        if (debounce) {
+
+            Long lastAllocation = lastAllocationTrigger.get(userId);
+
+            if (lastAllocation != null && (now - lastAllocation) < ALLOCATION_DEBOUNCE_MS) {
+
+                flowLogger.step("analysis.orchestrator.dashboard_allocation_debounced",
+
+                        "userId", userId, "window_ms", ALLOCATION_DEBOUNCE_MS);
+
+                return;
+
+            }
+
+        }
+
+        lastAllocationTrigger.put(userId, now);
+
+        dashboardAnalysisService.publishDashboardAllocation(userId, liveTicks);
+
+    }
+
+
+
+    private static boolean isDashboardChannel(String watchTarget) {
+
+        return InterestRegistryKeys.isDashboardChannel(watchTarget);
+
+    }
+
+
+
+    private void triggerBootstrapCalculation(String userId, String portfolioId, String inheritedTraceId) {
+
+        portfolioBootstrapTrigger.requestBootstrap(
+
+                userId, portfolioId, "BOOTSTRAP_ENTITY_MISSING", inheritedTraceId);
+
+    }
+
+
+
+    private void triggerLegacyCalculation(String userId, String portfolioId, String source,
+
+                                          String inheritedTraceId, boolean debounce) {
+
+        if (!portfolioStreamingProperties.isLegacyTriggerCalc()) {
+
+            return;
+
+        }
+
+
+
+        String debounceKey = portfolioId != null ? portfolioId : "global";
+
+
+
+        if (debounce) {
+
+            long now = System.currentTimeMillis();
+
+            Long lastTrigger = lastTriggerMap.get(debounceKey);
+
+
+
+            if (lastTrigger != null && (now - lastTrigger) < DEBOUNCE_WINDOW_MS) {
+
+                flowLogger.step("analysis.orchestrator.debounced",
+
+                        "portfolioId", debounceKey,
+
+                        "window_ms", DEBOUNCE_WINDOW_MS);
+
+                return;
+
+            }
+
+            lastTriggerMap.put(debounceKey, now);
+
+        }
+
+
+
+        if (portfolioId != null && !interestRegistry.hasActiveWatchers(portfolioId)) {
+
+            flowLogger.step("analysis.orchestrator.no_watchers",
+
+                    "portfolioId", portfolioId);
+
+            return;
+
+        }
+
+
+
+        triggerCalculationPublisher.publish(userId, portfolioId, source, inheritedTraceId);
+
+    }
+
 }
+

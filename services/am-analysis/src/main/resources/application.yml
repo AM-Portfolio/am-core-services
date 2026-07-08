@@ -73,6 +73,13 @@ am:
         enabled: true # Enable/disable Trade Event Listener
       ingestion:
         enabled: true # Enable/disable Analysis Ingestion Service
+    portfolio:
+      streaming:
+        enabled: true
+        legacy-trigger-calc: false
+    bootstrap:
+      enabled: true
+      debounce-ms: 60000
 
   services:
     market-data:

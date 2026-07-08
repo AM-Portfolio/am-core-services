@@ -21,3 +21,7 @@ vault:
       mappings:
         OAUTH2_CLIENT_ID: "AM_GATEWAY_STREAMING_CLIENT_ID"
         OAUTH2_CLIENT_SECRET: "AM_GATEWAY_STREAMING_CLIENT_SECRET"
+
+    market-data:
+      mappings:
+        MARKET_DATA_URL: "URL"

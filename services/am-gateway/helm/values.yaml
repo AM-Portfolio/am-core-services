@@ -64,3 +64,5 @@ env:
   SPRING_PROFILES_ACTIVE: "default"
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces"
   TRACING_SAMPLING_PROBABILITY: "0.1"
+  # Override locally when Vault disabled; preprod/prod use Vault market-data path
+  #MARKET_DATA_URL: "http://am-market-data:8080"

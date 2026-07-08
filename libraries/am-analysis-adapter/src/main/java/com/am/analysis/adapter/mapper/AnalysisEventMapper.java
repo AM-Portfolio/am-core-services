@@ -4,6 +4,7 @@ import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.model.components.*;
+import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.portfolio.domain.events.PortfolioUpdateEvent;
 import com.am.portfolio.domain.model.EquityModel;
 import org.springframework.stereotype.Component;
@@ -11,18 +12,28 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class AnalysisEventMapper {
 
     public AnalysisEntity mapPortfolioEvent(PortfolioUpdateEvent event) {
-        // Map equities to holdings
         List<AnalysisHolding> holdings = mapEquitiesToHoldings(event.getEquities(), event.getTotalValue());
 
-        String effectivePortfolioId = event.getPortfolioId() != null ? event.getPortfolioId() : "GLOBAL";
-        String entityId = "PORTFOLIO_" + effectivePortfolioId + (event.getPortfolioId() == null ? "_" + event.getUserId() : "");
-        
+        String rawPortfolioId = event.getPortfolioId();
+        String effectivePortfolioId = rawPortfolioId != null && !rawPortfolioId.isBlank()
+                ? rawPortfolioId
+                : AnalysisEntityKeys.GLOBAL_SOURCE_ID;
+
+        String entityId;
+        if (AnalysisEntityKeys.isGlobalSourceId(effectivePortfolioId)) {
+            entityId = AnalysisEntityKeys.globalEntityId(event.getUserId());
+            effectivePortfolioId = AnalysisEntityKeys.GLOBAL_SOURCE_ID;
+        } else {
+            entityId = AnalysisEntityKeys.portfolioEntityId(effectivePortfolioId, event.getUserId());
+        }
+
         return AnalysisEntity.builder()
                 .id(entityId)
                 .sourceId(effectivePortfolioId)
@@ -75,8 +86,12 @@ public class AnalysisEventMapper {
                             .market(MarketStats.builder()
                                     .currentPrice(equity.getCurrentPrice())
                                     .previousClose(equity.getPreviousClose())
-                                    .dayChange(equity.getDayChange())
-                                    .dayChangePercentage(equity.getDayChangePercentage())
+                                    .dayChange(equity.getDayChange() != null
+                                            ? equity.getDayChange()
+                                            : equity.getTodayProfitLoss())
+                                    .dayChangePercentage(equity.getDayChangePercentage() != null
+                                            ? equity.getDayChangePercentage()
+                                            : equity.getTodayProfitLossPercentage())
                                     .lastUpdatedTime(equity.getLastUpdatedTime())
                                     .build())
                             .classification(AssetClassification.builder()
@@ -148,17 +163,95 @@ public class AnalysisEventMapper {
     }
 
     public List<AnalysisEntity> mapMarketEvent(com.am.common.investment.model.events.EquityPriceUpdateEvent event) {
-        return event.getEquityPrices().stream().map(price -> AnalysisEntity.builder()
+        return event.getEquityPrices().stream().map(price -> {
+            double last = price.getLastPrice() != null ? price.getLastPrice() : 0.0;
+            Double prevClose = price.getOhlcv() != null ? price.getOhlcv().getClose() : null;
+            double change = prevClose != null && prevClose > 0 ? last - prevClose : 0.0;
+            double changePct = prevClose != null && prevClose > 0 ? (change / prevClose) * 100.0 : 0.0;
+            return AnalysisEntity.builder()
                 .id("MARKET_" + price.getSymbol())
                 .sourceId(price.getSymbol())
                 .type(AnalysisEntityType.MARKET_INDEX)
                 .performance(PerformanceSummary.builder()
-                        .totalValue(price.getLastPrice() != null ? price.getLastPrice() : 0.0)
-                        .dayChange(0.0) // If available in PriceUpdate
-                        .dayChangePercentage(0.0)
+                        .totalValue(last)
+                        .dayChange(change)
+                        .dayChangePercentage(changePct)
                         .build())
                 .lastUpdated(event.getTimestamp() != null ? event.getTimestamp() : LocalDateTime.now())
-                .build()).collect(Collectors.toList());
+                .build();
+        }).collect(Collectors.toList());
+    }
+
+    public PortfolioUpdateEvent mapEntityToPortfolioUpdateEvent(AnalysisEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        List<EquityModel> equities = Collections.emptyList();
+        if (entity.getHoldings() != null) {
+            equities = entity.getHoldings().stream()
+                    .map(this::mapHoldingToEquity)
+                    .collect(Collectors.toList());
+        }
+
+        PerformanceSummary perf = entity.getPerformance();
+        PortfolioUpdateEvent event = PortfolioUpdateEvent.builder()
+                .id(UUID.randomUUID())
+                .userId(entity.getOwnerId())
+                .portfolioId(entity.getSourceId())
+                .equities(equities)
+                .timestamp(entity.getLastUpdated() != null ? entity.getLastUpdated() : LocalDateTime.now())
+                .build();
+
+        if (perf != null) {
+            event.setTotalValue(perf.getTotalValue());
+            event.setTotalInvestment(perf.getTotalInvestment());
+            event.setTotalGainLoss(perf.getTotalGainLoss());
+            event.setTotalGainLossPercentage(perf.getTotalGainLossPercentage());
+            event.setTodayGainLoss(perf.getDayChange());
+            event.setTodayGainLossPercentage(perf.getDayChangePercentage());
+        }
+
+        return event;
+    }
+
+    private EquityModel mapHoldingToEquity(AnalysisHolding holding) {
+        HoldingIdentity identity = holding.getIdentity();
+        InvestmentStats inv = holding.getInvestment();
+        MarketStats market = holding.getMarket();
+        AssetClassification cls = holding.getClassification();
+
+        EquityModel model = new EquityModel();
+        if (identity != null) {
+            model.setIsin(identity.getIsin());
+            model.setSymbol(identity.getSymbol());
+            model.setName(identity.getName());
+            model.setCompanyName(identity.getCompanyName());
+            model.setExchange(identity.getExchange());
+        }
+        if (inv != null) {
+            model.setQuantity(inv.getQuantity());
+            model.setAveragePrice(inv.getAveragePrice());
+            model.setInvestmentValue(inv.getInvestmentValue());
+            model.setCurrentValue(inv.getCurrentValue());
+            model.setProfitLoss(inv.getProfitLoss());
+            model.setProfitLossPercentage(inv.getProfitLossPercentage());
+        }
+        if (market != null) {
+            model.setCurrentPrice(market.getCurrentPrice());
+            model.setPreviousClose(market.getPreviousClose());
+            model.setDayChange(market.getDayChange());
+            model.setDayChangePercentage(market.getDayChangePercentage());
+            model.setLastUpdatedTime(market.getLastUpdatedTime());
+            model.setTodayProfitLoss(market.getDayChange());
+            model.setTodayProfitLossPercentage(market.getDayChangePercentage());
+        }
+        if (cls != null) {
+            model.setSector(cls.getSector());
+            model.setIndustry(cls.getIndustry());
+            model.setMarketCap(cls.getMarketCapType());
+        }
+        return model;
     }
 
     public com.am.portfolio.domain.dto.PortfolioUpdateDto mapToDto(PortfolioUpdateEvent event) {
