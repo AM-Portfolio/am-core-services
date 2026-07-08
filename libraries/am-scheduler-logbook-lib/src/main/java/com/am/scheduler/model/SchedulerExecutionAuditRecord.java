@@ -22,6 +22,7 @@ public class SchedulerExecutionAuditRecord {
 
     private String status; // Current status of the execution: "RUNNING", "SUCCESS", "FAILED", or "SKIPPED"
 
+    @org.springframework.data.mongodb.core.index.Indexed(expireAfter = "14d")
     private Instant startTime; // The exact timestamp when this execution started
 
     private Instant endTime; // The exact timestamp when this execution completed or failed
