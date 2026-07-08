@@ -6,8 +6,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 
 /**
- * MongoDB Document representation for storing the logbook history/audit of scheduler runs.
- * This class is written in standard Java (without Lombok) to ensure compatibility
+ * MongoDB Document representation for storing the logbook history/audit of
+ * scheduler runs.
+ * This class is written in standard Java (without Lombok) to ensure
+ * compatibility
  * and compile-time safety across different modules during builds.
  */
 @Document(collection = "scheduler_execution_audit")
@@ -28,18 +30,20 @@ public class SchedulerExecutionAuditRecord {
 
     private String executedBy; // The pod ID / hostname of the server replica that executed this scheduler task
 
-    private String errorMessage; // The error details/message in case the execution throws an exception (FAILED status)
+    private String errorMessage; // The error details/message in case the execution throws an exception (FAILED
+                                 // status)
 
-    private String stackTrace; // Full stack trace recorded in case of failures for easy debugging without checking raw log files
+    private String stackTrace; // Full stack trace recorded in case of failures for easy debugging without
+                               // checking raw log files
 
     // Default constructor required by Spring Data MongoDB for deserialization
     public SchedulerExecutionAuditRecord() {
     }
 
     // Full constructor to support builder patterns and manual instantiation
-    public SchedulerExecutionAuditRecord(String id, String jobName, String status, Instant startTime, 
-                                         Instant endTime, Long durationMs, String executedBy, 
-                                         String errorMessage, String stackTrace) {
+    public SchedulerExecutionAuditRecord(String id, String jobName, String status, Instant startTime,
+            Instant endTime, Long durationMs, String executedBy,
+            String errorMessage, String stackTrace) {
         this.id = id;
         this.jobName = jobName;
         this.status = status;
@@ -57,7 +61,8 @@ public class SchedulerExecutionAuditRecord {
     }
 
     /**
-     * Fluent Builder helper class to construct SchedulerExecutionAuditRecord objects easily.
+     * Fluent Builder helper class to construct SchedulerExecutionAuditRecord
+     * objects easily.
      */
     public static class Builder {
         private String id;
@@ -116,7 +121,8 @@ public class SchedulerExecutionAuditRecord {
         }
 
         public SchedulerExecutionAuditRecord build() {
-            return new SchedulerExecutionAuditRecord(id, jobName, status, startTime, endTime, durationMs, executedBy, errorMessage, stackTrace);
+            return new SchedulerExecutionAuditRecord(id, jobName, status, startTime, endTime, durationMs, executedBy,
+                    errorMessage, stackTrace);
         }
     }
 
@@ -194,3 +200,5 @@ public class SchedulerExecutionAuditRecord {
         this.stackTrace = stackTrace;
     }
 }
+
+// comment
