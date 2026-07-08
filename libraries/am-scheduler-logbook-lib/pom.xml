@@ -56,4 +56,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+<!-- Trigger CI build: logbook v1.0.0 -->
 </project>
