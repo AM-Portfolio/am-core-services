@@ -15,11 +15,13 @@ on:
       - "libraries/**"
       - "domain/**"
       - "pom.xml"
+      - ".github/workflows/core-libraries-publish.yml"
   pull_request:
     paths:
       - "libraries/**"
       - "domain/**"
       - "pom.xml"
+      - ".github/workflows/core-libraries-publish.yml"
   workflow_dispatch:
 
 concurrency:
