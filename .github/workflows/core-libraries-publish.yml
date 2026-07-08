@@ -221,7 +221,7 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.internal-changed == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -309,7 +309,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.common-lib == 'true'
       && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
@@ -330,7 +330,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.api-core-lib == 'true'
       && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
@@ -350,7 +350,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.common-event-model == 'true'
     permissions:
       contents: write
@@ -370,7 +370,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.kafka-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -391,7 +391,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.security-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
       && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
@@ -413,7 +413,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.feign-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -434,7 +434,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.observability-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -454,7 +454,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.cache-lib == 'true'
     permissions:
       contents: write
@@ -474,7 +474,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.market-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -495,7 +495,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.trade-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -516,7 +516,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.portfolio-domain == 'true'
       && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
     permissions:
@@ -539,7 +539,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
       && (needs.publish-kafka-lib.result == 'success' || needs.publish-kafka-lib.result == 'skipped')
