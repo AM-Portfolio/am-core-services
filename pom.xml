@@ -60,6 +60,7 @@
         <module>libraries/am-trade-client-lib</module>
         <module>libraries/am-portfolio-client-lib</module>
         <module>libraries/am-analysis-client-lib</module>
+        <module>libraries/am-scheduler-logbook-lib</module>
         
         <!-- Domain Layer -->
         <module>domain/am-market-domain</module>
@@ -124,6 +125,11 @@
             <dependency>
                 <groupId>com.am.libraries</groupId>
                 <artifactId>am-observability-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.am.libraries</groupId>
+                <artifactId>am-scheduler-logbook-lib</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

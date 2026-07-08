@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.am</groupId>
+        <artifactId>am-core-services</artifactId>
+        <version>1.0.412-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.am.libraries</groupId>
+    <artifactId>am-scheduler-logbook-lib</artifactId>
+    <packaging>jar</packaging>
+    <name>AM Scheduler Logbook Library</name>
+    <description>Tracking and locking for scheduled tasks using MongoDB and ShedLock</description>
+
+    <properties>
+        <shedlock.version>5.13.0</shedlock.version>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot AOP -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- Spring Data MongoDB -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <!-- ShedLock Spring Integration -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+
+        <!-- ShedLock Mongo Provider -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-mongo</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+
+        <!-- Lombok for boilerplates -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
