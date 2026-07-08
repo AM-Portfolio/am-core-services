@@ -10,7 +10,7 @@ name: Core Libraries Publish
 
 on:
   push:
-    branches: [main, master, 'feature/**']
+    branches: [main, master, 'feature/**', 'hotfix/**', 'fix/**']
     paths:
       - "libraries/**"
       - "domain/**"
