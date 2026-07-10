@@ -10,16 +10,18 @@ name: Core Libraries Publish
 
 on:
   push:
-    branches: [main, master, 'feature/**']
+    branches: [main, master, 'feature/**', 'hotfix/**', 'fix/**']
     paths:
       - "libraries/**"
       - "domain/**"
       - "pom.xml"
+      - ".github/workflows/core-libraries-publish.yml"
   pull_request:
     paths:
       - "libraries/**"
       - "domain/**"
       - "pom.xml"
+      - ".github/workflows/core-libraries-publish.yml"
   workflow_dispatch:
 
 concurrency:
@@ -48,6 +50,7 @@ jobs:
       market-domain: ${{ steps.check.outputs.market-domain }}
       portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
       trade-domain: ${{ steps.check.outputs.trade-domain }}
+      scheduler-logbook-lib: ${{ steps.check.outputs.scheduler-logbook-lib }}
       internal-changed: ${{ steps.check.outputs.internal-changed }}
       maven-pl-list: ${{ steps.check.outputs.maven-pl-list }}
     steps:
@@ -111,6 +114,7 @@ jobs:
           lib "domain/am-market-domain" "market-domain"
           lib "domain/am-portfolio-domain" "portfolio-domain"
           lib "domain/am-trade-domain" "trade-domain"
+          lib "libraries/am-scheduler-logbook-lib" "scheduler-logbook-lib"
 
           # Pull in build-order dependencies when a downstream module changed
           enable() {
@@ -219,7 +223,7 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.internal-changed == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -307,7 +311,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.common-lib == 'true'
       && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
@@ -328,7 +332,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.api-core-lib == 'true'
       && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
@@ -348,7 +352,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.common-event-model == 'true'
     permissions:
       contents: write
@@ -368,7 +372,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.kafka-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -389,7 +393,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.security-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
       && (needs.publish-api-core-lib.result == 'success' || needs.publish-api-core-lib.result == 'skipped')
@@ -411,7 +415,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.feign-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -432,7 +436,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.observability-lib == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -452,7 +456,7 @@ jobs:
     needs: [detect-changes, publish-root-pom]
     if: >-
       github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.cache-lib == 'true'
     permissions:
       contents: write
@@ -472,7 +476,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.market-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -493,7 +497,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.trade-domain == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
     permissions:
@@ -514,7 +518,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.portfolio-domain == 'true'
       && (needs.publish-market-domain.result == 'success' || needs.publish-market-domain.result == 'skipped')
     permissions:
@@ -537,7 +541,7 @@ jobs:
     if: >-
       always()
       && github.event_name == 'push'
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
       && (needs.publish-kafka-lib.result == 'success' || needs.publish-kafka-lib.result == 'skipped')
@@ -554,3 +558,25 @@ jobs:
     secrets: inherit
 
   # am-analysis-client-lib → am-sdk-publish.yml
+
+  publish-scheduler-logbook-lib:
+    name: Publish am-scheduler-logbook-lib
+    needs: [detect-changes, publish-root-pom]
+    if: >-
+      always()
+      && github.event_name == 'push'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
+      && needs.detect-changes.outputs.scheduler-logbook-lib == 'true'
+      && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: java
+      working_directory: libraries/am-scheduler-logbook-lib
+      sdk_name: am-scheduler-logbook-lib
+      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
+      use_release_version: true
+    secrets: inherit
+
