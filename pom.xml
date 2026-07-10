@@ -10,7 +10,7 @@
 
     <groupId>com.am</groupId>
     <artifactId>am-core-services</artifactId>
-    <version>1.0.508-SNAPSHOT</version>
+    <version>1.0.509-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>AM Core Services</name>
     <description>Core Services Architecture for AM Investment Platform</description>
