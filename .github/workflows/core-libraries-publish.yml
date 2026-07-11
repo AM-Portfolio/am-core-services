@@ -358,9 +358,11 @@ jobs:
     name: Publish am-common-event-model
     needs: [detect-changes, publish-root-pom]
     if: >-
-      github.event_name == 'push'
+      always()
+      && github.event_name == 'push'
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.common-event-model == 'true'
+      && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
     permissions:
       contents: write
       packages: write
