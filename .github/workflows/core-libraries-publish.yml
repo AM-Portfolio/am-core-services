@@ -277,7 +277,7 @@ jobs:
       - name: Promote parent to release version
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
-          CURRENT=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
+          CURRENT=$(mvn -N -q -DforceStdout help:evaluate -Dexpression=project.version)
           if echo "$CURRENT" | grep -q 'SNAPSHOT'; then
             mvn -B org.codehaus.mojo:versions-maven-plugin:2.16.2:set -DremoveSnapshot -DgenerateBackupPoms=false
           fi
