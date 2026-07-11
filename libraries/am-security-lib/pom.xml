@@ -10,13 +10,13 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.774-SNAPSHOT</version>
+        <version>1.0.775-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>com.am.libraries</groupId>
     <artifactId>am-security-lib</artifactId>
-    <version>1.0.774-SNAPSHOT</version>
+    <version>1.0.775-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM Security Library</name>
