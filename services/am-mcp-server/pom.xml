@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.804-SNAPSHOT</version>
+        <version>1.0.805-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
 
     <groupId>com.am.services</groupId>
     <artifactId>am-mcp-server</artifactId>
-    <version>1.0.804-SNAPSHOT</version>
+    <version>1.0.805-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM MCP Server</name>
