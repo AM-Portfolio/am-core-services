@@ -8,13 +8,13 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.0.902-SNAPSHOT</version>
+        <version>1.0.903-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>com.am.libraries</groupId>
     <artifactId>am-feign-lib</artifactId>
-    <version>1.0.902-SNAPSHOT</version>
+    <version>1.0.903-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM Feign Library</name>
