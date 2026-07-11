@@ -21,10 +21,14 @@ on:
       - "libraries/am-trade-client-lib/**"
       - "services/am-analysis/am-analysis-sdk/**"
       - ".github/workflows/am-sdk-publish.yml"
+  workflow_run:
+    workflows: ["Core Libraries Publish"]
+    types: [completed]
+    branches: [main, master]
   workflow_dispatch:
 
 concurrency:
-  group: am-sdk-publish-${{ github.ref }}
+  group: am-sdk-publish-${{ github.event.workflow_run.head_branch || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -43,23 +47,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0
 
       - name: Detect which SDK paths changed
         id: check
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            HEAD="${{ github.event.workflow_run.head_sha }}"
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="${{ github.event.pull_request.base.sha }}"
             HEAD="${{ github.event.pull_request.head.sha }}"
+            CHANGED=$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null || true)
           else
             BASE="${{ github.event.before }}"
             HEAD="${{ github.sha }}"
-          fi
-
-          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
-            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
-          else
-            CHANGED=$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null || true)
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
+            else
+              CHANGED=$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null || true)
+            fi
           fi
 
           echo "Changed files:"
@@ -88,6 +96,10 @@ jobs:
           sdk "libraries/am-market-client-lib" "market-client-lib"
           sdk "libraries/am-portfolio-client-lib" "portfolio-client-lib"
           sdk "libraries/am-trade-client-lib" "trade-client-lib"
+
+          if grep -q '^analysis-client-lib=true' "$GITHUB_OUTPUT"; then
+            echo "analysis-client-sdk=true" >> "$GITHUB_OUTPUT"
+          fi
 
           if grep -q '=true$' "$GITHUB_OUTPUT"; then
             echo "any=true" >> "$GITHUB_OUTPUT"
@@ -149,11 +161,10 @@ jobs:
     name: Publish am-analysis-client (java-sdk)
     needs: detect-changes
     if: >-
-      github.event_name == 'push'
+      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-client-sdk == 'true'
-      && !contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version')
-      && !contains(github.event.head_commit.message, 'bump version to next snapshot version')
+      && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
       contents: write
       packages: write
@@ -162,17 +173,19 @@ jobs:
       language: "java"
       working_directory: "services/am-analysis/am-analysis-sdk/java-sdk"
       sdk_name: "am-analysis-client"
+      use_release_version: true
     secrets: inherit
 
   publish-analysis-client-lib:
     name: Publish am-analysis-client-lib
-    needs: detect-changes
+    needs: [detect-changes, publish-analysis-client-sdk]
     if: >-
-      github.event_name == 'push'
+      always()
+      && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-client-lib == 'true'
-      && !contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version')
-      && !contains(github.event.head_commit.message, 'bump version to next snapshot version')
+      && (needs.publish-analysis-client-sdk.result == 'success' || needs.publish-analysis-client-sdk.result == 'skipped')
+      && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
       contents: write
       packages: write
@@ -181,17 +194,17 @@ jobs:
       language: "java"
       working_directory: "libraries/am-analysis-client-lib"
       sdk_name: "am-analysis-client-lib"
+      use_release_version: true
     secrets: inherit
 
   publish-market-client-lib:
     name: Publish am-market-client-lib
     needs: detect-changes
     if: >-
-      github.event_name == 'push'
+      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.market-client-lib == 'true'
-      && !contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version')
-      && !contains(github.event.head_commit.message, 'bump version to next snapshot version')
+      && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
       contents: write
       packages: write
@@ -200,17 +213,17 @@ jobs:
       language: "java"
       working_directory: "libraries/am-market-client-lib"
       sdk_name: "am-market-client-lib"
+      use_release_version: true
     secrets: inherit
 
   publish-portfolio-client-lib:
     name: Publish am-portfolio-client-lib
     needs: detect-changes
     if: >-
-      github.event_name == 'push'
+      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.portfolio-client-lib == 'true'
-      && !contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version')
-      && !contains(github.event.head_commit.message, 'bump version to next snapshot version')
+      && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
       contents: write
       packages: write
@@ -219,17 +232,17 @@ jobs:
       language: "java"
       working_directory: "libraries/am-portfolio-client-lib"
       sdk_name: "am-portfolio-client-lib"
+      use_release_version: true
     secrets: inherit
 
   publish-trade-client-lib:
     name: Publish am-trade-client-lib
     needs: detect-changes
     if: >-
-      github.event_name == 'push'
+      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.trade-client-lib == 'true'
-      && !contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version')
-      && !contains(github.event.head_commit.message, 'bump version to next snapshot version')
+      && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
       contents: write
       packages: write
@@ -238,4 +251,5 @@ jobs:
       language: "java"
       working_directory: "libraries/am-trade-client-lib"
       sdk_name: "am-trade-client-lib"
+      use_release_version: true
     secrets: inherit
