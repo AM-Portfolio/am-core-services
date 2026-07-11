@@ -130,6 +130,11 @@ jobs:
           fi
           if grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT"; then
             enable kafka-lib libraries/am-kafka-lib
+            enable market-domain domain/am-market-domain
+            enable portfolio-domain domain/am-portfolio-domain
+          fi
+          if grep -q '^portfolio-domain=true' "$GITHUB_OUTPUT"; then
+            enable market-domain domain/am-market-domain
           fi
           if grep -q '^security-lib=true' "$GITHUB_OUTPUT"; then
             enable api-core-lib libraries/am-api-core-lib
@@ -539,7 +544,7 @@ jobs:
 
   publish-analysis-adapter:
     name: Publish am-analysis-adapter
-    needs: [detect-changes, publish-common-lib, publish-kafka-lib]
+    needs: [detect-changes, publish-common-lib, publish-kafka-lib, publish-portfolio-domain]
     if: >-
       always()
       && github.event_name == 'push'
@@ -547,6 +552,7 @@ jobs:
       && needs.detect-changes.outputs.analysis-adapter == 'true'
       && (needs.publish-common-lib.result == 'success' || needs.publish-common-lib.result == 'skipped')
       && (needs.publish-kafka-lib.result == 'success' || needs.publish-kafka-lib.result == 'skipped')
+      && (needs.publish-portfolio-domain.result == 'success' || needs.publish-portfolio-domain.result == 'skipped')
     permissions:
       contents: write
       packages: write
