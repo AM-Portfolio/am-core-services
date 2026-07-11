@@ -5,7 +5,7 @@ name: AM SDK Publish
 
 on:
   push:
-    branches: [main, master, 'feature/**']
+    branches: [main, master, 'feature/**', 'hotfix/**', 'fix/**']
     paths:
       - "libraries/am-analysis-client-lib/**"
       - "libraries/am-market-client-lib/**"
@@ -24,7 +24,7 @@ on:
   workflow_run:
     workflows: ["Core Libraries Publish"]
     types: [completed]
-    branches: [main, master]
+    branches: [main, master, 'hotfix/**', 'fix/**']
   workflow_dispatch:
 
 concurrency:
@@ -188,7 +188,7 @@ jobs:
     if: >-
       needs.detect-changes.outputs.skip_workflow != 'true'
       && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.analysis-client-sdk == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
@@ -210,7 +210,7 @@ jobs:
       needs.detect-changes.outputs.skip_workflow != 'true'
       && always()
       && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.analysis-client-lib == 'true'
       && (needs.publish-analysis-client-sdk.result == 'success' || needs.publish-analysis-client-sdk.result == 'skipped')
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
@@ -232,7 +232,7 @@ jobs:
     if: >-
       needs.detect-changes.outputs.skip_workflow != 'true'
       && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.market-client-lib == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
@@ -253,7 +253,7 @@ jobs:
     if: >-
       needs.detect-changes.outputs.skip_workflow != 'true'
       && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.portfolio-client-lib == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
@@ -274,7 +274,7 @@ jobs:
     if: >-
       needs.detect-changes.outputs.skip_workflow != 'true'
       && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
-      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.trade-client-lib == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
     permissions:
