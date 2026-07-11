@@ -61,6 +61,7 @@
         <module>libraries/am-trade-client-lib</module>
         <module>libraries/am-portfolio-client-lib</module>
         <module>libraries/am-analysis-client-lib</module>
+        <module>services/am-analysis/am-analysis-sdk/java-sdk</module>
         <module>libraries/am-scheduler-logbook-lib</module>
         
         <!-- Domain Layer -->
@@ -146,6 +147,11 @@
             <dependency>
                 <groupId>com.am.libraries</groupId>
                 <artifactId>am-analysis-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.am</groupId>
+                <artifactId>am-analysis-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

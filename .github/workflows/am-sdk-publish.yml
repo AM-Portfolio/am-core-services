@@ -44,17 +44,46 @@ jobs:
       portfolio-client-lib: ${{ steps.check.outputs.portfolio-client-lib }}
       trade-client-lib: ${{ steps.check.outputs.trade-client-lib }}
       any: ${{ steps.check.outputs.any }}
+      publish_ref: ${{ steps.resolve_ref.outputs.publish_ref }}
+      skip_workflow: ${{ steps.resolve_ref.outputs.skip_workflow }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0
 
+      - name: Resolve publish ref (pre-bump when Core Libraries ends with version bump)
+        id: resolve_ref
+        run: |
+          HEAD_SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
+          git checkout "$HEAD_SHA"
+          MSG=$(git log -1 --format=%s "$HEAD_SHA")
+          echo "Workflow head: $HEAD_SHA ($MSG)"
+
+          if [ "${{ github.event_name }}" = "workflow_run" ] && echo "$MSG" | grep -qiE 'bump (parent and submodules|version) to next snapshot'; then
+            if ! git rev-parse --verify "${HEAD_SHA}^" >/dev/null 2>&1; then
+              echo "Bump commit has no parent — skipping SDK publish."
+              echo "skip_workflow=true" >> "$GITHUB_OUTPUT"
+              echo "publish_ref=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            PUBLISH_REF=$(git rev-parse "${HEAD_SHA}^")
+            echo "Core Libraries bump commit detected — SDK publish will use pre-bump ref: $PUBLISH_REF"
+            echo "publish_ref=$PUBLISH_REF" >> "$GITHUB_OUTPUT"
+            echo "skip_workflow=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish_ref=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+            echo "skip_workflow=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Detect which SDK paths changed
         id: check
+        if: steps.resolve_ref.outputs.skip_workflow != 'true'
         run: |
+          git checkout "${{ steps.resolve_ref.outputs.publish_ref }}"
+
           if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            HEAD="${{ github.event.workflow_run.head_sha }}"
+            # Compare the publish ref to its parent (real code change), not the bump commit diff.
             CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="${{ github.event.pull_request.base.sha }}"
@@ -72,14 +101,6 @@ jobs:
 
           echo "Changed files:"
           echo "$CHANGED"
-
-          check() {
-            if echo "$CHANGED" | grep -q "^$1"; then
-              echo 'true'
-            else
-              echo 'false'
-            fi
-          }
 
           sdk() {
             local prefix="$1"
@@ -111,7 +132,8 @@ jobs:
     name: Verify changed SDKs (PR)
     needs: detect-changes
     if: >-
-      github.event_name == 'pull_request'
+      needs.detect-changes.outputs.skip_workflow != 'true'
+      && github.event_name == 'pull_request'
       && needs.detect-changes.outputs.any == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -119,6 +141,9 @@ jobs:
       packages: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.detect-changes.outputs.publish_ref }}
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           java-version: "17"
@@ -161,7 +186,8 @@ jobs:
     name: Publish am-analysis-client (java-sdk)
     needs: detect-changes
     if: >-
-      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
+      needs.detect-changes.outputs.skip_workflow != 'true'
+      && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-client-sdk == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
@@ -174,13 +200,15 @@ jobs:
       working_directory: "services/am-analysis/am-analysis-sdk/java-sdk"
       sdk_name: "am-analysis-client"
       use_release_version: true
+      git_ref: ${{ needs.detect-changes.outputs.publish_ref }}
     secrets: inherit
 
   publish-analysis-client-lib:
     name: Publish am-analysis-client-lib
     needs: [detect-changes, publish-analysis-client-sdk]
     if: >-
-      always()
+      needs.detect-changes.outputs.skip_workflow != 'true'
+      && always()
       && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.analysis-client-lib == 'true'
@@ -195,13 +223,15 @@ jobs:
       working_directory: "libraries/am-analysis-client-lib"
       sdk_name: "am-analysis-client-lib"
       use_release_version: true
+      git_ref: ${{ needs.detect-changes.outputs.publish_ref }}
     secrets: inherit
 
   publish-market-client-lib:
     name: Publish am-market-client-lib
     needs: detect-changes
     if: >-
-      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
+      needs.detect-changes.outputs.skip_workflow != 'true'
+      && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.market-client-lib == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
@@ -214,13 +244,15 @@ jobs:
       working_directory: "libraries/am-market-client-lib"
       sdk_name: "am-market-client-lib"
       use_release_version: true
+      git_ref: ${{ needs.detect-changes.outputs.publish_ref }}
     secrets: inherit
 
   publish-portfolio-client-lib:
     name: Publish am-portfolio-client-lib
     needs: detect-changes
     if: >-
-      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
+      needs.detect-changes.outputs.skip_workflow != 'true'
+      && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.portfolio-client-lib == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
@@ -233,13 +265,15 @@ jobs:
       working_directory: "libraries/am-portfolio-client-lib"
       sdk_name: "am-portfolio-client-lib"
       use_release_version: true
+      git_ref: ${{ needs.detect-changes.outputs.publish_ref }}
     secrets: inherit
 
   publish-trade-client-lib:
     name: Publish am-trade-client-lib
     needs: detect-changes
     if: >-
-      (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
+      needs.detect-changes.outputs.skip_workflow != 'true'
+      && (github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/'))
       && needs.detect-changes.outputs.trade-client-lib == 'true'
       && (github.event_name == 'workflow_run' || (!contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') && !contains(github.event.head_commit.message, 'bump version to next snapshot version')))
@@ -252,4 +286,5 @@ jobs:
       working_directory: "libraries/am-trade-client-lib"
       sdk_name: "am-trade-client-lib"
       use_release_version: true
+      git_ref: ${{ needs.detect-changes.outputs.publish_ref }}
     secrets: inherit
