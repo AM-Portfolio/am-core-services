@@ -225,6 +225,8 @@ jobs:
       github.event_name == 'push'
       && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
       && needs.detect-changes.outputs.internal-changed == 'true'
+      && !contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version')
+      && !contains(github.event.head_commit.message, 'bump version to next snapshot version')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -298,7 +300,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet; then
             git add pom.xml **/pom.xml
-            git commit -m "chore: bump parent and submodules to next snapshot version"
+            git commit -m "chore: bump parent and submodules to next snapshot version [skip ci]"
             git push origin HEAD:${{ github.ref }}
           else
             echo "No version changes detected."
