@@ -1,5 +1,5 @@
 # Pre-production environment overrides for am-mcp-server
-# Dual-host: am-preprod (target) + am.asrax.in until Phase 4
+# Preprod app host only — am.asrax.in reserved for prod
 environment: preprod
 language: java
 
@@ -60,10 +60,6 @@ ingress:
       am-apps-preprod-global-cors@kubernetescrd
   hosts:
     - host: am-preprod.asrax.in
-      paths:
-        - path: /mcp
-          pathType: Prefix
-    - host: am.asrax.in
       paths:
         - path: /mcp
           pathType: Prefix

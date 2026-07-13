@@ -1,7 +1,7 @@
 # values.preprod.yaml — am-analysis
 #
 # PURPOSE: Environment-specific Vault paths and non-secret runtime config.
-# Dual-host: am-preprod (target) + am.asrax.in until Phase 4
+# Preprod app host only — am.asrax.in reserved for prod
 
 environment: preprod
 
@@ -50,10 +50,6 @@ ingress:
       am-apps-preprod-strip-prefix-apps@kubernetescrd
   hosts:
     - host: am-preprod.asrax.in
-      paths:
-        - path: /analysis
-          pathType: Prefix
-    - host: am.asrax.in
       paths:
         - path: /analysis
           pathType: Prefix
