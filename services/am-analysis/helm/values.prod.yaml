@@ -1,7 +1,8 @@
 # Production environment overrides for am-analysis
+# Service-level Ingress (same model as am-identity).
 environment: prod
 
-replicaCount: 2
+replicaCount: 1
 
 resources:
   limits:
@@ -11,14 +12,18 @@ resources:
     cpu: 500m
     memory: 512Mi
 
-# Ingress enabled in prod
 ingress:
   enabled: true
-  className: "nginx"
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-prod-global-cors@kubernetescrd
   hosts:
-    - host: am-analysis.am-portfolio.io
+    - host: am.asrax.in
       paths:
-        - path: /
+        - path: /analysis
           pathType: Prefix
 
 # Vault enabled — injects all secrets at runtime
@@ -42,4 +47,4 @@ env:
   SPRING_PROFILES_ACTIVE: "prod"
   KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
-  #MARKET_DATA_URL: "http://am-market-data.am-apps-prod.svc.cluster.local:8080"
+  MARKET_DATA_URL: "https://am.asrax.in/market"

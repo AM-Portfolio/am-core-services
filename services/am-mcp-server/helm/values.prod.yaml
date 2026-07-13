@@ -1,7 +1,8 @@
 # Production environment overrides for am-mcp-server
+# Service-level Ingress (same model as am-identity).
 environment: prod
 
-replicaCount: 2
+replicaCount: 1
 
 resources:
   limits:
@@ -17,7 +18,7 @@ vault:
   role: "am-mcp-server-role"
   secretPaths:
     auth:
-      path: "kv/prod/services/am-auth"
+      path: "apps/data/prod/services/am-auth"
     identity-oidc:
       path: "apps/data/prod/services/am-identity"
     service-oauth:
@@ -29,3 +30,18 @@ env:
   AM_AUTH_URL: "http://am-auth.am-apps-prod.svc.cluster.local:8001"
   AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-prod.svc.cluster.local:8100"
   AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-prod.svc.cluster.local:8060"
+  MARKET_DATA_URL: "https://am.asrax.in/market"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-prod-global-cors@kubernetescrd
+  hosts:
+    - host: am.asrax.in
+      paths:
+        - path: /mcp
+          pathType: Prefix

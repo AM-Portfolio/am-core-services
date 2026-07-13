@@ -1,7 +1,7 @@
 # Pre-production environment overrides for am-mcp-server
+# Dual-host: am-preprod (target) + am.asrax.in until Phase 4
 environment: preprod
 language: java
-
 
 replicaCount: 1
 
@@ -30,7 +30,6 @@ vault:
     service-oauth:
       path: "apps/data/preprod/services/am-mcp-server"
 
-
 # Non-secret env vars pointing to preprod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
@@ -49,4 +48,22 @@ env:
   AM_TOOLS_PORTFOLIO_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
+  MARKET_DATA_URL: "https://am-preprod.asrax.in/market"
 
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-preprod-global-cors@kubernetescrd
+  hosts:
+    - host: am-preprod.asrax.in
+      paths:
+        - path: /mcp
+          pathType: Prefix
+    - host: am.asrax.in
+      paths:
+        - path: /mcp
+          pathType: Prefix

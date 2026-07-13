@@ -1,10 +1,7 @@
 # values.preprod.yaml — am-analysis
 #
 # PURPOSE: Environment-specific Vault paths and non-secret runtime config.
-#
-# RULE: Nothing in this file should duplicate what Vault already provides.
-#   - Secret values (passwords, URLs, credentials) → come from Vault via vault-mappings.yaml
-#   - Only non-secret protocol/mechanism settings and internal cluster URLs live here.
+# Dual-host: am-preprod (target) + am.asrax.in until Phase 4
 
 environment: preprod
 
@@ -35,9 +32,28 @@ vault:
       path: "apps/data/preprod/services/am-analysis"
 
 # Non-secret runtime config ONLY
-# Anything available in Vault must NOT appear here
+# Anything available in Vault must NOT appear here (except documented public URL fallback)
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT" # Protocol setting, not a secret
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256" # Mechanism setting, not a secret
-  #MARKET_DATA_URL:         "http://am-market-data.am-apps-preprod.svc.cluster.local:8080"
+  MARKET_DATA_URL: "https://am-preprod.asrax.in/market"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-preprod-global-cors@kubernetescrd,
+      am-apps-preprod-strip-prefix-apps@kubernetescrd
+  hosts:
+    - host: am-preprod.asrax.in
+      paths:
+        - path: /analysis
+          pathType: Prefix
+    - host: am.asrax.in
+      paths:
+        - path: /analysis
+          pathType: Prefix

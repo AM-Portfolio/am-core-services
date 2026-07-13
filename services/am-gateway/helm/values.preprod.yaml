@@ -1,7 +1,7 @@
 # Pre-production environment overrides for am-gateway
+# Dual-host: am-preprod (target) + am.asrax.in until Phase 4
 environment: preprod
 language: java
-
 
 replicaCount: 1
 
@@ -40,6 +40,23 @@ env:
   SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+  # Public gateway URL used when in-cluster URL is unavailable (Vault URL preferred)
+  MARKET_DATA_URL: "https://am-preprod.asrax.in/market"
 
-
-
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-preprod-global-cors@kubernetescrd
+  hosts:
+    - host: am-preprod.asrax.in
+      paths:
+        - path: /v1/streams
+          pathType: Prefix
+    - host: am.asrax.in
+      paths:
+        - path: /v1/streams
+          pathType: Prefix
