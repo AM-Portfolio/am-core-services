@@ -17,6 +17,7 @@ resources:
 
 vault:
   enabled: true
+  role: "am-backend-role"
   secretPaths:
     mongodb:
       path: "apps/data/preprod/infra/mongodb"

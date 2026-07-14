@@ -54,6 +54,7 @@ resources:
 # Vault (disabled by default — enabled in preprod/prod via values.<env>.yaml)
 vault:
   enabled: false
+  role: "am-backend-role"
 
 # Environment label injected into the container as ENVIRONMENT var
 environment: "default"

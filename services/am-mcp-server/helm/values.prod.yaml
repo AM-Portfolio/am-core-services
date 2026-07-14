@@ -15,7 +15,7 @@ resources:
 # Vault enabled — injects auth credentials at runtime
 vault:
   enabled: true
-  role: "am-mcp-server-role"
+  role: "am-backend-role"
   secretPaths:
     auth:
       path: "apps/data/prod/services/am-auth"

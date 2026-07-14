@@ -29,7 +29,7 @@ ingress:
 # Vault enabled — injects all secrets at runtime
 vault:
   enabled: true
-  role: "am-analysis-role"
+  role: "am-backend-role"
   secretPaths:
     kafka:
       path: "apps/data/prod/infra/kafka"

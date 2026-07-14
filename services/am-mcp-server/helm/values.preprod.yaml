@@ -13,9 +13,10 @@ resources:
     cpu: 150m
     memory: 192Mi
 
-# Vault enabled — role and token management now handled centrally
+# Vault enabled — use shared cluster role (am-backend-role)
 vault:
   enabled: true
+  role: "am-backend-role"
   secretPaths:
     kafka:
       path: "apps/data/preprod/infra/kafka"
