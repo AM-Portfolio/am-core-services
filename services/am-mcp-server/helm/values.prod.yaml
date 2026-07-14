@@ -17,8 +17,14 @@ vault:
   enabled: true
   role: "am-backend-role"
   secretPaths:
+    kafka:
+      path: "apps/data/prod/infra/kafka"
+    mongodb:
+      path: "apps/data/prod/infra/mongodb"
     auth:
       path: "apps/data/prod/services/am-auth"
+    redis:
+      path: "apps/data/prod/infra/redis"
     identity-oidc:
       path: "apps/data/prod/services/am-identity"
     service-oauth:
@@ -27,6 +33,8 @@ vault:
 # Non-secret env vars pointing to prod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "prod"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   AM_AUTH_URL: "http://am-auth.am-apps-prod.svc.cluster.local:8001"
   AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-prod.svc.cluster.local:8100"
   AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-prod.svc.cluster.local:8060"

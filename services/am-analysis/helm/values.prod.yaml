@@ -31,10 +31,12 @@ vault:
   enabled: true
   role: "am-backend-role"
   secretPaths:
-    kafka:
-      path: "apps/data/prod/infra/kafka"
     mongodb:
       path: "apps/data/prod/infra/mongodb"
+    kafka:
+      path: "apps/data/prod/infra/kafka"
+    redis:
+      path: "apps/data/prod/infra/redis"
     market-data:
       path: "apps/data/prod/services/am-market-data"
     identity-oidc:
@@ -45,6 +47,6 @@ vault:
 # Non-secret env vars
 env:
   SPRING_PROFILES_ACTIVE: "prod"
-  KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MARKET_DATA_URL: "https://am.asrax.in/market"
