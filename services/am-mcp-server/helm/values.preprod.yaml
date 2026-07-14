@@ -1,7 +1,7 @@
 # Pre-production environment overrides for am-mcp-server
+# Preprod app host only — am.asrax.in reserved for prod
 environment: preprod
 language: java
-
 
 replicaCount: 1
 
@@ -13,9 +13,10 @@ resources:
     cpu: 150m
     memory: 192Mi
 
-# Vault enabled — role and token management now handled centrally
+# Vault enabled — use shared cluster role (am-backend-role)
 vault:
   enabled: true
+  role: "am-backend-role"
   secretPaths:
     kafka:
       path: "apps/data/preprod/infra/kafka"
@@ -29,7 +30,6 @@ vault:
       path: "apps/data/preprod/services/am-identity"
     service-oauth:
       path: "apps/data/preprod/services/am-mcp-server"
-
 
 # Non-secret env vars pointing to preprod cluster services
 env:
@@ -49,4 +49,18 @@ env:
   AM_TOOLS_PORTFOLIO_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
+  MARKET_DATA_URL: "https://am-preprod.asrax.in/market"
 
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-preprod-global-cors@kubernetescrd
+  hosts:
+    - host: am-preprod.asrax.in
+      paths:
+        - path: /mcp
+          pathType: Prefix

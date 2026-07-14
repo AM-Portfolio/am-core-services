@@ -53,6 +53,7 @@ resources:
 # Vault (disabled by default — enabled in preprod/prod)
 vault:
   enabled: false
+  role: "am-backend-role"
 
 # Environment label
 environment: "default"

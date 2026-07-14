@@ -123,11 +123,13 @@ management:
   endpoint:
     health:
       show-details: always
+      # Kafka health contributor is not always registered; avoid boot failure.
+      validate-group-membership: false
       probes:
         enabled: true
       group:
         readiness:
-          include: mongo,redis,kafka,readinessState
+          include: mongo,redis,readinessState
         liveness:
           include: livenessState
   health:
@@ -136,7 +138,7 @@ management:
     redis:
       enabled: true
     kafka:
-      enabled: true
+      enabled: false
   tracing:
     enabled: true
     sampling:

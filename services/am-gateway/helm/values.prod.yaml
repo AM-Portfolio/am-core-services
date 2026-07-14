@@ -1,4 +1,6 @@
-# Pre-production environment overrides for am-gateway
+# Production environment overrides for am-gateway
+# Service-level Ingress (same model as am-identity).
+# CI rebuild trigger: 2026-07-14
 environment: prod
 language: java
 
@@ -33,9 +35,24 @@ vault:
     market-data:
       path: "apps/data/prod/services/am-market-data"
 
-# Non-secret env vars pointing to preprod cluster services
+# Non-secret env vars pointing to prod cluster services
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+  MARKET_DATA_URL: "https://am.asrax.in/market"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: >-
+      am-apps-prod-global-cors@kubernetescrd
+  hosts:
+    - host: am.asrax.in
+      paths:
+        - path: /v1/streams
+          pathType: Prefix

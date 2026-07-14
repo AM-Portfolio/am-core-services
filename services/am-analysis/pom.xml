@@ -14,11 +14,25 @@
 
     <groupId>com.am.services</groupId>
     <artifactId>am-analysis</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>AM Analysis Service</name>
     <description>Centralized Analysis Service</description>
+
+    <properties>
+        <!-- Per-artifact published versions (bump independently) -->
+        <am.common-lib.version>1.1.0</am.common-lib.version>
+        <am.observability-lib.version>1.1.0</am.observability-lib.version>
+        <am.kafka-lib.version>1.1.0</am.kafka-lib.version>
+        <am.market-domain.version>1.1.0</am.market-domain.version>
+        <am.analysis-adapter.version>1.1.0</am.analysis-adapter.version>
+        <am.security-lib.version>1.1.0</am.security-lib.version>
+        <am.cache-lib.version>1.1.0</am.cache-lib.version>
+        <am.feign-lib.version>1.1.0</am.feign-lib.version>
+        <am.market-client-lib.version>1.1.0</am.market-client-lib.version>
+        <am.trade-client-lib.version>1.1.0</am.trade-client-lib.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -42,54 +56,54 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-common-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.common-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-observability-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.observability-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-kafka-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.kafka-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.domain</groupId>
             <artifactId>am-market-domain</artifactId>
-            <version>${project.version}</version>
+            <version>${am.market-domain.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
-            <version>${project.version}</version>
+            <version>${am.analysis-adapter.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-security-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.security-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-cache-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.cache-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-feign-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.feign-lib.version}</version>
         </dependency>
 
         <!-- Market Data Client Library -->
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-market-client-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.market-client-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-trade-client-lib</artifactId>
-            <version>${project.version}</version>
+            <version>${am.trade-client-lib.version}</version>
         </dependency>
         
         <!-- Feign Client -->
