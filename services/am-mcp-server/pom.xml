@@ -28,7 +28,9 @@
         <am.market-client-lib.version>1.1.0</am.market-client-lib.version>
         <am.trade-client-lib.version>1.1.0</am.trade-client-lib.version>
         <am.portfolio-client-lib.version>1.1.0</am.portfolio-client-lib.version>
+        <!-- Published as SNAPSHOT only on GH Packages today -->
         <am.analysis-client-lib.version>1.1.0-SNAPSHOT</am.analysis-client-lib.version>
+        <am.analysis-client.version>1.1.0-SNAPSHOT</am.analysis-client.version>
         <am.api-core-lib.version>1.1.0</am.api-core-lib.version>
         <am.security-lib.version>1.1.0</am.security-lib.version>
         <am.analysis-adapter.version>1.1.0</am.analysis-adapter.version>
@@ -52,6 +54,17 @@
                 <version>${resilience4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Override transitive SDK so it does not pick service ${project.version}=1.1.0 -->
+            <dependency>
+                <groupId>com.am</groupId>
+                <artifactId>am-analysis-client</artifactId>
+                <version>${am.analysis-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.am.libraries</groupId>
+                <artifactId>am-analysis-client-lib</artifactId>
+                <version>${am.analysis-client-lib.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
