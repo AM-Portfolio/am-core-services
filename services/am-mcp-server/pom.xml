@@ -23,6 +23,15 @@
     </description>
 
     <properties>
+        <!-- Per-artifact published versions (bump independently) -->
+        <am.observability-lib.version>1.1.0</am.observability-lib.version>
+        <am.market-client-lib.version>1.1.0</am.market-client-lib.version>
+        <am.trade-client-lib.version>1.1.0</am.trade-client-lib.version>
+        <am.portfolio-client-lib.version>1.1.0</am.portfolio-client-lib.version>
+        <am.analysis-client-lib.version>1.1.0</am.analysis-client-lib.version>
+        <am.api-core-lib.version>1.1.0</am.api-core-lib.version>
+        <am.security-lib.version>1.1.0</am.security-lib.version>
+        <am.analysis-adapter.version>1.1.0</am.analysis-adapter.version>
         <spring-ai.version>1.0.0-M6</spring-ai.version>
         <resilience4j.version>2.2.0</resilience4j.version>
     </properties>
@@ -48,14 +57,14 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- â”€â”€ MCP Server (Spring AI) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- MCP Server (Spring AI) -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-mcp-server-spring-boot-starter</artifactId>
             <version>${spring-ai.version}</version>
         </dependency>
 
-        <!-- â”€â”€ Spring Boot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -83,7 +92,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- â”€â”€ Resilience4j (Circuit Breaker + Retry) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Resilience4j (Circuit Breaker + Retry) -->
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot3</artifactId>
@@ -97,63 +106,63 @@
             <artifactId>resilience4j-micrometer</artifactId>
         </dependency>
 
-        <!-- â”€â”€ Micrometer Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Micrometer Metrics -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
         </dependency>
 
-        <!-- â”€â”€ Apache HttpClient (for connection pooling) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Apache HttpClient (for connection pooling) -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
         </dependency>
 
-        <!-- â”€â”€ Observability (tracing + JSON logs) â”€â”€ -->
+        <!-- Observability (tracing + JSON logs) -->
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-observability-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.observability-lib.version}</version>
         </dependency>
 
-        <!-- â”€â”€ Internal SDKs (zero raw HTTP for internal services) â”€â”€ -->
+        <!-- Internal SDKs (zero raw HTTP for internal services) -->
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-market-client-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.market-client-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-trade-client-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.trade-client-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-portfolio-client-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.portfolio-client-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-client-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.analysis-client-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-api-core-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.api-core-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-security-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.security-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
-            <version>1.1.0</version>
+            <version>${am.analysis-adapter.version}</version>
         </dependency>
 
-        <!-- â”€â”€ Jackson â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -163,14 +172,14 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-        <!-- â”€â”€ Lombok â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- â”€â”€ Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

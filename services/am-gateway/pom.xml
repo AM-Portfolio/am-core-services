@@ -20,32 +20,42 @@
     <name>AM Gateway Service</name>
     <description>WebSocket Gateway with Kafka Message Relay</description>
 
+    <properties>
+        <!-- Per-artifact published versions (bump independently) -->
+        <am.common-lib.version>1.1.0</am.common-lib.version>
+        <am.observability-lib.version>1.1.0</am.observability-lib.version>
+        <am.kafka-lib.version>1.1.0</am.kafka-lib.version>
+        <am.portfolio-domain.version>1.1.0</am.portfolio-domain.version>
+        <am.analysis-adapter.version>1.1.0</am.analysis-adapter.version>
+        <am.security-lib.version>1.1.0</am.security-lib.version>
+    </properties>
+
     <dependencies>
         <!-- Internal Dependencies -->
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-common-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.common-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-observability-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.observability-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-kafka-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.kafka-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.domain</groupId>
             <artifactId>am-portfolio-domain</artifactId>
-            <version>1.1.0</version>
+            <version>${am.portfolio-domain.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
-            <version>1.1.0</version>
+            <version>${am.analysis-adapter.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -56,7 +66,7 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-security-lib</artifactId>
-            <version>1.1.0</version>
+            <version>${am.security-lib.version}</version>
         </dependency>
 
         <dependency>
