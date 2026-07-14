@@ -28,7 +28,7 @@
         <am.market-client-lib.version>1.1.0</am.market-client-lib.version>
         <am.trade-client-lib.version>1.1.0</am.trade-client-lib.version>
         <am.portfolio-client-lib.version>1.1.0</am.portfolio-client-lib.version>
-        <am.analysis-client-lib.version>1.1.0</am.analysis-client-lib.version>
+        <am.analysis-client-lib.version>1.0.0</am.analysis-client-lib.version>
         <am.api-core-lib.version>1.1.0</am.api-core-lib.version>
         <am.security-lib.version>1.1.0</am.security-lib.version>
         <am.analysis-adapter.version>1.1.0</am.analysis-adapter.version>
