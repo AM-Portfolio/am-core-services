@@ -59,6 +59,12 @@ vault:
 # Environment label
 environment: "default"
 
+# Prometheus scrape (Plane A — auto-register in shared Grafana)
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/actuator/prometheus"
+
 # Key application environment variables (non-secret defaults)
 env:
   SPRING_PROFILES_ACTIVE: "default"

@@ -18,7 +18,7 @@
     <artifactId>am-observability-lib</artifactId>
     <packaging>jar</packaging>
     <name>AM Observability Library</name>
-    <description>Distributed tracing (Micrometer + OTel W3C) and JSON structured logging for AM services</description>
+    <description>Distributed tracing (Micrometer + OTel W3C), Prometheus metrics, and JSON structured logging for AM services</description>
 
     <dependencies>
         <!-- Spring Boot core -->
@@ -29,6 +29,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Prometheus scrape (/actuator/prometheus) — Plane A Grafana discovery -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <!-- Web (servlet filter, OncePerRequestFilter) - optional per service -->
