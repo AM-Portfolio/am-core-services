@@ -22,9 +22,9 @@
 
     <properties>
         <!-- Per-artifact published versions (bump independently) -->
-        <am.common-lib.version>1.1.1-SNAPSHOT</am.common-lib.version>
-        <am.observability-lib.version>1.1.1-SNAPSHOT</am.observability-lib.version>
-        <am.kafka-lib.version>1.1.1-SNAPSHOT</am.kafka-lib.version>
+        <am.common-lib.version>1.1.2-SNAPSHOT</am.common-lib.version>
+        <am.observability-lib.version>1.1.2-SNAPSHOT</am.observability-lib.version>
+        <am.kafka-lib.version>1.1.2-SNAPSHOT</am.kafka-lib.version>
         <am.portfolio-domain.version>1.1.0</am.portfolio-domain.version>
         <am.analysis-adapter.version>1.1.0</am.analysis-adapter.version>
         <am.security-lib.version>1.1.0</am.security-lib.version>
