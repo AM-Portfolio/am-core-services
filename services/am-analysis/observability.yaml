@@ -9,7 +9,7 @@ namespace: am-apps-preprod
 owners: [core-services]
 signals:
   bundle: tier-a-java-core
-  domain: [analysis_orchestrator_events_total, analysis_dashboard_widget_publish_total, analysis_portfolio_stream_publish_total]
+  domain: [orchestrator_events_total, dashboard_widget_publish_total, portfolio_stream_publish_total]
   include: []
 dashboard:
   technical:

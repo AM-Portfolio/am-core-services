@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
  * Domain meters for Functional / Services dashboard (analysis streaming path).
  *
  * <ul>
- *   <li>{@code analysis.orchestrator.events} — consume/fanout outcomes by topic</li>
- *   <li>{@code analysis.dashboard.widget.publish} — widget Kafka publishes</li>
- *   <li>{@code analysis.portfolio.stream.publish} — portfolio stream publishes</li>
+ *   <li>{@code orchestrator.events} — consume/fanout outcomes by topic</li>
+ *   <li>{@code dashboard.widget.publish} — widget Kafka publishes</li>
+ *   <li>{@code portfolio.stream.publish} — portfolio stream publishes</li>
  * </ul>
  */
 @Component
@@ -23,7 +23,7 @@ public class AnalysisBusinessMetrics {
     }
 
     public void orchestratorEvent(String topic, String result) {
-        Counter.builder("analysis.orchestrator.events")
+        Counter.builder("orchestrator.events")
                 .description("Demand-driven orchestrator consume / fanout outcomes")
                 .tag("topic", topic == null ? "unknown" : topic)
                 .tag("result", result == null ? "unknown" : result)
@@ -32,7 +32,7 @@ public class AnalysisBusinessMetrics {
     }
 
     public void dashboardWidgetPublish(String widget, String result) {
-        Counter.builder("analysis.dashboard.widget.publish")
+        Counter.builder("dashboard.widget.publish")
                 .description("Dashboard widget Kafka publishes")
                 .tag("widget", widget == null ? "unknown" : widget)
                 .tag("result", result == null ? "unknown" : result)
@@ -41,7 +41,7 @@ public class AnalysisBusinessMetrics {
     }
 
     public void portfolioStreamPublish(String result) {
-        Counter.builder("analysis.portfolio.stream.publish")
+        Counter.builder("portfolio.stream.publish")
                 .description("Portfolio stream Kafka publishes")
                 .tag("result", result == null ? "unknown" : result)
                 .register(registry)

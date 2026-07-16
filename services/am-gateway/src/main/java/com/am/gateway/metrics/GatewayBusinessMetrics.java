@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Domain meters for Functional / Services dashboard (gateway streaming path).
  *
  * <ul>
- *   <li>{@code gateway.websocket.sessions.active} — live STOMP sessions</li>
- *   <li>{@code gateway.stomp.connect} — CONNECT attempts by result</li>
- *   <li>{@code gateway.kafka.relay.messages} — Kafka→WS relay by destination/result</li>
+ *   <li>{@code websocket.sessions.active} — live STOMP sessions</li>
+ *   <li>{@code stomp.connect} — CONNECT attempts by result</li>
+ *   <li>{@code stream.relay.messages} — Kafka→WS relay by destination/result</li>
  * </ul>
  */
 @Component
@@ -24,7 +24,7 @@ public class GatewayBusinessMetrics {
 
     public GatewayBusinessMetrics(MeterRegistry registry) {
         this.registry = registry;
-        Gauge.builder("gateway.websocket.sessions.active", activeSessions, AtomicInteger::doubleValue)
+        Gauge.builder("websocket.sessions.active", activeSessions, AtomicInteger::doubleValue)
                 .description("Active STOMP WebSocket sessions")
                 .register(registry);
     }
@@ -38,7 +38,7 @@ public class GatewayBusinessMetrics {
     }
 
     public void stompConnect(String result) {
-        Counter.builder("gateway.stomp.connect")
+        Counter.builder("stomp.connect")
                 .description("STOMP CONNECT attempts")
                 .tag("result", result == null ? "unknown" : result)
                 .register(registry)
@@ -46,7 +46,7 @@ public class GatewayBusinessMetrics {
     }
 
     public void kafkaRelay(String destination, String result) {
-        Counter.builder("gateway.kafka.relay.messages")
+        Counter.builder("stream.relay.messages")
                 .description("Kafka messages relayed to WebSocket clients")
                 .tag("destination", destination == null ? "unknown" : destination)
                 .tag("result", result == null ? "unknown" : result)

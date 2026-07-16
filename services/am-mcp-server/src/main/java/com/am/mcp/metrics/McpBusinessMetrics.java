@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
  * Domain meters for Functional / Services dashboard (MCP tool path).
  *
  * <ul>
- *   <li>{@code mcp.tool.invocations} — tool calls by name/result</li>
- *   <li>{@code mcp.tool.duration} — tool latency timer by name</li>
+ *   <li>{@code tool.invocations} — tool calls by name/result</li>
+ *   <li>{@code tool.duration} — tool latency timer by name</li>
  * </ul>
  */
 @Component
@@ -25,7 +25,7 @@ public class McpBusinessMetrics {
     }
 
     public void toolInvocation(String tool, String result) {
-        Counter.builder("mcp.tool.invocations")
+        Counter.builder("tool.invocations")
                 .description("MCP @Tool invocations")
                 .tag("tool", tool == null ? "unknown" : tool)
                 .tag("result", result == null ? "unknown" : result)
@@ -34,7 +34,7 @@ public class McpBusinessMetrics {
     }
 
     public void recordToolDuration(String tool, long durationNanos) {
-        Timer.builder("mcp.tool.duration")
+        Timer.builder("tool.duration")
                 .description("MCP @Tool execution duration")
                 .tag("tool", tool == null ? "unknown" : tool)
                 .register(registry)
