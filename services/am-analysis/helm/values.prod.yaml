@@ -32,6 +32,8 @@ vault:
   enabled: true
   role: "am-backend-role"
   secretPaths:
+    otel:
+      path: "apps/data/prod/infra/observability"
     mongodb:
       path: "apps/data/prod/infra/mongodb"
     kafka:

@@ -23,6 +23,8 @@ probes:
 vault:
   enabled: true
   secretPaths:
+    otel:
+      path: "apps/data/preprod/infra/observability"
     kafka:
       path: "apps/data/preprod/infra/kafka"
     redis:
