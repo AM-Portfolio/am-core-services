@@ -1,0 +1,20 @@
+apiVersion: am.obs/v1
+kind: ServiceObservability
+service: am-gateway
+tier: A
+runtime: java
+k8s_app_label: am-gateway
+# spring.application.name
+metrics_application: am-websocket-gateway
+namespace: am-apps-preprod
+owners: [core-services]
+signals:
+  bundle: tier-a-java-core
+  domain: [websocket_sessions_active, stomp_connect_total, stream_relay_messages_total]
+  include: []
+# Plane C optional — gateway has no Mongo; hide that row on a service view:
+dashboard:
+  technical:
+    rows:
+      hide: [row_mongo]
+      collapse: [row_jvm, row_k8s]

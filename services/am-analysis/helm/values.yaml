@@ -59,10 +59,17 @@ vault:
 # Environment label injected into the container as ENVIRONMENT var
 environment: "default"
 
+# Prometheus scrape (Plane A — auto-register in shared Grafana)
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/actuator/prometheus"
+
 # Key application environment variables (non-secret defaults)
 # Secrets (passwords, tokens) are injected by Vault in preprod/prod
 env:
   SPRING_PROFILES_ACTIVE: "default"
   #MARKET_DATA_URL: "http://am-market-data:8080"
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces"
-  TRACING_SAMPLING_PROBABILITY: "0.1"
+  # 1.0 while validating flows in Tempo; dial back to 0.1 when comfortable
+  TRACING_SAMPLING_PROBABILITY: "1.0"

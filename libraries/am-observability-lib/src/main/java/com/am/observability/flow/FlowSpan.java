@@ -1,5 +1,6 @@
 package com.am.observability.flow;
 
+import io.micrometer.observation.Observation;
 import org.slf4j.MDC;
 
 import java.util.HashMap;
@@ -22,15 +23,50 @@ public final class FlowSpan implements AutoCloseable {
     private final Map<String, String> priorMdc;
     private final Map<String, String> initialFields;
 
+    /**
+     * Optional Micrometer observation backing this flow step. When present the
+     * step becomes a child span in Tempo and a timer metric in Prometheus.
+     */
+    private final Observation observation;
+    private final Observation.Scope observationScope;
+
     private boolean closed;
 
     FlowSpan(FlowLogger logger, String stepName, long startNanos,
              Map<String, String> priorMdc, Map<String, String> initialFields) {
+        this(logger, stepName, startNanos, priorMdc, initialFields, null, null);
+    }
+
+    FlowSpan(FlowLogger logger, String stepName, long startNanos,
+             Map<String, String> priorMdc, Map<String, String> initialFields,
+             Observation observation, Observation.Scope observationScope) {
         this.logger = logger;
         this.stepName = stepName;
         this.startNanos = startNanos;
         this.priorMdc = priorMdc;
         this.initialFields = initialFields;
+        this.observation = observation;
+        this.observationScope = observationScope;
+    }
+
+    Observation observation() {
+        return observation;
+    }
+
+    /**
+     * Close the observation scope (if any) then stop the observation, recording
+     * {@code error} when a cause is supplied. Safe to call once per span.
+     */
+    void stopObservation(Throwable cause) {
+        if (observationScope != null) {
+            observationScope.close();
+        }
+        if (observation != null) {
+            if (cause != null) {
+                observation.error(cause);
+            }
+            observation.stop();
+        }
     }
 
     public String stepName() {

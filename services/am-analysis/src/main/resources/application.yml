@@ -134,6 +134,10 @@ management:
           include: mongo,redis,readinessState
         liveness:
           include: livenessState
+  metrics:
+    tags:
+      # Required for Grafana Technical / Services Service dropdown
+      application: ${spring.application.name}
   health:
     mongo:
       enabled: true

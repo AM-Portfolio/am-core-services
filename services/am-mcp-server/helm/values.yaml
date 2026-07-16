@@ -58,6 +58,12 @@ vault:
 # Environment label
 environment: "default"
 
+# Prometheus scrape (Plane A — auto-register in shared Grafana)
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/actuator/prometheus"
+
 # Key application environment variables (non-secret defaults)
 # Secrets (auth credentials) are injected by Vault in preprod/prod
 env:
@@ -72,4 +78,5 @@ env:
   AM_TOOLS_ANALYSIS_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces"
-  TRACING_SAMPLING_PROBABILITY: "0.1"
+  # 1.0 while validating flows in Tempo; dial back to 0.1 when comfortable
+  TRACING_SAMPLING_PROBABILITY: "1.0"

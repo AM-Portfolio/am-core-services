@@ -60,8 +60,9 @@
         <module>libraries/am-market-client-lib</module>
         <module>libraries/am-trade-client-lib</module>
         <module>libraries/am-portfolio-client-lib</module>
-        <module>libraries/am-analysis-client-lib</module>
+        <!-- Generated OpenAPI client BEFORE wrapper lib that depends on it -->
         <module>services/am-analysis/am-analysis-sdk/java-sdk</module>
+        <module>libraries/am-analysis-client-lib</module>
         <module>libraries/am-scheduler-logbook-lib</module>
         
         <!-- Domain Layer -->

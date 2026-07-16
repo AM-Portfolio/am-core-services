@@ -68,6 +68,9 @@ public class KafkaConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        // Emit a consumer span per received record so Kafka hops appear in Tempo
+        // and are tied to the producing trace via propagated headers.
+        factory.getContainerProperties().setObservationEnabled(true);
         return factory;
     }
 
@@ -89,6 +92,11 @@ public class KafkaConsumerConfig {
 
     @Bean
     public org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate() {
-        return new org.springframework.kafka.core.KafkaTemplate<>(producerFactory());
+        org.springframework.kafka.core.KafkaTemplate<String, String> template =
+                new org.springframework.kafka.core.KafkaTemplate<>(producerFactory());
+        // Emit a producer span per send; the ObservationRegistry bean is picked
+        // up from the application context automatically.
+        template.setObservationEnabled(true);
+        return template;
     }
 }

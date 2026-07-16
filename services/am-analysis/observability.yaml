@@ -1,0 +1,17 @@
+apiVersion: am.obs/v1
+kind: ServiceObservability
+service: am-analysis
+tier: A
+runtime: java
+k8s_app_label: am-analysis
+metrics_application: am-analysis
+namespace: am-apps-preprod
+owners: [core-services]
+signals:
+  bundle: tier-a-java-core
+  domain: [orchestrator_events_total, dashboard_widget_publish_total, portfolio_stream_publish_total]
+  include: []
+dashboard:
+  technical:
+    rows:
+      collapse: [row_jvm, row_k8s]

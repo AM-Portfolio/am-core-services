@@ -1,5 +1,6 @@
 package com.am.gateway.config;
 
+import com.am.gateway.metrics.GatewayBusinessMetrics;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.stomp.StompTracingChannelInterceptor;
@@ -37,6 +38,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompTracingChannelInterceptor stompTracingInterceptor;
     private final FlowLogger flowLogger;
+    private final GatewayBusinessMetrics businessMetrics;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -70,8 +72,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                if (accessor == null || accessor.getCommand() == null) {
+                    return message;
+                }
 
-                if (accessor == null || !StompCommand.CONNECT.equals(accessor.getCommand())) {
+                if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                    businessMetrics.sessionDisconnected();
+                    return message;
+                }
+
+                if (!StompCommand.CONNECT.equals(accessor.getCommand())) {
                     return message;
                 }
 
@@ -83,6 +93,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     String token = extractToken(accessor);
                     
                     if (token == null) {
+                        businessMetrics.stompConnect("failure");
                         flowLogger.fail(span, null, "reason", "missing_authorization");
                         log.warn("STOMP Connect rejected: Missing Authorization for session {}", sessionId);
                         throw new IllegalArgumentException("Unauthorized: Missing token");
@@ -98,12 +109,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         // 3. Bind User to Session
                         Principal userPrincipal = () -> userId;
                         accessor.setUser(userPrincipal);
-                        
+
+                        businessMetrics.stompConnect("success");
+                        businessMetrics.sessionConnected();
                         flowLogger.complete(span, "userId", userId);
                         log.info("STOMP Session {} authenticated for User {}", sessionId, userId);
                         return message;
 
                     } catch (Exception e) {
+                        businessMetrics.stompConnect("failure");
                         flowLogger.fail(span, e, "reason", "invalid_token");
                         log.error("STOMP Connect rejected: Invalid token for session {}. Error: {}", sessionId, e.getMessage());
                         throw new IllegalArgumentException("Unauthorized: Invalid token");

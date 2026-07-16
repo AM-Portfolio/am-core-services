@@ -9,6 +9,7 @@ import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.kafka.config.InterestRegistryKeys;
 import com.am.kafka.config.KafkaTopics;
 import com.am.kafka.service.InterestRegistryService;
+import com.am.analysis.metrics.AnalysisBusinessMetrics;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.portfolio.domain.events.PortfolioUpdateEvent;
@@ -39,6 +40,7 @@ public class PortfolioStreamingService {
     private final FlowLogger flowLogger;
     private final InterestRegistryService interestRegistry;
     private final PortfolioStreamingProperties properties;
+    private final AnalysisBusinessMetrics businessMetrics;
 
     /**
      * Load entity, optionally overlay live tick prices, map to event, publish Kafka.
@@ -131,8 +133,10 @@ public class PortfolioStreamingService {
                 kafkaTemplate.send(KafkaTopics.PORTFOLIO_STREAM, userId, payload);
                 int holdings = event.getEquities() != null ? event.getEquities().size() : 0;
                 flowLogger.complete(span, "payload_bytes", payload.length(), "holdings", holdings);
+                businessMetrics.portfolioStreamPublish("success");
             } catch (JsonProcessingException e) {
                 flowLogger.fail(span, e);
+                businessMetrics.portfolioStreamPublish("failure");
             }
         }
     }

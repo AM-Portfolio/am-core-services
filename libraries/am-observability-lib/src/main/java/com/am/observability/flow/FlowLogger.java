@@ -1,6 +1,8 @@
 package com.am.observability.flow;
 
 import com.am.observability.mdc.MdcKeys;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +35,16 @@ public final class FlowLogger {
     private static final Logger LOG = LoggerFactory.getLogger(FlowLogger.class);
 
     private final Tracer tracer;
+    private final ObservationRegistry observationRegistry;
     private final String serviceName;
 
     public FlowLogger(Tracer tracer, String serviceName) {
+        this(tracer, ObservationRegistry.NOOP, serviceName);
+    }
+
+    public FlowLogger(Tracer tracer, ObservationRegistry observationRegistry, String serviceName) {
         this.tracer = tracer;
+        this.observationRegistry = observationRegistry == null ? ObservationRegistry.NOOP : observationRegistry;
         this.serviceName = serviceName;
     }
 
@@ -68,7 +76,15 @@ public final class FlowLogger {
             fields.putIfAbsent("user", userId);
         }
 
-        FlowSpan span = new FlowSpan(this, stepName, startNanos, prior, fields);
+        Observation observation = Observation.createNotStarted(stepName, observationRegistry)
+                .contextualName(stepName)
+                .lowCardinalityKeyValue("service", serviceName);
+        observation.start();
+        // Open scope on the calling thread so downstream client spans (HTTP,
+        // Kafka, Mongo, Redis) nest under this flow step in Tempo.
+        Observation.Scope scope = observation.openScope();
+
+        FlowSpan span = new FlowSpan(this, stepName, startNanos, prior, fields, observation, scope);
         emit(stepName, "start", null, fields, null);
         return span;
     }
@@ -91,6 +107,7 @@ public final class FlowLogger {
         long elapsed = span.elapsedMillis();
         Map<String, String> fields = mergeFields(span.initialFields(), toMap(kv));
         emit(span.stepName(), "ok", elapsed, fields, null);
+        span.stopObservation(null);
         span.markClosed();
     }
 
@@ -110,6 +127,7 @@ public final class FlowLogger {
             }
         }
         emit(span.stepName(), "err", elapsed, fields, cause);
+        span.stopObservation(cause);
         span.markClosed();
     }
 
@@ -120,6 +138,7 @@ public final class FlowLogger {
     void autoComplete(FlowSpan span) {
         long elapsed = span.elapsedMillis();
         emit(span.stepName(), "ok", elapsed, span.initialFields(), null);
+        span.stopObservation(null);
         span.markClosed();
     }
 

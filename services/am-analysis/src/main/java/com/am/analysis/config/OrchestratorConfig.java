@@ -1,6 +1,7 @@
 package com.am.analysis.config;
 
 import com.am.analysis.service.orchestrator.DemandDrivenOrchestrator;
+import com.am.analysis.metrics.AnalysisBusinessMetrics;
 import com.am.kafka.service.InterestRegistryService;
 import com.am.kafka.service.PreviousCloseRedisService;
 import com.am.observability.flow.FlowLogger;
@@ -39,13 +40,12 @@ public class OrchestratorConfig {
             com.am.analysis.config.PortfolioStreamingProperties portfolioStreamingProperties,
             PreviousCloseRedisService previousCloseRedisService,
             com.am.analysis.service.bootstrap.PortfolioBootstrapTrigger portfolioBootstrapTrigger,
-            com.am.analysis.service.bootstrap.TriggerCalculationPublisher triggerCalculationPublisher) {
+            com.am.analysis.service.bootstrap.TriggerCalculationPublisher triggerCalculationPublisher,
+            AnalysisBusinessMetrics businessMetrics) {
         return new DemandDrivenOrchestrator(interestRegistryService, objectMapper,
                 portfolioBootstrapTrigger, triggerCalculationPublisher,
                 flowLogger, tracingHelper, dashboardAnalysisService,
-                portfolioStreamingService, portfolioStreamingProperties, previousCloseRedisService);
+                portfolioStreamingService, portfolioStreamingProperties, previousCloseRedisService,
+                businessMetrics);
     }
 }
-
-
-// test

@@ -19,6 +19,7 @@ import com.am.analysis.dto.RecentActivityResponse;
 import com.am.analysis.dto.PerformanceResponse;
 import com.am.analysis.dto.TopMoversResponse;
 import com.am.analysis.service.aggregator.AnalysisAggregator;
+import com.am.analysis.metrics.AnalysisBusinessMetrics;
 import com.am.analysis.service.impl.AllocationAnalysisService;
 import com.am.analysis.service.impl.PerformanceAnalysisService;
 import com.am.analysis.service.impl.TopMoversAnalysisService;
@@ -53,6 +54,7 @@ public class DashboardAnalysisService {
     private final TopMoversAnalysisService topMoversService;
     private final PerformanceAnalysisService performanceService;
     private final GlobalPortfolioResolver globalPortfolioResolver;
+    private final AnalysisBusinessMetrics businessMetrics;
 
     public DashboardSummary getSummary(String userId) {
         return snapshotService.load(userId, DashboardWidgetType.SUMMARY, DashboardSummary.class)
@@ -333,11 +335,14 @@ public class DashboardAnalysisService {
                     kafkaTemplate.send(KafkaTopics.DASHBOARD_HISTORY_UPDATE, userId, payload);
 
                     flowLogger.complete(span, "payload_bytes", payload.length());
+                    businessMetrics.dashboardWidgetPublish("history", "success");
                 } else {
                     flowLogger.fail(span, null, "reason", "null_history");
+                    businessMetrics.dashboardWidgetPublish("history", "failure");
                 }
             } catch (Exception e) {
                 flowLogger.fail(span, e);
+                businessMetrics.dashboardWidgetPublish("history", "failure");
             }
         }
     }
@@ -359,11 +364,14 @@ public class DashboardAnalysisService {
                     kafkaTemplate.send(KafkaTopics.DASHBOARD_SUMMARY_UPDATE, userId, payload);
                     
                     flowLogger.complete(span, "payload_bytes", payload.length());
+                    businessMetrics.dashboardWidgetPublish("summary", "success");
                 } else {
                     flowLogger.fail(span, null, "reason", "null_summary");
+                    businessMetrics.dashboardWidgetPublish("summary", "failure");
                 }
             } catch (Exception e) {
                 flowLogger.fail(span, e);
+                businessMetrics.dashboardWidgetPublish("summary", "failure");
             }
         }
     }
@@ -386,11 +394,14 @@ public class DashboardAnalysisService {
                     kafkaTemplate.send(KafkaTopics.DASHBOARD_ACTIVITY_UPDATE, userId, payload);
                     
                     flowLogger.complete(span, "payload_bytes", payload.length());
+                    businessMetrics.dashboardWidgetPublish("activity", "success");
                 } else {
                     flowLogger.fail(span, null, "reason", "null_activity");
+                    businessMetrics.dashboardWidgetPublish("activity", "failure");
                 }
             } catch (Exception e) {
                 flowLogger.fail(span, e);
+                businessMetrics.dashboardWidgetPublish("activity", "failure");
             }
         }
     }
@@ -412,11 +423,14 @@ public class DashboardAnalysisService {
                     kafkaTemplate.send(KafkaTopics.DASHBOARD_ALLOCATION_UPDATE, userId, payload);
                     
                     flowLogger.complete(span, "payload_bytes", payload.length());
+                    businessMetrics.dashboardWidgetPublish("allocation", "success");
                 } else {
                     flowLogger.fail(span, null, "reason", "null_allocation");
+                    businessMetrics.dashboardWidgetPublish("allocation", "failure");
                 }
             } catch (Exception e) {
                 flowLogger.fail(span, e);
+                businessMetrics.dashboardWidgetPublish("allocation", "failure");
             }
         }
     }
@@ -438,11 +452,14 @@ public class DashboardAnalysisService {
                     kafkaTemplate.send(KafkaTopics.DASHBOARD_MOVERS_UPDATE, userId, payload);
                     
                     flowLogger.complete(span, "payload_bytes", payload.length());
+                    businessMetrics.dashboardWidgetPublish("movers", "success");
                 } else {
                     flowLogger.fail(span, null, "reason", "null_movers");
+                    businessMetrics.dashboardWidgetPublish("movers", "failure");
                 }
             } catch (Exception e) {
                 flowLogger.fail(span, e);
+                businessMetrics.dashboardWidgetPublish("movers", "failure");
             }
         }
     }

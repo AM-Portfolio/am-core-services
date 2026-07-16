@@ -75,6 +75,8 @@ public class SecurityAutoConfiguration {
         if (isMockEnabled) {
             http.addFilterBefore(new LocalMockUserContextFilter(properties.getLocalMock()), UsernamePasswordAuthenticationFilter.class);
         } else {
+            // Populate UserContext from Bearer claims so controllers can call UserContext.getUserIdOrThrow()
+            http.addFilterBefore(new com.am.security.context.UserContextFilter(), UsernamePasswordAuthenticationFilter.class);
             JwtDecoder jwtDecoder = jwtDecoderProvider.getIfAvailable();
             if (jwtDecoder != null) {
                 http.oauth2ResourceServer(oauth2 -> oauth2

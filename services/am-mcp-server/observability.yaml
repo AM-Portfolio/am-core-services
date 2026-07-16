@@ -1,0 +1,17 @@
+apiVersion: am.obs/v1
+kind: ServiceObservability
+service: am-mcp-server
+tier: A
+runtime: java
+k8s_app_label: am-mcp-server
+metrics_application: am-mcp-server
+namespace: am-apps-preprod
+owners: [core-services]
+signals:
+  bundle: tier-a-java-core
+  domain: [tool_invocations_total, tool_duration_p95]
+  include: []
+dashboard:
+  technical:
+    rows:
+      collapse: [row_jvm, row_k8s]
