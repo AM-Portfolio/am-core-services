@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!-- Trigger CI build: application tag customizer v1.1.3 -->
+    <!-- Trigger CI build: JWT MDC user attribution v1.1.2-SNAPSHOT -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -16,6 +16,7 @@
 
     <groupId>com.am.libraries</groupId>
     <artifactId>am-observability-lib</artifactId>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>AM Observability Library</name>
     <description>Distributed tracing (Micrometer + OTel W3C), Prometheus metrics, and JSON structured logging for AM services</description>

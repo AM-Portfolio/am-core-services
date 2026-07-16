@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.MDC;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,8 @@ public class LocalMockUserContextFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        boolean putUserId = false;
             
         // If real security (like a real JWT filter) already populated the context, do not override
         if (UserContext.getUserProfile() == null) {
@@ -40,6 +43,7 @@ public class LocalMockUserContextFilter extends OncePerRequestFilter {
                     .build();
             
             UserContext.setUserProfile(mockProfile);
+            putUserId = UserContextFilter.putUserIdInMdc(request, mockProps.getUserId());
 
             // Populate Spring Security Context so @PreAuthorize works
             if (SecurityContextHolder.getContext().getAuthentication() == null && mockProps.getRoles() != null) {
@@ -61,6 +65,9 @@ public class LocalMockUserContextFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } finally {
+            if (putUserId) {
+                MDC.remove(UserContextFilter.MDC_USER_ID);
+            }
             UserContext.clear();
             SecurityContextHolder.clearContext();
         }

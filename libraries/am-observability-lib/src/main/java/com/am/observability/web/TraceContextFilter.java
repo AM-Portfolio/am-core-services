@@ -34,6 +34,9 @@ public class TraceContextFilter extends OncePerRequestFilter implements Ordered 
     public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String HEADER_USER_ID = "X-User-Id";
 
+    /** Request attribute set by am-security-lib when JWT {@code sub} is resolved. */
+    public static final String REQUEST_ATTR_USER_ID = "am.observability.userId";
+
     public static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 50;
 
     private final TracingHelper tracingHelper;
@@ -84,6 +87,7 @@ public class TraceContextFilter extends OncePerRequestFilter implements Ordered 
             String userId = resolveUserId(request);
             if (userId != null && !userId.isBlank()) {
                 MDC.put(MdcKeys.USER_ID, userId);
+                request.setAttribute(REQUEST_ATTR_USER_ID, userId);
                 putUser = true;
             }
 
