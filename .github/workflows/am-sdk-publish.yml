@@ -7,6 +7,7 @@ on:
   push:
     branches: [main, master, 'feature/**', 'hotfix/**', 'fix/**']
     paths:
+      - "pom.xml"
       - "libraries/am-analysis-client-lib/**"
       - "libraries/am-market-client-lib/**"
       - "libraries/am-portfolio-client-lib/**"
@@ -15,6 +16,7 @@ on:
       - ".github/workflows/am-sdk-publish.yml"
   pull_request:
     paths:
+      - "pom.xml"
       - "libraries/am-analysis-client-lib/**"
       - "libraries/am-market-client-lib/**"
       - "libraries/am-portfolio-client-lib/**"
@@ -24,7 +26,7 @@ on:
   workflow_run:
     workflows: ["Core Libraries Publish"]
     types: [completed]
-    branches: [main, master, 'hotfix/**', 'fix/**']
+    branches: [main, master, 'feature/**', 'hotfix/**', 'fix/**']
   workflow_dispatch:
 
 concurrency:
@@ -102,27 +104,40 @@ jobs:
           echo "Changed files:"
           echo "$CHANGED"
 
-          sdk() {
-            local prefix="$1"
-            local key="$2"
-            if echo "$CHANGED" | grep -q "^${prefix}/"; then
-              echo "${key}=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "${key}=false" >> "$GITHUB_OUTPUT"
-            fi
-          }
+          path_changed() { echo "$CHANGED" | grep -q "^$1"; }
 
-          sdk "services/am-analysis/am-analysis-sdk" "analysis-client-sdk"
-          sdk "libraries/am-analysis-client-lib" "analysis-client-lib"
-          sdk "libraries/am-market-client-lib" "market-client-lib"
-          sdk "libraries/am-portfolio-client-lib" "portfolio-client-lib"
-          sdk "libraries/am-trade-client-lib" "trade-client-lib"
+          root_pom=false
+          analysis_client_sdk=false
+          analysis_client_lib=false
+          market_client_lib=false
+          portfolio_client_lib=false
+          trade_client_lib=false
 
-          if grep -q '^analysis-client-lib=true' "$GITHUB_OUTPUT"; then
-            echo "analysis-client-sdk=true" >> "$GITHUB_OUTPUT"
+          path_changed "pom.xml" && root_pom=true
+          path_changed "services/am-analysis/am-analysis-sdk/" && analysis_client_sdk=true
+          path_changed "libraries/am-analysis-client-lib/" && analysis_client_lib=true
+          path_changed "libraries/am-market-client-lib/" && market_client_lib=true
+          path_changed "libraries/am-portfolio-client-lib/" && portfolio_client_lib=true
+          path_changed "libraries/am-trade-client-lib/" && trade_client_lib=true
+
+          # am-analysis-client-lib wraps the generated am-analysis-client. Build/publish
+          # both when either side or the root reactor POM changes; no dummy lib edit needed.
+          if [ "$root_pom" = true ] || [ "$analysis_client_sdk" = true ] || [ "$analysis_client_lib" = true ]; then
+            analysis_client_sdk=true
+            analysis_client_lib=true
           fi
 
-          if grep -q '=true$' "$GITHUB_OUTPUT"; then
+          echo "analysis-client-sdk=${analysis_client_sdk}" >> "$GITHUB_OUTPUT"
+          echo "analysis-client-lib=${analysis_client_lib}" >> "$GITHUB_OUTPUT"
+          echo "market-client-lib=${market_client_lib}" >> "$GITHUB_OUTPUT"
+          echo "portfolio-client-lib=${portfolio_client_lib}" >> "$GITHUB_OUTPUT"
+          echo "trade-client-lib=${trade_client_lib}" >> "$GITHUB_OUTPUT"
+
+          if [ "$analysis_client_sdk" = true ] \
+            || [ "$analysis_client_lib" = true ] \
+            || [ "$market_client_lib" = true ] \
+            || [ "$portfolio_client_lib" = true ] \
+            || [ "$trade_client_lib" = true ]; then
             echo "any=true" >> "$GITHUB_OUTPUT"
           else
             echo "any=false" >> "$GITHUB_OUTPUT"
