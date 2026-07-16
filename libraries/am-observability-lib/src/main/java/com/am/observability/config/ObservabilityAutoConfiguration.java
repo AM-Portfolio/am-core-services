@@ -14,11 +14,13 @@ import com.am.observability.trace.TracingHelper;
 import com.am.observability.web.RequestLoggingFilter;
 import com.am.observability.web.TraceContextFilter;
 import feign.RequestInterceptor;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -83,6 +85,19 @@ public class ObservabilityAutoConfiguration {
     @ConditionalOnClass(MeterFilter.class)
     public MeterFilter amObservabilityMetricNameMappingFilter(ObservabilityProperties properties) {
         return new MetricNameMappingFilter(properties.getMetrics().getMap());
+    }
+
+    /**
+     * Adds the {@code application} common tag required by Grafana Service
+     * discovery ({@code label_values(jvm_memory_used_bytes, application)}).
+     * Matches portfolio-app's {@code management.metrics.tags.application}.
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "amObservabilityApplicationTagCustomizer")
+    @ConditionalOnClass(MeterRegistry.class)
+    public MeterRegistryCustomizer<MeterRegistry> amObservabilityApplicationTagCustomizer(
+            @Value("${spring.application.name:am-service}") String serviceName) {
+        return registry -> registry.config().commonTags("application", serviceName);
     }
 
     // ---------------- Web ----------------
