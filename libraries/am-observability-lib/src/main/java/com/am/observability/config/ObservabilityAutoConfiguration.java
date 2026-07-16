@@ -7,12 +7,14 @@ import com.am.observability.http.TraceContextSdkInterceptor;
 import com.am.observability.kafka.TracingKafkaConsumerInterceptor;
 import com.am.observability.kafka.TracingKafkaProducerInterceptor;
 import com.am.observability.mdc.MdcTaskDecorator;
+import com.am.observability.metrics.MetricNameMappingFilter;
 import com.am.observability.sanitize.Sanitizer;
 import com.am.observability.stomp.StompTracingChannelInterceptor;
 import com.am.observability.trace.TracingHelper;
 import com.am.observability.web.RequestLoggingFilter;
 import com.am.observability.web.TraceContextFilter;
 import feign.RequestInterceptor;
+import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import org.springframework.beans.factory.ObjectProvider;
@@ -69,6 +71,18 @@ public class ObservabilityAutoConfiguration {
     @ConditionalOnMissingBean(name = "amObservabilityTaskDecorator")
     public TaskDecorator amObservabilityTaskDecorator() {
         return new MdcTaskDecorator();
+    }
+
+    /**
+     * Remaps local Micrometer meter names to canonical concept names used by
+     * shared Grafana domain tiles. Spring Boot applies all {@link MeterFilter}
+     * beans to the managed {@code MeterRegistry}. Empty map is a no-op.
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "amObservabilityMetricNameMappingFilter")
+    @ConditionalOnClass(MeterFilter.class)
+    public MeterFilter amObservabilityMetricNameMappingFilter(ObservabilityProperties properties) {
+        return new MetricNameMappingFilter(properties.getMetrics().getMap());
     }
 
     // ---------------- Web ----------------

@@ -4,7 +4,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Binds {@code am.observability.*} properties. All knobs default to sensible
@@ -29,6 +31,11 @@ public class ObservabilityProperties {
      * Sanitiser settings.
      */
     private Sanitize sanitize = new Sanitize();
+
+    /**
+     * Micrometer meter rename map (local name → canonical Micrometer name).
+     */
+    private Metrics metrics = new Metrics();
 
     @Data
     public static class RequestLog {
@@ -60,5 +67,15 @@ public class ObservabilityProperties {
          * Additional field names to mask, on top of the built-in list.
          */
         private List<String> extraFields = new ArrayList<>();
+    }
+
+    @Data
+    public static class Metrics {
+        /**
+         * Exact Micrometer meter-name remaps (local → canonical). Empty = no-op.
+         * Example: {@code abc: websocket.sessions.active}
+         * Use Micrometer dotted names, not Prometheus underscores.
+         */
+        private Map<String, String> map = new LinkedHashMap<>();
     }
 }
