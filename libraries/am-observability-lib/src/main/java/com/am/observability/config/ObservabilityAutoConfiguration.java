@@ -13,6 +13,7 @@ import com.am.observability.trace.TracingHelper;
 import com.am.observability.web.RequestLoggingFilter;
 import com.am.observability.web.TraceContextFilter;
 import feign.RequestInterceptor;
+import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,8 +50,12 @@ public class ObservabilityAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public FlowLogger flowLogger(ObjectProvider<Tracer> tracerProvider,
+                                  ObjectProvider<ObservationRegistry> observationRegistryProvider,
                                   @Value("${spring.application.name:am-service}") String serviceName) {
-        return new FlowLogger(tracerProvider.getIfAvailable(), serviceName);
+        return new FlowLogger(
+                tracerProvider.getIfAvailable(),
+                observationRegistryProvider.getIfAvailable(() -> ObservationRegistry.NOOP),
+                serviceName);
     }
 
     @Bean
