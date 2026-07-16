@@ -10,6 +10,7 @@ import com.am.analysis.adapter.model.components.MarketStats;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.config.PortfolioStreamingProperties;
+import com.am.analysis.metrics.AnalysisBusinessMetrics;
 import com.am.analysis.service.LivePriceTick;
 import com.am.kafka.config.AnalysisEntityKeys;
 import com.am.kafka.config.KafkaTopics;
@@ -56,6 +57,8 @@ class PortfolioStreamingServiceTest {
     private FlowLogger flowLogger;
     @Mock
     private InterestRegistryService interestRegistry;
+    @Mock
+    private AnalysisBusinessMetrics businessMetrics;
 
     private AnalysisEventMapper analysisEventMapper;
     private PortfolioStreamingProperties properties;
@@ -74,7 +77,8 @@ class PortfolioStreamingServiceTest {
                 objectMapper,
                 flowLogger,
                 interestRegistry,
-                properties);
+                properties,
+                businessMetrics);
 
         lenient().when(flowLogger.start(anyString(), any(Object[].class)))
                 .thenReturn(mock(FlowSpan.class, RETURNS_DEEP_STUBS));

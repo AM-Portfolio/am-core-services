@@ -14,6 +14,8 @@ import com.am.analysis.service.LivePriceTick;
 
 import com.am.analysis.service.PortfolioStreamingService;
 
+import com.am.analysis.metrics.AnalysisBusinessMetrics;
+
 import com.am.common.investment.model.equity.EquityPrice;
 
 import com.am.common.investment.model.events.EquityPriceUpdateEvent;
@@ -100,6 +102,8 @@ public class DemandDrivenOrchestrator {
 
     private final PreviousCloseRedisService previousCloseRedisService;
 
+    private final AnalysisBusinessMetrics businessMetrics;
+
 
 
     private static final long DEBOUNCE_WINDOW_MS = 2_000;
@@ -159,10 +163,12 @@ public class DemandDrivenOrchestrator {
                         "action", event.getAction(),
 
                         "userId", event.getUserId());
+                businessMetrics.orchestratorEvent("user_watching", "success");
 
             } catch (Exception e) {
 
                 flowLogger.fail(span, e);
+                businessMetrics.orchestratorEvent("user_watching", "failure");
 
             }
 
@@ -187,6 +193,7 @@ public class DemandDrivenOrchestrator {
             triggerDashboardUpdatesForActiveWatchers(liveTicks);
 
             flowLogger.complete(span, "symbols", liveTicks.size());
+            businessMetrics.orchestratorEvent("stock_update", "success");
 
         }
 
@@ -223,6 +230,7 @@ public class DemandDrivenOrchestrator {
         if (activeUsers.isEmpty()) {
 
             flowLogger.step("analysis.orchestrator.no_active_watchers", "source", source);
+            businessMetrics.orchestratorEvent("stock_update", "no_watchers");
 
             return;
 
@@ -273,6 +281,7 @@ public class DemandDrivenOrchestrator {
                     "portfolioId", debounceKey,
 
                     "window_ms", DEBOUNCE_WINDOW_MS);
+            businessMetrics.orchestratorEvent("portfolio_stream", "debounced");
 
             return;
 
@@ -285,6 +294,7 @@ public class DemandDrivenOrchestrator {
             flowLogger.step("analysis.orchestrator.no_watchers",
 
                     "portfolioId", portfolioId);
+            businessMetrics.orchestratorEvent("portfolio_stream", "no_watchers");
 
             return;
 
@@ -295,6 +305,7 @@ public class DemandDrivenOrchestrator {
         lastTriggerMap.put(debounceKey, now);
 
         portfolioStreamingService.publishPortfolioStream(userId, portfolioId, liveTicks);
+        businessMetrics.orchestratorEvent("portfolio_stream", "triggered");
 
     }
 

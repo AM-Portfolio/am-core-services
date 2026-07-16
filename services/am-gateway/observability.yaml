@@ -10,7 +10,7 @@ namespace: am-apps-preprod
 owners: [core-services]
 signals:
   bundle: tier-a-java-core
-  domain: []
+  domain: [gateway_websocket_sessions_active, gateway_stomp_connect_total, gateway_kafka_relay_messages_total]
   include: []
 # Plane C optional — gateway has no Mongo; hide that row on a service view:
 dashboard:

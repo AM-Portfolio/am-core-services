@@ -1,5 +1,6 @@
 package com.am.gateway.service;
 
+import com.am.gateway.metrics.GatewayBusinessMetrics;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.sanitize.Sanitizer;
@@ -22,6 +23,7 @@ public class KafkaRelayService {
     private final com.am.analysis.adapter.mapper.AnalysisEventMapper analysisEventMapper;
     private final FlowLogger flowLogger;
     private final Sanitizer sanitizer;
+    private final GatewayBusinessMetrics businessMetrics;
 
     @KafkaListener(topics = com.am.kafka.config.KafkaTopics.STOCK_UPDATE, groupId = "am-gateway-stock-group")
     public void handleStockUpdate(String message) {
@@ -41,9 +43,11 @@ public class KafkaRelayService {
                     }
                 }
                 flowLogger.complete(span, "prices", count);
+                businessMetrics.kafkaRelay("stock", "success");
             } catch (Exception e) {
                 log.debug("Stock update parse failed, preview={}", sanitizer.preview(message));
                 flowLogger.fail(span, e);
+                businessMetrics.kafkaRelay("stock", "failure");
             }
         }
     }
@@ -63,6 +67,7 @@ public class KafkaRelayService {
 
                 if (event.getUserId() == null) {
                     flowLogger.fail(span, null, "reason", "missing_userId");
+                    businessMetrics.kafkaRelay("portfolio", "failure");
                     return;
                 }
                 String userId = event.getUserId();
@@ -80,9 +85,11 @@ public class KafkaRelayService {
                         "userId", userId,
                         "portfolioId", portfolioId != null ? portfolioId : "ALL",
                         "holdings", holdingCount);
+                businessMetrics.kafkaRelay("portfolio", "success");
             } catch (Exception e) {
                 log.debug("Portfolio update parse/dispatch failed, preview={}", sanitizer.preview(message));
                 flowLogger.fail(span, e);
+                businessMetrics.kafkaRelay("portfolio", "failure");
             }
         }
     }
@@ -96,14 +103,17 @@ public class KafkaRelayService {
                 if (!node.has("userId")) {
                     flowLogger.fail(span, null, "reason", "missing_userId");
                     log.debug("Trade update preview={}", sanitizer.preview(message));
+                    businessMetrics.kafkaRelay("trade", "failure");
                     return;
                 }
                 String userId = node.get("userId").asText();
                 messagingTemplate.convertAndSendToUser(userId, "/queue/trade", message);
                 flowLogger.complete(span, "userId", userId);
+                businessMetrics.kafkaRelay("trade", "success");
             } catch (Exception e) {
                 log.debug("Trade update parse failed, preview={}", sanitizer.preview(message));
                 flowLogger.fail(span, e);
+                businessMetrics.kafkaRelay("trade", "failure");
             }
         }
     }
@@ -116,14 +126,17 @@ public class KafkaRelayService {
                 JsonNode node = objectMapper.readTree(message);
                 if (!node.has("userId")) {
                     flowLogger.fail(span, null, "reason", "missing_userId");
+                    businessMetrics.kafkaRelay("dashboard", "failure");
                     return;
                 }
                 String userId = node.get("userId").asText();
                 messagingTemplate.convertAndSend("/topic/dashboard/" + userId, message);
                 flowLogger.complete(span, "userId", userId);
+                businessMetrics.kafkaRelay("dashboard", "success");
             } catch (Exception e) {
                 log.debug("Dashboard update parse failed, preview={}", sanitizer.preview(message));
                 flowLogger.fail(span, e);
+                businessMetrics.kafkaRelay("dashboard", "failure");
             }
         }
     }
@@ -154,11 +167,13 @@ public class KafkaRelayService {
     }
 
     private void relayDashboardWidget(String message, String destination, String spanName) {
+        String destTag = destinationTag(destination);
         try (FlowSpan span = flowLogger.start(spanName, "payload_bytes", message == null ? 0 : message.length())) {
             try {
                 JsonNode node = objectMapper.readTree(message);
                 if (!node.has("userId")) {
                     flowLogger.fail(span, null, "reason", "missing_userId");
+                    businessMetrics.kafkaRelay(destTag, "failure");
                     return;
                 }
                 String userId = node.get("userId").asText();
@@ -169,10 +184,20 @@ public class KafkaRelayService {
                         "destination", destination);
                 messagingTemplate.convertAndSendToUser(userId, destination, dataNode);
                 flowLogger.complete(span, "userId", userId, "destination", destination);
+                businessMetrics.kafkaRelay(destTag, "success");
             } catch (Exception e) {
                 log.error("Failed to relay dashboard widget to {}", destination, e);
                 flowLogger.fail(span, e);
+                businessMetrics.kafkaRelay(destTag, "failure");
             }
         }
+    }
+
+    private static String destinationTag(String destination) {
+        if (destination == null) {
+            return "dashboard_unknown";
+        }
+        int slash = destination.lastIndexOf('/');
+        return slash >= 0 ? "dashboard_" + destination.substring(slash + 1) : destination;
     }
 }

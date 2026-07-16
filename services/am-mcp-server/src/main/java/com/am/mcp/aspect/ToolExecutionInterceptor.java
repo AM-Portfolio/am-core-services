@@ -1,5 +1,6 @@
 package com.am.mcp.aspect;
 
+import com.am.mcp.metrics.McpBusinessMetrics;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.mdc.MdcKeys;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 public class ToolExecutionInterceptor {
 
     private final FlowLogger flowLogger;
+    private final McpBusinessMetrics businessMetrics;
 
     @Around("@annotation(org.springframework.ai.tool.annotation.Tool)")
     public Object traceToolExecution(ProceedingJoinPoint pjp) throws Throwable {
@@ -45,6 +47,7 @@ public class ToolExecutionInterceptor {
         MDC.put(MdcKeys.TOOL_NAME, toolName);
         MDC.put(MdcKeys.TOOL_ARGS_SIZE, String.valueOf(argSize));
 
+        long startNanos = System.nanoTime();
         try (FlowSpan span = flowLogger.start("mcp.tool.invoke",
                 "tool", toolName,
                 "class", toolClass,
@@ -55,9 +58,13 @@ public class ToolExecutionInterceptor {
                 flowLogger.complete(span,
                         "response_chars", chars,
                         "response_type", result == null ? "null" : result.getClass().getSimpleName());
+                businessMetrics.toolInvocation(toolName, "success");
+                businessMetrics.recordToolDuration(toolName, System.nanoTime() - startNanos);
                 return result;
             } catch (Throwable t) {
                 flowLogger.fail(span, t);
+                businessMetrics.toolInvocation(toolName, "failure");
+                businessMetrics.recordToolDuration(toolName, System.nanoTime() - startNanos);
                 throw t;
             }
         } finally {

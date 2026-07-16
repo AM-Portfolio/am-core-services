@@ -1,6 +1,7 @@
 package com.am.gateway.service;
 
 import com.am.analysis.adapter.mapper.AnalysisEventMapper;
+import com.am.gateway.metrics.GatewayBusinessMetrics;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.sanitize.Sanitizer;
@@ -35,6 +36,9 @@ class KafkaRelayServiceTest {
     @Mock
     private FlowLogger flowLogger;
 
+    @Mock
+    private GatewayBusinessMetrics businessMetrics;
+
     private KafkaRelayService relayService;
     private ObjectMapper objectMapper;
 
@@ -46,7 +50,8 @@ class KafkaRelayServiceTest {
                 objectMapper,
                 analysisEventMapper,
                 flowLogger,
-                new Sanitizer());
+                new Sanitizer(),
+                businessMetrics);
 
         FlowSpan span = mock(FlowSpan.class);
         when(flowLogger.start(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any()))
