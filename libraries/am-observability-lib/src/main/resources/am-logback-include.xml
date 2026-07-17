@@ -207,7 +207,6 @@
     <springProfile name="mcp-stdio">
         <root level="INFO">
             <appender-ref ref="JSON_STDERR"/>
-            <appender-ref ref="JSON_FILE"/>
         </root>
     </springProfile>
 
@@ -220,7 +219,6 @@
     <springProfile name="!mcp-stdio &amp; !logback-text &amp; !local">
         <root level="INFO">
             <appender-ref ref="JSON_STDOUT"/>
-            <appender-ref ref="JSON_FILE"/>
         </root>
     </springProfile>
 

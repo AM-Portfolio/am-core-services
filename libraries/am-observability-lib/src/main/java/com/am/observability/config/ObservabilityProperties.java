@@ -45,6 +45,11 @@ public class ObservabilityProperties {
         private boolean enabled = true;
 
         /**
+         * Log the HTTP JSON request and response payloads. Default false.
+         */
+        private boolean logPayloads = false;
+
+        /**
          * Ant-style paths to skip in the access log. Default skips actuator.
          */
         private List<String> ignorePaths = new ArrayList<>(List.of(

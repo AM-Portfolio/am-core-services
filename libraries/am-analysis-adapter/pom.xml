@@ -52,6 +52,26 @@
                     <groupId>am.trade</groupId>
                     <artifactId>am-trade-persistence</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.am.libraries</groupId>
+                    <artifactId>am-common-lib</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.am.domain</groupId>
+                    <artifactId>am-market-domain</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.am.libraries</groupId>
+                    <artifactId>am-kafka-lib</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.am.domain</groupId>
+                    <artifactId>am-portfolio-domain</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.am.libraries</groupId>
+                    <artifactId>am-api-core-lib</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
