@@ -16,6 +16,8 @@ resources:
 vault:
   enabled: true
   secretPaths:
+    otel:
+      path: "apps/data/dev/infra/observability"
     identity-oidc:
       path: "apps/data/dev/services/am-identity"
     service-oauth:

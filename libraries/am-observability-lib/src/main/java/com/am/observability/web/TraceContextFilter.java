@@ -11,12 +11,15 @@ import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.UUID;
 
 /**
  * Populates MDC with {@code traceId}, {@code spanId}, {@code service},
  * {@code correlationId}, {@code request.method}, {@code request.path},
- * and {@code userId} (when an {@code X-User-Id} header is present).
+ * and {@code userId}. Authenticated principals (including a Spring Security
+ * JWT's {@code sub}) take precedence over the legacy {@code X-User-Id}
+ * propagation header.
  *
  * <p>Runs <em>after</em> Spring Boot's auto-instrumented tracing filter so
  * that {@code tracer.currentSpan()} is already populated.</p>
@@ -30,6 +33,9 @@ public class TraceContextFilter extends OncePerRequestFilter implements Ordered 
     public static final String HEADER_CORRELATION_ID = "X-Correlation-Id";
     public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String HEADER_USER_ID = "X-User-Id";
+
+    /** Request attribute set by am-security-lib when JWT {@code sub} is resolved. */
+    public static final String REQUEST_ATTR_USER_ID = "am.observability.userId";
 
     public static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 50;
 
@@ -78,12 +84,10 @@ public class TraceContextFilter extends OncePerRequestFilter implements Ordered 
             putCorrelation = true;
             response.setHeader(HEADER_CORRELATION_ID, correlationId);
 
-            String userId = request.getHeader(HEADER_USER_ID);
-            if (userId == null || userId.isBlank()) {
-                userId = request.getParameter("userId");
-            }
+            String userId = resolveUserId(request);
             if (userId != null && !userId.isBlank()) {
                 MDC.put(MdcKeys.USER_ID, userId);
+                request.setAttribute(REQUEST_ATTR_USER_ID, userId);
                 putUser = true;
             }
 
@@ -111,6 +115,14 @@ public class TraceContextFilter extends OncePerRequestFilter implements Ordered 
             }
         }
         return null;
+    }
+
+    static String resolveUserId(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        if (principal != null && principal.getName() != null && !principal.getName().isBlank()) {
+            return principal.getName();
+        }
+        return firstNonBlank(request.getHeader(HEADER_USER_ID));
     }
 
     @Override

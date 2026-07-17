@@ -17,6 +17,8 @@ resources:
 vault:
   enabled: true
   secretPaths:
+    otel:
+      path: "apps/data/dev/infra/observability"
     kafka:
       path: "apps/data/dev/infra/kafka"
     redis:

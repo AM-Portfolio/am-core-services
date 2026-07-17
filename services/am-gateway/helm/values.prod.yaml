@@ -24,6 +24,8 @@ probes:
 vault:
   enabled: true
   secretPaths:
+    otel:
+      path: "apps/data/prod/infra/observability"
     kafka:
       path: "apps/data/prod/infra/kafka"
     redis:

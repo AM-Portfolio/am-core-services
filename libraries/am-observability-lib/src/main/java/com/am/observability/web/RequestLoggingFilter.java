@@ -63,6 +63,12 @@ public class RequestLoggingFilter extends OncePerRequestFilter implements Ordere
             try {
                 String method = request.getMethod();
                 String userId = MDC.get(MdcKeys.USER_ID);
+                if (userId == null || userId.isBlank()) {
+                    Object attr = request.getAttribute("am.observability.userId");
+                    if (attr instanceof String s && !s.isBlank()) {
+                        userId = s;
+                    }
+                }
                 String query = request.getQueryString();
                 String queryFragment = query == null ? "" : "?" + query;
                 String userFragment = userId == null ? "" : " user=" + userId;
