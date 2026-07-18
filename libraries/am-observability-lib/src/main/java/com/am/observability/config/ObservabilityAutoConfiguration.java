@@ -58,6 +58,18 @@ import java.util.Set;
 @EnableConfigurationProperties(ObservabilityProperties.class)
 public class ObservabilityAutoConfiguration {
 
+    public ObservabilityAutoConfiguration() {
+        try {
+            ch.qos.logback.classic.Logger mongoLogger = (ch.qos.logback.classic.Logger)
+                    org.slf4j.LoggerFactory.getLogger("org.springframework.data.mongodb.core.MongoTemplate");
+            if (mongoLogger != null) {
+                mongoLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
+            }
+        } catch (Throwable t) {
+            // Guard against ClassNotFound or cast exception if a non-logback system is used
+        }
+    }
+
     @Bean
     @ConditionalOnMissingBean
     public TracingHelper tracingHelper(ObjectProvider<Tracer> tracerProvider) {
@@ -273,6 +285,12 @@ public class ObservabilityAutoConfiguration {
             return io.lettuce.core.resource.DefaultClientResources.builder()
                     .tracing(new io.lettuce.core.tracing.MicrometerTracing(observationRegistry, "redis", true))
                     .build();
+        }
+
+        @Bean
+        public LettuceConnectionFactoryTracingPostProcessor lettuceConnectionFactoryTracingPostProcessor(
+                io.lettuce.core.resource.ClientResources clientResources) {
+            return new LettuceConnectionFactoryTracingPostProcessor(clientResources);
         }
     }
 }
