@@ -271,7 +271,7 @@ public class ObservabilityAutoConfiguration {
         @ConditionalOnMissingBean(io.lettuce.core.resource.ClientResources.class)
         public io.lettuce.core.resource.ClientResources lettuceClientResources(ObservationRegistry observationRegistry) {
             return io.lettuce.core.resource.DefaultClientResources.builder()
-                    .tracing(new io.lettuce.core.tracing.MicrometerTracing(observationRegistry, "redis"))
+                    .tracing(new io.lettuce.core.tracing.MicrometerTracing(observationRegistry, "redis", true))
                     .build();
         }
     }
