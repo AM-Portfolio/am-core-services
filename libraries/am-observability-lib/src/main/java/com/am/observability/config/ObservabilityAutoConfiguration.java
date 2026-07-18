@@ -47,11 +47,13 @@ import java.util.Set;
  * Spring Boot via the {@code AutoConfiguration.imports} file. Backs out
  * entirely when {@code am.observability.enabled=false}.
  */
-@AutoConfiguration(after = {
-    MongoAutoConfiguration.class,
-    RedisAutoConfiguration.class,
-    DataSourceAutoConfiguration.class
-})
+@AutoConfiguration(
+    before = { RedisAutoConfiguration.class },
+    after = {
+        MongoAutoConfiguration.class,
+        DataSourceAutoConfiguration.class
+    }
+)
 @ConditionalOnProperty(prefix = "am.observability", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(ObservabilityProperties.class)
 public class ObservabilityAutoConfiguration {
