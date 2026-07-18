@@ -288,9 +288,9 @@ public class ObservabilityAutoConfiguration {
         }
 
         @Bean
-        public LettuceConnectionFactoryTracingPostProcessor lettuceConnectionFactoryTracingPostProcessor(
-                io.lettuce.core.resource.ClientResources clientResources) {
-            return new LettuceConnectionFactoryTracingPostProcessor(clientResources);
+        public static LettuceConnectionFactoryTracingPostProcessor lettuceConnectionFactoryTracingPostProcessor(
+                org.springframework.beans.factory.ObjectProvider<io.lettuce.core.resource.ClientResources> clientResourcesProvider) {
+            return new LettuceConnectionFactoryTracingPostProcessor(clientResourcesProvider);
         }
     }
 }

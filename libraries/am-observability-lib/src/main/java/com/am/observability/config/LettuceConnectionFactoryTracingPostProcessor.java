@@ -23,10 +23,10 @@ public class LettuceConnectionFactoryTracingPostProcessor implements BeanPostPro
 
     private static final Logger log = LoggerFactory.getLogger(LettuceConnectionFactoryTracingPostProcessor.class);
     
-    private final ClientResources clientResources;
+    private final org.springframework.beans.factory.ObjectProvider<ClientResources> clientResourcesProvider;
 
-    public LettuceConnectionFactoryTracingPostProcessor(ClientResources clientResources) {
-        this.clientResources = clientResources;
+    public LettuceConnectionFactoryTracingPostProcessor(org.springframework.beans.factory.ObjectProvider<ClientResources> clientResourcesProvider) {
+        this.clientResourcesProvider = clientResourcesProvider;
     }
 
     @Override
@@ -42,6 +42,12 @@ public class LettuceConnectionFactoryTracingPostProcessor implements BeanPostPro
 
                 if (originalConfig == null) {
                     log.warn("[OBSERVABILITY] LettuceClientConfiguration was null in factory bean '{}', skipping tracing injection", beanName);
+                    return bean;
+                }
+
+                ClientResources clientResources = clientResourcesProvider.getIfAvailable();
+                if (clientResources == null) {
+                    log.warn("[OBSERVABILITY] ClientResources bean not available yet, skipping tracing injection");
                     return bean;
                 }
 
