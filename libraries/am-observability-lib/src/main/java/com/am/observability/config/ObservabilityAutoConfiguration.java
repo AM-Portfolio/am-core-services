@@ -18,6 +18,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
@@ -265,6 +267,29 @@ public class ObservabilityAutoConfiguration {
             return builder -> builder.addCommandListener(
                 new MongoObservationCommandListener(observationRegistry)
             );
+        }
+
+        /**
+         * [WHY THIS WAS ADDED]:
+         * MongoObservationCommandListener emits observations into the ObservationRegistry,
+         * but those observations only produce Tempo spans when a TracingObservationHandler
+         * is registered. Spring Boot's MicrometerTracingAutoConfiguration registers this
+         * handler lazily, which can miss the MongoDB driver initialization window.
+         * This customizer ensures the handler is explicitly registered early and is
+         * zero-config — no changes required in any microservice.
+         */
+        @Bean
+        @ConditionalOnMissingBean(name = "mongoTracingObservationRegistryCustomizer")
+        public ObservationRegistryCustomizer<ObservationRegistry> mongoTracingObservationRegistryCustomizer(
+                ObjectProvider<Tracer> tracerProvider) {
+            return registry -> {
+                Tracer tracer = tracerProvider.getIfAvailable();
+                if (tracer != null) {
+                    registry.observationConfig().observationHandler(
+                        new DefaultTracingObservationHandler(tracer)
+                    );
+                }
+            };
         }
     }
 
