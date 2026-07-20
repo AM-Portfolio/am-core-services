@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+    <!-- Trigger CI build: observability updates v1.1.3-SNAPSHOT -->
     <!-- Trigger CI build: streaming v1.1.1 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"

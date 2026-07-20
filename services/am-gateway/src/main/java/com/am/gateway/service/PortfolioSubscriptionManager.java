@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
+import com.am.observability.trace.IgnoreTracing;
+
 /**
  * Stateless Portfolio Subscription Manager.
  *
@@ -27,6 +29,7 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@IgnoreTracing
 public class PortfolioSubscriptionManager {
 
     private final InterestRegistryService interestRegistry;

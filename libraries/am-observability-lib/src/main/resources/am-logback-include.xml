@@ -135,66 +135,68 @@
         </encoder>
     </appender>
 
-    <!-- Rolling JSON file -->
-    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
-            <maxFileSize>${LOG_FILE_MAX_SIZE}</maxFileSize>
-            <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
-            <totalSizeCap>2GB</totalSizeCap>
-        </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp>
-                    <fieldName>@timestamp</fieldName>
-                    <timeZone>UTC</timeZone>
-                </timestamp>
-                <pattern>
+    <!-- Rolling JSON file — only instantiated when local or default profile is active to avoid K8s write-permission crashes -->
+    <springProfile name="local | default">
+        <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_FILE}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+                <maxFileSize>${LOG_FILE_MAX_SIZE}</maxFileSize>
+                <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
+                <totalSizeCap>2GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp>
+                        <fieldName>@timestamp</fieldName>
+                        <timeZone>UTC</timeZone>
+                    </timestamp>
                     <pattern>
-                        {
-                          "level": "%level",
-                          "service": "${serviceName}",
-                          "logger": "%logger{40}",
-                          "thread": "%thread",
-                          "traceId": "%mdc{traceId}",
-                          "spanId": "%mdc{spanId}",
-                          "userId": "%mdc{userId}",
-                          "correlationId": "%mdc{correlationId}",
-                          "flow.id": "%mdc{flow.id}",
-                          "flow.step": "%mdc{flow.step}",
-                          "flow.outcome": "%mdc{flow.outcome}",
-                          "flow.duration_ms": "%mdc{flow.duration_ms}",
-                          "request.method": "%mdc{request.method}",
-                          "request.path": "%mdc{request.path}",
-                          "http.status": "%mdc{http.status}",
-                          "tool.name": "%mdc{tool.name}"
-                        }
+                        <pattern>
+                            {
+                              "level": "%level",
+                              "service": "${serviceName}",
+                              "logger": "%logger{40}",
+                              "thread": "%thread",
+                              "traceId": "%mdc{traceId}",
+                              "spanId": "%mdc{spanId}",
+                              "userId": "%mdc{userId}",
+                              "correlationId": "%mdc{correlationId}",
+                              "flow.id": "%mdc{flow.id}",
+                              "flow.step": "%mdc{flow.step}",
+                              "flow.outcome": "%mdc{flow.outcome}",
+                              "flow.duration_ms": "%mdc{flow.duration_ms}",
+                              "request.method": "%mdc{request.method}",
+                              "request.path": "%mdc{request.path}",
+                              "http.status": "%mdc{http.status}",
+                              "tool.name": "%mdc{tool.name}"
+                            }
+                        </pattern>
                     </pattern>
-                </pattern>
-                <message/>
-                <loggerName/>
-                <mdc/>
-                <arguments/>
-                <logstashMarkers/>
-                <springProfile name="!caller-off">
-                    <callerData>
-                        <classFieldName>caller.class</classFieldName>
-                        <methodFieldName>caller.method</methodFieldName>
-                        <fileFieldName>caller.file</fileFieldName>
-                        <lineFieldName>caller.line</lineFieldName>
-                    </callerData>
-                </springProfile>
-                <stackTrace>
-                    <fieldName>stack_trace</fieldName>
-                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                        <maxDepthPerThrowable>40</maxDepthPerThrowable>
-                        <maxLength>8192</maxLength>
-                    </throwableConverter>
-                </stackTrace>
-            </providers>
-        </encoder>
-    </appender>
+                    <message/>
+                    <loggerName/>
+                    <mdc/>
+                    <arguments/>
+                    <logstashMarkers/>
+                    <springProfile name="!caller-off">
+                        <callerData>
+                            <classFieldName>caller.class</classFieldName>
+                            <methodFieldName>caller.method</methodFieldName>
+                            <fileFieldName>caller.file</fileFieldName>
+                            <lineFieldName>caller.line</lineFieldName>
+                        </callerData>
+                    </springProfile>
+                    <stackTrace>
+                        <fieldName>stack_trace</fieldName>
+                        <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                            <maxDepthPerThrowable>40</maxDepthPerThrowable>
+                            <maxLength>8192</maxLength>
+                        </throwableConverter>
+                    </stackTrace>
+                </providers>
+            </encoder>
+        </appender>
+    </springProfile>
 
     <!-- Plain text appender — only used when the logback-text profile is active. -->
     <appender name="TEXT_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -207,7 +209,6 @@
     <springProfile name="mcp-stdio">
         <root level="INFO">
             <appender-ref ref="JSON_STDERR"/>
-            <appender-ref ref="JSON_FILE"/>
         </root>
     </springProfile>
 
@@ -220,7 +221,6 @@
     <springProfile name="!mcp-stdio &amp; !logback-text &amp; !local">
         <root level="INFO">
             <appender-ref ref="JSON_STDOUT"/>
-            <appender-ref ref="JSON_FILE"/>
         </root>
     </springProfile>
 

@@ -13,9 +13,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import com.am.observability.trace.IgnoreTracing;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@IgnoreTracing
 public class KafkaRelayService {
 
     private final SimpMessagingTemplate messagingTemplate;

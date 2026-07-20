@@ -18,6 +18,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
@@ -32,6 +34,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
 
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import io.micrometer.observation.aop.ObservedAspect;
+import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
+import org.springframework.data.mongodb.observability.MongoObservationCommandListener;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -40,10 +49,28 @@ import java.util.Set;
  * Spring Boot via the {@code AutoConfiguration.imports} file. Backs out
  * entirely when {@code am.observability.enabled=false}.
  */
-@AutoConfiguration
+@AutoConfiguration(
+    before = { RedisAutoConfiguration.class },
+    after = {
+        MongoAutoConfiguration.class,
+        DataSourceAutoConfiguration.class
+    }
+)
 @ConditionalOnProperty(prefix = "am.observability", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(ObservabilityProperties.class)
 public class ObservabilityAutoConfiguration {
+
+    public ObservabilityAutoConfiguration() {
+        try {
+            ch.qos.logback.classic.Logger mongoLogger = (ch.qos.logback.classic.Logger)
+                    org.slf4j.LoggerFactory.getLogger("org.springframework.data.mongodb.core.MongoTemplate");
+            if (mongoLogger != null) {
+                mongoLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
+            }
+        } catch (Throwable t) {
+            // Guard against ClassNotFound or cast exception if a non-logback system is used
+        }
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -124,8 +151,8 @@ public class ObservabilityAutoConfiguration {
         @Bean
         @ConditionalOnProperty(prefix = "am.observability.request-log", name = "enabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean
-        public RequestLoggingFilter requestLoggingFilter(ObservabilityProperties properties) {
-            return new RequestLoggingFilter(properties.getRequestLog());
+        public RequestLoggingFilter requestLoggingFilter(ObservabilityProperties properties, Sanitizer sanitizer) {
+            return new RequestLoggingFilter(properties.getRequestLog(), sanitizer);
         }
 
         @Bean
@@ -194,5 +221,101 @@ public class ObservabilityAutoConfiguration {
     @ConditionalOnMissingBean
     public TraceContextSdkInterceptor traceContextSdkInterceptor(TracingHelper tracingHelper) {
         return new TraceContextSdkInterceptor(tracingHelper);
+    }
+
+    // ---------------- Observed & AOP Auto-Tracing ----------------
+
+    /**
+     * [WHY THIS WAS ADDED]:
+     * Creates the ObservedAspect bean to make the `@Observed` annotation work.
+     * With this, developers can manually label specific methods for detailed timing.
+     */
+    @Bean
+    @ConditionalOnClass(ObservedAspect.class)
+    @ConditionalOnMissingBean
+    public ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
+        return new ObservedAspect(observationRegistry);
+    }
+
+    /**
+     * [WHY THIS WAS ADDED]:
+     * Automatically traces all methods in `@Service` classes without needing annotations.
+     * Uses @ConditionalOnProperty so it can be disabled in application.yml if needed.
+     */
+    @Bean
+    @ConditionalOnClass(org.aspectj.lang.ProceedingJoinPoint.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "am.observability.service-tracing", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public AutoObservabilityAspect autoObservabilityAspect(ObservationRegistry observationRegistry) {
+        return new AutoObservabilityAspect(observationRegistry);
+    }
+
+    // ---------------- MongoDB Tracing ----------------
+
+    /**
+     * [WHY THIS WAS ADDED]:
+     * Automatically hooks into the MongoDB driver to record the execution time and raw queries.
+     * Activated ONLY if MongoDB client libraries are on the microservice's classpath.
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass({com.mongodb.client.MongoClient.class, MongoClientSettingsBuilderCustomizer.class})
+    static class MongoTracingConfig {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public MongoClientSettingsBuilderCustomizer mongoObservabilityCustomizer(ObservationRegistry observationRegistry) {
+            return builder -> builder.addCommandListener(
+                new MongoObservationCommandListener(observationRegistry)
+            );
+        }
+
+        /**
+         * [WHY THIS WAS ADDED]:
+         * MongoObservationCommandListener emits observations into the ObservationRegistry,
+         * but those observations only produce Tempo spans when a TracingObservationHandler
+         * is registered. Spring Boot's MicrometerTracingAutoConfiguration registers this
+         * handler lazily, which can miss the MongoDB driver initialization window.
+         * This customizer ensures the handler is explicitly registered early and is
+         * zero-config — no changes required in any microservice.
+         */
+        @Bean
+        @ConditionalOnMissingBean(name = "mongoTracingObservationRegistryCustomizer")
+        public ObservationRegistryCustomizer<ObservationRegistry> mongoTracingObservationRegistryCustomizer(
+                ObjectProvider<Tracer> tracerProvider) {
+            return registry -> {
+                Tracer tracer = tracerProvider.getIfAvailable();
+                if (tracer != null) {
+                    registry.observationConfig().observationHandler(
+                        new DefaultTracingObservationHandler(tracer)
+                    );
+                }
+            };
+        }
+    }
+
+    // ---------------- Lettuce Redis Tracing ----------------
+
+    /**
+     * [WHY THIS WAS ADDED]:
+     * Automatically hooks into the Lettuce Redis driver to record cache queries (e.g. GET, SET, TTL).
+     * Activated ONLY if the Lettuce Redis client libraries are present in the classpath.
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass({io.lettuce.core.resource.ClientResources.class, io.lettuce.core.tracing.MicrometerTracing.class})
+    static class LettuceTracingConfig {
+
+        @Bean(destroyMethod = "shutdown")
+        @ConditionalOnMissingBean(io.lettuce.core.resource.ClientResources.class)
+        public io.lettuce.core.resource.ClientResources lettuceClientResources(ObservationRegistry observationRegistry) {
+            return io.lettuce.core.resource.DefaultClientResources.builder()
+                    .tracing(new io.lettuce.core.tracing.MicrometerTracing(observationRegistry, "redis", true))
+                    .build();
+        }
+
+        @Bean
+        public static LettuceConnectionFactoryTracingPostProcessor lettuceConnectionFactoryTracingPostProcessor(
+                org.springframework.beans.factory.ObjectProvider<io.lettuce.core.resource.ClientResources> clientResourcesProvider) {
+            return new LettuceConnectionFactoryTracingPostProcessor(clientResourcesProvider);
+        }
     }
 }
