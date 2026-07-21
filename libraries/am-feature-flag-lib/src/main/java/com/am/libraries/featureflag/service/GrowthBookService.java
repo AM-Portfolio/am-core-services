@@ -85,6 +85,7 @@ public class GrowthBookService {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(sseUrl))
                         .header("Accept", "text/event-stream")
+                        .header("User-Agent", "AM-Core-Services/1.0 (GrowthBookClient)")
                         .timeout(Duration.ofHours(1)) // Keep connection alive
                         .GET()
                         .build();
@@ -128,6 +129,7 @@ public class GrowthBookService {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Accept", "application/json")
+                    .header("User-Agent", "AM-Core-Services/1.0 (GrowthBookClient)")
                     .timeout(Duration.ofSeconds(5))
                     .GET()
                     .build();
