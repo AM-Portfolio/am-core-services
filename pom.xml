@@ -64,6 +64,7 @@
         <module>services/am-analysis/am-analysis-sdk/java-sdk</module>
         <module>libraries/am-analysis-client-lib</module>
         <module>libraries/am-scheduler-logbook-lib</module>
+        <module>libraries/am-feature-flag-lib</module>
         
         <!-- Domain Layer -->
         <module>domain/am-market-domain</module>
