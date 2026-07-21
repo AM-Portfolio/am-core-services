@@ -1,0 +1,88 @@
+# Notify qa-agent when changes land on master/main.
+#
+# After merge to master, starts ReleaseReadinessWorkflow via qa-agent gateway.
+# Secrets (repo or org):
+#   QA_AGENT_BASE_URL      e.g. https://qa-agent.example or http://host:8150
+#   QA_AGENT_GATEWAY_TOKEN Bearer token expected by qa-agent
+#
+# Optional: also configure a GitHub App / webhook to qa-agent /webhooks/github
+# for native workflow_run events — this job is the explicit CI trigger.
+
+name: QA Agent Notify
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+    inputs:
+      head_sha:
+        description: Optional override commit SHA
+        required: false
+        type: string
+      branch:
+        description: Optional override branch
+        required: false
+        type: string
+
+concurrency:
+  group: qa-agent-notify-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  notify-qa-agent:
+    name: Trigger qa-agent release-readiness
+    runs-on: ubuntu-latest
+    # Skip version-bump-only noise commits if desired
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || !contains(github.event.head_commit.message, '[skip ci]')
+    steps:
+      - name: Resolve payload
+        id: meta
+        run: |
+          SHA="${{ github.event.inputs.head_sha || github.sha }}"
+          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+          echo "repo=${{ github.repository }}" >> "$GITHUB_OUTPUT"
+          echo "Triggering qa-agent for ${{ github.repository }}@${SHA} branch=${BRANCH}"
+
+      - name: POST release-readiness
+        env:
+          QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
+          QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${QA_AGENT_BASE_URL:-}" ] || [ -z "${QA_AGENT_GATEWAY_TOKEN:-}" ]; then
+            echo "::error::Set secrets QA_AGENT_BASE_URL and QA_AGENT_GATEWAY_TOKEN"
+            exit 1
+          fi
+          BASE="${QA_AGENT_BASE_URL%/}"
+          BODY=$(jq -n \
+            --arg repo "${{ steps.meta.outputs.repo }}" \
+            --arg branch "${{ steps.meta.outputs.branch }}" \
+            --arg sha "${{ steps.meta.outputs.sha }}" \
+            '{
+              repo: $repo,
+              branch: $branch,
+              head_sha: $sha,
+              ci_conclusion: "success",
+              trigger_kind: "ci_master_merge",
+              environment: "preprod",
+              assume_ci_success: true,
+              use_temporal: true
+            }')
+          echo "POST ${BASE}/v2/workflows/release-readiness"
+          HTTP_CODE=$(curl -sS -o /tmp/qa-agent-resp.json -w "%{http_code}" \
+            -X POST "${BASE}/v2/workflows/release-readiness" \
+            -H "Authorization: Bearer ${QA_AGENT_GATEWAY_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "${BODY}")
+          echo "HTTP ${HTTP_CODE}"
+          cat /tmp/qa-agent-resp.json || true
+          echo
+          if [ "${HTTP_CODE}" -lt 200 ] || [ "${HTTP_CODE}" -ge 300 ]; then
+            echo "::error::qa-agent notify failed with HTTP ${HTTP_CODE}"
+            exit 1
+          fi
+          echo "qa-agent activated for merge to ${{ steps.meta.outputs.branch }}"
