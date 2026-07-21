@@ -50,9 +50,11 @@ import java.util.Set;
  * entirely when {@code am.observability.enabled=false}.
  */
 @AutoConfiguration(
-    before = { RedisAutoConfiguration.class },
+    before = {
+        RedisAutoConfiguration.class,
+        MongoAutoConfiguration.class
+    },
     after = {
-        MongoAutoConfiguration.class,
         DataSourceAutoConfiguration.class
     }
 )
