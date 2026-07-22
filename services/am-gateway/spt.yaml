@@ -5,9 +5,29 @@ label: am-gateway
 enabled: true
 runtime: java
 owners: [core-services]
+description: API gateway load-test registration (OpenAPI via springdoc)
+createdBy: core-services
+updatedBy: core-services
+createdAt: "2026-07-22"
+updatedAt: "2026-07-22"
+tags: [core, java, gateway, springdoc]
+source:
+  repo: am-core-services
+  path: services/am-gateway/spt.yaml
+  team: core-services
+traces:
+  - name: onboarding
+    ref: docs/spt-onboarding.md
+  - name: configmap
+    ref: spt-catalog-am-gateway
+  - name: openapi
+    ref: /v3/api-docs
+  - name: namespace
+    ref: load-testing
 targets:
   dev: "http://am-gateway.am-apps-dev.svc.cluster.local:8080"
   preprod: "http://am-gateway.am-apps-preprod.svc.cluster.local:8080"
   prod: "http://am-gateway.am-apps-prod.svc.cluster.local:8080"
+  public_dev: "https://am-dev.asrax.in/gateway"
 openapi:
   path: /v3/api-docs

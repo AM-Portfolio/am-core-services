@@ -36,6 +36,17 @@ service: am-analysis
 label: am-analysis
 enabled: true
 runtime: java                 # java | python
+owners: [core-services]
+createdBy: core-services
+updatedBy: core-services
+createdAt: "2026-07-22"
+updatedAt: "2026-07-22"
+source:
+  repo: am-core-services
+  path: services/am-analysis/spt.yaml
+traces:
+  - { name: configmap, ref: spt-catalog-am-analysis }
+  - { name: onboarding, ref: docs/spt-onboarding.md }
 targets:
   dev: "http://am-analysis.am-apps-dev.svc.cluster.local:8080"
   preprod: "http://am-analysis.am-apps-preprod.svc.cluster.local:8080"
@@ -47,7 +58,8 @@ openapi:
 ### Rules
 
 - Pass **per-env base URLs** in `targets` — SPT picks `targets[environment]` automatically.
-- Set `runtime: java` or `runtime: python`.
+- Set `runtime: java` or `python`.
+- Prefer `owners`, `createdBy`/`updatedBy`, `source.repo`/`path`, and `traces` for Specs **Traceability**.
 - **Do not** put auth/tokens here — SPT uses platform identity login.
 - **Do not** hand-maintain `apis: []` — SPT loads OpenAPI from `{target}{openapi.path}`.
 

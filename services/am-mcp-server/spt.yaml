@@ -5,6 +5,25 @@ label: am-mcp-server
 enabled: true
 runtime: java
 owners: [core-services]
+description: MCP server load-test registration (OpenAPI via springdoc)
+createdBy: core-services
+updatedBy: core-services
+createdAt: "2026-07-22"
+updatedAt: "2026-07-22"
+tags: [core, java, mcp, springdoc]
+source:
+  repo: am-core-services
+  path: services/am-mcp-server/spt.yaml
+  team: core-services
+traces:
+  - name: onboarding
+    ref: docs/spt-onboarding.md
+  - name: configmap
+    ref: spt-catalog-am-mcp-server
+  - name: openapi
+    ref: /v3/api-docs
+  - name: namespace
+    ref: load-testing
 targets:
   # Not in am-apps-dev today — preprod until a dev deployment exists
   dev: "http://am-mcp-server.am-apps-preprod.svc.cluster.local:8080"
