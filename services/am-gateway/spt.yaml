@@ -1,0 +1,13 @@
+﻿apiVersion: am.spt/v1
+kind: ServiceLoadTest
+service: am-gateway
+label: am-gateway
+enabled: true
+runtime: java
+owners: [core-services]
+targets:
+  dev: "http://am-gateway.am-apps-dev.svc.cluster.local:8080"
+  preprod: "http://am-gateway.am-apps-preprod.svc.cluster.local:8080"
+  prod: "http://am-gateway.am-apps-prod.svc.cluster.local:8080"
+openapi:
+  path: /v3/api-docs

@@ -1,0 +1,14 @@
+apiVersion: am.spt/v1
+kind: ServiceLoadTest
+service: am-mcp-server
+label: am-mcp-server
+enabled: true
+runtime: java
+owners: [core-services]
+targets:
+  # Not in am-apps-dev today — preprod until a dev deployment exists
+  dev: "http://am-mcp-server.am-apps-preprod.svc.cluster.local:8080"
+  preprod: "http://am-mcp-server.am-apps-preprod.svc.cluster.local:8080"
+  prod: "http://am-mcp-server.am-apps-prod.svc.cluster.local:8080"
+openapi:
+  path: /v3/api-docs

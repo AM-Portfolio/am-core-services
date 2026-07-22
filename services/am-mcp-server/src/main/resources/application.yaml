@@ -28,12 +28,14 @@ spring.ai.mcp.server:
   version: 1.0.0
   transport-type: STDIO
 
-# ── Swagger / OpenAPI Documentation ───────────────────────────────────────────
+# ── Swagger / OpenAPI Documentation (SPT discovers APIs from /v3/api-docs) ─────
 springdoc:
   api-docs:
-    path: /api-docs
+    enabled: true
+    path: /v3/api-docs
   swagger-ui:
-    path: /swagger-ui/index.html
+    enabled: true
+    path: /swagger-ui.html
     operationsSorter: alpha
     tagsSorter: alpha
     displayRequestDuration: true

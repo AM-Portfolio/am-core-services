@@ -1,0 +1,14 @@
+apiVersion: am.spt/v1
+kind: ServiceLoadTest
+service: am-analysis
+label: am-analysis
+enabled: true
+runtime: java
+owners: [core-services]
+targets:
+  dev: "http://am-analysis.am-apps-dev.svc.cluster.local:8080"
+  preprod: "http://am-analysis.am-apps-preprod.svc.cluster.local:8080"
+  prod: "http://am-analysis.am-apps-prod.svc.cluster.local:8080"
+  public_dev: "https://am.asrax.in/analysis"
+openapi:
+  path: /v3/api-docs
