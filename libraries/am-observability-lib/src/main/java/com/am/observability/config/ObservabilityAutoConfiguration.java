@@ -285,12 +285,61 @@ public class ObservabilityAutoConfiguration {
         public ObservationRegistryCustomizer<ObservationRegistry> mongoTracingObservationRegistryCustomizer(
                 ObjectProvider<Tracer> tracerProvider) {
             return registry -> {
-                Tracer tracer = tracerProvider.getIfAvailable();
-                if (tracer != null) {
-                    registry.observationConfig().observationHandler(
-                        new DefaultTracingObservationHandler(tracer)
-                    );
-                }
+                registry.observationConfig().observationHandler(new io.micrometer.observation.ObservationHandler<io.micrometer.observation.Observation.Context>() {
+                    private io.micrometer.tracing.handler.DefaultTracingObservationHandler delegate;
+
+                    private io.micrometer.tracing.handler.DefaultTracingObservationHandler getDelegate() {
+                        if (delegate == null) {
+                            Tracer tracer = tracerProvider.getIfAvailable();
+                            if (tracer != null) {
+                                delegate = new io.micrometer.tracing.handler.DefaultTracingObservationHandler(tracer);
+                            }
+                        }
+                        return delegate;
+                    }
+
+                    @Override
+                    public void onStart(io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        if (d != null) d.onStart(context);
+                    }
+
+                    @Override
+                    public void onError(io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        if (d != null) d.onError(context);
+                    }
+
+                    @Override
+                    public void onEvent(io.micrometer.observation.Observation.Event event, io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        if (d != null) d.onEvent(event, context);
+                    }
+
+                    @Override
+                    public void onScopeOpened(io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        if (d != null) d.onScopeOpened(context);
+                    }
+
+                    @Override
+                    public void onScopeClosed(io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        if (d != null) d.onScopeClosed(context);
+                    }
+
+                    @Override
+                    public void onStop(io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        if (d != null) d.onStop(context);
+                    }
+
+                    @Override
+                    public boolean supportsContext(io.micrometer.observation.Observation.Context context) {
+                        var d = getDelegate();
+                        return d != null && d.supportsContext(context);
+                    }
+                });
             };
         }
     }
