@@ -1,0 +1,56 @@
+enabled: true
+tool: gitnexus
+phase: local
+versions:
+  gitnexus: 1.6.9
+  graphifyy: 0.4.11
+production:
+  branch: main
+  embeddings: false
+  ci: false
+  mode: verify
+local:
+  sync_on_commit: true
+  sync_on_save: false
+  index_workspace: true
+  watch_debounce_sec: 30
+gitnexus:
+  skipAgentsMd: true
+  skipSkills: true
+  group_path: services/am-core-services
+capabilities:
+  domain: services
+  surfaces:
+  - http
+  - kafka
+  - stomp
+  - libs
+  - config
+  - redis
+  pdg: true
+  scan:
+    scan_roots:
+    - services
+    - libraries
+  topics:
+  - USER_WATCHING
+  - STOCK_UPDATE
+  - PREVIOUS_CLOSE_SNAPSHOT
+  - PORTFOLIO_UPDATE
+  - PORTFOLIO_STREAM
+  - TRADE_UPDATE
+  - TRIGGER_CALCULATION
+  - DASHBOARD_UPDATE
+  - DASHBOARD_SUMMARY_UPDATE
+  - DASHBOARD_MOVERS_UPDATE
+  - DASHBOARD_ACTIVITY_UPDATE
+  - DASHBOARD_ALLOCATION_UPDATE
+  - DASHBOARD_HISTORY_UPDATE
+  config_prefixes:
+  - am.analysis.portfolio.streaming
+  - am.analysis.bootstrap
+  flows:
+  - slug: redis-streaming
+    tier: A
+    query: redis portfolio subscribe kafka
+    entry_contract: STOMP /app/portfolio/subscribe

@@ -1,18 +1,18 @@
-# Notify qa-agent when changes land on master/main.
+# Notify qa-agent for am-analysis pilot when changes land on master/main.
 #
-# After merge to master, starts ReleaseReadinessWorkflow via qa-agent gateway.
+# Opt-in: services/am-analysis/qa-agent.yaml (enabled + branches).
 # Secrets (repo or org):
 #   QA_AGENT_BASE_URL      e.g. https://qa-agent.example or http://host:8150
 #   QA_AGENT_GATEWAY_TOKEN Bearer token expected by qa-agent
-#
-# Optional: also configure a GitHub App / webhook to qa-agent /webhooks/github
-# for native workflow_run events — this job is the explicit CI trigger.
 
 name: QA Agent Notify
 
 on:
   push:
     branches: [master, main]
+    paths:
+      - "services/am-analysis/**"
+      - ".github/workflows/qa-agent-notify.yml"
   workflow_dispatch:
     inputs:
       head_sha:
@@ -30,24 +30,71 @@ concurrency:
 
 jobs:
   notify-qa-agent:
-    name: Trigger qa-agent release-readiness
+    name: Trigger qa-agent release-readiness (am-analysis)
     runs-on: ubuntu-latest
-    # Skip version-bump-only noise commits if desired
     if: >-
       github.event_name == 'workflow_dispatch'
       || !contains(github.event.head_commit.message, '[skip ci]')
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read am-analysis qa-agent.yaml
+        id: cfg
+        run: |
+          set -euo pipefail
+          MANIFEST="services/am-analysis/qa-agent.yaml"
+          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
+          if [ ! -f "$MANIFEST" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "reason=missing_manifest" >> "$GITHUB_OUTPUT"
+            echo "Manifest missing: $MANIFEST — skipping"
+            exit 0
+          fi
+          python3 -m pip install --quiet pyyaml
+          python3 <<'PY' >> "$GITHUB_OUTPUT"
+          import os
+          import yaml
+          from pathlib import Path
+
+          branch = os.environ["BRANCH"]
+          data = yaml.safe_load(Path("services/am-analysis/qa-agent.yaml").read_text(encoding="utf-8")) or {}
+          enabled = bool(data.get("enabled", False))
+          branches = data.get("branches") or []
+          service = str(data.get("service") or "am-analysis")
+          environment = str(data.get("environment") or "dev")
+          if not enabled:
+              print("skip=true")
+              print("reason=disabled")
+          elif branches and branch not in branches:
+              print("skip=true")
+              print(f"reason=branch_not_listed:{branch}")
+          else:
+              print("skip=false")
+              print("reason=ok")
+          print(f"service={service}")
+          print(f"environment={environment}")
+          PY
+        env:
+          BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
+
       - name: Resolve payload
         id: meta
+        if: steps.cfg.outputs.skip != 'true'
         run: |
           SHA="${{ github.event.inputs.head_sha || github.sha }}"
           BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
           echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
           echo "repo=${{ github.repository }}" >> "$GITHUB_OUTPUT"
-          echo "Triggering qa-agent for ${{ github.repository }}@${SHA} branch=${BRANCH}"
+          echo "Triggering qa-agent for ${{ github.repository }}@${SHA} service=${{ steps.cfg.outputs.service }}"
+
+      - name: Skip notice
+        if: steps.cfg.outputs.skip == 'true'
+        run: echo "Skipping qa-agent notify (${{ steps.cfg.outputs.reason }})"
 
       - name: POST release-readiness
+        if: steps.cfg.outputs.skip != 'true'
         env:
           QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
           QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
@@ -62,13 +109,16 @@ jobs:
             --arg repo "${{ steps.meta.outputs.repo }}" \
             --arg branch "${{ steps.meta.outputs.branch }}" \
             --arg sha "${{ steps.meta.outputs.sha }}" \
+            --arg service "${{ steps.cfg.outputs.service }}" \
+            --arg environment "${{ steps.cfg.outputs.environment }}" \
             '{
               repo: $repo,
               branch: $branch,
               head_sha: $sha,
+              service: $service,
               ci_conclusion: "success",
               trigger_kind: "ci_master_merge",
-              environment: "preprod",
+              environment: $environment,
               assume_ci_success: true,
               use_temporal: true
             }')
@@ -85,4 +135,8 @@ jobs:
             echo "::error::qa-agent notify failed with HTTP ${HTTP_CODE}"
             exit 1
           fi
-          echo "qa-agent activated for merge to ${{ steps.meta.outputs.branch }}"
+          if jq -e '.skipped == true' /tmp/qa-agent-resp.json >/dev/null 2>&1; then
+            echo "::warning::qa-agent skipped: $(jq -r '.reason' /tmp/qa-agent-resp.json)"
+            exit 0
+          fi
+          echo "qa-agent activated for am-analysis on ${{ steps.meta.outputs.branch }}"
