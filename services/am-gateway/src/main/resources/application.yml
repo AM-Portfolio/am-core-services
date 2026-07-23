@@ -1,4 +1,4 @@
-# Trigger CI/CD test for service-only change
+# Trigger CI/CD: openapi-spt 2026-07-24
 server:
   port: ${SERVICE_PORT:8080}
 
