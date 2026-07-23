@@ -51,16 +51,17 @@ traces:
   - { name: configmap, ref: spt-catalog-am-analysis }
   - { name: onboarding, ref: docs/spt-onboarding.md }
 targets:
-  dev: "http://am-analysis.am-apps-dev.svc.cluster.local:8080"
-  preprod: "http://am-analysis.am-apps-preprod.svc.cluster.local:8080"
-  prod: "http://am-analysis.am-apps-prod.svc.cluster.local:8080"
+  dev: "https://am-dev.asrax.in/analysis"
+  preprod: "https://am-preprod.asrax.in/analysis"
+  prod: "https://am.asrax.in/analysis"
 openapi:
   path: /v3/api-docs          # java; python: /openapi.json
 ```
 
 ### Rules
 
-- Pass **per-env base URLs** in `targets` — SPT picks `targets[environment]` automatically.
+- Pass **three public HTTPS bases** in `targets` (`dev` / `preprod` / `prod`) — SPT picks `targets[environment]`.
+  Do **not** duplicate cluster DNS + `public_*` keys; one URL per env is enough.
 - Set `runtime: java` or `python`.
 - Prefer `owners`, `createdBy`/`updatedBy`, `source.repo`/`path`, and `traces` for Specs **Traceability**.
 - **Do not** put auth/tokens here — SPT uses platform identity login.

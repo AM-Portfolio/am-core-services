@@ -25,9 +25,10 @@ traces:
   - name: namespace
     ref: load-testing
 targets:
-  # Not in am-apps-dev today — preprod until a dev deployment exists
-  dev: "http://am-mcp-server.am-apps-preprod.svc.cluster.local:8080"
-  preprod: "http://am-mcp-server.am-apps-preprod.svc.cluster.local:8080"
-  prod: "http://am-mcp-server.am-apps-prod.svc.cluster.local:8080"
+  # Public HTTPS bases only (Traefik strip /mcp → service root)
+  # No dedicated am-apps-dev deploy yet — dev points at preprod host until one exists
+  dev: "https://am-preprod.asrax.in/mcp"
+  preprod: "https://am-preprod.asrax.in/mcp"
+  prod: "https://am.asrax.in/mcp"
 openapi:
   path: /v3/api-docs

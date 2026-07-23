@@ -9,7 +9,7 @@ description: Analysis service load-test registration (OpenAPI via springdoc)
 createdBy: core-services
 updatedBy: core-services
 createdAt: "2026-07-22"
-updatedAt: "2026-07-22"
+updatedAt: "2026-07-24"
 tags: [core, java, springdoc]
 source:
   repo: am-core-services
@@ -25,9 +25,9 @@ traces:
   - name: namespace
     ref: load-testing
 targets:
-  dev: "http://am-analysis.am-apps-dev.svc.cluster.local:8080"
-  preprod: "http://am-analysis.am-apps-preprod.svc.cluster.local:8080"
-  prod: "http://am-analysis.am-apps-prod.svc.cluster.local:8080"
-  public_dev: "https://am-dev.asrax.in/analysis"
+  # Public HTTPS bases only (Traefik strip /analysis → service root)
+  dev: "https://am-dev.asrax.in/analysis"
+  preprod: "https://am-preprod.asrax.in/analysis"
+  prod: "https://am.asrax.in/analysis"
 openapi:
   path: /v3/api-docs
