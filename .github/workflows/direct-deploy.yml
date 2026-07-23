@@ -1,0 +1,85 @@
+name: Direct Deploy (Existing Container)
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: "Select the service to deploy"
+        required: true
+        type: choice
+        options:
+          - am-gateway
+          - am-analysis
+          - am-mcp-server
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - preprod
+          - prod
+      image_tag:
+        description: "Docker image tag (e.g. local-abc1234 or CI run id)"
+        required: true
+        default: "latest"
+        type: string
+
+jobs:
+  setup:
+    name: Prepare Parameters
+    runs-on: ubuntu-latest
+    outputs:
+      working_directory: ${{ steps.vars.outputs.working_directory }}
+      language: ${{ steps.vars.outputs.language }}
+      namespace: ${{ steps.vars.outputs.namespace }}
+    steps:
+      - id: vars
+        run: |
+          case "${{ github.event.inputs.service }}" in
+            am-gateway)
+              echo "working_directory=services/am-gateway" >> "$GITHUB_OUTPUT"
+              echo "language=java" >> "$GITHUB_OUTPUT"
+              ;;
+            am-analysis)
+              echo "working_directory=services/am-analysis" >> "$GITHUB_OUTPUT"
+              echo "language=java" >> "$GITHUB_OUTPUT"
+              ;;
+            am-mcp-server)
+              echo "working_directory=services/am-mcp-server" >> "$GITHUB_OUTPUT"
+              echo "language=java" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unknown service: ${{ github.event.inputs.service }}"
+              exit 1
+              ;;
+          esac
+
+          case "${{ github.event.inputs.environment }}" in
+            prod)
+              echo "namespace=am-apps-prod" >> "$GITHUB_OUTPUT"
+              ;;
+            preprod)
+              echo "namespace=am-apps-preprod" >> "$GITHUB_OUTPUT"
+              ;;
+            dev)
+              echo "namespace=am-apps-dev" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unknown environment: ${{ github.event.inputs.environment }}"
+              exit 1
+              ;;
+          esac
+
+  deploy:
+    name: Execute Deploy
+    needs: setup
+    uses: AM-Portfolio/am-pipelines/.github/workflows/central-deploy.yml@main
+    with:
+      service_name: ${{ github.event.inputs.service }}
+      working_directory: ${{ needs.setup.outputs.working_directory }}
+      language: ${{ needs.setup.outputs.language }}
+      environment: ${{ github.event.inputs.environment }}
+      image_tag: ${{ github.event.inputs.image_tag }}
+      namespace: ${{ needs.setup.outputs.namespace }}
+    secrets: inherit
