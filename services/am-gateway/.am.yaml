@@ -1,0 +1,12 @@
+# Local amctl identity — matches CI image_name
+name: am-gateway
+release: am-gateway
+image: ghcr.io/am-portfolio/am-gateway
+runtime: java
+language: java
+dockerfile: Dockerfile
+context: .
+github:
+  repo: AM-Portfolio/am-core-services
+  deploy_workflow: direct-deploy.yml
+  service: am-gateway
