@@ -22,11 +22,13 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
-# ── MCP Server ────────────────────────────────────────────────────────────────
+# ── MCP Server (HTTP/SSE for any MCP client: ChatGPT, Claude, Cursor, …) ──────
 spring.ai.mcp.server:
   name: am-platform
   version: 1.0.0
-  transport-type: STDIO
+  stdio: false
+  # Traefik strip-prefix /mcp → backend paths /sse and /message
+  sse-message-endpoint: /message
 
 # ── Swagger / OpenAPI Documentation (SPT discovers APIs from /v3/api-docs) ─────
 springdoc:
@@ -170,9 +172,8 @@ am.observability:
 
 
 # ── Logging ───────────────────────────────────────────────────────────────────
-# Activate mcp-stdio profile to push JSON logs to STDERR (keeps STDOUT clean
-# for the MCP framing protocol). Override per environment.
-spring.profiles.include: mcp-stdio, security
+# HTTP/SSE mode: normal logging. For local stdio Claude Desktop, activate mcp-stdio.
+spring.profiles.include: security
 logging:
   level:
     com.am.mcp: DEBUG

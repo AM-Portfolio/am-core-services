@@ -16,5 +16,8 @@ deploy:
   # Cluster apply after local build+push. CLI --via / AM_DEPLOY_VIA override this.
   # actions = GitHub Direct Deploy (same Helm as CI)
   # helm    = laptop Helm against VPS kubeconfig
-  via: actions
+  via: helm
   # skip_github_actions: true   # equivalent to via: helm
+  # Rebuild image only when service sources change (skip mvn/docker otherwise).
+  # always | on-change | never — override with --rebuild / --skip-build
+  rebuild: on-change

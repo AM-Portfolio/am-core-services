@@ -14,10 +14,13 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Thread-safe JWT provider. Priority:
+ * Thread-safe JWT provider (AM Platform identity). Priority:
  *   1. am.auth.static-token (set in application.yaml) → use directly, no network
  *   2. Valid cached JWT (TTL not expired)              → return cached
- *   3. POST am-auth /api/v1/auth/token                → fetch, cache, return
+ *   3. POST {am.auth.url}/auth/login                   → fetch, cache, return
+ *
+ * Same contract as SPT / other platform services: am-identity POST /auth/login
+ * body {username,password} → {access_token, ...}.
  */
 @Slf4j
 @Component
@@ -69,7 +72,7 @@ public class AuthTokenProvider {
                 return "";
             }
 
-            String url = props.getAuth().getUrl() + "/api/v1/auth/token";
+            String url = props.getAuth().getUrl() + "/auth/login";
             Map<String, Object> body = Map.of("username", username, "password", password);
 
             Map<String, Object> data = restClient.post()
@@ -81,21 +84,21 @@ public class AuthTokenProvider {
 
             if (data == null) throw new IllegalStateException("Empty auth response");
 
-            String token = (String) data.getOrDefault("token",
+            String token = (String) data.getOrDefault("access_token",
                            data.getOrDefault("accessToken",
-                           data.getOrDefault("access_token", "")));
+                           data.getOrDefault("token", "")));
             if (token == null || token.isBlank())
-                throw new IllegalStateException("Auth response missing token: " + data);
+                throw new IllegalStateException("Auth response missing access_token: " + data);
 
-            int ttl = ((Number) data.getOrDefault("expiresIn",
-                              data.getOrDefault("expires_in", 3600))).intValue();
+            int ttl = ((Number) data.getOrDefault("expires_in",
+                              data.getOrDefault("expiresIn", 3600))).intValue();
             cachedToken  = token;
             tokenExpiry  = Instant.now().plusSeconds(ttl);
-            log.info("JWT acquired from am-auth (TTL={}s)", ttl);
+            log.info("JWT acquired from am-identity (TTL={}s)", ttl);
             return token;
 
         } catch (RestClientException e) {
-            log.error("Auth call to am-auth failed: {}", e.getMessage());
+            log.error("Auth call to am-identity failed: {}", e.getMessage());
             return "";
         } catch (Exception e) {
             log.error("Auth error: {}", e.getMessage(), e);

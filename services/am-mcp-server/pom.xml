@@ -75,6 +75,12 @@
             <artifactId>spring-ai-mcp-server-spring-boot-starter</artifactId>
             <version>${spring-ai.version}</version>
         </dependency>
+        <!-- Required for HTTP/SSE transport (Cursor, Claude Desktop, Traefik /mcp) -->
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp-spring-webmvc</artifactId>
+            <version>0.7.0</version>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>
