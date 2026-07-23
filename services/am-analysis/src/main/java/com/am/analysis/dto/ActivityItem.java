@@ -1,5 +1,6 @@
 package com.am.analysis.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,10 +32,12 @@ public class ActivityItem {
      * Critical when viewing activity across ALL portfolios — lets the UI
      * group or link back to the correct portfolio.
      */
+    @Schema(example = "pf-demo-001")
     private String portfolioId;
     private String portfolioName;   // Human-readable name
 
     // ── Holding Identity ──────────────────────────────────────────────────
+    @Schema(example = "AAPL")
     private String symbol;          // e.g. "AAPL"
     private String companyName;     // e.g. "Apple Inc."
     private String exchange;        // e.g. "NSE", "BSE", "NASDAQ"
@@ -58,11 +61,13 @@ public class ActivityItem {
      * LOSS = losing position    (profitLoss < 0)
      * NEUTRAL = breakeven or P&L unavailable
      */
+    @Schema(description = "P&L bucket: WIN, LOSS, or NEUTRAL", example = "WIN")
     private String status;
 
     // ── Display ───────────────────────────────────────────────────────────
     private String title;
     private String description;
+    @Schema(description = "Activity time", format = "date-time", example = "2026-07-22T10:15:30")
     private LocalDateTime timestamp;
 
     /** Resolve WIN / LOSS / NEUTRAL from an absolute P&L value. */

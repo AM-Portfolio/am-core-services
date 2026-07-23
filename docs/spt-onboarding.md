@@ -21,6 +21,9 @@ springdoc:
 
 Keep docs **auth-protected** (same JWT as APIs). SPT fetches with platform identity.
 
+Spec quality (enums, examples, `operationId`): see [`openapi-spec-guidelines.md`](openapi-spec-guidelines.md).
+am-analysis gap audit: [`openapi-gap-am-analysis.md`](openapi-gap-am-analysis.md).
+
 | Service | Live today | After next deploy |
 |---------|------------|-------------------|
 | am-analysis | `/v3/api-docs` | same |
@@ -76,3 +79,8 @@ Validate:
 ```bash
 python ../am-agents/poc/spt/scripts/validate-spt-yaml.py services
 ```
+
+## Agent / MCP execute
+
+See `am-agents/poc/spt/docs/agent-execute.md` and `docs/store-cutover.md`.
+Profiles: `GET /api/profiles`. Control plane MCP: `/mcp`.
