@@ -51,6 +51,7 @@ jobs:
       portfolio-domain: ${{ steps.check.outputs.portfolio-domain }}
       trade-domain: ${{ steps.check.outputs.trade-domain }}
       scheduler-logbook-lib: ${{ steps.check.outputs.scheduler-logbook-lib }}
+      feature-flag-lib: ${{ steps.check.outputs.feature-flag-lib }}
       internal-changed: ${{ steps.check.outputs.internal-changed }}
       maven-pl-list: ${{ steps.check.outputs.maven-pl-list }}
     steps:
@@ -115,6 +116,7 @@ jobs:
           lib "domain/am-portfolio-domain" "portfolio-domain"
           lib "domain/am-trade-domain" "trade-domain"
           lib "libraries/am-scheduler-logbook-lib" "scheduler-logbook-lib"
+          lib "libraries/am-feature-flag-lib" "feature-flag-lib"
 
           # Pull in build-order dependencies when a downstream module changed
           enable() {
@@ -590,4 +592,24 @@ jobs:
       use_release_version: true
     secrets: inherit
 
+  publish-feature-flag-lib:
+    name: Publish am-feature-flag-lib
+    needs: [detect-changes, publish-root-pom]
+    if: >-
+      always()
+      && github.event_name == 'push'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/heads/fix/'))
+      && needs.detect-changes.outputs.feature-flag-lib == 'true'
+      && (needs.publish-root-pom.result == 'success' || needs.publish-root-pom.result == 'skipped')
+    permissions:
+      contents: write
+      packages: write
+    uses: AM-Portfolio/am-pipelines/.github/workflows/publish-library.yml@main
+    with:
+      language: java
+      working_directory: libraries/am-feature-flag-lib
+      sdk_name: am-feature-flag-lib
+      action: ${{ (github.event_name == 'pull_request' || contains(github.event.head_commit.message, 'bump parent and submodules to next snapshot version') || contains(github.event.head_commit.message, 'bump version to next snapshot version')) && 'verify' || 'publish' }}
+      use_release_version: true
+    secrets: inherit
 
