@@ -22,7 +22,7 @@ tags:
 - description: Advanced analytics endpoints for market indices data
   name: Index Analytics
 paths:
-  /api/v1/analytics/portfolio/{portfolioId}/advanced:
+  /v1/analytics/portfolio/{portfolioId}/advanced:
     post:
       description: Retrieves comprehensive analytics for a portfolio with customizable
         components and timeframes
@@ -67,7 +67,7 @@ paths:
       x-accepts:
       - '*/*'
       - application/json
-  /api/v1/analytics/index/{indexSymbol}/advanced:
+  /v1/analytics/index/{indexSymbol}/advanced:
     post:
       description: Retrieves comprehensive analytics for a market index with customizable
         components and timeframes
@@ -112,19 +112,11 @@ paths:
       x-accepts:
       - '*/*'
       - application/json
-  /api/v1/portfolios:
+  /v1/portfolios:
     get:
       description: Retrieves all portfolios associated with a specific user ID
       operationId: getPortfolios
       parameters:
-      - description: User ID to fetch portfolios for
-        explode: true
-        in: query
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: form
       responses:
         "200":
           content:
@@ -147,7 +139,7 @@ paths:
       - Portfolio Management
       x-accepts:
       - '*/*'
-  /api/v1/portfolios/{portfolioId}:
+  /v1/portfolios/{portfolioId}:
     get:
       description: Retrieves detailed portfolio information for a specific portfolio
         ID
@@ -186,20 +178,12 @@ paths:
       x-accepts:
       - '*/*'
       - application/json
-  /api/v1/portfolios/summary:
+  /v1/portfolios/summary:
     get:
       description: Retrieves a summary of all portfolios for a user with performance
         metrics. Optionally filter by specific portfolio ID.
       operationId: getPortfolioSummary
       parameters:
-      - description: User ID to fetch portfolio summary for
-        explode: true
-        in: query
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: form
       - description: Optional portfolio ID to filter results for specific portfolio
         explode: true
         in: query
@@ -249,20 +233,12 @@ paths:
       - Portfolio Management
       x-accepts:
       - '*/*'
-  /api/v1/portfolios/list:
+  /v1/portfolios/list:
     get:
       description: Retrieves a lightweight list of portfolio IDs and names for all
         user portfolios
       operationId: getPortfolioBasicDetails
       parameters:
-      - description: User ID to fetch portfolio basic details for
-        explode: true
-        in: query
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: form
       responses:
         "404":
           content:
@@ -285,20 +261,12 @@ paths:
       - Portfolio Management
       x-accepts:
       - '*/*'
-  /api/v1/portfolios/holdings:
+  /v1/portfolios/holdings:
     get:
       description: Retrieves all holdings across portfolios for a user with current
         values. Optionally filter by specific portfolio ID.
       operationId: getPortfolioHoldings
       parameters:
-      - description: User ID to fetch portfolio holdings for
-        explode: true
-        in: query
-        name: userId
-        required: true
-        schema:
-          type: string
-        style: form
       - description: Optional portfolio ID to filter results for specific portfolio
         explode: true
         in: query
@@ -348,7 +316,7 @@ paths:
       - Portfolio Management
       x-accepts:
       - '*/*'
-  /api/v1/market-index/all:
+  /v1/market-index/all:
     get:
       description: Retrieves all market indices with optional filtering by interval
         and type

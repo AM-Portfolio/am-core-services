@@ -33,11 +33,16 @@ env:
   SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
   REDIS_PORT: "6379"
   AM_AUTH_URL: "http://am-identity.am-apps-dev.svc.cluster.local:8080"
-  AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-dev.svc.cluster.local:8100"
-  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-dev.svc.cluster.local:8060"
+  # fin-portfolio-agent not yet in cluster — use am-fin-agent chat until Phase 2 cutover
+  AM_AI_AGENT_URL: "http://am-fin-agent.am-apps-dev.svc.cluster.local:8080"
+  AM_AI_AGENT_CHAT_PATH: "/v1/ai/chat"
+  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-dev.svc.cluster.local:8080"
+  AM_TRADE_URL: "http://am-trade-management-service.am-apps-dev.svc.cluster.local:8080"
+  MARKET_DATA_URL: "http://am-market-data.am-apps-dev.svc.cluster.local:8080"
   AM_TOOLS_ANALYSIS_ENABLED: "true"
   AM_TOOLS_MARKET_ENABLED: "true"
   AM_TOOLS_PORTFOLIO_ENABLED: "true"
+  AM_TOOLS_BASKET_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
 

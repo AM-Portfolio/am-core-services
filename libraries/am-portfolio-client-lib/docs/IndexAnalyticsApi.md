@@ -4,8 +4,8 @@ All URIs are relative to *http://localhost:8101*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getAdvancedAnalytics1**](IndexAnalyticsApi.md#getAdvancedAnalytics1) | **POST** /api/v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics |
-| [**getAdvancedAnalytics1WithHttpInfo**](IndexAnalyticsApi.md#getAdvancedAnalytics1WithHttpInfo) | **POST** /api/v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics |
+| [**getAdvancedAnalytics1**](IndexAnalyticsApi.md#getAdvancedAnalytics1) | **POST** /v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics |
+| [**getAdvancedAnalytics1WithHttpInfo**](IndexAnalyticsApi.md#getAdvancedAnalytics1WithHttpInfo) | **POST** /v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics |
 
 
 

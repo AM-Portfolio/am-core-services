@@ -110,22 +110,22 @@ All URIs are relative to *http://localhost:8101*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*IndexAnalyticsApi* | [**getAdvancedAnalytics1**](docs/IndexAnalyticsApi.md#getAdvancedAnalytics1) | **POST** /api/v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics
-*IndexAnalyticsApi* | [**getAdvancedAnalytics1WithHttpInfo**](docs/IndexAnalyticsApi.md#getAdvancedAnalytics1WithHttpInfo) | **POST** /api/v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics
-*MarketIndicesApi* | [**getAllMarketIndices**](docs/MarketIndicesApi.md#getAllMarketIndices) | **GET** /api/v1/market-index/all | Get all market indices
-*MarketIndicesApi* | [**getAllMarketIndicesWithHttpInfo**](docs/MarketIndicesApi.md#getAllMarketIndicesWithHttpInfo) | **GET** /api/v1/market-index/all | Get all market indices
-*PortfolioAnalyticsApi* | [**getAdvancedAnalytics**](docs/PortfolioAnalyticsApi.md#getAdvancedAnalytics) | **POST** /api/v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics
-*PortfolioAnalyticsApi* | [**getAdvancedAnalyticsWithHttpInfo**](docs/PortfolioAnalyticsApi.md#getAdvancedAnalyticsWithHttpInfo) | **POST** /api/v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics
-*PortfolioManagementApi* | [**getPortfolioBasicDetails**](docs/PortfolioManagementApi.md#getPortfolioBasicDetails) | **GET** /api/v1/portfolios/list | Get portfolio IDs and names
-*PortfolioManagementApi* | [**getPortfolioBasicDetailsWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioBasicDetailsWithHttpInfo) | **GET** /api/v1/portfolios/list | Get portfolio IDs and names
-*PortfolioManagementApi* | [**getPortfolioById**](docs/PortfolioManagementApi.md#getPortfolioById) | **GET** /api/v1/portfolios/{portfolioId} | Get portfolio by ID
-*PortfolioManagementApi* | [**getPortfolioByIdWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioByIdWithHttpInfo) | **GET** /api/v1/portfolios/{portfolioId} | Get portfolio by ID
-*PortfolioManagementApi* | [**getPortfolioHoldings**](docs/PortfolioManagementApi.md#getPortfolioHoldings) | **GET** /api/v1/portfolios/holdings | Get portfolio holdings
-*PortfolioManagementApi* | [**getPortfolioHoldingsWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioHoldingsWithHttpInfo) | **GET** /api/v1/portfolios/holdings | Get portfolio holdings
-*PortfolioManagementApi* | [**getPortfolioSummary**](docs/PortfolioManagementApi.md#getPortfolioSummary) | **GET** /api/v1/portfolios/summary | Get portfolio summary
-*PortfolioManagementApi* | [**getPortfolioSummaryWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioSummaryWithHttpInfo) | **GET** /api/v1/portfolios/summary | Get portfolio summary
-*PortfolioManagementApi* | [**getPortfolios**](docs/PortfolioManagementApi.md#getPortfolios) | **GET** /api/v1/portfolios | Get all portfolios for user
-*PortfolioManagementApi* | [**getPortfoliosWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfoliosWithHttpInfo) | **GET** /api/v1/portfolios | Get all portfolios for user
+*IndexAnalyticsApi* | [**getAdvancedAnalytics1**](docs/IndexAnalyticsApi.md#getAdvancedAnalytics1) | **POST** /v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics
+*IndexAnalyticsApi* | [**getAdvancedAnalytics1WithHttpInfo**](docs/IndexAnalyticsApi.md#getAdvancedAnalytics1WithHttpInfo) | **POST** /v1/analytics/index/{indexSymbol}/advanced | Get advanced index analytics
+*MarketIndicesApi* | [**getAllMarketIndices**](docs/MarketIndicesApi.md#getAllMarketIndices) | **GET** /v1/market-index/all | Get all market indices
+*MarketIndicesApi* | [**getAllMarketIndicesWithHttpInfo**](docs/MarketIndicesApi.md#getAllMarketIndicesWithHttpInfo) | **GET** /v1/market-index/all | Get all market indices
+*PortfolioAnalyticsApi* | [**getAdvancedAnalytics**](docs/PortfolioAnalyticsApi.md#getAdvancedAnalytics) | **POST** /v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics
+*PortfolioAnalyticsApi* | [**getAdvancedAnalyticsWithHttpInfo**](docs/PortfolioAnalyticsApi.md#getAdvancedAnalyticsWithHttpInfo) | **POST** /v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics
+*PortfolioManagementApi* | [**getPortfolioBasicDetails**](docs/PortfolioManagementApi.md#getPortfolioBasicDetails) | **GET** /v1/portfolios/list | Get portfolio IDs and names
+*PortfolioManagementApi* | [**getPortfolioBasicDetailsWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioBasicDetailsWithHttpInfo) | **GET** /v1/portfolios/list | Get portfolio IDs and names
+*PortfolioManagementApi* | [**getPortfolioById**](docs/PortfolioManagementApi.md#getPortfolioById) | **GET** /v1/portfolios/{portfolioId} | Get portfolio by ID
+*PortfolioManagementApi* | [**getPortfolioByIdWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioByIdWithHttpInfo) | **GET** /v1/portfolios/{portfolioId} | Get portfolio by ID
+*PortfolioManagementApi* | [**getPortfolioHoldings**](docs/PortfolioManagementApi.md#getPortfolioHoldings) | **GET** /v1/portfolios/holdings | Get portfolio holdings
+*PortfolioManagementApi* | [**getPortfolioHoldingsWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioHoldingsWithHttpInfo) | **GET** /v1/portfolios/holdings | Get portfolio holdings
+*PortfolioManagementApi* | [**getPortfolioSummary**](docs/PortfolioManagementApi.md#getPortfolioSummary) | **GET** /v1/portfolios/summary | Get portfolio summary
+*PortfolioManagementApi* | [**getPortfolioSummaryWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfolioSummaryWithHttpInfo) | **GET** /v1/portfolios/summary | Get portfolio summary
+*PortfolioManagementApi* | [**getPortfolios**](docs/PortfolioManagementApi.md#getPortfolios) | **GET** /v1/portfolios | Get all portfolios for user
+*PortfolioManagementApi* | [**getPortfoliosWithHttpInfo**](docs/PortfolioManagementApi.md#getPortfoliosWithHttpInfo) | **GET** /v1/portfolios | Get all portfolios for user
 
 
 ## Documentation for Models

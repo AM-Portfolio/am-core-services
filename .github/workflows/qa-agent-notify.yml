@@ -1,9 +1,10 @@
-# Notify qa-agent for am-analysis pilot when changes land on master/main.
+# Sequential: detect service → publish SPT catalog → poll catalog ready → notify release-readiness.
+# Prevents register vs SPT/UI race (never parallel with notify).
 #
-# Opt-in: services/am-analysis/qa-agent.yaml (enabled + branches).
 # Secrets (repo or org):
-#   QA_AGENT_BASE_URL      e.g. https://qa-agent.example or http://host:8150
-#   QA_AGENT_GATEWAY_TOKEN Bearer token expected by qa-agent
+#   QA_AGENT_BASE_URL
+#   QA_AGENT_GATEWAY_TOKEN
+#   KUBE_CONFIG  (base64 kubeconfig with rights to apply ConfigMaps in load-testing + am-apps-dev)
 
 name: QA Agent Notify
 
@@ -12,9 +13,15 @@ on:
     branches: [master, main]
     paths:
       - "services/am-analysis/**"
+      - "services/am-gateway/**"
+      - "services/am-mcp-server/**"
       - ".github/workflows/qa-agent-notify.yml"
   workflow_dispatch:
     inputs:
+      service:
+        description: Service name (am-analysis | am-gateway | am-mcp-server)
+        required: false
+        type: string
       head_sha:
         description: Optional override commit SHA
         required: false
@@ -23,78 +30,180 @@ on:
         description: Optional override branch
         required: false
         type: string
+      skip_catalog:
+        description: Skip catalog publish (UI-only / emergency)
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
-  group: qa-agent-notify-${{ github.ref }}
+  group: qa-agent-notify-${{ github.repository }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  notify-qa-agent:
-    name: Trigger qa-agent release-readiness (am-analysis)
+  detect:
+    name: Detect service
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'workflow_dispatch'
-      || !contains(github.event.head_commit.message, '[skip ci]')
+    outputs:
+      service: ${{ steps.pick.outputs.service }}
+      skip: ${{ steps.pick.outputs.skip }}
+      reason: ${{ steps.pick.outputs.reason }}
+      environment: ${{ steps.pick.outputs.environment }}
+      require_catalog: ${{ steps.pick.outputs.require_catalog }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Read am-analysis qa-agent.yaml
-        id: cfg
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Resolve service from paths / input
+        id: pick
+        env:
+          INPUT_SERVICE: ${{ github.event.inputs.service || '' }}
+          BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
         run: |
           set -euo pipefail
-          MANIFEST="services/am-analysis/qa-agent.yaml"
-          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
-          if [ ! -f "$MANIFEST" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "reason=missing_manifest" >> "$GITHUB_OUTPUT"
-            echo "Manifest missing: $MANIFEST — skipping"
-            exit 0
-          fi
           python3 -m pip install --quiet pyyaml
           python3 <<'PY' >> "$GITHUB_OUTPUT"
           import os
-          import yaml
+          import subprocess
           from pathlib import Path
+          import yaml
 
           branch = os.environ["BRANCH"]
-          data = yaml.safe_load(Path("services/am-analysis/qa-agent.yaml").read_text(encoding="utf-8")) or {}
-          enabled = bool(data.get("enabled", False))
-          branches = data.get("branches") or []
-          service = str(data.get("service") or "am-analysis")
-          environment = str(data.get("environment") or "dev")
-          if not enabled:
-              print("skip=true")
-              print("reason=disabled")
-          elif branches and branch not in branches:
-              print("skip=true")
-              print(f"reason=branch_not_listed:{branch}")
-          else:
+          input_svc = (os.environ.get("INPUT_SERVICE") or "").strip()
+          candidates = ["am-analysis", "am-gateway", "am-mcp-server"]
+
+          def enabled(svc: str) -> tuple[bool, str, str, bool]:
+              man = Path(f"services/{svc}/qa-agent.yaml")
+              if not man.is_file():
+                  return False, "missing_manifest", "dev", True
+              data = yaml.safe_load(man.read_text(encoding="utf-8")) or {}
+              if not data.get("enabled", False):
+                  return False, "disabled", str(data.get("environment") or "dev"), True
+              branches = data.get("branches") or []
+              if branches and branch not in branches:
+                  return False, f"branch_not_listed:{branch}", str(data.get("environment") or "dev"), True
+              spt = data.get("spt") if isinstance(data.get("spt"), dict) else {}
+              # Prefer spt.required; fall back to require_spt_catalog; default True for backends
+              if "required" in spt:
+                  req = bool(spt.get("required"))
+              elif "require_spt_catalog" in data:
+                  req = bool(data.get("require_spt_catalog"))
+              else:
+                  req = True
+              # Sibling spt.yaml must exist when required
+              if req and not (Path(f"services/{svc}/spt.yaml").is_file()):
+                  return False, "missing_spt_yaml", str(data.get("environment") or "dev"), True
+              return True, "ok", str(data.get("environment") or "dev"), req
+
+          service = input_svc
+          if not service and os.environ.get("GITHUB_EVENT_NAME") == "push":
+              try:
+                  diff = subprocess.check_output(
+                      ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
+                      text=True,
+                  )
+              except subprocess.CalledProcessError:
+                  diff = ""
+              for line in diff.splitlines():
+                  for c in candidates:
+                      if line.startswith(f"services/{c}/"):
+                          service = c
+                          break
+                  if service:
+                      break
+
+          if not service:
+              # Prefer analysis if dispatch without input
+              service = "am-analysis"
+
+          ok, reason, env, req = enabled(service)
+          print(f"service={service}")
+          print(f"environment={env}")
+          print(f"require_catalog={'true' if req else 'false'}")
+          if ok:
               print("skip=false")
               print("reason=ok")
-          print(f"service={service}")
-          print(f"environment={environment}")
+          else:
+              print("skip=true")
+              print(f"reason={reason}")
           PY
+
+  publish-catalog:
+    name: Publish SPT catalog
+    needs: detect
+    if: needs.detect.outputs.skip != 'true' && needs.detect.outputs.require_catalog == 'true' && github.event.inputs.skip_catalog != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup kubeconfig
         env:
-          BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
-
-      - name: Resolve payload
-        id: meta
-        if: steps.cfg.outputs.skip != 'true'
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
-          SHA="${{ github.event.inputs.head_sha || github.sha }}"
-          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
-          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
-          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
-          echo "repo=${{ github.repository }}" >> "$GITHUB_OUTPUT"
-          echo "Triggering qa-agent for ${{ github.repository }}@${SHA} service=${{ steps.cfg.outputs.service }}"
+          set -euo pipefail
+          if [ -z "${KUBE_CONFIG:-}" ]; then
+            echo "::error::Set secret KUBE_CONFIG (base64 kubeconfig)"
+            exit 1
+          fi
+          mkdir -p "$HOME/.kube"
+          echo "$KUBE_CONFIG" | base64 -d > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+          kubectl cluster-info
+      - name: Apply ConfigMaps (load-testing + am-apps-dev)
+        run: |
+          set -euo pipefail
+          python3 scripts/publish-spt-catalogs.py \
+            --service "${{ needs.detect.outputs.service }}" \
+            --namespace load-testing \
+            --namespace am-apps-dev
 
-      - name: Skip notice
-        if: steps.cfg.outputs.skip == 'true'
-        run: echo "Skipping qa-agent notify (${{ steps.cfg.outputs.reason }})"
+  wait-catalog:
+    name: Wait catalog ready
+    needs: [detect, publish-catalog]
+    if: |
+      always() &&
+      needs.detect.outputs.skip != 'true' &&
+      (needs.publish-catalog.result == 'success' || needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poll Specs registrations
+        if: needs.detect.outputs.require_catalog == 'true' && github.event.inputs.skip_catalog != 'true'
+        env:
+          QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
+          SERVICE: ${{ needs.detect.outputs.service }}
+        run: |
+          set -euo pipefail
+          if [ -z "${QA_AGENT_BASE_URL:-}" ]; then
+            echo "::error::Set secret QA_AGENT_BASE_URL"
+            exit 1
+          fi
+          BASE="${QA_AGENT_BASE_URL%/}"
+          echo "Waiting for ${SERVICE} in ${BASE}/api/catalog/registrations"
+          for i in $(seq 1 36); do
+            CODE=$(curl -sS -o /tmp/reg.json -w "%{http_code}" "${BASE}/api/catalog/registrations" || true)
+            if [ "${CODE}" = "200" ] && jq -e --arg s "$SERVICE" '
+                [.services[]? | (.id // .service // "")] | index($s)
+              ' /tmp/reg.json >/dev/null 2>&1; then
+              echo "Catalog ready for ${SERVICE} (attempt ${i})"
+              cat /tmp/reg.json
+              exit 0
+            fi
+            echo "attempt ${i}: http=${CODE} not ready yet"
+            sleep 5
+          done
+          echo "::error::catalog_not_ready for ${SERVICE}"
+          cat /tmp/reg.json || true
+          exit 1
+      - name: Skip catalog wait
+        if: needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true'
+        run: echo "Catalog wait skipped"
 
-      - name: POST release-readiness
-        if: steps.cfg.outputs.skip != 'true'
+  notify:
+    name: POST release-readiness
+    needs: [detect, wait-catalog]
+    if: always() && needs.detect.outputs.skip != 'true' && needs.wait-catalog.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger qa-agent
         env:
           QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
           QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
@@ -105,12 +214,16 @@ jobs:
             exit 1
           fi
           BASE="${QA_AGENT_BASE_URL%/}"
+          SHA="${{ github.event.inputs.head_sha || github.sha }}"
+          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
+          SERVICE="${{ needs.detect.outputs.service }}"
+          ENV="${{ needs.detect.outputs.environment }}"
           BODY=$(jq -n \
-            --arg repo "${{ steps.meta.outputs.repo }}" \
-            --arg branch "${{ steps.meta.outputs.branch }}" \
-            --arg sha "${{ steps.meta.outputs.sha }}" \
-            --arg service "${{ steps.cfg.outputs.service }}" \
-            --arg environment "${{ steps.cfg.outputs.environment }}" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "$BRANCH" \
+            --arg sha "$SHA" \
+            --arg service "$SERVICE" \
+            --arg environment "$ENV" \
             '{
               repo: $repo,
               branch: $branch,
@@ -139,4 +252,4 @@ jobs:
             echo "::warning::qa-agent skipped: $(jq -r '.reason' /tmp/qa-agent-resp.json)"
             exit 0
           fi
-          echo "qa-agent activated for am-analysis on ${{ steps.meta.outputs.branch }}"
+          echo "qa-agent activated for ${SERVICE} on ${BRANCH}"

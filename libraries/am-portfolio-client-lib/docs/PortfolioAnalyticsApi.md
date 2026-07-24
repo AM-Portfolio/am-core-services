@@ -4,8 +4,8 @@ All URIs are relative to *http://localhost:8101*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getAdvancedAnalytics**](PortfolioAnalyticsApi.md#getAdvancedAnalytics) | **POST** /api/v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics |
-| [**getAdvancedAnalyticsWithHttpInfo**](PortfolioAnalyticsApi.md#getAdvancedAnalyticsWithHttpInfo) | **POST** /api/v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics |
+| [**getAdvancedAnalytics**](PortfolioAnalyticsApi.md#getAdvancedAnalytics) | **POST** /v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics |
+| [**getAdvancedAnalyticsWithHttpInfo**](PortfolioAnalyticsApi.md#getAdvancedAnalyticsWithHttpInfo) | **POST** /v1/analytics/portfolio/{portfolioId}/advanced | Get advanced portfolio analytics |
 
 
 

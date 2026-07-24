@@ -270,7 +270,7 @@ public class IndexAnalyticsApi {
 
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/analytics/index/{indexSymbol}/advanced"
+    String localVarPath = "/v1/analytics/index/{indexSymbol}/advanced"
         .replace("{indexSymbol}", ApiClient.urlEncode(indexSymbol.toString()));
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));

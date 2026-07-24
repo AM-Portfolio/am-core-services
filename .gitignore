@@ -3,6 +3,10 @@ target/
 *.log
 *.txt
 
+# Local image/jar patch scratch (never commit)
+services/am-mcp-server/_patch_build/
+**/_patch_build/
+
 # IDE
 .idea/
 .vscode/

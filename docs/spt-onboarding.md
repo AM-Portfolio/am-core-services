@@ -32,6 +32,8 @@ am-analysis gap audit: [`openapi-gap-am-analysis.md`](openapi-gap-am-analysis.md
 
 ## File: `services/<name>/spt.yaml`
 
+**Source of truth for load testing** (targets, OpenAPI path, runtime). Keep adding / maintaining these — release-gate hydrates from the published catalog, it does **not** replace `spt.yaml`.
+
 ```yaml
 apiVersion: am.spt/v1
 kind: ServiceLoadTest
@@ -58,6 +60,27 @@ openapi:
   path: /v3/api-docs          # java; python: /openapi.json
 ```
 
+## Optional: `services/<name>/qa-agent.yaml`
+
+Thin **CI opt-in** for release-readiness notify. Do **not** copy targets here — point at `spt.yaml`:
+
+```yaml
+apiVersion: am.qa/v1
+kind: ReleaseReadiness
+service: am-analysis
+enabled: true
+branches: [master, main]
+environment: dev
+spt:
+  path: spt.yaml
+  required: true
+  iterations: 50
+```
+
+| File | Role |
+|------|------|
+| `spt.yaml` | Registration + load (OpenAPI/targets) — already used across repos |
+| `qa-agent.yaml` | Enable merge → catalog publish → SPT run → go/no-go |
 ### Rules
 
 - Pass **three public HTTPS bases** in `targets` (`dev` / `preprod` / `prod`) — SPT picks `targets[environment]`.
