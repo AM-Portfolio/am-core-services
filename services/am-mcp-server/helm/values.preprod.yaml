@@ -41,7 +41,7 @@ env:
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
   REDIS_PORT: "6379"
-  AM_AUTH_URL: "http://am-auth.am-apps-preprod.svc.cluster.local:8001"
+  AM_AUTH_URL: "http://am-identity.am-apps-preprod.svc.cluster.local:8080"
 
   AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-preprod.svc.cluster.local:8100"
   AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-preprod.svc.cluster.local:8060"

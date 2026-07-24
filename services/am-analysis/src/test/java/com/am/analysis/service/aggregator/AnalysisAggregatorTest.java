@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -70,5 +71,45 @@ public class AnalysisAggregatorTest {
         assertEquals(new BigDecimal("3000.0"), summary.getTotalGainLoss()); // 15000 - 12000
         assertEquals(25.0, summary.getTotalGainLossPercentage()); // 3000 / 12000 * 100
         assertEquals(new BigDecimal("500.0"), summary.getDayChange()); // 500 + 0 (trade assumed 0)
+    }
+
+    @Test
+    void getPortfolioOverviews_toleratesNullPerformanceAmounts() {
+        AnalysisEntity amPortfolio = new AnalysisEntity();
+        amPortfolio.setSourceId("p-null");
+        amPortfolio.setPerformance(PerformanceSummary.builder()
+                .totalValue(null)
+                .totalInvestment(null)
+                .dayChange(null)
+                .build());
+
+        when(entityLoadService.loadPortfoliosForUser(eq("user1"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(amPortfolio), false));
+        when(tradeClientService.getPortfolios("user1")).thenReturn(List.of());
+
+        var overviews = aggregator.getPortfolioOverviews("user1");
+        assertEquals(1, overviews.size());
+        assertEquals(BigDecimal.ZERO, overviews.get(0).getTotalValue());
+        assertEquals(BigDecimal.ZERO, overviews.get(0).getInvestedValue());
+        assertNotNull(overviews.get(0).getDayChange());
+    }
+
+    @Test
+    void getOverallSummary_toleratesNullPerformanceAmounts() {
+        AnalysisEntity amPortfolio = new AnalysisEntity();
+        amPortfolio.setSourceId("p-null");
+        amPortfolio.setPerformance(PerformanceSummary.builder()
+                .totalValue(100.0)
+                .totalInvestment(null)
+                .dayChange(null)
+                .build());
+
+        when(entityLoadService.loadPortfoliosForUser(eq("user1"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(amPortfolio), false));
+        when(tradeClientService.getPortfolios("user1")).thenReturn(List.of());
+
+        DashboardSummary summary = aggregator.getOverallSummary("user1");
+        assertEquals(new BigDecimal("100.0"), summary.getTotalValue());
+        assertEquals(BigDecimal.ZERO, summary.getTotalInvested());
     }
 }

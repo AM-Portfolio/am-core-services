@@ -1,0 +1,34 @@
+apiVersion: am.spt/v1
+kind: ServiceLoadTest
+service: am-mcp-server
+label: am-mcp-server
+enabled: true
+runtime: java
+owners: [core-services]
+description: MCP server load-test registration (OpenAPI via springdoc)
+createdBy: core-services
+updatedBy: core-services
+createdAt: "2026-07-22"
+updatedAt: "2026-07-22"
+tags: [core, java, mcp, springdoc]
+source:
+  repo: am-core-services
+  path: services/am-mcp-server/spt.yaml
+  team: core-services
+traces:
+  - name: onboarding
+    ref: docs/spt-onboarding.md
+  - name: configmap
+    ref: spt-catalog-am-mcp-server
+  - name: openapi
+    ref: /v3/api-docs
+  - name: namespace
+    ref: load-testing
+targets:
+  # Public HTTPS bases only (Traefik strip /mcp → service root)
+  # No dedicated am-apps-dev deploy yet — dev points at preprod host until one exists
+  dev: "https://am-preprod.asrax.in/mcp"
+  preprod: "https://am-preprod.asrax.in/mcp"
+  prod: "https://am.asrax.in/mcp"
+openapi:
+  path: /v3/api-docs

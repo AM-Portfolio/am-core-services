@@ -21,11 +21,7 @@ import com.am.portfolio.client.model.PortfolioSummaryV1;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -47,9 +43,8 @@ public class PortfolioManagementApiTest {
      */
     @Test
     public void getPortfolioBasicDetailsTest() throws ApiException {
-        String userId = null;
         List<PortfolioBasicInfo> response = 
-        api.getPortfolioBasicDetails(userId);
+        api.getPortfolioBasicDetails();
         
         // TODO: test validations
     }
@@ -81,13 +76,12 @@ public class PortfolioManagementApiTest {
      */
     @Test
     public void getPortfolioHoldingsTest() throws ApiException {
-        String userId = null;
         String portfolioId = null;
         Integer page = null;
         Integer size = null;
         String interval = null;
         PortfolioHoldings response = 
-        api.getPortfolioHoldings(userId, portfolioId, page, size, interval);
+        api.getPortfolioHoldings(portfolioId, page, size, interval);
         
         // TODO: test validations
     }
@@ -102,13 +96,12 @@ public class PortfolioManagementApiTest {
      */
     @Test
     public void getPortfolioSummaryTest() throws ApiException {
-        String userId = null;
         String portfolioId = null;
         Integer page = null;
         Integer size = null;
         String interval = null;
         PortfolioSummaryV1 response = 
-        api.getPortfolioSummary(userId, portfolioId, page, size, interval);
+        api.getPortfolioSummary(portfolioId, page, size, interval);
         
         // TODO: test validations
     }
@@ -116,16 +109,15 @@ public class PortfolioManagementApiTest {
     /**
      * Get all portfolios for user
      *
-     * Retrieves all portfolios associated with a specific user ID
+     * Retrieves all portfolios associated with the authenticated user
      *
      * @throws ApiException
      *          if the Api call fails
      */
     @Test
     public void getPortfoliosTest() throws ApiException {
-        String userId = null;
         List<PortfolioModelV1> response = 
-        api.getPortfolios(userId);
+        api.getPortfolios();
         
         // TODO: test validations
     }

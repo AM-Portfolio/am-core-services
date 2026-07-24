@@ -1,0 +1,33 @@
+apiVersion: am.spt/v1
+kind: ServiceLoadTest
+service: am-analysis
+label: am-analysis
+enabled: true
+runtime: java
+owners: [core-services]
+description: Analysis service load-test registration (OpenAPI via springdoc)
+createdBy: core-services
+updatedBy: core-services
+createdAt: "2026-07-22"
+updatedAt: "2026-07-24"
+tags: [core, java, springdoc]
+source:
+  repo: am-core-services
+  path: services/am-analysis/spt.yaml
+  team: core-services
+traces:
+  - name: onboarding
+    ref: docs/spt-onboarding.md
+  - name: configmap
+    ref: spt-catalog-am-analysis
+  - name: openapi
+    ref: /v3/api-docs
+  - name: namespace
+    ref: load-testing
+targets:
+  # Public HTTPS bases only (Traefik strip /analysis → service root)
+  dev: "https://am-dev.asrax.in/analysis"
+  preprod: "https://am-preprod.asrax.in/analysis"
+  prod: "https://am.asrax.in/analysis"
+openapi:
+  path: /v3/api-docs

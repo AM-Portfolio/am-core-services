@@ -2,6 +2,15 @@ spring:
   config:
     activate:
       on-profile: local
+  kafka:
+    bootstrap-servers: localhost:9092
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://admin:sGwaiRdoaYtBiaqq4n9qaRkr@127.0.0.1:27017/?authSource=admin&directConnection=true}
+    redis:
+      host: ${REDIS_HOSTNAME:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ygD@iCKUD-6Gsu@fbwtpUOz_VzbJ7dCo}
 
 am:
   security:
@@ -13,3 +22,25 @@ am:
       roles:
         - "ROLE_USER"
         - "ROLE_ADMIN"
+  auth:
+    url: ${AM_AUTH_URL:http://127.0.0.1:8001}
+  services:
+    ai-agent-url: ${AM_AI_AGENT_URL:http://127.0.0.1:8100}
+    ai-agent-chat-path: ${AM_AI_AGENT_CHAT_PATH:/v1/ai/chat}
+    portfolio-url: ${AM_PORTFOLIO_URL:http://127.0.0.1:8060}
+    trade-url: ${AM_TRADE_URL:http://127.0.0.1:8040}
+    market-data-url: ${MARKET_DATA_URL:http://127.0.0.1:8050}
+
+am.observability:
+  enabled: true
+
+management:
+  tracing:
+    enabled: false
+  otlp:
+    tracing:
+      endpoint: http://127.0.0.1:4318/v1/traces
+  health:
+    kafka:
+      enabled: false
+

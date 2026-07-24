@@ -22,18 +22,27 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
-# ── MCP Server ────────────────────────────────────────────────────────────────
+# ── MCP Server (HTTP/SSE for any MCP client: ChatGPT, Claude, Cursor, …) ──────
 spring.ai.mcp.server:
   name: am-platform
   version: 1.0.0
-  transport-type: STDIO
+  stdio: false
+  # Traefik strip-prefix /mcp → backend paths /sse and /message
+  sse-message-endpoint: /message
+  capabilities:
+    tool: true
+    resource: false
+    prompt: false
+    completion: false
 
-# ── Swagger / OpenAPI Documentation ───────────────────────────────────────────
+# ── Swagger / OpenAPI Documentation (SPT discovers APIs from /v3/api-docs) ─────
 springdoc:
   api-docs:
-    path: /api-docs
+    enabled: true
+    path: /v3/api-docs
   swagger-ui:
-    path: /swagger-ui/index.html
+    enabled: true
+    path: /swagger-ui.html
     operationsSorter: alpha
     tagsSorter: alpha
     displayRequestDuration: true
@@ -53,12 +62,18 @@ am:
 
   services:
     ai-agent-url: ${AM_AI_AGENT_URL:http://localhost:8100}
+    # am-fin-agent: /v1/ai/chat; fin-portfolio-agent: /api/v1/ai/chat
+    ai-agent-chat-path: ${AM_AI_AGENT_CHAT_PATH:/api/v1/ai/chat}
     portfolio-url: ${AM_PORTFOLIO_URL:http://localhost:8060}
+    trade-url: ${AM_TRADE_URL:http://localhost:8040}
+    market-data-url: ${MARKET_DATA_URL:http://localhost:8050}
 
   # ── Tool Group Toggles ── set false to disable a group without recompiling ──
   tools:
     portfolio:
       enabled: ${AM_TOOLS_PORTFOLIO_ENABLED:true}
+    basket:
+      enabled: ${AM_TOOLS_BASKET_ENABLED:true}
     trade:
       enabled: ${AM_TOOLS_TRADE_ENABLED:true}
     market:
@@ -97,6 +112,12 @@ resilience4j:
         slidingWindowSize: 10
         failureRateThreshold: 50
         waitDurationInOpenState: 20s
+      am-portfolio:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
       am-trade:
         slidingWindowSize: 10
         failureRateThreshold: 50
@@ -113,6 +134,9 @@ resilience4j:
       am-market:
         maxAttempts: 2
         waitDuration: 300ms
+      am-portfolio:
+        maxAttempts: 2
+        waitDuration: 500ms
 
 # ── Actuator + Tracing + OTLP ─────────────────────────────────────────────────
 management:
@@ -168,12 +192,11 @@ am.observability:
 
 
 # ── Logging ───────────────────────────────────────────────────────────────────
-# Activate mcp-stdio profile to push JSON logs to STDERR (keeps STDOUT clean
-# for the MCP framing protocol). Override per environment.
-spring.profiles.include: mcp-stdio, security
+# HTTP/SSE mode: normal logging. For local stdio Claude Desktop, activate mcp-stdio.
+spring.profiles.include: security
 logging:
   level:
-    com.am.mcp: DEBUG
+    com.am.mcp: INFO
     org.springframework.ai.mcp: WARN
 
 ---
@@ -184,5 +207,5 @@ spring:
       on-profile: dev
 logging:
   level:
-    com.am.mcp: DEBUG
-    org.springframework.ai.mcp: DEBUG
+    com.am.mcp: INFO
+    org.springframework.ai.mcp: INFO

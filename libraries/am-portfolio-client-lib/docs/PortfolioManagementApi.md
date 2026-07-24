@@ -4,16 +4,16 @@ All URIs are relative to *http://localhost:8101*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getPortfolioBasicDetails**](PortfolioManagementApi.md#getPortfolioBasicDetails) | **GET** /api/v1/portfolios/list | Get portfolio IDs and names |
-| [**getPortfolioBasicDetailsWithHttpInfo**](PortfolioManagementApi.md#getPortfolioBasicDetailsWithHttpInfo) | **GET** /api/v1/portfolios/list | Get portfolio IDs and names |
-| [**getPortfolioById**](PortfolioManagementApi.md#getPortfolioById) | **GET** /api/v1/portfolios/{portfolioId} | Get portfolio by ID |
-| [**getPortfolioByIdWithHttpInfo**](PortfolioManagementApi.md#getPortfolioByIdWithHttpInfo) | **GET** /api/v1/portfolios/{portfolioId} | Get portfolio by ID |
-| [**getPortfolioHoldings**](PortfolioManagementApi.md#getPortfolioHoldings) | **GET** /api/v1/portfolios/holdings | Get portfolio holdings |
-| [**getPortfolioHoldingsWithHttpInfo**](PortfolioManagementApi.md#getPortfolioHoldingsWithHttpInfo) | **GET** /api/v1/portfolios/holdings | Get portfolio holdings |
-| [**getPortfolioSummary**](PortfolioManagementApi.md#getPortfolioSummary) | **GET** /api/v1/portfolios/summary | Get portfolio summary |
-| [**getPortfolioSummaryWithHttpInfo**](PortfolioManagementApi.md#getPortfolioSummaryWithHttpInfo) | **GET** /api/v1/portfolios/summary | Get portfolio summary |
-| [**getPortfolios**](PortfolioManagementApi.md#getPortfolios) | **GET** /api/v1/portfolios | Get all portfolios for user |
-| [**getPortfoliosWithHttpInfo**](PortfolioManagementApi.md#getPortfoliosWithHttpInfo) | **GET** /api/v1/portfolios | Get all portfolios for user |
+| [**getPortfolioBasicDetails**](PortfolioManagementApi.md#getPortfolioBasicDetails) | **GET** /v1/portfolios/list | Get portfolio IDs and names |
+| [**getPortfolioBasicDetailsWithHttpInfo**](PortfolioManagementApi.md#getPortfolioBasicDetailsWithHttpInfo) | **GET** /v1/portfolios/list | Get portfolio IDs and names |
+| [**getPortfolioById**](PortfolioManagementApi.md#getPortfolioById) | **GET** /v1/portfolios/{portfolioId} | Get portfolio by ID |
+| [**getPortfolioByIdWithHttpInfo**](PortfolioManagementApi.md#getPortfolioByIdWithHttpInfo) | **GET** /v1/portfolios/{portfolioId} | Get portfolio by ID |
+| [**getPortfolioHoldings**](PortfolioManagementApi.md#getPortfolioHoldings) | **GET** /v1/portfolios/holdings | Get portfolio holdings |
+| [**getPortfolioHoldingsWithHttpInfo**](PortfolioManagementApi.md#getPortfolioHoldingsWithHttpInfo) | **GET** /v1/portfolios/holdings | Get portfolio holdings |
+| [**getPortfolioSummary**](PortfolioManagementApi.md#getPortfolioSummary) | **GET** /v1/portfolios/summary | Get portfolio summary |
+| [**getPortfolioSummaryWithHttpInfo**](PortfolioManagementApi.md#getPortfolioSummaryWithHttpInfo) | **GET** /v1/portfolios/summary | Get portfolio summary |
+| [**getPortfolios**](PortfolioManagementApi.md#getPortfolios) | **GET** /v1/portfolios | Get all portfolios for user |
+| [**getPortfoliosWithHttpInfo**](PortfolioManagementApi.md#getPortfoliosWithHttpInfo) | **GET** /v1/portfolios | Get all portfolios for user |
 
 
 

@@ -270,7 +270,7 @@ public class PortfolioAnalyticsApi {
 
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/analytics/portfolio/{portfolioId}/advanced"
+    String localVarPath = "/v1/analytics/portfolio/{portfolioId}/advanced"
         .replace("{portfolioId}", ApiClient.urlEncode(portfolioId.toString()));
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));

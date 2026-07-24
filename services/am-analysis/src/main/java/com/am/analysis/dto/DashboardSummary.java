@@ -1,5 +1,6 @@
 package com.am.analysis.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -54,6 +55,7 @@ public class DashboardSummary {
 
     @Data @Builder @NoArgsConstructor @AllArgsConstructor
     public static class PortfolioBreakdown {
+        @Schema(example = "pf-demo-001")
         private String     portfolioId;
         private String     portfolioName;
         private String     portfolioType;    // "Long Term", "Intraday", "SIP" etc.

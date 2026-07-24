@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
- * Utility: truncate tool responses to protect LLM context window.
- *
- * MCP tools must always return String. Large JSON dumps hurt response quality
- * because they consume context and bury the relevant data points.
- * Configured by am.mcp.max-response-chars in application.yaml.
+ * Utility: serialize tool responses and emit a consistent error envelope.
+ * MCP tools must always return String — never throw from {@code @Tool} methods.
  */
 @Slf4j
 @Component
@@ -21,22 +21,21 @@ public class ResponseHelper {
     private final ObjectMapper objectMapper;
     private final AmMcpProperties props;
 
-    /**
-     * Serialize object to JSON, then truncate if over the configured limit.
-     * The truncation suffix tells Claude to request more specific data.
-     */
     public String toJson(Object data) {
         try {
-            String json = objectMapper.writeValueAsString(data);
-            return truncate(json);
+            return truncate(objectMapper.writeValueAsString(data));
         } catch (Exception e) {
-            return errorJson("serialization", e);
+            return failure("serialization", "SERIALIZATION_ERROR", e.getMessage(), false, null);
         }
     }
 
-    /**
-     * Truncate an already-serialized JSON string.
-     */
+    public String success(Object data) {
+        Map<String, Object> envelope = new LinkedHashMap<>();
+        envelope.put("ok", true);
+        envelope.put("data", data);
+        return toJson(envelope);
+    }
+
     public String truncate(String json) {
         int max = props.getMcp().getMaxResponseChars();
         if (json.length() <= max) {
@@ -47,22 +46,41 @@ public class ResponseHelper {
                 + " ... [TRUNCATED: use more specific filters to narrow results]\"";
     }
 
-    /**
-     * Standard error response — never throw from a tool.
-     */
     public String errorJson(String tool, Exception e) {
-        return String.format("{\"error\":\"%s failed\",\"detail\":\"%s\"}",
-                tool, e.getMessage() != null
-                        ? e.getMessage().replace("\"", "'").substring(0, Math.min(200, e.getMessage().length()))
-                        : "unknown error");
+        return failure(tool, "TOOL_FAILED",
+                e.getMessage() != null ? e.getMessage() : "unknown error",
+                true, "Retry the tool or use ask_finance_agent for a multi-step answer.");
     }
 
-    /**
-     * Service-unavailable message returned by circuit-breaker fallbacks.
-     */
     public String unavailable(String service) {
-        return String.format(
-                "{\"error\":\"%s is temporarily unavailable\",\"retry\":true,\"hint\":\"Try again in 30 seconds.\"}",
-                service);
+        return failure(service, "SERVICE_UNAVAILABLE",
+                service + " is temporarily unavailable",
+                true, "Try again in 30 seconds.");
+    }
+
+    public String failure(String tool, String code, String message, boolean retry, String hint) {
+        Map<String, Object> envelope = new LinkedHashMap<>();
+        envelope.put("ok", false);
+        envelope.put("error", code);
+        envelope.put("message", sanitize(message));
+        envelope.put("retry", retry);
+        envelope.put("tool", tool);
+        if (hint != null && !hint.isBlank()) {
+            envelope.put("hint", hint);
+        }
+        try {
+            return objectMapper.writeValueAsString(envelope);
+        } catch (Exception e) {
+            return "{\"ok\":false,\"error\":\"ENVELOPE_FAILED\",\"message\":\""
+                    + sanitize(message) + "\",\"retry\":true,\"tool\":\"" + tool + "\"}";
+        }
+    }
+
+    private static String sanitize(String msg) {
+        if (msg == null) {
+            return "unknown error";
+        }
+        String cleaned = msg.replace("\"", "'");
+        return cleaned.substring(0, Math.min(200, cleaned.length()));
     }
 }

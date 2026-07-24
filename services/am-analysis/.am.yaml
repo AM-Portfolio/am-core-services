@@ -1,0 +1,23 @@
+# Local amctl identity — matches CI image_name
+name: am-analysis
+release: am-analysis
+image: ghcr.io/am-portfolio/am-analysis
+runtime: java
+language: java
+dockerfile: Dockerfile
+context: .
+github:
+  repo: AM-Portfolio/am-core-services
+  deploy_workflow: direct-deploy.yml
+  service: am-analysis
+  # workflow_dispatch ref — must be default branch once workflow is registered
+  ref: master
+deploy:
+  # Cluster apply after local build+push. CLI --via / AM_DEPLOY_VIA override this.
+  # actions = GitHub Direct Deploy (same Helm as CI)
+  # helm    = laptop Helm against VPS kubeconfig
+  via: helm
+  # skip_github_actions: true   # equivalent to via: helm
+  # Rebuild image only when service sources change (skip mvn/docker otherwise).
+  # always | on-change | never — override with --rebuild / --skip-build
+  rebuild: on-change

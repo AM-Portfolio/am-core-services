@@ -69,14 +69,30 @@ public class AmMcpProperties {
     @Getter
     public static class Services {
         private String aiAgentUrl = "http://localhost:8100";
+        /** Chat path appended to aiAgentUrl. am-fin-agent uses /v1/ai/chat; fin-portfolio-agent uses /api/v1/ai/chat. */
+        private String aiAgentChatPath = "/api/v1/ai/chat";
         private String portfolioUrl = "http://localhost:8060";
+        private String tradeUrl = "http://localhost:8040";
+        private String marketDataUrl = "http://localhost:8050";
 
         public void setAiAgentUrl(String v) {
             this.aiAgentUrl = v;
         }
 
+        public void setAiAgentChatPath(String v) {
+            this.aiAgentChatPath = v;
+        }
+
         public void setPortfolioUrl(String v) {
             this.portfolioUrl = v;
+        }
+
+        public void setTradeUrl(String v) {
+            this.tradeUrl = v;
+        }
+
+        public void setMarketDataUrl(String v) {
+            this.marketDataUrl = v;
         }
     }
 
@@ -142,6 +158,7 @@ public class AmMcpProperties {
     @Getter
     public static class Tools {
         private final ToolGroup portfolio = new ToolGroup(true);
+        private final ToolGroup basket = new ToolGroup(true);
         private final ToolGroup trade = new ToolGroup(true);
         private final ToolGroup market = new ToolGroup(true);
         private final ToolGroup analysis = new ToolGroup(true);

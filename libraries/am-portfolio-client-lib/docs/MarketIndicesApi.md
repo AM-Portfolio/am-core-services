@@ -4,8 +4,8 @@ All URIs are relative to *http://localhost:8101*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getAllMarketIndices**](MarketIndicesApi.md#getAllMarketIndices) | **GET** /api/v1/market-index/all | Get all market indices |
-| [**getAllMarketIndicesWithHttpInfo**](MarketIndicesApi.md#getAllMarketIndicesWithHttpInfo) | **GET** /api/v1/market-index/all | Get all market indices |
+| [**getAllMarketIndices**](MarketIndicesApi.md#getAllMarketIndices) | **GET** /v1/market-index/all | Get all market indices |
+| [**getAllMarketIndicesWithHttpInfo**](MarketIndicesApi.md#getAllMarketIndicesWithHttpInfo) | **GET** /v1/market-index/all | Get all market indices |
 
 
 

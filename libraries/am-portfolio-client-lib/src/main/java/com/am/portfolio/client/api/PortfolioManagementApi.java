@@ -168,48 +168,44 @@ public class PortfolioManagementApi {
   /**
    * Get portfolio IDs and names
    * Retrieves a lightweight list of portfolio IDs and names for all user portfolios
-   * @param userId User ID to fetch portfolio basic details for (required)
    * @return List&lt;PortfolioBasicInfo&gt;
    * @throws ApiException if fails to make API call
    */
-  public List<PortfolioBasicInfo> getPortfolioBasicDetails(@javax.annotation.Nonnull String userId) throws ApiException {
-    return getPortfolioBasicDetails(userId, null);
+  public List<PortfolioBasicInfo> getPortfolioBasicDetails() throws ApiException {
+    return getPortfolioBasicDetails(null);
   }
 
   /**
    * Get portfolio IDs and names
    * Retrieves a lightweight list of portfolio IDs and names for all user portfolios
-   * @param userId User ID to fetch portfolio basic details for (required)
    * @param headers Optional headers to include in the request
    * @return List&lt;PortfolioBasicInfo&gt;
    * @throws ApiException if fails to make API call
    */
-  public List<PortfolioBasicInfo> getPortfolioBasicDetails(@javax.annotation.Nonnull String userId, Map<String, String> headers) throws ApiException {
-    ApiResponse<List<PortfolioBasicInfo>> localVarResponse = getPortfolioBasicDetailsWithHttpInfo(userId, headers);
+  public List<PortfolioBasicInfo> getPortfolioBasicDetails(Map<String, String> headers) throws ApiException {
+    ApiResponse<List<PortfolioBasicInfo>> localVarResponse = getPortfolioBasicDetailsWithHttpInfo(headers);
     return localVarResponse.getData();
   }
 
   /**
    * Get portfolio IDs and names
    * Retrieves a lightweight list of portfolio IDs and names for all user portfolios
-   * @param userId User ID to fetch portfolio basic details for (required)
    * @return ApiResponse&lt;List&lt;PortfolioBasicInfo&gt;&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<List<PortfolioBasicInfo>> getPortfolioBasicDetailsWithHttpInfo(@javax.annotation.Nonnull String userId) throws ApiException {
-    return getPortfolioBasicDetailsWithHttpInfo(userId, null);
+  public ApiResponse<List<PortfolioBasicInfo>> getPortfolioBasicDetailsWithHttpInfo() throws ApiException {
+    return getPortfolioBasicDetailsWithHttpInfo(null);
   }
 
   /**
    * Get portfolio IDs and names
    * Retrieves a lightweight list of portfolio IDs and names for all user portfolios
-   * @param userId User ID to fetch portfolio basic details for (required)
    * @param headers Optional headers to include in the request
    * @return ApiResponse&lt;List&lt;PortfolioBasicInfo&gt;&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<List<PortfolioBasicInfo>> getPortfolioBasicDetailsWithHttpInfo(@javax.annotation.Nonnull String userId, Map<String, String> headers) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getPortfolioBasicDetailsRequestBuilder(userId, headers);
+  public ApiResponse<List<PortfolioBasicInfo>> getPortfolioBasicDetailsWithHttpInfo(Map<String, String> headers) throws ApiException {
+    HttpRequest.Builder localVarRequestBuilder = getPortfolioBasicDetailsRequestBuilder(headers);
     try {
       HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
@@ -256,21 +252,14 @@ public class PortfolioManagementApi {
     }
   }
 
-  private HttpRequest.Builder getPortfolioBasicDetailsRequestBuilder(@javax.annotation.Nonnull String userId, Map<String, String> headers) throws ApiException {
-    // verify the required parameter 'userId' is set
-    if (userId == null) {
-      throw new ApiException(400, "Missing the required parameter 'userId' when calling getPortfolioBasicDetails");
-    }
-
+  private HttpRequest.Builder getPortfolioBasicDetailsRequestBuilder(Map<String, String> headers) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/portfolios/list";
+    String localVarPath = "/v1/portfolios/list";
 
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
     String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "userId";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("userId", userId));
 
     if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
       StringJoiner queryJoiner = new StringJoiner("&");
@@ -396,7 +385,7 @@ public class PortfolioManagementApi {
 
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/portfolios/{portfolioId}"
+    String localVarPath = "/v1/portfolios/{portfolioId}"
         .replace("{portfolioId}", ApiClient.urlEncode(portfolioId.toString()));
 
     localVarRequestBuilder.uri(URI.create(memberVarBaseUri + localVarPath));
@@ -418,7 +407,6 @@ public class PortfolioManagementApi {
   /**
    * Get portfolio holdings
    * Retrieves all holdings across portfolios for a user with current values. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio holdings for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -426,14 +414,13 @@ public class PortfolioManagementApi {
    * @return PortfolioHoldings
    * @throws ApiException if fails to make API call
    */
-  public PortfolioHoldings getPortfolioHoldings(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
-    return getPortfolioHoldings(userId, portfolioId, page, size, interval, null);
+  public PortfolioHoldings getPortfolioHoldings(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
+    return getPortfolioHoldings(portfolioId, page, size, interval, null);
   }
 
   /**
    * Get portfolio holdings
    * Retrieves all holdings across portfolios for a user with current values. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio holdings for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -442,15 +429,14 @@ public class PortfolioManagementApi {
    * @return PortfolioHoldings
    * @throws ApiException if fails to make API call
    */
-  public PortfolioHoldings getPortfolioHoldings(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
-    ApiResponse<PortfolioHoldings> localVarResponse = getPortfolioHoldingsWithHttpInfo(userId, portfolioId, page, size, interval, headers);
+  public PortfolioHoldings getPortfolioHoldings(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
+    ApiResponse<PortfolioHoldings> localVarResponse = getPortfolioHoldingsWithHttpInfo(portfolioId, page, size, interval, headers);
     return localVarResponse.getData();
   }
 
   /**
    * Get portfolio holdings
    * Retrieves all holdings across portfolios for a user with current values. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio holdings for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -458,14 +444,13 @@ public class PortfolioManagementApi {
    * @return ApiResponse&lt;PortfolioHoldings&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<PortfolioHoldings> getPortfolioHoldingsWithHttpInfo(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
-    return getPortfolioHoldingsWithHttpInfo(userId, portfolioId, page, size, interval, null);
+  public ApiResponse<PortfolioHoldings> getPortfolioHoldingsWithHttpInfo(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
+    return getPortfolioHoldingsWithHttpInfo(portfolioId, page, size, interval, null);
   }
 
   /**
    * Get portfolio holdings
    * Retrieves all holdings across portfolios for a user with current values. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio holdings for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -474,8 +459,8 @@ public class PortfolioManagementApi {
    * @return ApiResponse&lt;PortfolioHoldings&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<PortfolioHoldings> getPortfolioHoldingsWithHttpInfo(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getPortfolioHoldingsRequestBuilder(userId, portfolioId, page, size, interval, headers);
+  public ApiResponse<PortfolioHoldings> getPortfolioHoldingsWithHttpInfo(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
+    HttpRequest.Builder localVarRequestBuilder = getPortfolioHoldingsRequestBuilder(portfolioId, page, size, interval, headers);
     try {
       HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
@@ -522,21 +507,14 @@ public class PortfolioManagementApi {
     }
   }
 
-  private HttpRequest.Builder getPortfolioHoldingsRequestBuilder(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
-    // verify the required parameter 'userId' is set
-    if (userId == null) {
-      throw new ApiException(400, "Missing the required parameter 'userId' when calling getPortfolioHoldings");
-    }
-
+  private HttpRequest.Builder getPortfolioHoldingsRequestBuilder(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/portfolios/holdings";
+    String localVarPath = "/v1/portfolios/holdings";
 
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
     String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "userId";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("userId", userId));
     localVarQueryParameterBaseName = "portfolioId";
     localVarQueryParams.addAll(ApiClient.parameterToPairs("portfolioId", portfolioId));
     localVarQueryParameterBaseName = "page";
@@ -574,7 +552,6 @@ public class PortfolioManagementApi {
   /**
    * Get portfolio summary
    * Retrieves a summary of all portfolios for a user with performance metrics. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio summary for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -582,14 +559,13 @@ public class PortfolioManagementApi {
    * @return PortfolioSummaryV1
    * @throws ApiException if fails to make API call
    */
-  public PortfolioSummaryV1 getPortfolioSummary(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
-    return getPortfolioSummary(userId, portfolioId, page, size, interval, null);
+  public PortfolioSummaryV1 getPortfolioSummary(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
+    return getPortfolioSummary(portfolioId, page, size, interval, null);
   }
 
   /**
    * Get portfolio summary
    * Retrieves a summary of all portfolios for a user with performance metrics. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio summary for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -598,15 +574,14 @@ public class PortfolioManagementApi {
    * @return PortfolioSummaryV1
    * @throws ApiException if fails to make API call
    */
-  public PortfolioSummaryV1 getPortfolioSummary(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
-    ApiResponse<PortfolioSummaryV1> localVarResponse = getPortfolioSummaryWithHttpInfo(userId, portfolioId, page, size, interval, headers);
+  public PortfolioSummaryV1 getPortfolioSummary(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
+    ApiResponse<PortfolioSummaryV1> localVarResponse = getPortfolioSummaryWithHttpInfo(portfolioId, page, size, interval, headers);
     return localVarResponse.getData();
   }
 
   /**
    * Get portfolio summary
    * Retrieves a summary of all portfolios for a user with performance metrics. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio summary for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -614,14 +589,13 @@ public class PortfolioManagementApi {
    * @return ApiResponse&lt;PortfolioSummaryV1&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<PortfolioSummaryV1> getPortfolioSummaryWithHttpInfo(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
-    return getPortfolioSummaryWithHttpInfo(userId, portfolioId, page, size, interval, null);
+  public ApiResponse<PortfolioSummaryV1> getPortfolioSummaryWithHttpInfo(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval) throws ApiException {
+    return getPortfolioSummaryWithHttpInfo(portfolioId, page, size, interval, null);
   }
 
   /**
    * Get portfolio summary
    * Retrieves a summary of all portfolios for a user with performance metrics. Optionally filter by specific portfolio ID.
-   * @param userId User ID to fetch portfolio summary for (required)
    * @param portfolioId Optional portfolio ID to filter results for specific portfolio (optional)
    * @param page  (optional)
    * @param size  (optional)
@@ -630,8 +604,8 @@ public class PortfolioManagementApi {
    * @return ApiResponse&lt;PortfolioSummaryV1&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<PortfolioSummaryV1> getPortfolioSummaryWithHttpInfo(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getPortfolioSummaryRequestBuilder(userId, portfolioId, page, size, interval, headers);
+  public ApiResponse<PortfolioSummaryV1> getPortfolioSummaryWithHttpInfo(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
+    HttpRequest.Builder localVarRequestBuilder = getPortfolioSummaryRequestBuilder(portfolioId, page, size, interval, headers);
     try {
       HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
@@ -678,21 +652,14 @@ public class PortfolioManagementApi {
     }
   }
 
-  private HttpRequest.Builder getPortfolioSummaryRequestBuilder(@javax.annotation.Nonnull String userId, @javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
-    // verify the required parameter 'userId' is set
-    if (userId == null) {
-      throw new ApiException(400, "Missing the required parameter 'userId' when calling getPortfolioSummary");
-    }
-
+  private HttpRequest.Builder getPortfolioSummaryRequestBuilder(@javax.annotation.Nullable String portfolioId, @javax.annotation.Nullable Integer page, @javax.annotation.Nullable Integer size, @javax.annotation.Nullable String interval, Map<String, String> headers) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/portfolios/summary";
+    String localVarPath = "/v1/portfolios/summary";
 
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
     String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "userId";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("userId", userId));
     localVarQueryParameterBaseName = "portfolioId";
     localVarQueryParams.addAll(ApiClient.parameterToPairs("portfolioId", portfolioId));
     localVarQueryParameterBaseName = "page";
@@ -730,48 +697,44 @@ public class PortfolioManagementApi {
   /**
    * Get all portfolios for user
    * Retrieves all portfolios associated with a specific user ID
-   * @param userId User ID to fetch portfolios for (required)
    * @return List&lt;PortfolioModelV1&gt;
    * @throws ApiException if fails to make API call
    */
-  public List<PortfolioModelV1> getPortfolios(@javax.annotation.Nonnull String userId) throws ApiException {
-    return getPortfolios(userId, null);
+  public List<PortfolioModelV1> getPortfolios() throws ApiException {
+    return getPortfolios(null);
   }
 
   /**
    * Get all portfolios for user
    * Retrieves all portfolios associated with a specific user ID
-   * @param userId User ID to fetch portfolios for (required)
    * @param headers Optional headers to include in the request
    * @return List&lt;PortfolioModelV1&gt;
    * @throws ApiException if fails to make API call
    */
-  public List<PortfolioModelV1> getPortfolios(@javax.annotation.Nonnull String userId, Map<String, String> headers) throws ApiException {
-    ApiResponse<List<PortfolioModelV1>> localVarResponse = getPortfoliosWithHttpInfo(userId, headers);
+  public List<PortfolioModelV1> getPortfolios(Map<String, String> headers) throws ApiException {
+    ApiResponse<List<PortfolioModelV1>> localVarResponse = getPortfoliosWithHttpInfo(headers);
     return localVarResponse.getData();
   }
 
   /**
    * Get all portfolios for user
    * Retrieves all portfolios associated with a specific user ID
-   * @param userId User ID to fetch portfolios for (required)
    * @return ApiResponse&lt;List&lt;PortfolioModelV1&gt;&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<List<PortfolioModelV1>> getPortfoliosWithHttpInfo(@javax.annotation.Nonnull String userId) throws ApiException {
-    return getPortfoliosWithHttpInfo(userId, null);
+  public ApiResponse<List<PortfolioModelV1>> getPortfoliosWithHttpInfo() throws ApiException {
+    return getPortfoliosWithHttpInfo(null);
   }
 
   /**
    * Get all portfolios for user
    * Retrieves all portfolios associated with a specific user ID
-   * @param userId User ID to fetch portfolios for (required)
    * @param headers Optional headers to include in the request
    * @return ApiResponse&lt;List&lt;PortfolioModelV1&gt;&gt;
    * @throws ApiException if fails to make API call
    */
-  public ApiResponse<List<PortfolioModelV1>> getPortfoliosWithHttpInfo(@javax.annotation.Nonnull String userId, Map<String, String> headers) throws ApiException {
-    HttpRequest.Builder localVarRequestBuilder = getPortfoliosRequestBuilder(userId, headers);
+  public ApiResponse<List<PortfolioModelV1>> getPortfoliosWithHttpInfo(Map<String, String> headers) throws ApiException {
+    HttpRequest.Builder localVarRequestBuilder = getPortfoliosRequestBuilder(headers);
     try {
       HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
@@ -818,21 +781,14 @@ public class PortfolioManagementApi {
     }
   }
 
-  private HttpRequest.Builder getPortfoliosRequestBuilder(@javax.annotation.Nonnull String userId, Map<String, String> headers) throws ApiException {
-    // verify the required parameter 'userId' is set
-    if (userId == null) {
-      throw new ApiException(400, "Missing the required parameter 'userId' when calling getPortfolios");
-    }
-
+  private HttpRequest.Builder getPortfoliosRequestBuilder(Map<String, String> headers) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
 
-    String localVarPath = "/api/v1/portfolios";
+    String localVarPath = "/v1/portfolios";
 
     List<Pair> localVarQueryParams = new ArrayList<>();
     StringJoiner localVarQueryStringJoiner = new StringJoiner("&");
     String localVarQueryParameterBaseName;
-    localVarQueryParameterBaseName = "userId";
-    localVarQueryParams.addAll(ApiClient.parameterToPairs("userId", userId));
 
     if (!localVarQueryParams.isEmpty() || localVarQueryStringJoiner.length() != 0) {
       StringJoiner queryJoiner = new StringJoiner("&");

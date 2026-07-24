@@ -159,3 +159,12 @@ otel:
   service:
     name: ${spring.application.name}
     namespace: am-core-services
+
+# ── Swagger / OpenAPI (SPT discovers APIs from /v3/api-docs; keep auth-protected) ─
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

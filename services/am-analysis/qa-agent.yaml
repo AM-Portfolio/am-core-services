@@ -1,0 +1,11 @@
+apiVersion: am.qa/v1
+kind: ReleaseReadiness
+# CI opt-in only. Load targets / OpenAPI / runtime stay in sibling spt.yaml (am.spt/v1).
+service: am-analysis
+enabled: true
+branches: [master, main]
+environment: dev
+spt:
+  path: spt.yaml
+  required: true
+  iterations: 50

@@ -86,10 +86,9 @@ public class AnalysisAggregator {
         for (AnalysisEntity entity : amPortfolios) {
             if (entity.getPerformance() == null) continue;
 
-            BigDecimal val  = BigDecimal.valueOf(entity.getPerformance().getTotalValue());
-            BigDecimal inv  = BigDecimal.valueOf(entity.getPerformance().getTotalInvestment());
-            BigDecimal dc   = entity.getPerformance().getDayChange() != null
-                    ? BigDecimal.valueOf(entity.getPerformance().getDayChange()) : BigDecimal.ZERO;
+            BigDecimal val  = toBd(entity.getPerformance().getTotalValue());
+            BigDecimal inv  = toBd(entity.getPerformance().getTotalInvestment());
+            BigDecimal dc   = toBd(entity.getPerformance().getDayChange());
             BigDecimal gl   = val.subtract(inv);
             double     glPct = inv.compareTo(BigDecimal.ZERO) > 0
                     ? gl.divide(inv, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue() : 0.0;
@@ -201,8 +200,8 @@ public class AnalysisAggregator {
                             .collect(Collectors.toList())
                         : Collections.emptyList();
 
-                BigDecimal val = BigDecimal.valueOf(entity.getPerformance().getTotalValue());
-                BigDecimal inv = BigDecimal.valueOf(entity.getPerformance().getTotalInvestment());
+                BigDecimal val = toBd(entity.getPerformance().getTotalValue());
+                BigDecimal inv = toBd(entity.getPerformance().getTotalInvestment());
                 BigDecimal gl  = val.subtract(inv);
 
                 overviews.add(PortfolioOverview.builder()
@@ -215,9 +214,7 @@ public class AnalysisAggregator {
                         .investedValue(inv)
                         .totalReturn(gl)
                         .returnPercentage(entity.getPerformance().getTotalGainLossPercentage())
-                        .dayChange(BigDecimal.valueOf(
-                                entity.getPerformance().getDayChange() != null
-                                        ? entity.getPerformance().getDayChange() : 0.0))
+                        .dayChange(toBd(entity.getPerformance().getDayChange()))
                         .dayChangePercentage(entity.getPerformance().getDayChangePercentage())
                         .topSymbols(topSymbols)
                         .build());
@@ -326,5 +323,10 @@ public class AnalysisAggregator {
                 "cause", ex.getClass().getSimpleName(),
                 "cause.message", ex.getMessage());
         return null;
+    }
+
+    /** Null-safe Double → BigDecimal (Mongo performance fields are often partially populated). */
+    private static BigDecimal toBd(Double value) {
+        return value != null ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
     }
 }

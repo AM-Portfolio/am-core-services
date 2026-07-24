@@ -1,6 +1,7 @@
 package com.am.mcp.aspect;
 
 import com.am.mcp.metrics.McpBusinessMetrics;
+import com.am.mcp.util.ResponseHelper;
 import com.am.observability.flow.FlowLogger;
 import com.am.observability.flow.FlowSpan;
 import com.am.observability.mdc.MdcKeys;
@@ -15,11 +16,9 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;
 
 /**
- * AOP interceptor — wraps every @Tool method with FlowLogger checkpoints and
- * MDC enrichment. Captures tool name, class, duration, outcome and response
- * size; stamps {@code tool.name} + {@code tool.args.size} onto MDC for the
- * duration of each invocation so every log line emitted inside the tool can
- * be filtered by tool name.
+ * AOP interceptor — wraps every @Tool method with FlowLogger and metrics.
+ * On failure returns a JSON error envelope for String-returning tools.
+ * Hard timeouts rely on HTTP client / Resilience4j (Spring AOP proceed is not thread-safe off-thread).
  */
 @Slf4j
 @Aspect
@@ -29,6 +28,7 @@ public class ToolExecutionInterceptor {
 
     private final FlowLogger flowLogger;
     private final McpBusinessMetrics businessMetrics;
+    private final ResponseHelper response;
 
     @Around("@annotation(org.springframework.ai.tool.annotation.Tool)")
     public Object traceToolExecution(ProceedingJoinPoint pjp) throws Throwable {
@@ -65,6 +65,10 @@ public class ToolExecutionInterceptor {
                 flowLogger.fail(span, t);
                 businessMetrics.toolInvocation(toolName, "failure");
                 businessMetrics.recordToolDuration(toolName, System.nanoTime() - startNanos);
+                if (sig.getReturnType() == String.class) {
+                    return response.errorJson(toolName,
+                            t instanceof Exception ex ? ex : new RuntimeException(t));
+                }
                 throw t;
             }
         } finally {
