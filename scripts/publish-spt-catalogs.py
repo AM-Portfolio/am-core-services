@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Publish services/*/spt.yaml as ConfigMaps for SPT catalog mounts.
 
+Per-service ConfigMaps (spt-catalog-<service>) stay for tooling/traces.
+Helm mounts ONE aggregate ConfigMap (spt-catalog-bundle) so qa-agent
+values.yaml never lists individual services (any of N services, no trade-off).
+
+Bundle keys: <service>.yaml → mounted at /catalog-external/<service>.yaml
+(catalog_loader already accepts that layout).
+
 Usage (from am-core-services root):
   python scripts/publish-spt-catalogs.py
   python scripts/publish-spt-catalogs.py --service am-analysis
@@ -15,6 +22,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+BUNDLE_NAME = "spt-catalog-bundle"
 
 
 def find_spt_yamls(service: str | None = None) -> list[Path]:
@@ -24,15 +32,16 @@ def find_spt_yamls(service: str | None = None) -> list[Path]:
     return sorted((ROOT / "services").glob("*/spt.yaml"))
 
 
-def apply_configmap(path: Path, namespace: str, dry_run: bool) -> str:
+def service_id_from_path(path: Path) -> str:
     data = path.read_text(encoding="utf-8")
-    service = None
     for line in data.splitlines():
         if line.startswith("service:"):
-            service = line.split(":", 1)[1].strip().strip("\"'")
-            break
-    if not service:
-        service = path.parent.name
+            return line.split(":", 1)[1].strip().strip("\"'")
+    return path.parent.name
+
+
+def apply_configmap(path: Path, namespace: str, dry_run: bool) -> str:
+    service = service_id_from_path(path)
     name = f"spt-catalog-{service}"
     cmd = [
         "kubectl",
@@ -54,11 +63,50 @@ def apply_configmap(path: Path, namespace: str, dry_run: bool) -> str:
         ["kubectl", "-n", namespace, "apply", "-f", "-"],
         input=rendered,
         text=True,
-        check=True,
         capture_output=True,
     )
+    if apply.returncode != 0:
+        print(apply.stdout, file=sys.stderr)
+        print(apply.stderr, file=sys.stderr)
+        apply.check_returncode()
     print(apply.stdout.strip() or f"applied {namespace}/{name}")
     return name
+
+
+def apply_bundle(paths: list[Path], namespace: str, dry_run: bool) -> str:
+    """One ConfigMap with every service — Helm mounts this only."""
+    if not paths:
+        return BUNDLE_NAME
+    cmd = [
+        "kubectl",
+        "-n",
+        namespace,
+        "create",
+        "configmap",
+        BUNDLE_NAME,
+        "--dry-run=client",
+        "-o",
+        "yaml",
+    ]
+    for path in paths:
+        sid = service_id_from_path(path)
+        cmd.append(f"--from-file={sid}.yaml={path}")
+    rendered = subprocess.check_output(cmd, text=True)
+    if dry_run:
+        print(rendered)
+        return BUNDLE_NAME
+    apply = subprocess.run(
+        ["kubectl", "-n", namespace, "apply", "-f", "-"],
+        input=rendered,
+        text=True,
+        capture_output=True,
+    )
+    if apply.returncode != 0:
+        print(apply.stdout, file=sys.stderr)
+        print(apply.stderr, file=sys.stderr)
+        apply.check_returncode()
+    print(apply.stdout.strip() or f"applied {namespace}/{BUNDLE_NAME} ({len(paths)} services)")
+    return BUNDLE_NAME
 
 
 def main() -> int:
@@ -67,20 +115,30 @@ def main() -> int:
         "--namespace",
         action="append",
         dest="namespaces",
-        help="Target namespace (repeatable). Default: load-testing + am-apps-dev",
+        help="Target namespace (repeatable). Default: am-apps-dev (+ optional load-testing)",
     )
-    parser.add_argument("--service", help="Single service dir under services/")
+    parser.add_argument("--service", help="Single service dir under services/ (per-CM only; bundle always full)")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--skip-bundle",
+        action="store_true",
+        help="Only publish per-service ConfigMaps (legacy)",
+    )
     args = parser.parse_args()
-    namespaces = args.namespaces or ["load-testing", "am-apps-dev"]
+    namespaces = args.namespaces or ["am-apps-dev"]
     files = find_spt_yamls(args.service)
     if not files:
         print("no matching services/*/spt.yaml found", file=sys.stderr)
         return 2
+    all_files = find_spt_yamls(None)
     for path in files:
         for ns in namespaces:
-            print(f"publishing {path} -> {ns}")
+            print(f"publishing {path} -> {ns}/{f'spt-catalog-{service_id_from_path(path)}'}")
             apply_configmap(path, ns, args.dry_run)
+    if not args.skip_bundle:
+        for ns in namespaces:
+            print(f"publishing bundle ({len(all_files)} services) -> {ns}/{BUNDLE_NAME}")
+            apply_bundle(all_files, ns, args.dry_run)
     return 0
 
 

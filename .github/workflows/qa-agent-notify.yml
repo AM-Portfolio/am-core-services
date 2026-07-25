@@ -148,13 +148,18 @@ jobs:
           echo "$KUBE_CONFIG" | base64 -d > "$HOME/.kube/config"
           chmod 600 "$HOME/.kube/config"
           kubectl cluster-info
-      - name: Apply ConfigMaps (load-testing + am-apps-dev)
+      - name: Apply ConfigMaps (am-apps-dev)
         run: |
           set -euo pipefail
+          # am-qa-agents mounts spt-catalog-bundle in am-apps-dev only.
+          # load-testing is legacy SPT ns — optional, do not fail the gate on it.
+          python3 scripts/publish-spt-catalogs.py \
+            --service "${{ needs.detect.outputs.service }}" \
+            --namespace am-apps-dev
           python3 scripts/publish-spt-catalogs.py \
             --service "${{ needs.detect.outputs.service }}" \
             --namespace load-testing \
-            --namespace am-apps-dev
+            || echo "::warning::load-testing catalog publish failed (non-blocking)"
 
   wait-catalog:
     name: Wait catalog ready
