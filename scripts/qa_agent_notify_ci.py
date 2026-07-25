@@ -59,8 +59,10 @@ def cmd_detect() -> int:
             return False, "missing_spt_yaml", str(data.get("environment") or "dev"), True
         return True, "ok", str(data.get("environment") or "dev"), req
 
-    service = input_svc
-    if not service and os.environ.get("GITHUB_EVENT_NAME") == "push":
+    matched: list[str] = []
+    if input_svc:
+        matched = [input_svc]
+    elif os.environ.get("GITHUB_EVENT_NAME") == "push":
         try:
             diff = subprocess.check_output(
                 ["git", "diff", "--name-only", "HEAD~1", "HEAD"], text=True
@@ -69,21 +71,39 @@ def cmd_detect() -> int:
             diff = ""
         for line in diff.splitlines():
             for c in candidates:
-                if line.startswith(f"services/{c}/"):
-                    service = c
-                    break
-            if service:
-                break
-    if not service:
-        service = "am-analysis"
+                if line.startswith(f"services/{c}/") and c not in matched:
+                    matched.append(c)
+    if not matched:
+        matched = ["am-analysis"]
 
+    # Primary = first matched (workflow jobs use single service today)
+    service = matched[0]
     ok, reason, env, req = enabled(service)
+    # Also emit all enabled matched services for future fan-out
+    enabled_services = [s for s in matched if enabled(s)[0]]
     print(f"service={service}")
+    print(f"services={','.join(enabled_services) if enabled_services else service}")
     print(f"environment={env}")
     print(f"require_catalog={'true' if req else 'false'}")
     print("skip=false" if ok else "skip=true")
     print(f"reason={'ok' if ok else reason}")
     return 0
+
+
+def _http_json(url: str, *, method: str = "GET", data: dict | None = None, token: str | None = None, timeout: int = 30):
+    headers = {"Accept": "application/json"}
+    body = None
+    if data is not None:
+        body = json.dumps(data).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(url, data=body, method=method, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.status, resp.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode("utf-8", errors="replace")
 
 
 def cmd_wait() -> int:
@@ -93,13 +113,7 @@ def cmd_wait() -> int:
     print(f"Waiting for {service} in {url}")
     for i in range(1, 37):
         try:
-            req = urllib.request.Request(url, method="GET")
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                code = resp.status
-                body = resp.read().decode("utf-8", errors="replace")
-        except urllib.error.HTTPError as e:
-            code = e.code
-            body = e.read().decode("utf-8", errors="replace")
+            code, body = _http_json(url, timeout=10)
         except Exception as e:
             print(f"attempt {i}: error {type(e).__name__}: {e}")
             time.sleep(5)
@@ -127,6 +141,17 @@ def cmd_wait() -> int:
 def cmd_notify() -> int:
     base = os.environ["QA_AGENT_BASE_URL"].rstrip("/")
     token = os.environ["QA_AGENT_GATEWAY_TOKEN"]
+    # Fail fast if Specs cannot run k6 (release SPT would soft-fail / miss evidence)
+    try:
+        hc, hb = _http_json(f"{base}/api/platform/health", timeout=10)
+        if hc == 200:
+            health = json.loads(hb)
+            if health.get("k6_binary") is False:
+                print("::error::qa-agent k6_binary=false — rebuild image with k6 before notify", file=sys.stderr)
+                return 1
+    except Exception as e:
+        print(f"::warning::platform health check failed: {e}")
+
     payload = {
         "repo": os.environ["REPO"],
         "branch": os.environ["BRANCH"],
@@ -140,22 +165,11 @@ def cmd_notify() -> int:
     }
     url = f"{base}/v2/workflows/release-readiness"
     print(f"POST {url}")
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        },
-    )
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            code = resp.status
-            body = resp.read().decode("utf-8", errors="replace")
-    except urllib.error.HTTPError as e:
-        code = e.code
-        body = e.read().decode("utf-8", errors="replace")
+        code, body = _http_json(url, method="POST", data=payload, token=token, timeout=60)
+    except Exception as e:
+        print(f"::error::qa-agent notify request failed: {e}", file=sys.stderr)
+        return 1
     print(f"HTTP {code}")
     print(body)
     if code < 200 or code >= 300:
@@ -168,13 +182,106 @@ def cmd_notify() -> int:
     if data.get("skipped") is True:
         print(f"::warning::qa-agent skipped: {data.get('reason')}")
         return 0
+    tid = data.get("tracking_id") or ""
+    print(f"tracking_id={tid}")
+    gh_out = os.environ.get("GITHUB_OUTPUT")
+    if gh_out and tid:
+        with open(gh_out, "a", encoding="utf-8") as f:
+            f.write(f"tracking_id={tid}\n")
     print(f"qa-agent activated for {os.environ['SERVICE']} on {os.environ['BRANCH']}")
     return 0
 
 
+def cmd_wait_verify() -> int:
+    """Poll until Temporal verify finishes (awaiting_release step), then fail if not releasable.
+
+    Does not wait for HITL approve/reject.
+    """
+    base = os.environ["QA_AGENT_BASE_URL"].rstrip("/")
+    token = os.environ.get("QA_AGENT_GATEWAY_TOKEN") or ""
+    tid = (os.environ.get("TRACKING_ID") or "").strip()
+    if not tid:
+        print("::error::TRACKING_ID required for wait-verify", file=sys.stderr)
+        return 1
+    timeout_sec = int(os.environ.get("QA_AGENT_VERIFY_TIMEOUT_SEC") or "1200")
+    poll = int(os.environ.get("QA_AGENT_VERIFY_POLL_SEC") or "10")
+    url = f"{base}/v2/runs/{tid}"
+    print(f"Waiting for verify on {url} (timeout={timeout_sec}s)")
+    deadline = time.time() + timeout_sec
+    attempt = 0
+    while time.time() < deadline:
+        attempt += 1
+        try:
+            code, body = _http_json(url, token=token or None, timeout=20)
+        except Exception as e:
+            print(f"attempt {attempt}: error {type(e).__name__}: {e}")
+            time.sleep(poll)
+            continue
+        if code == 404:
+            print(f"attempt {attempt}: run not found yet")
+            time.sleep(poll)
+            continue
+        if code >= 400:
+            print(f"attempt {attempt}: http={code} body={body[:500]}")
+            time.sleep(poll)
+            continue
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError:
+            print(f"attempt {attempt}: bad json")
+            time.sleep(poll)
+            continue
+        steps = data.get("steps") or {}
+        status = str(data.get("status") or "")
+        awaiting = steps.get("awaiting_release")
+        post_verify = steps.get("post_test_verify") or steps.get("verify")
+        # Prefer post_test_verify (available before PDF/HITL); then awaiting_release
+        releasable = None
+        blockers = None
+        if isinstance(post_verify, dict) and "releasable" in post_verify:
+            releasable = post_verify.get("releasable")
+            blockers = post_verify.get("blockers")
+        elif isinstance(awaiting, dict) and "releasable" in awaiting:
+            releasable = awaiting.get("releasable")
+            blockers = awaiting.get("blockers")
+        terminal_fail = status in {
+            "failed",
+            "error",
+            "release_rejected",
+            "hitl_timeout",
+        }
+        if post_verify is not None or awaiting is not None or releasable is not None or terminal_fail:
+            print(f"verify reached status={status} releasable={releasable} blockers={blockers}")
+            print(body[:4000])
+            if terminal_fail and releasable is not True:
+                print("::error::release-readiness terminal failure", file=sys.stderr)
+                return 1
+            if releasable is False:
+                print("::error::release-readiness not releasable (SPT/UI/verify blockers)", file=sys.stderr)
+                return 1
+            if releasable is True:
+                print("verify passed (releasable=true); HITL still pending if awaiting_release")
+                return 0
+            # awaiting without releasable key — treat as incomplete
+            if awaiting is not None and releasable is None:
+                print("::warning::awaiting_release present but releasable missing; checking matrix steps")
+        # Also inspect execute_matrix / post_test_verify nested
+        exec_step = steps.get("execute_matrix") or {}
+        if isinstance(exec_step, dict) and exec_step.get("p0_failed"):
+            # Wait until verify step exists before failing on p0 alone
+            pass
+        print(
+            f"attempt {attempt}: status={status} steps={list(steps.keys())} "
+            f"releasable={releasable}"
+        )
+        time.sleep(poll)
+    print(f"::error::verify timeout after {timeout_sec}s for {tid}", file=sys.stderr)
+    return 1
+
+
 def main() -> int:
     if len(sys.argv) < 2:
-        print("usage: qa_agent_notify_ci.py detect|wait|notify", file=sys.stderr)
+        print("usage: qa_agent_notify_ci.py detect|wait|notify|wait-verify", file=sys.stderr)
         return 2
     cmd = sys.argv[1]
     if cmd == "detect":
@@ -183,6 +290,8 @@ def main() -> int:
         return cmd_wait()
     if cmd == "notify":
         return cmd_notify()
+    if cmd in {"wait-verify", "wait_verify"}:
+        return cmd_wait_verify()
     print(f"unknown command: {cmd}", file=sys.stderr)
     return 2
 
