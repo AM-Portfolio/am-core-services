@@ -18,6 +18,8 @@ on:
       - "services/am-gateway/**"
       - "services/am-mcp-server/**"
       - ".github/workflows/qa-agent-notify.yml"
+      - "scripts/qa_agent_notify_ci.py"
+      - "scripts/publish-spt-catalogs.py"
   workflow_dispatch:
     inputs:
       service:
@@ -63,95 +65,7 @@ jobs:
           BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
         run: |
           set -euo pipefail
-          # No pip/pyyaml on self-hosted runners — parse flat qa-agent.yaml fields.
-          python3 <<'PY' >> "$GITHUB_OUTPUT"
-          import os
-          import re
-          import subprocess
-          from pathlib import Path
-
-          branch = os.environ["BRANCH"]
-          input_svc = (os.environ.get("INPUT_SERVICE") or "").strip()
-          candidates = ["am-analysis", "am-gateway", "am-mcp-server"]
-
-          def load_manifest(path: Path) -> dict:
-              text = path.read_text(encoding="utf-8")
-              data = {}
-              # top-level scalars
-              for key in ("enabled", "environment", "service"):
-                  m = re.search(rf"(?m)^{key}:\s*(.+?)\s*$", text)
-                  if m:
-                      val = m.group(1).strip().strip("\"'")
-                      if key == "enabled":
-                          data[key] = val.lower() in ("true", "yes", "1")
-                      else:
-                          data[key] = val
-              bm = re.search(r"(?m)^branches:\s*\[([^\]]*)\]\s*$", text)
-              if bm:
-                  data["branches"] = [b.strip().strip("\"'") for b in bm.group(1).split(",") if b.strip()]
-              else:
-                  data["branches"] = []
-              # spt.required under spt: block (indent 2)
-              sm = re.search(r"(?m)^spt:\s*\n(?:  .+\n)*", text)
-              if sm:
-                  block = sm.group(0)
-                  rm = re.search(r"(?m)^  required:\s*(.+?)\s*$", block)
-                  if rm:
-                      data["spt_required"] = rm.group(1).strip().strip("\"'").lower() in ("true", "yes", "1")
-              if "spt_required" not in data:
-                  rm2 = re.search(r"(?m)^require_spt_catalog:\s*(.+?)\s*$", text)
-                  if rm2:
-                      data["spt_required"] = rm2.group(1).strip().strip("\"'").lower() in ("true", "yes", "1")
-                  else:
-                      data["spt_required"] = True
-              return data
-
-          def enabled(svc: str):
-              man = Path(f"services/{svc}/qa-agent.yaml")
-              if not man.is_file():
-                  return False, "missing_manifest", "dev", True
-              data = load_manifest(man)
-              if not data.get("enabled", False):
-                  return False, "disabled", str(data.get("environment") or "dev"), True
-              branches = data.get("branches") or []
-              if branches and branch not in branches:
-                  return False, f"branch_not_listed:{branch}", str(data.get("environment") or "dev"), True
-              req = bool(data.get("spt_required", True))
-              if req and not (Path(f"services/{svc}/spt.yaml").is_file()):
-                  return False, "missing_spt_yaml", str(data.get("environment") or "dev"), True
-              return True, "ok", str(data.get("environment") or "dev"), req
-
-          service = input_svc
-          if not service and os.environ.get("GITHUB_EVENT_NAME") == "push":
-              try:
-                  diff = subprocess.check_output(
-                      ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
-                      text=True,
-                  )
-              except subprocess.CalledProcessError:
-                  diff = ""
-              for line in diff.splitlines():
-                  for c in candidates:
-                      if line.startswith(f"services/{c}/"):
-                          service = c
-                          break
-                  if service:
-                      break
-
-          if not service:
-              service = "am-analysis"
-
-          ok, reason, env, req = enabled(service)
-          print(f"service={service}")
-          print(f"environment={env}")
-          print(f"require_catalog={'true' if req else 'false'}")
-          if ok:
-              print("skip=false")
-              print("reason=ok")
-          else:
-              print("skip=true")
-              print(f"reason={reason}")
-          PY
+          python3 scripts/qa_agent_notify_ci.py detect >> "$GITHUB_OUTPUT"
 
   publish-catalog:
     name: Publish SPT catalog
@@ -176,8 +90,6 @@ jobs:
       - name: Apply ConfigMaps (am-apps-dev)
         run: |
           set -euo pipefail
-          # am-qa-agents mounts spt-catalog-bundle in am-apps-dev only.
-          # load-testing is legacy SPT ns — optional, do not fail the gate on it.
           python3 scripts/publish-spt-catalogs.py \
             --service "${{ needs.detect.outputs.service }}" \
             --namespace am-apps-dev
@@ -196,6 +108,7 @@ jobs:
       (needs.publish-catalog.result == 'success' || needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true')
     runs-on: [self-hosted, linux, x64, docker]
     steps:
+      - uses: actions/checkout@v4
       - name: Poll Specs registrations
         if: needs.detect.outputs.require_catalog == 'true' && github.event.inputs.skip_catalog != 'true'
         env:
@@ -207,27 +120,7 @@ jobs:
             echo "::error::Set secret QA_AGENT_BASE_URL"
             exit 1
           fi
-          BASE="${QA_AGENT_BASE_URL%/}"
-          echo "Waiting for ${SERVICE} in ${BASE}/api/catalog/registrations"
-          for i in $(seq 1 36); do
-            CODE=$(curl -sS -o /tmp/reg.json -w "%{http_code}" "${BASE}/api/catalog/registrations" || true)
-            if [ "${CODE}" = "200" ] && python3 -c "
-import json,sys
-s=sys.argv[1]
-d=json.load(open('/tmp/reg.json'))
-ids=[x.get('id') or x.get('service') or '' for x in (d.get('services') or [])]
-sys.exit(0 if s in ids else 1)
-" "$SERVICE"; then
-              echo "Catalog ready for ${SERVICE} (attempt ${i})"
-              cat /tmp/reg.json
-              exit 0
-            fi
-            echo "attempt ${i}: http=${CODE} not ready yet"
-            sleep 5
-          done
-          echo "::error::catalog_not_ready for ${SERVICE}"
-          cat /tmp/reg.json || true
-          exit 1
+          python3 scripts/qa_agent_notify_ci.py wait
       - name: Skip catalog wait
         if: needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true'
         run: echo "Catalog wait skipped"
@@ -238,6 +131,7 @@ sys.exit(0 if s in ids else 1)
     if: always() && needs.detect.result == 'success' && needs.detect.outputs.skip != 'true' && needs.wait-catalog.result == 'success'
     runs-on: [self-hosted, linux, x64, docker]
     steps:
+      - uses: actions/checkout@v4
       - name: Trigger qa-agent
         env:
           QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
@@ -253,36 +147,4 @@ sys.exit(0 if s in ids else 1)
             echo "::error::Set secrets QA_AGENT_BASE_URL and QA_AGENT_GATEWAY_TOKEN"
             exit 1
           fi
-          BASE="${QA_AGENT_BASE_URL%/}"
-          BODY=$(python3 -c "
-import json,os
-print(json.dumps({
-  'repo': os.environ['REPO'],
-  'branch': os.environ['BRANCH'],
-  'head_sha': os.environ['SHA'],
-  'service': os.environ['SERVICE'],
-  'ci_conclusion': 'success',
-  'trigger_kind': 'ci_master_merge',
-  'environment': os.environ['ENV'],
-  'assume_ci_success': True,
-  'use_temporal': True,
-}))
-")
-          echo "POST ${BASE}/v2/workflows/release-readiness"
-          HTTP_CODE=$(curl -sS -o /tmp/qa-agent-resp.json -w "%{http_code}" \
-            -X POST "${BASE}/v2/workflows/release-readiness" \
-            -H "Authorization: Bearer ${QA_AGENT_GATEWAY_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "${BODY}")
-          echo "HTTP ${HTTP_CODE}"
-          cat /tmp/qa-agent-resp.json || true
-          echo
-          if [ "${HTTP_CODE}" -lt 200 ] || [ "${HTTP_CODE}" -ge 300 ]; then
-            echo "::error::qa-agent notify failed with HTTP ${HTTP_CODE}"
-            exit 1
-          fi
-          if python3 -c "import json,sys; d=json.load(open('/tmp/qa-agent-resp.json')); sys.exit(0 if d.get('skipped') is True else 1)"; then
-            echo "::warning::qa-agent skipped: $(python3 -c "import json; print(json.load(open('/tmp/qa-agent-resp.json')).get('reason'))")"
-            exit 0
-          fi
-          echo "qa-agent activated for ${SERVICE} on ${BRANCH}"
+          python3 scripts/qa_agent_notify_ci.py notify
