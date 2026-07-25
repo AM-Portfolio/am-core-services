@@ -63,36 +63,60 @@ jobs:
           BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet pyyaml
+          # No pip/pyyaml on self-hosted runners — parse flat qa-agent.yaml fields.
           python3 <<'PY' >> "$GITHUB_OUTPUT"
           import os
+          import re
           import subprocess
           from pathlib import Path
-          import yaml
 
           branch = os.environ["BRANCH"]
           input_svc = (os.environ.get("INPUT_SERVICE") or "").strip()
           candidates = ["am-analysis", "am-gateway", "am-mcp-server"]
 
-          def enabled(svc: str) -> tuple[bool, str, str, bool]:
+          def load_manifest(path: Path) -> dict:
+              text = path.read_text(encoding="utf-8")
+              data = {}
+              # top-level scalars
+              for key in ("enabled", "environment", "service"):
+                  m = re.search(rf"(?m)^{key}:\s*(.+?)\s*$", text)
+                  if m:
+                      val = m.group(1).strip().strip("\"'")
+                      if key == "enabled":
+                          data[key] = val.lower() in ("true", "yes", "1")
+                      else:
+                          data[key] = val
+              bm = re.search(r"(?m)^branches:\s*\[([^\]]*)\]\s*$", text)
+              if bm:
+                  data["branches"] = [b.strip().strip("\"'") for b in bm.group(1).split(",") if b.strip()]
+              else:
+                  data["branches"] = []
+              # spt.required under spt: block (indent 2)
+              sm = re.search(r"(?m)^spt:\s*\n(?:  .+\n)*", text)
+              if sm:
+                  block = sm.group(0)
+                  rm = re.search(r"(?m)^  required:\s*(.+?)\s*$", block)
+                  if rm:
+                      data["spt_required"] = rm.group(1).strip().strip("\"'").lower() in ("true", "yes", "1")
+              if "spt_required" not in data:
+                  rm2 = re.search(r"(?m)^require_spt_catalog:\s*(.+?)\s*$", text)
+                  if rm2:
+                      data["spt_required"] = rm2.group(1).strip().strip("\"'").lower() in ("true", "yes", "1")
+                  else:
+                      data["spt_required"] = True
+              return data
+
+          def enabled(svc: str):
               man = Path(f"services/{svc}/qa-agent.yaml")
               if not man.is_file():
                   return False, "missing_manifest", "dev", True
-              data = yaml.safe_load(man.read_text(encoding="utf-8")) or {}
+              data = load_manifest(man)
               if not data.get("enabled", False):
                   return False, "disabled", str(data.get("environment") or "dev"), True
               branches = data.get("branches") or []
               if branches and branch not in branches:
                   return False, f"branch_not_listed:{branch}", str(data.get("environment") or "dev"), True
-              spt = data.get("spt") if isinstance(data.get("spt"), dict) else {}
-              # Prefer spt.required; fall back to require_spt_catalog; default True for backends
-              if "required" in spt:
-                  req = bool(spt.get("required"))
-              elif "require_spt_catalog" in data:
-                  req = bool(data.get("require_spt_catalog"))
-              else:
-                  req = True
-              # Sibling spt.yaml must exist when required
+              req = bool(data.get("spt_required", True))
               if req and not (Path(f"services/{svc}/spt.yaml").is_file()):
                   return False, "missing_spt_yaml", str(data.get("environment") or "dev"), True
               return True, "ok", str(data.get("environment") or "dev"), req
@@ -115,7 +139,6 @@ jobs:
                       break
 
           if not service:
-              # Prefer analysis if dispatch without input
               service = "am-analysis"
 
           ok, reason, env, req = enabled(service)
@@ -168,6 +191,7 @@ jobs:
     needs: [detect, publish-catalog]
     if: |
       always() &&
+      needs.detect.result == 'success' &&
       needs.detect.outputs.skip != 'true' &&
       (needs.publish-catalog.result == 'success' || needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true')
     runs-on: [self-hosted, linux, x64, docker]
@@ -187,9 +211,13 @@ jobs:
           echo "Waiting for ${SERVICE} in ${BASE}/api/catalog/registrations"
           for i in $(seq 1 36); do
             CODE=$(curl -sS -o /tmp/reg.json -w "%{http_code}" "${BASE}/api/catalog/registrations" || true)
-            if [ "${CODE}" = "200" ] && jq -e --arg s "$SERVICE" '
-                [.services[]? | (.id // .service // "")] | index($s)
-              ' /tmp/reg.json >/dev/null 2>&1; then
+            if [ "${CODE}" = "200" ] && python3 -c "
+import json,sys
+s=sys.argv[1]
+d=json.load(open('/tmp/reg.json'))
+ids=[x.get('id') or x.get('service') or '' for x in (d.get('services') or [])]
+sys.exit(0 if s in ids else 1)
+" "$SERVICE"; then
               echo "Catalog ready for ${SERVICE} (attempt ${i})"
               cat /tmp/reg.json
               exit 0
@@ -207,13 +235,18 @@ jobs:
   notify:
     name: POST release-readiness
     needs: [detect, wait-catalog]
-    if: always() && needs.detect.outputs.skip != 'true' && needs.wait-catalog.result == 'success'
+    if: always() && needs.detect.result == 'success' && needs.detect.outputs.skip != 'true' && needs.wait-catalog.result == 'success'
     runs-on: [self-hosted, linux, x64, docker]
     steps:
       - name: Trigger qa-agent
         env:
           QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
           QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.inputs.head_sha || github.sha }}
+          BRANCH: ${{ github.event.inputs.branch || github.ref_name }}
+          SERVICE: ${{ needs.detect.outputs.service }}
+          ENV: ${{ needs.detect.outputs.environment }}
         run: |
           set -euo pipefail
           if [ -z "${QA_AGENT_BASE_URL:-}" ] || [ -z "${QA_AGENT_GATEWAY_TOKEN:-}" ]; then
@@ -221,27 +254,20 @@ jobs:
             exit 1
           fi
           BASE="${QA_AGENT_BASE_URL%/}"
-          SHA="${{ github.event.inputs.head_sha || github.sha }}"
-          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
-          SERVICE="${{ needs.detect.outputs.service }}"
-          ENV="${{ needs.detect.outputs.environment }}"
-          BODY=$(jq -n \
-            --arg repo "${{ github.repository }}" \
-            --arg branch "$BRANCH" \
-            --arg sha "$SHA" \
-            --arg service "$SERVICE" \
-            --arg environment "$ENV" \
-            '{
-              repo: $repo,
-              branch: $branch,
-              head_sha: $sha,
-              service: $service,
-              ci_conclusion: "success",
-              trigger_kind: "ci_master_merge",
-              environment: $environment,
-              assume_ci_success: true,
-              use_temporal: true
-            }')
+          BODY=$(python3 -c "
+import json,os
+print(json.dumps({
+  'repo': os.environ['REPO'],
+  'branch': os.environ['BRANCH'],
+  'head_sha': os.environ['SHA'],
+  'service': os.environ['SERVICE'],
+  'ci_conclusion': 'success',
+  'trigger_kind': 'ci_master_merge',
+  'environment': os.environ['ENV'],
+  'assume_ci_success': True,
+  'use_temporal': True,
+}))
+")
           echo "POST ${BASE}/v2/workflows/release-readiness"
           HTTP_CODE=$(curl -sS -o /tmp/qa-agent-resp.json -w "%{http_code}" \
             -X POST "${BASE}/v2/workflows/release-readiness" \
@@ -255,8 +281,8 @@ jobs:
             echo "::error::qa-agent notify failed with HTTP ${HTTP_CODE}"
             exit 1
           fi
-          if jq -e '.skipped == true' /tmp/qa-agent-resp.json >/dev/null 2>&1; then
-            echo "::warning::qa-agent skipped: $(jq -r '.reason' /tmp/qa-agent-resp.json)"
+          if python3 -c "import json,sys; d=json.load(open('/tmp/qa-agent-resp.json')); sys.exit(0 if d.get('skipped') is True else 1)"; then
+            echo "::warning::qa-agent skipped: $(python3 -c "import json; print(json.load(open('/tmp/qa-agent-resp.json')).get('reason'))")"
             exit 0
           fi
           echo "qa-agent activated for ${SERVICE} on ${BRANCH}"
