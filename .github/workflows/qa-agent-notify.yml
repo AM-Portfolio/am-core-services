@@ -112,14 +112,11 @@ jobs:
       - name: Poll Specs registrations
         if: needs.detect.outputs.require_catalog == 'true' && github.event.inputs.skip_catalog != 'true'
         env:
-          QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
+          # Prefer in-cluster (self-hosted runners); public Ingress can hang/hairpin.
+          QA_AGENT_BASE_URL: http://am-qa-agents.am-apps-dev.svc.cluster.local:8150
           SERVICE: ${{ needs.detect.outputs.service }}
         run: |
           set -euo pipefail
-          if [ -z "${QA_AGENT_BASE_URL:-}" ]; then
-            echo "::error::Set secret QA_AGENT_BASE_URL"
-            exit 1
-          fi
           python3 scripts/qa_agent_notify_ci.py wait
       - name: Skip catalog wait
         if: needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true'
@@ -134,7 +131,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Trigger qa-agent
         env:
-          QA_AGENT_BASE_URL: ${{ secrets.QA_AGENT_BASE_URL }}
+          QA_AGENT_BASE_URL: http://am-qa-agents.am-apps-dev.svc.cluster.local:8150
           QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
           REPO: ${{ github.repository }}
           SHA: ${{ github.event.inputs.head_sha || github.sha }}
@@ -143,8 +140,8 @@ jobs:
           ENV: ${{ needs.detect.outputs.environment }}
         run: |
           set -euo pipefail
-          if [ -z "${QA_AGENT_BASE_URL:-}" ] || [ -z "${QA_AGENT_GATEWAY_TOKEN:-}" ]; then
-            echo "::error::Set secrets QA_AGENT_BASE_URL and QA_AGENT_GATEWAY_TOKEN"
+          if [ -z "${QA_AGENT_GATEWAY_TOKEN:-}" ]; then
+            echo "::error::Set secret QA_AGENT_GATEWAY_TOKEN"
             exit 1
           fi
           python3 scripts/qa_agent_notify_ci.py notify

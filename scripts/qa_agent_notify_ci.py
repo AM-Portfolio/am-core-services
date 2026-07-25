@@ -93,29 +93,32 @@ def cmd_wait() -> int:
     print(f"Waiting for {service} in {url}")
     for i in range(1, 37):
         try:
-            with urllib.request.urlopen(url, timeout=20) as resp:
+            req = urllib.request.Request(url, method="GET")
+            with urllib.request.urlopen(req, timeout=10) as resp:
                 code = resp.status
                 body = resp.read().decode("utf-8", errors="replace")
         except urllib.error.HTTPError as e:
             code = e.code
             body = e.read().decode("utf-8", errors="replace")
         except Exception as e:
-            print(f"attempt {i}: error {e}")
+            print(f"attempt {i}: error {type(e).__name__}: {e}")
             time.sleep(5)
             continue
         ready = False
+        ids: list[str] = []
         if code == 200:
             try:
                 data = json.loads(body)
                 ids = [x.get("id") or x.get("service") or "" for x in (data.get("services") or [])]
                 ready = service in ids
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
+                print(f"attempt {i}: bad json: {e}")
                 ready = False
         if ready:
             print(f"Catalog ready for {service} (attempt {i})")
-            print(body)
+            print(body[:2000])
             return 0
-        print(f"attempt {i}: http={code} not ready yet")
+        print(f"attempt {i}: http={code} ids={ids!r} not ready yet")
         time.sleep(5)
     print(f"::error::catalog_not_ready for {service}", file=sys.stderr)
     return 1
