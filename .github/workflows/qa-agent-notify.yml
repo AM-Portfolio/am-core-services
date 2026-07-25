@@ -127,9 +127,12 @@ jobs:
     needs: [detect, wait-catalog]
     if: always() && needs.detect.result == 'success' && needs.detect.outputs.skip != 'true' && needs.wait-catalog.result == 'success'
     runs-on: [self-hosted, linux, x64, docker]
+    outputs:
+      tracking_id: ${{ steps.trigger.outputs.tracking_id }}
     steps:
       - uses: actions/checkout@v4
       - name: Trigger qa-agent
+        id: trigger
         env:
           QA_AGENT_BASE_URL: http://am-qa-agents.am-apps-dev.svc.cluster.local:8150
           QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
@@ -145,3 +148,21 @@ jobs:
             exit 1
           fi
           python3 scripts/qa_agent_notify_ci.py notify
+
+  wait-verify:
+    name: Wait verify (SPT/UI)
+    needs: [detect, notify]
+    if: always() && needs.detect.result == 'success' && needs.detect.outputs.skip != 'true' && needs.notify.result == 'success' && needs.notify.outputs.tracking_id != ''
+    runs-on: [self-hosted, linux, x64, docker]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Poll until releasable decision
+        env:
+          QA_AGENT_BASE_URL: http://am-qa-agents.am-apps-dev.svc.cluster.local:8150
+          QA_AGENT_GATEWAY_TOKEN: ${{ secrets.QA_AGENT_GATEWAY_TOKEN }}
+          TRACKING_ID: ${{ needs.notify.outputs.tracking_id }}
+          QA_AGENT_VERIFY_TIMEOUT_SEC: "1200"
+          QA_AGENT_VERIFY_POLL_SEC: "10"
+        run: |
+          set -euo pipefail
+          python3 scripts/qa_agent_notify_ci.py wait-verify
