@@ -1,10 +1,12 @@
 # Sequential: detect service → publish SPT catalog → poll catalog ready → notify release-readiness.
 # Prevents register vs SPT/UI race (never parallel with notify).
 #
+# Runs on org self-hosted runners (in-cluster) — GitHub-hosted ubuntu loses kube API (http2).
+#
 # Secrets (repo or org):
 #   QA_AGENT_BASE_URL
 #   QA_AGENT_GATEWAY_TOKEN
-#   KUBE_CONFIG  (base64 kubeconfig with rights to apply ConfigMaps in load-testing + am-apps-dev)
+#   KUBE_CONFIG  (base64 kubeconfig with rights to apply ConfigMaps in am-apps-dev)
 
 name: QA Agent Notify
 
@@ -43,7 +45,7 @@ concurrency:
 jobs:
   detect:
     name: Detect service
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, docker]
     outputs:
       service: ${{ steps.pick.outputs.service }}
       skip: ${{ steps.pick.outputs.skip }}
@@ -132,7 +134,7 @@ jobs:
     name: Publish SPT catalog
     needs: detect
     if: needs.detect.outputs.skip != 'true' && needs.detect.outputs.require_catalog == 'true' && github.event.inputs.skip_catalog != 'true'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, docker]
     steps:
       - uses: actions/checkout@v4
       - name: Setup kubeconfig
@@ -168,7 +170,7 @@ jobs:
       always() &&
       needs.detect.outputs.skip != 'true' &&
       (needs.publish-catalog.result == 'success' || needs.detect.outputs.require_catalog != 'true' || github.event.inputs.skip_catalog == 'true')
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, docker]
     steps:
       - name: Poll Specs registrations
         if: needs.detect.outputs.require_catalog == 'true' && github.event.inputs.skip_catalog != 'true'
@@ -206,7 +208,7 @@ jobs:
     name: POST release-readiness
     needs: [detect, wait-catalog]
     if: always() && needs.detect.outputs.skip != 'true' && needs.wait-catalog.result == 'success'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, docker]
     steps:
       - name: Trigger qa-agent
         env:
