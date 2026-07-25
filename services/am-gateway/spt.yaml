@@ -1,4 +1,4 @@
-﻿apiVersion: am.spt/v1
+apiVersion: am.spt/v1
 kind: ServiceLoadTest
 service: am-gateway
 label: am-gateway
