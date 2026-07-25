@@ -19,6 +19,8 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+import tempfile
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,42 +34,77 @@ def find_spt_yamls(service: str | None = None) -> list[Path]:
     return sorted((ROOT / "services").glob("*/spt.yaml"))
 
 
+def read_spt_text(path: Path) -> str:
+    """UTF-8 text without BOM (kubectl --from-file preserves BOM otherwise)."""
+    raw = path.read_bytes()
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raw = raw[3:]
+    return raw.decode("utf-8")
+
+
 def service_id_from_path(path: Path) -> str:
-    data = path.read_text(encoding="utf-8")
-    for line in data.splitlines():
+    for line in read_spt_text(path).splitlines():
         if line.startswith("service:"):
             return line.split(":", 1)[1].strip().strip("\"'")
     return path.parent.name
 
 
+def kubectl_apply(namespace: str, rendered: str, *, attempts: int = 4) -> subprocess.CompletedProcess[str]:
+    last: subprocess.CompletedProcess[str] | None = None
+    for i in range(1, attempts + 1):
+        last = subprocess.run(
+            ["kubectl", "-n", namespace, "apply", "-f", "-"],
+            input=rendered,
+            text=True,
+            capture_output=True,
+        )
+        if last.returncode == 0:
+            return last
+        err = (last.stderr or "") + (last.stdout or "")
+        retryable = any(
+            s in err
+            for s in (
+                "client connection lost",
+                "connection reset",
+                "Timeout",
+                "i/o timeout",
+                "EOF",
+                "TLS handshake timeout",
+            )
+        )
+        print(f"kubectl apply failed (attempt {i}/{attempts})", file=sys.stderr)
+        print(err, file=sys.stderr)
+        if not retryable or i == attempts:
+            break
+        time.sleep(2**i)
+    assert last is not None
+    return last
+
+
 def apply_configmap(path: Path, namespace: str, dry_run: bool) -> str:
     service = service_id_from_path(path)
     name = f"spt-catalog-{service}"
-    cmd = [
-        "kubectl",
-        "-n",
-        namespace,
-        "create",
-        "configmap",
-        name,
-        f"--from-file=spt.yaml={path}",
-        "--dry-run=client",
-        "-o",
-        "yaml",
-    ]
-    rendered = subprocess.check_output(cmd, text=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        clean = Path(tmp) / "spt.yaml"
+        clean.write_text(read_spt_text(path), encoding="utf-8", newline="\n")
+        cmd = [
+            "kubectl",
+            "-n",
+            namespace,
+            "create",
+            "configmap",
+            name,
+            f"--from-file=spt.yaml={clean}",
+            "--dry-run=client",
+            "-o",
+            "yaml",
+        ]
+        rendered = subprocess.check_output(cmd, text=True)
     if dry_run:
         print(rendered)
         return name
-    apply = subprocess.run(
-        ["kubectl", "-n", namespace, "apply", "-f", "-"],
-        input=rendered,
-        text=True,
-        capture_output=True,
-    )
+    apply = kubectl_apply(namespace, rendered)
     if apply.returncode != 0:
-        print(apply.stdout, file=sys.stderr)
-        print(apply.stderr, file=sys.stderr)
         apply.check_returncode()
     print(apply.stdout.strip() or f"applied {namespace}/{name}")
     return name
@@ -77,33 +114,29 @@ def apply_bundle(paths: list[Path], namespace: str, dry_run: bool) -> str:
     """One ConfigMap with every service — Helm mounts this only."""
     if not paths:
         return BUNDLE_NAME
-    cmd = [
-        "kubectl",
-        "-n",
-        namespace,
-        "create",
-        "configmap",
-        BUNDLE_NAME,
-        "--dry-run=client",
-        "-o",
-        "yaml",
-    ]
-    for path in paths:
-        sid = service_id_from_path(path)
-        cmd.append(f"--from-file={sid}.yaml={path}")
-    rendered = subprocess.check_output(cmd, text=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        cmd = [
+            "kubectl",
+            "-n",
+            namespace,
+            "create",
+            "configmap",
+            BUNDLE_NAME,
+            "--dry-run=client",
+            "-o",
+            "yaml",
+        ]
+        for path in paths:
+            sid = service_id_from_path(path)
+            clean = Path(tmp) / f"{sid}.yaml"
+            clean.write_text(read_spt_text(path), encoding="utf-8", newline="\n")
+            cmd.append(f"--from-file={sid}.yaml={clean}")
+        rendered = subprocess.check_output(cmd, text=True)
     if dry_run:
         print(rendered)
         return BUNDLE_NAME
-    apply = subprocess.run(
-        ["kubectl", "-n", namespace, "apply", "-f", "-"],
-        input=rendered,
-        text=True,
-        capture_output=True,
-    )
+    apply = kubectl_apply(namespace, rendered)
     if apply.returncode != 0:
-        print(apply.stdout, file=sys.stderr)
-        print(apply.stderr, file=sys.stderr)
         apply.check_returncode()
     print(apply.stdout.strip() or f"applied {namespace}/{BUNDLE_NAME} ({len(paths)} services)")
     return BUNDLE_NAME
@@ -115,7 +148,7 @@ def main() -> int:
         "--namespace",
         action="append",
         dest="namespaces",
-        help="Target namespace (repeatable). Default: am-apps-dev (+ optional load-testing)",
+        help="Target namespace (repeatable). Default: am-apps-dev",
     )
     parser.add_argument("--service", help="Single service dir under services/ (per-CM only; bundle always full)")
     parser.add_argument("--dry-run", action="store_true")
