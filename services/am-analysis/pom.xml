@@ -22,16 +22,16 @@
 
     <properties>
         <!-- Per-artifact published versions (bump independently) -->
-        <am.common-lib.version>1.1.3-SNAPSHOT</am.common-lib.version>
-        <am.observability-lib.version>1.1.3-SNAPSHOT</am.observability-lib.version>
-        <am.kafka-lib.version>1.1.3-SNAPSHOT</am.kafka-lib.version>
-        <am.market-domain.version>1.1.3-SNAPSHOT</am.market-domain.version>
-        <am.analysis-adapter.version>1.1.3-SNAPSHOT</am.analysis-adapter.version>
-        <am.security-lib.version>1.1.3-SNAPSHOT</am.security-lib.version>
-        <am.cache-lib.version>1.1.3-SNAPSHOT</am.cache-lib.version>
-        <am.feign-lib.version>1.1.3-SNAPSHOT</am.feign-lib.version>
-        <am.market-client-lib.version>1.1.3-SNAPSHOT</am.market-client-lib.version>
-        <am.trade-client-lib.version>1.1.3-SNAPSHOT</am.trade-client-lib.version>
+        <am.common-lib.version>1.1.5-SNAPSHOT</am.common-lib.version>
+        <am.observability-lib.version>1.1.5-SNAPSHOT</am.observability-lib.version>
+        <am.kafka-lib.version>1.1.5-SNAPSHOT</am.kafka-lib.version>
+        <am.market-domain.version>1.1.5-SNAPSHOT</am.market-domain.version>
+        <am.analysis-adapter.version>1.1.5-SNAPSHOT</am.analysis-adapter.version>
+        <am.security-lib.version>1.1.5-SNAPSHOT</am.security-lib.version>
+        <am.cache-lib.version>1.1.5-SNAPSHOT</am.cache-lib.version>
+        <am.feign-lib.version>1.1.5-SNAPSHOT</am.feign-lib.version>
+        <am.market-client-lib.version>1.1.5-SNAPSHOT</am.market-client-lib.version>
+        <am.trade-client-lib.version>1.1.5-SNAPSHOT</am.trade-client-lib.version>
     </properties>
 
     <dependencies>

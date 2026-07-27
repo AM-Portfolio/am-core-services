@@ -97,11 +97,16 @@ public class AnalysisAggregator {
             totalValue    = totalValue.add(val);
             totalInvested = totalInvested.add(inv);
             dayChange     = dayChange.add(dc);
-            totalHoldings += holdings;
+            String pid = (entity.getSourceId() != null && !entity.getSourceId().isBlank())
+                    ? entity.getSourceId()
+                    : "unassigned";
+            String pname = (entity.getSourceId() != null && !entity.getSourceId().isBlank())
+                    ? entity.getSourceId()
+                    : "Unassigned Holdings";
 
             breakdowns.add(DashboardSummary.PortfolioBreakdown.builder()
-                    .portfolioId(entity.getSourceId())
-                    .portfolioName(entity.getSourceId())  // enrich with real name if available
+                    .portfolioId(pid)
+                    .portfolioName(pname)
                     .portfolioType("Long Term")
                     .currentValue(val)
                     .investedValue(inv)
