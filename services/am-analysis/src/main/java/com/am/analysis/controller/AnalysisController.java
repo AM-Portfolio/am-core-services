@@ -11,7 +11,9 @@ import com.am.analysis.dto.DashboardSummary;
 import com.am.analysis.dto.PerformanceResponse;
 import com.am.analysis.dto.RecentActivityResponse;
 import com.am.analysis.dto.TopMoversResponse;
+import com.am.analysis.dto.HeatmapResponse;
 import com.am.analysis.service.AnalysisService;
+import com.am.analysis.service.impl.HeatmapAnalysisService;
 import com.am.analysis.service.DashboardAnalysisService;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.kafka.config.Timeframe;
@@ -45,6 +47,7 @@ public class AnalysisController {
 
     private final AnalysisService analysisService;
     private final DashboardAnalysisService dashboardService;
+    private final HeatmapAnalysisService heatmapAnalysisService;
     private final FlowLogger flowLogger;
 
     @Operation(
@@ -285,6 +288,27 @@ public class AnalysisController {
                 "groupBy", groupBy.name(),
                 "timeFrame", tf)) {
             TopMoversResponse response = analysisService.getTopMovers(id, type, tf, userId, groupBy);
+            flowLogger.complete(span);
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @Operation(
+            summary = "Entity heatmap",
+            description = "Heatmap breakdown for a portfolio or other analysis entity.",
+            operationId = "getHeatmap")
+    @GetMapping("/{type}/{id}/heatmap")
+    public ResponseEntity<HeatmapResponse> getHeatmap(
+            @Parameter(description = "Entity kind", example = "PORTFOLIO")
+            @PathVariable("type") AnalysisEntityType type,
+            @Parameter(description = "Entity id (open catalog)", example = "pf-demo-001")
+            @PathVariable("id") String id) {
+        String userId = UserContext.getUserIdOrThrow();
+        try (FlowSpan span = flowLogger.start("analysis.http.heatmap",
+                "type", type.name(),
+                "id", id,
+                "userId", userId)) {
+            HeatmapResponse response = heatmapAnalysisService.getHeatmap(id, type, userId);
             flowLogger.complete(span);
             return ResponseEntity.ok(response);
         }
