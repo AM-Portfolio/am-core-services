@@ -90,8 +90,12 @@ public class AnalysisAggregator {
             BigDecimal inv  = toBd(entity.getPerformance().getTotalInvestment());
             BigDecimal dc   = toBd(entity.getPerformance().getDayChange());
             BigDecimal gl   = val.subtract(inv);
-            double     glPct = inv.compareTo(BigDecimal.ZERO) > 0
+            double     glPct = inv.compareTo(BigDecimal.ONE) >= 0
                     ? gl.divide(inv, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue() : 0.0;
+            
+            Double rawDayChangePct = entity.getPerformance().getDayChangePercentage();
+            double dayChangePct = rawDayChangePct != null ? rawDayChangePct : 0.0;
+
             int holdings = entity.getHoldings() != null ? entity.getHoldings().size() : 0;
 
             totalValue    = totalValue.add(val);
@@ -113,7 +117,7 @@ public class AnalysisAggregator {
                     .gainLoss(gl)
                     .gainLossPercent(glPct)
                     .dayChange(dc)
-                    .dayChangePercent(entity.getPerformance().getDayChangePercentage())
+                    .dayChangePercent(dayChangePct)
                     .holdingCount(holdings)
                     .build());
         }
@@ -209,6 +213,14 @@ public class AnalysisAggregator {
                 BigDecimal inv = toBd(entity.getPerformance().getTotalInvestment());
                 BigDecimal gl  = val.subtract(inv);
 
+                // Safely handle null return percentages from DB performance summary
+                Double rawGainLossPct = entity.getPerformance().getTotalGainLossPercentage();
+                double totalGainLossPct = (rawGainLossPct != null && inv.compareTo(BigDecimal.ONE) >= 0) 
+                        ? rawGainLossPct : 0.0;
+
+                Double rawDayChangePct = entity.getPerformance().getDayChangePercentage();
+                double dayChangePct = rawDayChangePct != null ? rawDayChangePct : 0.0;
+
                 overviews.add(PortfolioOverview.builder()
                         .portfolioId(pid)
                         .portfolioName(pid)  // enrich with real name if name stored separately
@@ -218,9 +230,9 @@ public class AnalysisAggregator {
                         .totalValue(val)
                         .investedValue(inv)
                         .totalReturn(gl)
-                        .returnPercentage(entity.getPerformance().getTotalGainLossPercentage())
+                        .returnPercentage(totalGainLossPct)
                         .dayChange(toBd(entity.getPerformance().getDayChange()))
-                        .dayChangePercentage(entity.getPerformance().getDayChangePercentage())
+                        .dayChangePercentage(dayChangePct)
                         .topSymbols(topSymbols)
                         .build());
             }
