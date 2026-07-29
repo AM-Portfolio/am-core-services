@@ -85,9 +85,9 @@ public class TopMoversAnalysisService {
 
             // Deduplicate by symbol for STOCK view
             Map<String, com.am.analysis.adapter.model.AnalysisHolding> uniqueHoldings = allHoldings.stream()
-                .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
+                .filter(h -> resolveSymbol(h) != null)
                 .collect(java.util.stream.Collectors.toMap(
-                    h -> h.getIdentity().getSymbol(),
+                    h -> resolveSymbol(h),
                     h -> h,
                     (existing, replacement) -> existing // Keep existing
                 ));
@@ -356,8 +356,20 @@ public class TopMoversAnalysisService {
                 .build();
     }
 
+    private String resolveSymbol(com.am.analysis.adapter.model.AnalysisHolding h) {
+        if (h == null || h.getIdentity() == null) return null;
+        String sym = h.getIdentity().getSymbol();
+        if (org.springframework.util.StringUtils.hasText(sym)) {
+            return sym;
+        }
+        if (org.springframework.util.StringUtils.hasText(h.getIdentity().getIsin())) {
+            return h.getIdentity().getIsin();
+        }
+        return h.getIdentity().getName();
+    }
+
     private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame, double totalPortfolioValue) {
-        String symbol = h.getIdentity() != null ? h.getIdentity().getSymbol() : "UNKNOWN";
+        String symbol = resolveSymbol(h) != null ? resolveSymbol(h) : "UNKNOWN";
         String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
         Double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
