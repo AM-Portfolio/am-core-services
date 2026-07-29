@@ -28,6 +28,11 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     properties:
+      # Native Apache Kafka client dot-notation properties (required by KafkaAdmin & AdminClient)
+      "security.protocol": ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
+      "sasl.mechanism": ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
+      "sasl.jaas.config": ${SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG:${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:kafkaUser}" password="${KAFKA_PASSWORD:kafkaPassword123!}";}}
+      # Spring Boot kebab-case fallback properties
       security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
       sasl-mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
       sasl-jaas-config: ${SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG:${KAFKA_JAAS_CONFIG:org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:kafkaUser}" password="${KAFKA_PASSWORD:kafkaPassword123!}";}}
