@@ -257,6 +257,7 @@ public class AnalysisCalculationService {
         if (timeFrame == null) return toDate.minusMonths(1);
         
         switch (timeFrame.toUpperCase()) {
+            case "1D": return toDate.minusDays(1);
             case "1W": return toDate.minusWeeks(1);
             case "1M": return toDate.minusMonths(1);
             case "3M": return toDate.minusMonths(3);

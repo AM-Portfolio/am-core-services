@@ -21,6 +21,17 @@ public class AnalysisEventMapper {
     public AnalysisEntity mapPortfolioEvent(PortfolioUpdateEvent event) {
         List<AnalysisHolding> holdings = mapEquitiesToHoldings(event.getEquities(), event.getTotalValue());
 
+        double computedTotalInvestment = (event.getTotalInvestment() != null && event.getTotalInvestment() > 0)
+                ? event.getTotalInvestment()
+                : holdings.stream()
+                        .filter(h -> h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null)
+                        .mapToDouble(h -> h.getInvestment().getInvestmentValue())
+                        .sum();
+
+        double totalVal = event.getTotalValue() != null ? event.getTotalValue() : 0.0;
+        double gainLoss = totalVal - computedTotalInvestment;
+        double gainLossPct = computedTotalInvestment > 0 ? (gainLoss / computedTotalInvestment) * 100.0 : 0.0;
+
         String rawPortfolioId = event.getPortfolioId();
         String effectivePortfolioId = rawPortfolioId != null && !rawPortfolioId.isBlank()
                 ? rawPortfolioId
@@ -41,10 +52,10 @@ public class AnalysisEventMapper {
                 .ownerId(event.getUserId())
                 .holdings(holdings)
                 .performance(PerformanceSummary.builder()
-                        .totalValue(event.getTotalValue())
-                        .totalInvestment(event.getTotalInvestment())
-                        .totalGainLoss(event.getTotalGainLoss())
-                        .totalGainLossPercentage(event.getTotalGainLossPercentage())
+                        .totalValue(totalVal)
+                        .totalInvestment(computedTotalInvestment)
+                        .totalGainLoss(gainLoss)
+                        .totalGainLossPercentage(gainLossPct)
                         .dayChange(event.getTodayGainLoss() != null ? event.getTodayGainLoss() : 0.0)
                         .dayChangePercentage(event.getTodayGainLossPercentage() != null ? event.getTodayGainLossPercentage() : 0.0)
                         .build())
@@ -64,6 +75,12 @@ public class AnalysisEventMapper {
                     double value = equity.getCurrentValue() != null ? equity.getCurrentValue() : equity.getInvestmentValue();
                     double weight = (value / validTotalValue) * 100.0;
 
+                    Double invVal = equity.getInvestmentValue() != null ? equity.getInvestmentValue() : 0.0;
+                    Double curVal = equity.getCurrentValue() != null ? equity.getCurrentValue() : value;
+                    Double pnl = equity.getProfitLoss() != null ? equity.getProfitLoss() : (curVal - invVal);
+                    Double pnlPct = equity.getProfitLossPercentage() != null ? equity.getProfitLossPercentage()
+                            : (invVal > 0 ? (pnl / invVal) * 100.0 : 0.0);
+
                     return AnalysisHolding.builder()
                             .identity(HoldingIdentity.builder()
                                     .symbol(equity.getSymbol())
@@ -76,10 +93,10 @@ public class AnalysisEventMapper {
                             .investment(InvestmentStats.builder()
                                     .quantity(equity.getQuantity())
                                     .averagePrice(equity.getAveragePrice())
-                                    .investmentValue(equity.getInvestmentValue())
-                                    .currentValue(equity.getCurrentValue())
-                                    .profitLoss(equity.getProfitLoss())
-                                    .profitLossPercentage(equity.getProfitLossPercentage())
+                                    .investmentValue(invVal)
+                                    .currentValue(curVal)
+                                    .profitLoss(pnl)
+                                    .profitLossPercentage(pnlPct)
                                     .weight(weight)
                                     .value(value)
                                     .build())
