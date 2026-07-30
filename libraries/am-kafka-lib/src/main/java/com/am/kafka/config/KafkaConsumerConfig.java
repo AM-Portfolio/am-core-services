@@ -99,4 +99,36 @@ public class KafkaConsumerConfig {
         template.setObservationEnabled(true);
         return template;
     }
+
+    /**
+     * Configures an explicit KafkaAdmin bean with properly mapped SASL security configuration properties.
+     * <p>
+     * Why this is necessary:
+     * When Spring Boot's Micrometer Observation tracing is enabled (template.setObservationEnabled(true)),
+     * Spring Kafka queries KafkaAdmin.clusterId() before publishing messages. If KafkaAdmin is auto-configured
+     * without mapping kebab-case Spring properties ("security-protocol") to native Apache Kafka dot-notation
+     * ("security.protocol"), native Kafka AdminClient falls back to unauthenticated PLAINTEXT, resulting in a
+     * 60-second TimeoutException and blocking event publication.
+     *
+     * @return Fully configured KafkaAdmin instance ready for authenticated SASL operations.
+     */
+    @Bean
+    public org.springframework.kafka.core.KafkaAdmin kafkaAdmin() {
+        // Build base admin configuration map from Spring Boot auto-configured KafkaProperties
+        Map<String, Object> kafkaAdminConfigurationProperties = new HashMap<>(kafkaProperties.buildAdminProperties());
+        
+        // Retrieve raw common properties supplied under spring.kafka.properties
+        Map<String, String> rawSpringCommonProperties = kafkaProperties.getProperties();
+        
+        // Robustly map security properties from both kebab-case (Spring convention) and dot-notation (Kafka native)
+        mapSecurityProperty(rawSpringCommonProperties, "security-protocol", "security.protocol", kafkaAdminConfigurationProperties);
+        mapSecurityProperty(rawSpringCommonProperties, "security.protocol", "security.protocol", kafkaAdminConfigurationProperties);
+        mapSecurityProperty(rawSpringCommonProperties, "sasl-mechanism", "sasl.mechanism", kafkaAdminConfigurationProperties);
+        mapSecurityProperty(rawSpringCommonProperties, "sasl.mechanism", "sasl.mechanism", kafkaAdminConfigurationProperties);
+        mapSecurityProperty(rawSpringCommonProperties, "sasl-jaas-config", "sasl.jaas.config", kafkaAdminConfigurationProperties);
+        mapSecurityProperty(rawSpringCommonProperties, "sasl.jaas.config", "sasl.jaas.config", kafkaAdminConfigurationProperties);
+
+        return new org.springframework.kafka.core.KafkaAdmin(kafkaAdminConfigurationProperties);
+    }
 }
+

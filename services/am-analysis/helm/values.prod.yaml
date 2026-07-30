@@ -1,5 +1,4 @@
-# Production environment overrides for am-analysis
-# Service-level Ingress (same model as am-identity).
+# CI rebuild trigger: 2026-07-29-redeploy-analysis
 environment: prod
 
 replicaCount: 1
@@ -9,7 +8,7 @@ resources:
     cpu: 1000m
     memory: 1024Mi
   requests:
-    cpu: 500m
+    cpu: 100m
     memory: 512Mi
 
 ingress:
