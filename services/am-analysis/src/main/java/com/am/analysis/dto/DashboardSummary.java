@@ -27,6 +27,11 @@ public class DashboardSummary {
     private BigDecimal dayChange;
     private Double     dayChangePercentage;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("investmentValue")
+    public BigDecimal getInvestmentValue() {
+        return totalInvested != null ? totalInvested : BigDecimal.ZERO;
+    }
+
     // ── Portfolio count ───────────────────────────────────────────────────
     private int totalPortfolios;
     private int totalHoldings; // total unique stock positions across all portfolios

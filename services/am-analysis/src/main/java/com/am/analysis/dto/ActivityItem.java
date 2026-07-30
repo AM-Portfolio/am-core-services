@@ -43,12 +43,20 @@ public class ActivityItem {
     private String exchange;        // e.g. "NSE", "BSE", "NASDAQ"
     private String sector;          // e.g. "Technology" — used for filter grouping
 
-    // ── Position Details ──────────────────────────────────────────────────
     private Double quantity;        // Number of shares/units held
     private Double avgBuyingPrice;  // Average cost basis per unit
     private Double currentPrice;    // Live market price per unit
     private Double investmentValue; // Total cost (qty × avgBuyingPrice)
     private Double currentValue;    // Current market value (qty × currentPrice)
+
+    @com.fasterxml.jackson.annotation.JsonProperty("amount")
+    public String getAmount() {
+        Double val = currentValue != null && currentValue > 0 ? currentValue : investmentValue;
+        if (val != null && val > 0) {
+            return String.format("₹%,.2f", val);
+        }
+        return null;
+    }
 
     // ── P&L ───────────────────────────────────────────────────────────────
     private Double profitLoss;          // Absolute P&L (currentValue - investmentValue)
