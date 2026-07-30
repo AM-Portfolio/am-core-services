@@ -26,7 +26,7 @@ public class DashboardUpdateListener {
     private final ObjectMapper objectMapper;
     private final FlowLogger flowLogger;
 
-    @KafkaListener(topics = {KafkaTopics.PORTFOLIO_UPDATE, "am-portfolio"}, groupId = "am-analysis-dashboard-updater")
+    @KafkaListener(topics = KafkaTopics.PORTFOLIO_UPDATE, groupId = "am-analysis-dashboard-updater")
     public void onPortfolioUpdate(String message) {
         try (FlowSpan span = flowLogger.start("analysis.kafka.consume.portfolio_update",
                 "payload_bytes", message == null ? 0 : message.length())) {
