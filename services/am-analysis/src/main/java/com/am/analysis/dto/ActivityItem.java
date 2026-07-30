@@ -52,7 +52,7 @@ public class ActivityItem {
     @com.fasterxml.jackson.annotation.JsonProperty("amount")
     public String getAmount() {
         Double val = currentValue != null && currentValue > 0 ? currentValue : investmentValue;
-        if (val != null && val > 0) {
+        if (val != null && val >= 0) {
             return String.format("₹%,.2f", val);
         }
         return null;
