@@ -28,7 +28,12 @@ public class AnalysisEventMapper {
                         .mapToDouble(h -> h.getInvestment().getInvestmentValue())
                         .sum();
 
-        double totalVal = event.getTotalValue() != null ? event.getTotalValue() : 0.0;
+        double totalVal = (event.getTotalValue() != null && event.getTotalValue() > 0)
+                ? event.getTotalValue()
+                : holdings.stream()
+                        .filter(h -> h.getInvestment() != null && h.getInvestment().getValue() != null)
+                        .mapToDouble(h -> h.getInvestment().getValue())
+                        .sum();
         double gainLoss = totalVal - computedTotalInvestment;
         double gainLossPct = computedTotalInvestment > 0 ? (gainLoss / computedTotalInvestment) * 100.0 : 0.0;
 
