@@ -259,15 +259,8 @@ public class TopMoversAnalysisService {
             if (!isins.isEmpty()) {
                 // Step 2: Resolve ISINs to tickers via security search
                 try {
-                    Map<String, com.am.portfolio.client.market.model.SecurityMetadata> meta =
-                            marketDataClientService.searchSecurities(isins);
-                    if (meta != null && !meta.isEmpty()) {
-                        meta.forEach((ticker, secMeta) -> {
-                            String isin = secMeta != null ? secMeta.getIsin() : null;
-                            if (isin != null) {
-                                isinToTicker.put(isin, ticker);
-                            }
-                        });
+                    isinToTicker = marketDataClientService.resolveIsinsToTickers(isins);
+                    if (isinToTicker != null && !isinToTicker.isEmpty()) {
                         tickersToFetch.clear();
                         for (String sym : holdingSymbols) {
                             String resolved = isinToTicker.get(sym);
@@ -286,7 +279,7 @@ public class TopMoversAnalysisService {
             if (symbolsCsv.isBlank()) {
                 return result;
             }
-            Map<String, Object> quotes = marketDataClientService.getQuotes(symbolsCsv, "1D", false);
+            Map<String, Object> quotes = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
             if (quotes == null || quotes.isEmpty() || quotes.containsKey("error")) {
                 log.warn("[TopMovers] Live quotes fetch returned empty/error for symbols: {}", symbolsCsv);
                 return result;
