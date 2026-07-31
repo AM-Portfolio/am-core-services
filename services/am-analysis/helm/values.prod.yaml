@@ -6,10 +6,10 @@ replicaCount: 1
 resources:
   limits:
     cpu: 1000m
-    memory: 1024Mi
+    memory: 768Mi
   requests:
-    cpu: 100m
-    memory: 512Mi
+    cpu: 200m
+    memory: 384Mi
 
 probes:
   port: 8080
@@ -63,3 +63,4 @@ env:
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MARKET_DATA_URL: "https://am.asrax.in/market"
+  JAVA_OPTS: "-Xms384m -Xmx512m -XX:+UseStringDeduplication -Dspring.backgroundpreinitializer.ignore=true"
