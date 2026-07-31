@@ -31,8 +31,13 @@ public class AnalysisEventMapper {
         double totalVal = (event.getTotalValue() != null && event.getTotalValue() > 0)
                 ? event.getTotalValue()
                 : holdings.stream()
-                        .filter(h -> h.getInvestment() != null && h.getInvestment().getValue() != null)
-                        .mapToDouble(h -> h.getInvestment().getValue())
+                        .filter(h -> h.getInvestment() != null)
+                        .mapToDouble(h -> {
+                            Double v = h.getInvestment().getValue();
+                            if (v != null && v > 0) return v;
+                            Double inv = h.getInvestment().getInvestmentValue();
+                            return inv != null ? inv : 0.0;
+                        })
                         .sum();
         double gainLoss = totalVal - computedTotalInvestment;
         double gainLossPct = computedTotalInvestment > 0 ? (gainLoss / computedTotalInvestment) * 100.0 : 0.0;
@@ -86,9 +91,13 @@ public class AnalysisEventMapper {
                     Double pnlPct = equity.getProfitLossPercentage() != null ? equity.getProfitLossPercentage()
                             : (invVal > 0 ? (pnl / invVal) * 100.0 : 0.0);
 
+                    String sym = (equity.getSymbol() != null && !equity.getSymbol().isBlank())
+                            ? equity.getSymbol()
+                            : (equity.getIsin() != null && !equity.getIsin().isBlank() ? equity.getIsin() : equity.getName());
+
                     return AnalysisHolding.builder()
                             .identity(HoldingIdentity.builder()
-                                    .symbol(equity.getSymbol())
+                                    .symbol(sym)
                                     .name(equity.getName())
                                     .assetClass("EQUITY")
                                     .isin(equity.getIsin())
