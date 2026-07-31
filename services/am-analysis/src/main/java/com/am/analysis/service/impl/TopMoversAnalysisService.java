@@ -280,20 +280,36 @@ public class TopMoversAnalysisService {
     }
 
     private Double computeChangePercentage(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
-        if (h.getMarket() == null || h.getInvestment() == null) {
+        if (h.getInvestment() == null) {
             return null;
         }
-        if (h.getMarket().getDayChangePercentage() != null) {
+        // 1. Prefer live day-change percentage when market data is available
+        if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
             return h.getMarket().getDayChangePercentage();
         }
-        Double price = h.getMarket().getCurrentPrice();
-        Double reference = h.getMarket().getPreviousClose();
-        if (price == null || reference == null) {
-            return null;
+        // 2. Try to compute from current price vs previous close
+        if (h.getMarket() != null) {
+            Double price = h.getMarket().getCurrentPrice();
+            Double reference = h.getMarket().getPreviousClose();
+            if (price != null && reference != null && reference > 0) {
+                return isDailyTimeFrame(timeFrame)
+                        ? LivePriceOverlayHelper.computeDailyChangePercent(price, reference)
+                        : LivePriceOverlayHelper.computePeriodChangePercent(price, reference, resolveTimeframe(timeFrame));
+            }
         }
-        return isDailyTimeFrame(timeFrame)
-                ? LivePriceOverlayHelper.computeDailyChangePercent(price, reference)
-                : LivePriceOverlayHelper.computePeriodChangePercent(price, reference, resolveTimeframe(timeFrame));
+        // 3. Fallback: use total P&L percentage (inception return) when no live data is available
+        //    This ensures Market Movers shows something meaningful even without a live price feed.
+        Double pnlPct = h.getInvestment().getProfitLossPercentage();
+        if (pnlPct != null) {
+            return pnlPct;
+        }
+        // 4. Compute P&L % from raw investment values
+        Double curVal = h.getInvestment().getCurrentValue();
+        Double invVal = h.getInvestment().getInvestmentValue();
+        if (curVal != null && invVal != null && invVal > 0) {
+            return ((curVal - invVal) / invVal) * 100.0;
+        }
+        return null;
     }
 
     private double resolveChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
@@ -302,21 +318,36 @@ public class TopMoversAnalysisService {
     }
 
     private Double computeChangeAmount(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame) {
-        if (h.getMarket() == null || h.getInvestment() == null) {
+        if (h.getInvestment() == null) {
             return null;
         }
-        if (h.getMarket().getDayChange() != null) {
+        // 1. Prefer live day-change amount
+        if (h.getMarket() != null && h.getMarket().getDayChange() != null) {
             return h.getMarket().getDayChange();
         }
-        Double price = h.getMarket().getCurrentPrice();
-        Double reference = h.getMarket().getPreviousClose();
-        double qty = h.getInvestment().getQuantity() != null ? h.getInvestment().getQuantity() : 0.0;
-        if (price == null || reference == null || qty <= 0) {
-            return null;
+        // 2. Compute from current price vs previous close
+        if (h.getMarket() != null) {
+            Double price = h.getMarket().getCurrentPrice();
+            Double reference = h.getMarket().getPreviousClose();
+            double qty = h.getInvestment().getQuantity() != null ? h.getInvestment().getQuantity() : 0.0;
+            if (price != null && reference != null && reference > 0 && qty > 0) {
+                return isDailyTimeFrame(timeFrame)
+                        ? LivePriceOverlayHelper.computeDailyChangeAmount(qty, price, reference)
+                        : LivePriceOverlayHelper.computePeriodChangeAmount(qty, price, reference, resolveTimeframe(timeFrame));
+            }
         }
-        return isDailyTimeFrame(timeFrame)
-                ? LivePriceOverlayHelper.computeDailyChangeAmount(qty, price, reference)
-                : LivePriceOverlayHelper.computePeriodChangeAmount(qty, price, reference, resolveTimeframe(timeFrame));
+        // 3. Fallback: use stored profitLoss (total P&L amount)
+        Double pnl = h.getInvestment().getProfitLoss();
+        if (pnl != null) {
+            return pnl;
+        }
+        // 4. Compute from raw values
+        Double curVal = h.getInvestment().getCurrentValue();
+        Double invVal = h.getInvestment().getInvestmentValue();
+        if (curVal != null && invVal != null) {
+            return curVal - invVal;
+        }
+        return null;
     }
 
     private TopMoversResponse buildTopMoversResponse(List<AnalysisEntity> gainers, List<AnalysisEntity> losers) {

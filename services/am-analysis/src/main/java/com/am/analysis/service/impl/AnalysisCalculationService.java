@@ -247,10 +247,73 @@ public class AnalysisCalculationService {
                     .build();
         }
 
-        // 4. Delegate Calculation
+        // 4. Delegate Calculation — fall back to synthetic chart if market data is empty
+        if (marketDataMap.isEmpty()) {
+            log.warn("[PerfCalc] No market data returned for Entity {}. Building synthetic chart from stored holding values.", entityId);
+            return buildSyntheticPerformance(entity, timeFrame);
+        }
         PerformanceResponse response = performanceCalculator.calculate(entity, timeFrame, marketDataMap, fromDate, toDate);
         log.info("[PerfCalc] Calculation completed in {} ms. Total Return: {}%", (System.currentTimeMillis() - startTime), response.getTotalReturnPercentage());
         return response;
+    }
+
+    /**
+     * Builds a simple 2-point performance chart from the holdings' stored investmentValue (cost) and currentValue
+     * when the external market data API returns no historical data (e.g., for very short time ranges or inactive feeds).
+     */
+    private PerformanceResponse buildSyntheticPerformance(AnalysisEntity entity, String timeFrame) {
+        double totalInvestment = entity.getHoldings().stream()
+                .filter(h -> h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null)
+                .mapToDouble(h -> h.getInvestment().getInvestmentValue())
+                .sum();
+
+        double totalCurrentValue = entity.getHoldings().stream()
+                .filter(h -> h.getInvestment() != null)
+                .mapToDouble(h -> {
+                    // Prefer currentValue, fallback to investmentValue
+                    Double cur = h.getInvestment().getCurrentValue();
+                    return cur != null ? cur : (h.getInvestment().getInvestmentValue() != null ? h.getInvestment().getInvestmentValue() : 0.0);
+                })
+                .sum();
+
+        if (totalInvestment <= 0 && totalCurrentValue <= 0) {
+            return PerformanceResponse.builder()
+                    .portfolioId(entity.getSourceId())
+                    .timeFrame(timeFrame)
+                    .totalReturnPercentage(0.0)
+                    .totalReturnValue(java.math.BigDecimal.ZERO)
+                    .chartData(java.util.Collections.emptyList())
+                    .errorMessage("No holding values available to build performance chart.")
+                    .build();
+        }
+
+        double returnVal = totalCurrentValue - totalInvestment;
+        double returnPct = totalInvestment > 0 ? (returnVal / totalInvestment) * 100.0 : 0.0;
+
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        List<PerformanceResponse.DataPoint> chartData = List.of(
+                PerformanceResponse.DataPoint.builder()
+                        .date(yesterday)
+                        .value(java.math.BigDecimal.valueOf(totalInvestment).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .build(),
+                PerformanceResponse.DataPoint.builder()
+                        .date(today)
+                        .value(java.math.BigDecimal.valueOf(totalCurrentValue).setScale(2, java.math.RoundingMode.HALF_UP))
+                        .build()
+        );
+
+        log.info("[PerfCalc] Synthetic chart built for Entity {}: invested={}, currentValue={}, returnPct={}%",
+                entity.getSourceId(), totalInvestment, totalCurrentValue, returnPct);
+
+        return PerformanceResponse.builder()
+                .portfolioId(entity.getSourceId())
+                .timeFrame(timeFrame)
+                .totalReturnPercentage(java.math.BigDecimal.valueOf(returnPct).setScale(4, java.math.RoundingMode.HALF_UP).doubleValue())
+                .totalReturnValue(java.math.BigDecimal.valueOf(returnVal).setScale(2, java.math.RoundingMode.HALF_UP))
+                .chartData(chartData)
+                .build();
     }
 
     private LocalDate calculateFromDate(String timeFrame, LocalDate toDate) {
