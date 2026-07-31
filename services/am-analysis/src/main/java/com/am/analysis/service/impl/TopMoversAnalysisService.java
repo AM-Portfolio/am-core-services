@@ -220,12 +220,137 @@ public class TopMoversAnalysisService {
 
         Map<String, LivePriceTick> ticks = buildTicksFromHoldingsAndPrevClose(
                 portfolios, holdingSymbols, prevCloseByRedisKey);
+
+        // If no ticks built (holdings use ISINs as symbol, no currentPrice stored),
+        // resolve ISINs -> NSE tickers and fetch live quotes from market data service
         if (ticks.isEmpty()) {
             log.warn("[TopMovers] No ticks built: missing currentPrice on holdings for {} symbols",
                     holdingSymbols.size());
-            return;
+            ticks = buildTicksFromLiveQuotes(portfolios, holdingSymbols);
         }
-        LivePriceOverlayHelper.applyAll(portfolios, ticks, window);
+
+        if (!ticks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(portfolios, ticks, window);
+        }
+    }
+
+    /**
+     * Resolves holdings that are stored with ISINs as their symbol key by querying
+     * the market data service for live quotes.
+     *
+     * 1. Detect ISINs (12-char alphanumeric)
+     * 2. Resolve ISIN -> NSE ticker via searchSecurities()
+     * 3. Fetch live quotes via getQuotes() to get lastPrice / changePercent
+     * 4. Apply dayChange% directly to holdings (so computeChangePercentage uses it)
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, LivePriceTick> buildTicksFromLiveQuotes(
+            List<AnalysisEntity> portfolios, List<String> holdingSymbols) {
+        Map<String, LivePriceTick> result = new HashMap<>();
+        try {
+            // Step 1: Partition ISINs vs regular tickers
+            List<String> isins = holdingSymbols.stream()
+                    .filter(s -> s != null && s.length() == 12 && s.matches("[A-Z]{2}[A-Z0-9]{10}"))
+                    .toList();
+
+            Map<String, String> isinToTicker = new HashMap<>(); // ISIN -> NSE ticker
+            List<String> tickersToFetch = new java.util.ArrayList<>(holdingSymbols);
+
+            if (!isins.isEmpty()) {
+                // Step 2: Resolve ISINs to tickers via security search
+                try {
+                    Map<String, com.am.portfolio.client.market.model.SecurityMetadata> meta =
+                            marketDataClientService.searchSecurities(isins);
+                    if (meta != null && !meta.isEmpty()) {
+                        meta.forEach((ticker, secMeta) -> {
+                            String isin = secMeta != null ? secMeta.getIsin() : null;
+                            if (isin != null) {
+                                isinToTicker.put(isin, ticker);
+                            }
+                        });
+                        tickersToFetch.clear();
+                        for (String sym : holdingSymbols) {
+                            String resolved = isinToTicker.get(sym);
+                            tickersToFetch.add(resolved != null ? resolved : sym);
+                        }
+                        log.info("[TopMovers] Resolved {}/{} ISINs to tickers: {}",
+                                isinToTicker.size(), isins.size(), isinToTicker);
+                    }
+                } catch (Exception e) {
+                    log.warn("[TopMovers] ISIN->ticker resolution failed: {}", e.getMessage());
+                }
+            }
+
+            // Step 3: Fetch live quotes for resolved tickers
+            String symbolsCsv = tickersToFetch.stream().distinct().collect(Collectors.joining(","));
+            if (symbolsCsv.isBlank()) {
+                return result;
+            }
+            Map<String, Object> quotes = marketDataClientService.getQuotes(symbolsCsv, "1D", false);
+            if (quotes == null || quotes.isEmpty() || quotes.containsKey("error")) {
+                log.warn("[TopMovers] Live quotes fetch returned empty/error for symbols: {}", symbolsCsv);
+                return result;
+            }
+
+            // Step 4: Build ticks and apply dayChange% directly to holdings
+            for (String originalSym : holdingSymbols) {
+                String ticker = isinToTicker.getOrDefault(originalSym, originalSym);
+                Object quoteObj = quotes.get(ticker);
+                if (quoteObj instanceof Map) {
+                    Map<String, Object> q = (Map<String, Object>) quoteObj;
+                    Double lastPrice = toDouble(q.get("lastPrice"));
+                    Double prevClose = toDouble(q.get("previousClose"));
+                    Double changePercent = toDouble(q.get("changePercent"));
+                    if (lastPrice != null && lastPrice > 0) {
+                        result.put(originalSym, new LivePriceTick(lastPrice, prevClose));
+                        if (!ticker.equals(originalSym)) {
+                            result.put(ticker, new LivePriceTick(lastPrice, prevClose));
+                        }
+                        // Directly stamp dayChange% onto holdings so computeChangePercentage picks it up
+                        if (changePercent != null) {
+                            applyDayChangeToHoldings(portfolios, originalSym, ticker,
+                                    lastPrice, prevClose, changePercent);
+                        }
+                    }
+                }
+            }
+            log.info("[TopMovers] Built {} live ticks from market data service", result.size());
+        } catch (Exception e) {
+            log.warn("[TopMovers] Failed to build live ticks from quotes: {}", e.getMessage());
+        }
+        return result;
+    }
+
+    /** Stamps live market stats directly onto matched holdings (by ISIN or ticker). */
+    private void applyDayChangeToHoldings(List<AnalysisEntity> portfolios,
+                                           String isinKey, String tickerKey,
+                                           Double lastPrice, Double prevClose,
+                                           Double changePercent) {
+        for (AnalysisEntity portfolio : portfolios) {
+            if (portfolio.getHoldings() == null) continue;
+            for (com.am.analysis.adapter.model.AnalysisHolding holding : portfolio.getHoldings()) {
+                if (holding.getIdentity() == null) continue;
+                String sym = holding.getIdentity().getSymbol();
+                if (sym != null && (sym.equals(isinKey) || sym.equals(tickerKey))
+                        && holding.getMarket() != null) {
+                    if (holding.getMarket().getDayChangePercentage() == null) {
+                        holding.getMarket().setDayChangePercentage(changePercent);
+                    }
+                    if (holding.getMarket().getCurrentPrice() == null) {
+                        holding.getMarket().setCurrentPrice(lastPrice);
+                    }
+                    if (prevClose != null && holding.getMarket().getPreviousClose() == null) {
+                        holding.getMarket().setPreviousClose(prevClose);
+                    }
+                }
+            }
+        }
+    }
+
+    private static Double toDouble(Object o) {
+        if (o == null) return null;
+        if (o instanceof Number) return ((Number) o).doubleValue();
+        try { return Double.parseDouble(o.toString()); } catch (Exception e) { return null; }
     }
 
     private static Timeframe resolveTimeframe(String timeFrame) {
