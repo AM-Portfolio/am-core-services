@@ -17,6 +17,10 @@ spring:
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      # Cap metadata/buffer block so HTTP bootstrap triggers cannot stall ~60s when Kafka is down.
+      properties:
+        max.block.ms: ${KAFKA_PRODUCER_MAX_BLOCK_MS:2000}
     properties:
       security-protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_PLAINTEXT}
       sasl-mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}

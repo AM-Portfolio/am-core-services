@@ -4,15 +4,16 @@
 Bridges local stdio <-> remote HTTP/SSE so ChatGPT, Claude, Cursor, and other
 LLM tools can attach to am-mcp-server the same way.
 
+Auth (prefer Keycloak client_credentials — same as platform agents):
+  AM_MCP_CLIENT_ID / AM_MCP_CLIENT_SECRET + KEYCLOAK_TOKEN_URL
+Fallback (human / break-glass):
+  AM_AUTH_USER / AM_AUTH_PASS → AM_AUTH_LOGIN_URL (am-identity)
+
 Env:
-  AM_MCP_SSE_URL    default http://127.0.0.1:18080/sse (kubectl port-forward)
-                    public: https://am-dev.asrax.in/mcp/sse
-  AM_AUTH_LOGIN_URL default https://am-dev.asrax.in/identity/auth/login
-                    (falls back to identity port-forward if public login fails)
-  AM_AUTH_USER / AM_AUTH_PASS  identity credentials (Bearer for /sse)
-  AM_MCP_PF_PORT    local port for am-mcp-server forward (default 18080)
-  AM_IDENTITY_PF_PORT local port for am-identity forward (default 18001)
-  KUBECONFIG        required for auto port-forward when using localhost SSE
+  AM_MCP_SSE_URL      default https://am-dev.asrax.in/mcp/sse
+  KEYCLOAK_TOKEN_URL  default http://auth.munish.org/auth/realms/am-dev-realm/protocol/openid-connect/token
+  AM_AUTH_LOGIN_URL   default https://am-dev.asrax.in/identity/auth/login
+  AM_MCP_PF_PORT / AM_IDENTITY_PF_PORT / KUBECONFIG — only for localhost SSE
 """
 
 from __future__ import annotations
@@ -25,6 +26,7 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 
@@ -71,6 +73,32 @@ def _ensure_port_forward(local_port: int, service: str) -> None:
     raise RuntimeError(f"port-forward to 127.0.0.1:{local_port} ({service}) did not come up")
 
 
+def _client_credentials(token_url: str, client_id: str, client_secret: str) -> str:
+    body = urllib.parse.urlencode(
+        {
+            "grant_type": "client_credentials",
+            "client_id": client_id,
+            "client_secret": client_secret,
+        }
+    ).encode()
+    req = urllib.request.Request(
+        token_url,
+        data=body,
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+            "User-Agent": "am-mcp-remote-launch/1.1",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        data = json.loads(resp.read().decode())
+    token = data.get("access_token") or ""
+    if not token:
+        raise RuntimeError(f"client_credentials ok but no access_token: keys={list(data)}")
+    return token
+
+
 def _login(url: str, user: str, password: str) -> str:
     body = json.dumps({"username": user, "password": password}).encode()
     req = urllib.request.Request(
@@ -79,7 +107,7 @@ def _login(url: str, user: str, password: str) -> str:
         headers={
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "am-mcp-remote-launch/1.0",
+            "User-Agent": "am-mcp-remote-launch/1.1",
         },
         method="POST",
     )
@@ -104,18 +132,48 @@ def _login_with_fallback(login_url: str, user: str, password: str, identity_port
         return _login(fallback, user, password)
 
 
+def _resolve_token(
+    *,
+    token_url: str,
+    client_id: str,
+    client_secret: str,
+    login_url: str,
+    user: str,
+    password: str,
+    identity_port: int,
+) -> str:
+    if client_id and client_secret:
+        try:
+            print("auth: Keycloak client_credentials", file=sys.stderr)
+            return _client_credentials(token_url, client_id, client_secret)
+        except Exception as exc:  # noqa: BLE001
+            print(f"client_credentials failed: {exc}", file=sys.stderr)
+            if not (user and password):
+                raise
+            print("auth: falling back to identity user login", file=sys.stderr)
+    if user and password:
+        return _login_with_fallback(login_url, user, password, identity_port)
+    raise RuntimeError(
+        "Set AM_MCP_CLIENT_ID+AM_MCP_CLIENT_SECRET (preferred) "
+        "or AM_AUTH_USER+AM_AUTH_PASS"
+    )
+
+
 def main() -> int:
     local_port = int(os.environ.get("AM_MCP_PF_PORT", "18080"))
     identity_port = int(os.environ.get("AM_IDENTITY_PF_PORT", "18001"))
-    sse_url = os.environ.get("AM_MCP_SSE_URL", f"http://127.0.0.1:{local_port}/sse")
+    sse_url = os.environ.get("AM_MCP_SSE_URL", "https://am-dev.asrax.in/mcp/sse")
+    token_url = os.environ.get(
+        "KEYCLOAK_TOKEN_URL",
+        "http://auth.munish.org/auth/realms/am-dev-realm/protocol/openid-connect/token",
+    )
     login_url = os.environ.get(
         "AM_AUTH_LOGIN_URL", "https://am-dev.asrax.in/identity/auth/login"
     )
-    user = os.environ.get("AM_AUTH_USER", "")
-    password = os.environ.get("AM_AUTH_PASS", "")
-    if not user or not password:
-        print("AM_AUTH_USER and AM_AUTH_PASS are required", file=sys.stderr)
-        return 2
+    client_id = os.environ.get("AM_MCP_CLIENT_ID", "").strip()
+    client_secret = os.environ.get("AM_MCP_CLIENT_SECRET", "").strip()
+    user = os.environ.get("AM_AUTH_USER", "").strip()
+    password = os.environ.get("AM_AUTH_PASS", "").strip()
 
     if sse_url.startswith("http://127.0.0.1") or sse_url.startswith("http://localhost"):
         try:
@@ -125,9 +183,17 @@ def main() -> int:
             return 1
 
     try:
-        token = _login_with_fallback(login_url, user, password, identity_port)
+        token = _resolve_token(
+            token_url=token_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            login_url=login_url,
+            user=user,
+            password=password,
+            identity_port=identity_port,
+        )
     except Exception as exc:  # noqa: BLE001
-        print(f"identity login failed: {exc}", file=sys.stderr)
+        print(f"auth failed: {exc}", file=sys.stderr)
         return 1
 
     npx = shutil.which("npx.cmd") or shutil.which("npx")
