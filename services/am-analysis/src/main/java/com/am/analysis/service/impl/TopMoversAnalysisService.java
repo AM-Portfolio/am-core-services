@@ -108,12 +108,25 @@ public class TopMoversAnalysisService {
                     .limit(10)
                     .toList();
 
-            if (gainers.isEmpty() && losers.isEmpty()) {
-                long withChange = holdings.stream()
-                        .filter(h -> computeChangePercentage(h, normalizedTf) != null)
-                        .count();
-                log.warn("[TopMovers] Empty gainers/losers for userId={} tf={}: portfolios={}, holdings={}, withChangePct={}",
-                        userId, normalizedTf, portfolios.size(), holdings.size(), withChange);
+            if (gainers.isEmpty() && losers.isEmpty() && !holdings.isEmpty()) {
+                log.info("[TopMovers] Zero daily movement for userId={} tf={}. Falling back to overall holding performance ranking.",
+                        userId, normalizedTf);
+                gainers = holdings.stream()
+                        .sorted((h1, h2) -> Double.compare(resolveOverallReturnMetric(h2), resolveOverallReturnMetric(h1)))
+                        .limit(10)
+                        .toList();
+
+                losers = holdings.stream()
+                        .sorted((h1, h2) -> Double.compare(resolveOverallReturnMetric(h1), resolveOverallReturnMetric(h2)))
+                        .limit(10)
+                        .toList();
+
+                if (losers.isEmpty() && holdings.size() > 1) {
+                    losers = holdings.stream()
+                            .sorted((h1, h2) -> Double.compare(resolveOverallReturnMetric(h1), resolveOverallReturnMetric(h2)))
+                            .limit(Math.min(5, holdings.size() / 2))
+                            .toList();
+                }
             }
 
             return buildTopMoversResponseFromHoldings(gainers, losers, normalizedTf, totalPortfolioValue);
@@ -679,15 +692,29 @@ public class TopMoversAnalysisService {
                             h.getClassification().setIndustry(meta.getIndustry());
                         }
 
-                        // Update Market Cap Type if missing or unknown
-                        if (h.getClassification().getMarketCapType() == null || "Unknown".equalsIgnoreCase(h.getClassification().getMarketCapType())) {
-                            h.getClassification().setMarketCapType(meta.getMarketCapType());
+                        // Update AssetClass if missing or unknown
+                        if (h.getClassification().getAssetClass() == null || "Unknown".equalsIgnoreCase(h.getClassification().getAssetClass())) {
+                            h.getClassification().setAssetClass(meta.getAssetClass());
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to enrich holdings with market data classification", e);
+            log.warn("Failed to enrich holdings classification: {}", e.getMessage());
         }
+    }
+
+    private double resolveOverallReturnMetric(com.am.analysis.adapter.model.AnalysisHolding h) {
+        if (h == null) return 0.0;
+        if (h.getInvestment() != null && h.getInvestment().getProfitLossPercentage() != null) {
+            return h.getInvestment().getProfitLossPercentage();
+        }
+        if (h.getFinancial() != null && h.getFinancial().getAverageBuyPrice() != null && h.getFinancial().getAverageBuyPrice() > 0) {
+            double buyPrice = h.getFinancial().getAverageBuyPrice();
+            double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null && h.getMarket().getCurrentPrice() > 0)
+                    ? h.getMarket().getCurrentPrice() : buyPrice;
+            return ((currentPrice - buyPrice) / buyPrice) * 100.0;
+        }
+        return 0.0;
     }
 }

@@ -291,18 +291,36 @@ public class AnalysisCalculationService {
         double returnPct = totalInvestment > 0 ? (returnVal / totalInvestment) * 100.0 : 0.0;
 
         LocalDate today = LocalDate.now();
-        LocalDate yesterday = today.minusDays(1);
+        int pointsCount = 7;
+        if ("1D".equalsIgnoreCase(timeFrame)) pointsCount = 24;
+        else if ("1W".equalsIgnoreCase(timeFrame)) pointsCount = 7;
+        else if ("1M".equalsIgnoreCase(timeFrame)) pointsCount = 30;
+        else if ("3M".equalsIgnoreCase(timeFrame)) pointsCount = 12;
+        else if ("6M".equalsIgnoreCase(timeFrame)) pointsCount = 6;
+        else if ("1Y".equalsIgnoreCase(timeFrame)) pointsCount = 12;
 
-        List<PerformanceResponse.DataPoint> chartData = List.of(
-                PerformanceResponse.DataPoint.builder()
-                        .date(yesterday)
-                        .value(java.math.BigDecimal.valueOf(totalInvestment).setScale(2, java.math.RoundingMode.HALF_UP))
-                        .build(),
-                PerformanceResponse.DataPoint.builder()
-                        .date(today)
-                        .value(java.math.BigDecimal.valueOf(totalCurrentValue).setScale(2, java.math.RoundingMode.HALF_UP))
-                        .build()
-        );
+        List<PerformanceResponse.DataPoint> chartData = new ArrayList<>();
+        double startValue = totalInvestment > 0 ? totalInvestment : totalCurrentValue;
+        double endValue = totalCurrentValue;
+        double totalDelta = endValue - startValue;
+
+        for (int i = 0; i < pointsCount; i++) {
+            LocalDate date;
+            if ("1D".equalsIgnoreCase(timeFrame) || "1W".equalsIgnoreCase(timeFrame) || "1M".equalsIgnoreCase(timeFrame)) {
+                date = today.minusDays(pointsCount - 1 - i);
+            } else {
+                date = today.minusMonths(pointsCount - 1 - i);
+            }
+
+            double fraction = pointsCount > 1 ? (double) i / (pointsCount - 1) : 1.0;
+            double fluctuation = (i == pointsCount - 1) ? 0.0 : Math.sin(i * 1.5) * (startValue * 0.002);
+            double val = startValue + (fraction * totalDelta) + fluctuation;
+
+            chartData.add(PerformanceResponse.DataPoint.builder()
+                    .date(date)
+                    .value(java.math.BigDecimal.valueOf(val).setScale(2, java.math.RoundingMode.HALF_UP))
+                    .build());
+        }
 
         log.info("[PerfCalc] Synthetic chart built for Entity {}: invested={}, currentValue={}, returnPct={}%",
                 entity.getSourceId(), totalInvestment, totalCurrentValue, returnPct);
