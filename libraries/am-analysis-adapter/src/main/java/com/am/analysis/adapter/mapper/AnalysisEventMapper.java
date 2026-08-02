@@ -119,7 +119,9 @@ public class AnalysisEventMapper {
                                                                         .build())
                                                         .investment(InvestmentStats.builder()
                                                                         .quantity(equity.getQuantity())
-                                                                        .averagePrice(equity.getAveragePrice())
+                                                                        .averagePrice(equity.getAveragePrice() != null && equity.getAveragePrice() > 0
+                                                                                        ? equity.getAveragePrice()
+                                                                                        : equity.getAvgBuyingPrice())
                                                                         .investmentValue(invVal)
                                                                         .currentValue(curVal)
                                                                         .profitLoss(pnl)
