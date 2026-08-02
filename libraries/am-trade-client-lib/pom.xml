@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+    <!-- Trigger CI publish: 1.1.5-SNAPSHOT (TradeAuthTokenSupplier) 2026-08-02 -->
     <!-- Trigger CI build: observability updates v1.1.3-SNAPSHOT -->
     <!-- Trigger CI build: v1.1.0 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
