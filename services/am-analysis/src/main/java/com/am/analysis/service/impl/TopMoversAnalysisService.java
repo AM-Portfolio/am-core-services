@@ -234,13 +234,8 @@ public class TopMoversAnalysisService {
         Map<String, LivePriceTick> ticks = buildTicksFromHoldingsAndPrevClose(
                 portfolios, holdingSymbols, prevCloseByRedisKey);
 
-        // If no ticks built (holdings use ISINs as symbol, no currentPrice stored),
-        // resolve ISINs -> NSE tickers and fetch live quotes from market data service
-        if (ticks.isEmpty()) {
-            log.warn("[TopMovers] No ticks built: missing currentPrice on holdings for {} symbols",
-                    holdingSymbols.size());
-            ticks = buildTicksFromLiveQuotes(portfolios, holdingSymbols);
-        }
+        // Always fetch live quotes from market data service to ensure prices and day changes are accurate
+        ticks = buildTicksFromLiveQuotes(portfolios, holdingSymbols);
 
         if (!ticks.isEmpty()) {
             LivePriceOverlayHelper.applyAll(portfolios, ticks, window);
@@ -292,10 +287,15 @@ public class TopMoversAnalysisService {
             if (symbolsCsv.isBlank()) {
                 return result;
             }
-            Map<String, Object> quotes = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
-            if (quotes == null || quotes.isEmpty() || quotes.containsKey("error")) {
+            Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
+            if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
                 log.warn("[TopMovers] Live quotes fetch returned empty/error for symbols: {}", symbolsCsv);
                 return result;
+            }
+
+            Map<String, Object> quotes = rawResponse;
+            if (rawResponse.containsKey("quotes") && rawResponse.get("quotes") instanceof Map) {
+                quotes = (Map<String, Object>) rawResponse.get("quotes");
             }
 
             // Step 4: Build ticks and apply dayChange% directly to holdings
@@ -307,16 +307,17 @@ public class TopMoversAnalysisService {
                     Double lastPrice = toDouble(q.get("lastPrice"));
                     Double prevClose = toDouble(q.get("previousClose"));
                     Double changePercent = toDouble(q.get("changePercent"));
+                    if (changePercent == null && lastPrice != null && prevClose != null && prevClose > 0) {
+                        changePercent = ((lastPrice - prevClose) / prevClose) * 100.0;
+                    }
                     if (lastPrice != null && lastPrice > 0) {
-                        result.put(originalSym, new LivePriceTick(lastPrice, prevClose));
+                        result.put(originalSym, new LivePriceTick(lastPrice, prevClose != null ? prevClose : lastPrice));
                         if (!ticker.equals(originalSym)) {
-                            result.put(ticker, new LivePriceTick(lastPrice, prevClose));
+                            result.put(ticker, new LivePriceTick(lastPrice, prevClose != null ? prevClose : lastPrice));
                         }
-                        // Directly stamp dayChange% onto holdings so computeChangePercentage picks it up
-                        if (changePercent != null) {
-                            applyDayChangeToHoldings(portfolios, originalSym, ticker,
-                                    lastPrice, prevClose, changePercent);
-                        }
+                        // Directly stamp dayChange% and live prices onto holdings
+                        applyDayChangeToHoldings(portfolios, originalSym, ticker,
+                                lastPrice, prevClose != null ? prevClose : lastPrice, changePercent != null ? changePercent : 0.0);
                     }
                 }
             }
@@ -337,16 +338,26 @@ public class TopMoversAnalysisService {
             for (com.am.analysis.adapter.model.AnalysisHolding holding : portfolio.getHoldings()) {
                 if (holding.getIdentity() == null) continue;
                 String sym = holding.getIdentity().getSymbol();
-                if (sym != null && (sym.equals(isinKey) || sym.equals(tickerKey))
-                        && holding.getMarket() != null) {
-                    if (holding.getMarket().getDayChangePercentage() == null) {
-                        holding.getMarket().setDayChangePercentage(changePercent);
+                if (sym != null && (sym.equals(isinKey) || sym.equals(tickerKey))) {
+                    if (holding.getMarket() == null) {
+                        holding.setMarket(com.am.analysis.adapter.model.components.MarketStats.builder().build());
                     }
-                    if (holding.getMarket().getCurrentPrice() == null) {
-                        holding.getMarket().setCurrentPrice(lastPrice);
-                    }
-                    if (prevClose != null && holding.getMarket().getPreviousClose() == null) {
-                        holding.getMarket().setPreviousClose(prevClose);
+                    holding.getMarket().setCurrentPrice(lastPrice);
+                    holding.getMarket().setPreviousClose(prevClose);
+                    holding.getMarket().setDayChange(lastPrice - prevClose);
+                    holding.getMarket().setDayChangePercentage(changePercent);
+
+                    if (holding.getInvestment() != null && holding.getInvestment().getAveragePrice() != null && holding.getInvestment().getAveragePrice() > 0) {
+                        double buyPrice = holding.getInvestment().getAveragePrice();
+                        double qty = holding.getInvestment().getQuantity() != null ? holding.getInvestment().getQuantity() : 1.0;
+                        double curVal = lastPrice * qty;
+                        double invVal = buyPrice * qty;
+                        double pnl = curVal - invVal;
+                        double pnlPct = ((lastPrice - buyPrice) / buyPrice) * 100.0;
+
+                        holding.getInvestment().setCurrentValue(curVal);
+                        holding.getInvestment().setProfitLoss(pnl);
+                        holding.getInvestment().setProfitLossPercentage(pnlPct);
                     }
                 }
             }
