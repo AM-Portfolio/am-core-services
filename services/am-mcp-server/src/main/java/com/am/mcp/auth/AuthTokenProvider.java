@@ -1,6 +1,7 @@
 package com.am.mcp.auth;
 
 import com.am.mcp.config.AmMcpProperties;
+import com.am.security.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -14,13 +15,11 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Thread-safe JWT provider (AM Platform identity). Priority:
- *   1. am.auth.static-token (set in application.yaml) → use directly, no network
- *   2. Valid cached JWT (TTL not expired)              → return cached
- *   3. POST {am.auth.url}/auth/login                   → fetch, cache, return
- *
- * Same contract as SPT / other platform services: am-identity POST /auth/login
- * body {username,password} → {access_token, ...}.
+ * JWT provider for outbound calls to portfolio / market / trade / AI.
+ * Priority:
+ *   1. Inbound request Bearer ({@link UserContext#getToken()}) — user identity
+ *   2. {@code am.auth.static-token} — ops override
+ *   3. Cached service login via am-identity — fallback when no user context
  */
 @Slf4j
 @Component
@@ -28,18 +27,26 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AuthTokenProvider {
 
     private final AmMcpProperties props;
-    private final RestClient       restClient;
+    private final RestClient restClient;
 
-    private volatile String  cachedToken   = null;
-    private volatile Instant tokenExpiry   = Instant.EPOCH;
-    private final ReentrantLock lock        = new ReentrantLock();
+    private volatile String cachedToken = null;
+    private volatile Instant tokenExpiry = Instant.EPOCH;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public String getToken() {
+        String requestToken = UserContext.getToken();
+        if (requestToken != null && !requestToken.isBlank()) {
+            return requestToken;
+        }
+
         String staticToken = props.getAuth().getStaticToken();
         if (staticToken != null && !staticToken.isBlank()) {
             return staticToken;
         }
-        if (isValid()) return cachedToken;
+
+        if (isValid()) {
+            return cachedToken;
+        }
         return fetch();
     }
 
@@ -47,11 +54,11 @@ public class AuthTokenProvider {
     public HttpHeaders authHeaders() {
         HttpHeaders h = new HttpHeaders();
         String token = getToken();
-        if (token != null && !token.isBlank()) h.setBearerAuth(token);
+        if (token != null && !token.isBlank()) {
+            h.setBearerAuth(token);
+        }
         return h;
     }
-
-    // ── Private ───────────────────────────────────────────────────────────────
 
     private boolean isValid() {
         return cachedToken != null
@@ -63,7 +70,9 @@ public class AuthTokenProvider {
     private String fetch() {
         lock.lock();
         try {
-            if (isValid()) return cachedToken;  // double-check after lock
+            if (isValid()) {
+                return cachedToken;
+            }
 
             String username = props.getAuth().getUsername();
             String password = props.getAuth().getPassword();
@@ -82,18 +91,21 @@ public class AuthTokenProvider {
                     .retrieve()
                     .body(Map.class);
 
-            if (data == null) throw new IllegalStateException("Empty auth response");
+            if (data == null) {
+                throw new IllegalStateException("Empty auth response");
+            }
 
             String token = (String) data.getOrDefault("access_token",
-                           data.getOrDefault("accessToken",
-                           data.getOrDefault("token", "")));
-            if (token == null || token.isBlank())
+                    data.getOrDefault("accessToken",
+                            data.getOrDefault("token", "")));
+            if (token == null || token.isBlank()) {
                 throw new IllegalStateException("Auth response missing access_token: " + data);
+            }
 
             int ttl = ((Number) data.getOrDefault("expires_in",
-                              data.getOrDefault("expiresIn", 3600))).intValue();
-            cachedToken  = token;
-            tokenExpiry  = Instant.now().plusSeconds(ttl);
+                    data.getOrDefault("expiresIn", 3600))).intValue();
+            cachedToken = token;
+            tokenExpiry = Instant.now().plusSeconds(ttl);
             log.info("JWT acquired from am-identity (TTL={}s)", ttl);
             return token;
 

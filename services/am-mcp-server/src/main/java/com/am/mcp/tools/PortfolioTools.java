@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * Portfolio domain MCP tools.
- * Identity comes from the service JWT (AuthTokenProvider → Bearer).
+ * Identity comes from the inbound user JWT (AuthTokenProvider → Bearer).
  */
 @Slf4j
 @Service

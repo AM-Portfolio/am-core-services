@@ -154,8 +154,7 @@ public class BasketTools {
     private Map<String, Object> baseBody(String portfolioId, String userId) {
         Map<String, Object> body = new HashMap<>();
         body.put("portfolioId", portfolioId);
-        body.put("userId", (userId != null && !userId.isBlank())
-                ? userId : props.getDefaults().getUserId());
+        body.put("userId", com.am.mcp.util.UserIdResolver.resolve(userId, props));
         return body;
     }
 }

@@ -3,8 +3,9 @@ package com.am.trade.client.service;
 import am.trade.sdk.AmTradeSdk;
 import com.am.domain.trade.TradePortfolio;
 import com.am.domain.trade.TradeTransaction;
-import lombok.RequiredArgsConstructor;
+import com.am.trade.client.auth.TradeAuthTokenSupplier;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,22 +15,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class TradeClientService {
 
     private final AmTradeSdk tradeSdk;
+    private final ObjectProvider<TradeAuthTokenSupplier> tokenSupplier;
+
+    public TradeClientService(AmTradeSdk tradeSdk, ObjectProvider<TradeAuthTokenSupplier> tokenSupplier) {
+        this.tradeSdk = tradeSdk;
+        this.tokenSupplier = tokenSupplier;
+    }
 
     public List<TradePortfolio> getPortfolios(String userId) {
-        try {
-            Map<String, Object> response = tradeSdk.getPortfolioClient().getAllPortfolios(0, 100);
-            return mapPortfolios(response);
-        } catch (Exception e) {
-            log.error("Failed to fetch trade portfolios for user: {}", userId, e);
-            return Collections.emptyList();
-        }
+        return withAuth(() -> {
+            try {
+                Map<String, Object> response = tradeSdk.getPortfolioClient().getAllPortfolios(0, 100);
+                return mapPortfolios(response);
+            } catch (Exception e) {
+                log.error("Failed to fetch trade portfolios for user: {}", userId, e);
+                return Collections.emptyList();
+            }
+        });
     }
 
     public List<TradeTransaction> getRecentTrades(String userId) {
@@ -37,50 +46,78 @@ public class TradeClientService {
     }
 
     public List<TradeTransaction> getRecentTrades(String userId, int page, int size) {
-        try {
-            Map<String, Object> response = tradeSdk.getTradeClient().getTradesByFreeTab(page, size);
-            return mapTrades(response, userId);
-        } catch (Exception e) {
-            log.error("Failed to fetch recent trades for user: {}", userId, e);
-            return Collections.emptyList();
-        }
+        return withAuth(() -> {
+            try {
+                Map<String, Object> response = tradeSdk.getTradeClient().getTradesByFreeTab(page, size);
+                return mapTrades(response, userId);
+            } catch (Exception e) {
+                log.error("Failed to fetch recent trades for user: {}", userId, e);
+                return Collections.emptyList();
+            }
+        });
     }
 
     public List<TradeTransaction> getTradesBySymbol(String userId, String symbol, int page, int size) {
-        try {
-            Map<String, Object> response = tradeSdk.getTradeClient()
-                    .getTradesByFreeTabAndSymbol(symbol, page, size);
-            return mapTrades(response, userId);
-        } catch (Exception e) {
-            log.error("Failed to fetch trades for symbol {}: {}", symbol, e.getMessage());
-            return Collections.emptyList();
-        }
+        return withAuth(() -> {
+            try {
+                Map<String, Object> response = tradeSdk.getTradeClient()
+                        .getTradesByFreeTabAndSymbol(symbol, page, size);
+                return mapTrades(response, userId);
+            } catch (Exception e) {
+                log.error("Failed to fetch trades for symbol {}: {}", symbol, e.getMessage());
+                return Collections.emptyList();
+            }
+        });
     }
 
     public Map<String, Object> filterTrades(Map<String, Object> filters) {
-        try {
-            return tradeSdk.getTradeClient().filterTrades(filters);
-        } catch (Exception e) {
-            log.error("Failed to filter trades: {}", e.getMessage());
-            return Map.of("error", e.getMessage() != null ? e.getMessage() : "filter failed");
-        }
+        return withAuth(() -> {
+            try {
+                return tradeSdk.getTradeClient().filterTrades(filters);
+            } catch (Exception e) {
+                log.error("Failed to filter trades: {}", e.getMessage());
+                return Map.of("error", e.getMessage() != null ? e.getMessage() : "filter failed");
+            }
+        });
     }
 
     public Map<String, Object> getTradeMetrics(String portfolioId) {
-        try {
-            return tradeSdk.getAnalyticsClient().getTradeMetrics(portfolioId);
-        } catch (Exception e) {
-            log.error("Failed to fetch trade metrics for {}: {}", portfolioId, e.getMessage());
-            return Map.of("error", e.getMessage() != null ? e.getMessage() : "metrics failed");
-        }
+        return withAuth(() -> {
+            try {
+                return tradeSdk.getAnalyticsClient().getTradeMetrics(portfolioId);
+            } catch (Exception e) {
+                log.error("Failed to fetch trade metrics for {}: {}", portfolioId, e.getMessage());
+                return Map.of("error", e.getMessage() != null ? e.getMessage() : "metrics failed");
+            }
+        });
     }
 
     public Map<String, Object> getTradePortfolioSummary(String portfolioId) {
-        try {
-            return tradeSdk.getPortfolioClient().getPortfolioSummary(portfolioId);
-        } catch (Exception e) {
-            log.error("Failed to fetch trade portfolio summary for {}: {}", portfolioId, e.getMessage());
-            return Map.of("error", e.getMessage() != null ? e.getMessage() : "summary failed");
+        return withAuth(() -> {
+            try {
+                return tradeSdk.getPortfolioClient().getPortfolioSummary(portfolioId);
+            } catch (Exception e) {
+                log.error("Failed to fetch trade portfolio summary for {}: {}", portfolioId, e.getMessage());
+                return Map.of("error", e.getMessage() != null ? e.getMessage() : "summary failed");
+            }
+        });
+    }
+
+    private <T> T withAuth(Supplier<T> action) {
+        TradeAuthTokenSupplier supplier = tokenSupplier.getIfAvailable();
+        if (supplier == null) {
+            return action.get();
+        }
+        Object lock = tradeSdk.getConfiguration();
+        synchronized (lock) {
+            String previous = tradeSdk.getConfiguration().getApiKey();
+            try {
+                String token = supplier.getToken();
+                tradeSdk.getConfiguration().setApiKey(token != null ? token : "");
+                return action.get();
+            } finally {
+                tradeSdk.getConfiguration().setApiKey(previous);
+            }
         }
     }
 

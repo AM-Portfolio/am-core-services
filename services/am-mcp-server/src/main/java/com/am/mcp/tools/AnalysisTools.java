@@ -136,6 +136,6 @@ public class AnalysisTools {
     }
 
     private String resolve(String userId) {
-        return (userId != null && !userId.isBlank()) ? userId : props.getDefaults().getUserId();
+        return com.am.mcp.util.UserIdResolver.resolve(userId, props);
     }
 }
