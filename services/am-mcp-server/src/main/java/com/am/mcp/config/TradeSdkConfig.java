@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 /**
- * Trade SDK uses a blank apiKey at bean init; each call binds the live token
- * via {@link TradeAuthTokenSupplier} → {@link AuthTokenProvider#getToken()}.
+ * Wires AmTradeSdk with blank apiKey at init; outbound trade calls use the live
+ * per-request user JWT from {@link AuthTokenProvider} via {@link TradeAuthTokenSupplier}.
  */
 @Configuration
 public class TradeSdkConfig {
