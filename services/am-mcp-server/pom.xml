@@ -24,16 +24,16 @@
     </description>
 
     <properties>
-        <!-- Per-artifact published versions (bump independently) -->
-        <am.observability-lib.version>1.1.4-SNAPSHOT</am.observability-lib.version>
-        <am.market-client-lib.version>1.1.4-SNAPSHOT</am.market-client-lib.version>
+        <!-- Pin to versions present in GitHub Packages (not phantom 1.1.4) -->
+        <am.observability-lib.version>1.1.5-SNAPSHOT</am.observability-lib.version>
+        <am.market-client-lib.version>1.1.5-SNAPSHOT</am.market-client-lib.version>
         <am.trade-client-lib.version>1.1.5-SNAPSHOT</am.trade-client-lib.version>
         <am.portfolio-client-lib.version>1.1.4-SNAPSHOT</am.portfolio-client-lib.version>
-        <am.analysis-client-lib.version>1.1.4-SNAPSHOT</am.analysis-client-lib.version>
-        <am.analysis-client.version>1.1.4-SNAPSHOT</am.analysis-client.version>
-        <am.api-core-lib.version>1.1.4-SNAPSHOT</am.api-core-lib.version>
-        <am.security-lib.version>1.1.4-SNAPSHOT</am.security-lib.version>
-        <am.analysis-adapter.version>1.1.4-SNAPSHOT</am.analysis-adapter.version>
+        <am.analysis-client-lib.version>1.1.5-SNAPSHOT</am.analysis-client-lib.version>
+        <am.analysis-client.version>1.1.5-SNAPSHOT</am.analysis-client.version>
+        <am.api-core-lib.version>1.1.5-SNAPSHOT</am.api-core-lib.version>
+        <am.security-lib.version>1.1.3-SNAPSHOT</am.security-lib.version>
+        <am.analysis-adapter.version>1.1.3-SNAPSHOT</am.analysis-adapter.version>
         <spring-ai.version>1.0.0-M6</spring-ai.version>
         <resilience4j.version>2.2.0</resilience4j.version>
     </properties>
