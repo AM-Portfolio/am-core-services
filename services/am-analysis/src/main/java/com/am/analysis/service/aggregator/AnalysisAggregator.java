@@ -209,14 +209,32 @@ public class AnalysisAggregator {
                             .collect(Collectors.toList())
                         : Collections.emptyList();
 
-                BigDecimal val = toBd(entity.getPerformance().getTotalValue());
-                BigDecimal inv = toBd(entity.getPerformance().getTotalInvestment());
+                double calcVal = 0.0;
+                double calcInv = 0.0;
+                if (entity.getHoldings() != null) {
+                    for (AnalysisHolding h : entity.getHoldings()) {
+                        Double curP = h.getMarket() != null ? h.getMarket().getCurrentPrice() : null;
+                        Double avgP = h.getInvestment() != null ? h.getInvestment().getAveragePrice() : null;
+                        Double qty  = h.getInvestment() != null ? h.getInvestment().getQuantity() : 1.0;
+                        if (qty == null || qty <= 0) qty = 1.0;
+
+                        if (curP != null && curP > 0 && avgP != null && avgP > 0) {
+                            calcVal += curP * qty;
+                            calcInv += avgP * qty;
+                        } else if (h.getInvestment() != null) {
+                            calcVal += h.getInvestment().getCurrentValue() != null ? h.getInvestment().getCurrentValue() : 0.0;
+                            calcInv += h.getInvestment().getInvestmentValue() != null ? h.getInvestment().getInvestmentValue() : 0.0;
+                        }
+                    }
+                }
+
+                BigDecimal val = calcVal > 0 ? BigDecimal.valueOf(calcVal) : toBd(entity.getPerformance().getTotalValue());
+                BigDecimal inv = calcInv > 0 ? BigDecimal.valueOf(calcInv) : toBd(entity.getPerformance().getTotalInvestment());
                 BigDecimal gl  = val.subtract(inv);
 
-                // Safely handle null return percentages from DB performance summary
-                Double rawGainLossPct = entity.getPerformance().getTotalGainLossPercentage();
-                double totalGainLossPct = (rawGainLossPct != null && inv.compareTo(BigDecimal.ONE) >= 0) 
-                        ? rawGainLossPct : 0.0;
+                double totalGainLossPct = inv.compareTo(BigDecimal.ZERO) > 0 
+                        ? gl.doubleValue() / inv.doubleValue() * 100.0 
+                        : 0.0;
 
                 Double rawDayChangePct = entity.getPerformance().getDayChangePercentage();
                 double dayChangePct = rawDayChangePct != null ? rawDayChangePct : 0.0;

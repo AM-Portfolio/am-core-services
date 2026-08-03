@@ -224,6 +224,14 @@ public class DashboardAnalysisService {
         Double dayChange       = mkt != null ? mkt.getDayChange()             : null;
         Double dayChangePct    = mkt != null ? mkt.getDayChangePercentage()   : null;
 
+        if (currentPrice != null && currentPrice > 0 && avgBuyingPrice != null && avgBuyingPrice > 0) {
+            double qty = (quantity != null && quantity > 0) ? quantity : 1.0;
+            currentValue = currentPrice * qty;
+            investmentValue = avgBuyingPrice * qty;
+            profitLoss = currentValue - investmentValue;
+            profitLossPct = ((currentPrice - avgBuyingPrice) / avgBuyingPrice) * 100.0;
+        }
+
         String status = ActivityItem.resolveStatus(profitLoss);
 
         // Human-readable title
