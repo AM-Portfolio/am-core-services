@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +21,8 @@ import java.util.Map;
 public class PortfolioRawClient {
 
     private static final ParameterizedTypeReference<Map<String, Object>> MAP =
+            new ParameterizedTypeReference<>() {};
+    private static final ParameterizedTypeReference<List<Map<String, Object>>> LIST_MAP =
             new ParameterizedTypeReference<>() {};
 
     private final RestClient restClient;
@@ -33,10 +36,40 @@ public class PortfolioRawClient {
         if (portfolioId != null && !portfolioId.isBlank()) {
             uri.queryParam("portfolioId", portfolioId);
         }
-        return get(uri.toUriString());
+        return getMap(uri.toUriString());
     }
 
-    private Map<String, Object> get(String url) {
+    public Map<String, Object> getPortfolioHoldings(String portfolioId) {
+        String base = props.getServices().getPortfolioUrl();
+        UriComponentsBuilder uri = UriComponentsBuilder
+                .fromHttpUrl(base + "/v1/portfolios/holdings");
+        if (portfolioId != null && !portfolioId.isBlank()) {
+            uri.queryParam("portfolioId", portfolioId);
+        }
+        return getMap(uri.toUriString());
+    }
+
+    public List<Map<String, Object>> getPortfolioBasicDetails() {
+        String base = props.getServices().getPortfolioUrl();
+        return getList(base + "/v1/portfolios/list");
+    }
+
+    public Map<String, Object> getPortfolioById(String portfolioId) {
+        String base = props.getServices().getPortfolioUrl();
+        return getMap(base + "/v1/portfolios/" + portfolioId);
+    }
+
+    private Map<String, Object> getMap(String url) {
+        Map<String, Object> body = authorized(url).retrieve().body(MAP);
+        return body != null ? body : Map.of();
+    }
+
+    private List<Map<String, Object>> getList(String url) {
+        List<Map<String, Object>> body = authorized(url).retrieve().body(LIST_MAP);
+        return body != null ? body : List.of();
+    }
+
+    private RestClient.RequestHeadersSpec<?> authorized(String url) {
         String token = authTokenProvider.getToken();
         RestClient.RequestHeadersSpec<?> spec = restClient.get()
                 .uri(url)
@@ -44,7 +77,6 @@ public class PortfolioRawClient {
         if (token != null && !token.isBlank()) {
             spec = spec.header("Authorization", "Bearer " + token);
         }
-        Map<String, Object> body = spec.retrieve().body(MAP);
-        return body != null ? body : Map.of();
+        return spec;
     }
 }

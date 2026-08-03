@@ -2,7 +2,9 @@ package com.am.mcp.tools;
 
 import com.am.market.client.service.MarketDataClientService;
 import com.am.market.domain.enums.TimeFrame;
+import com.am.mcp.util.PayloadSlim;
 import com.am.mcp.util.ResponseHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +31,7 @@ public class MarketTools {
 
     private final MarketDataClientService marketDataClientService;
     private final ResponseHelper response;
+    private final ObjectMapper objectMapper;
 
     @Tool(name = "get_stock_quote",
           description = """
@@ -45,7 +49,7 @@ public class MarketTools {
         try {
             Map<String, Object> quotes = marketDataClientService.getQuotes(
                     symbol.toUpperCase(), null, true);
-            return response.toJson(quotes);
+            return response.toJson(slimQuote(quotes, symbol.toUpperCase()));
         } catch (Exception e) {
             return response.errorJson("get_stock_quote", e);
         }
@@ -67,7 +71,7 @@ public class MarketTools {
             @ToolParam(description = "Company name or partial symbol (e.g. 'HDFC', 'Tata', 'Nifty ETF').") String query) {
         try {
             var result = marketDataClientService.searchSecurities(List.of(query));
-            return response.toJson(result);
+            return response.toJson(slimSearch(result));
         } catch (Exception e) {
             return response.errorJson("search_instruments", e);
         }
@@ -99,7 +103,7 @@ public class MarketTools {
             };
             var result = marketDataClientService.getHistoricalDataBatch(
                     symbol.toUpperCase(), fromDate, toDate, tf);
-            return response.toJson(result);
+            return response.toJson(slimHistory(result, symbol.toUpperCase()));
         } catch (Exception e) {
             return response.errorJson("get_historical_data", e);
         }
@@ -122,12 +126,12 @@ public class MarketTools {
             @ToolParam(required = false, description = "Max results (default 10).") Integer limit,
             @ToolParam(required = false, description = "Index symbol e.g. NIFTY 50 (optional).") String indexSymbol) {
         try {
+            int capped = PayloadSlim.clampLimit(limit, 10, PayloadSlim.MOVERS_LIMIT);
             List<Map<String, Object>> movers = marketDataClientService.getMovers(
-                    type, limit != null ? limit : 10, indexSymbol, null, null);
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("movers", movers);
-            result.put("count", movers.size());
-            return response.toJson(result);
+                    type, capped, indexSymbol, null, null);
+            return response.toJson(PayloadSlim.mapList(
+                    movers, "movers", capped,
+                    "symbol", "name", "ltp", "change", "changePct", "changePercent", "percentage"));
         } catch (Exception e) {
             return response.errorJson("get_market_movers", e);
         }
@@ -150,7 +154,9 @@ public class MarketTools {
         try {
             List<Map<String, Object>> sectors = marketDataClientService.getSectorPerformance(
                     indexSymbol, timeFrame, null);
-            return response.toJson(Map.of("sectors", sectors, "count", sectors.size()));
+            return response.toJson(PayloadSlim.mapList(
+                    sectors, "sectors", 30,
+                    "sector", "name", "change", "changePct", "changePercent", "percentage", "value"));
         } catch (Exception e) {
             return response.errorJson("get_sector_performance", e);
         }
@@ -179,7 +185,8 @@ public class MarketTools {
             } else {
                 list = List.of("NIFTY 50", "NIFTY BANK", "SENSEX");
             }
-            return response.toJson(marketDataClientService.getIndicesData(list, false));
+            Object raw = marketDataClientService.getIndicesData(list, false);
+            return response.toJson(slimIndices(raw));
         } catch (Exception e) {
             return response.errorJson("get_indices_data", e);
         }
@@ -187,5 +194,121 @@ public class MarketTools {
 
     public String indicesFallback(String s, Exception e) {
         return response.unavailable("am-market (indices)");
+    }
+
+    static Map<String, Object> slimQuote(Map<String, Object> quotes, String symbol) {
+        Map<String, Object> slim = new LinkedHashMap<>();
+        slim.put("symbol", symbol);
+        if (quotes == null || quotes.isEmpty()) {
+            return slim;
+        }
+        Object direct = quotes.get(symbol);
+        if (direct instanceof Map<?, ?>) {
+            slim.putAll(PayloadSlim.pickLoose(direct,
+                    "ltp", "lastPrice", "price", "change", "changePct", "changePercent",
+                    "open", "high", "low", "close", "volume", "symbol", "name"));
+            return slim;
+        }
+        slim.putAll(PayloadSlim.pick(quotes,
+                "ltp", "lastPrice", "price", "change", "changePct", "changePercent",
+                "open", "high", "low", "close", "volume", "symbol", "name"));
+        if (slim.size() == 1) {
+            for (Map.Entry<String, Object> e : quotes.entrySet()) {
+                if (e.getValue() instanceof Map<?, ?> nested) {
+                    slim.put("symbol", e.getKey());
+                    slim.putAll(PayloadSlim.pickLoose(nested,
+                            "ltp", "lastPrice", "price", "change", "changePct", "changePercent",
+                            "open", "high", "low", "close", "volume", "name"));
+                    break;
+                }
+            }
+        }
+        return slim;
+    }
+
+    @SuppressWarnings("unchecked")
+    Map<String, Object> slimSearch(Object result) {
+        if (result instanceof Map<?, ?> map) {
+            List<Map<String, Object>> rows = new ArrayList<>();
+            for (Map.Entry<?, ?> e : map.entrySet()) {
+                Map<String, Object> row = PayloadSlim.pickLoose(e.getValue(),
+                        "symbol", "name", "isin", "exchange", "instrumentType");
+                if (row.isEmpty() && e.getKey() != null) {
+                    row.put("symbol", String.valueOf(e.getKey()));
+                } else if (!row.containsKey("symbol") && e.getKey() != null) {
+                    row.put("symbol", String.valueOf(e.getKey()));
+                }
+                if (!row.isEmpty()) {
+                    rows.add(row);
+                }
+            }
+            return PayloadSlim.mapList(rows, "instruments", PayloadSlim.SEARCH_LIMIT,
+                    "symbol", "name", "isin", "exchange", "instrumentType");
+        }
+        if (result instanceof List<?> list) {
+            return PayloadSlim.mapList(list, "instruments", PayloadSlim.SEARCH_LIMIT,
+                    "symbol", "name", "isin", "exchange", "instrumentType");
+        }
+        Map<String, Object> converted = objectMapper.convertValue(result, Map.class);
+        return slimSearch(converted);
+    }
+
+    @SuppressWarnings("unchecked")
+    Map<String, Object> slimHistory(Object result, String symbol) {
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("symbol", symbol);
+        if (result instanceof List<?> list) {
+            out.putAll(PayloadSlim.lastN(list, "bars", PayloadSlim.HISTORY_BARS,
+                    "time", "date", "open", "high", "low", "close", "volume"));
+            return out;
+        }
+        Map<String, Object> asMap = objectMapper.convertValue(result, Map.class);
+        if (asMap == null) {
+            return out;
+        }
+        for (String key : List.of("points", "ohlcv", "data", "candles", "bars", "historicalData")) {
+            if (asMap.get(key) instanceof List<?> list) {
+                out.putAll(PayloadSlim.lastN(list, "bars", PayloadSlim.HISTORY_BARS,
+                        "time", "date", "open", "high", "low", "close", "volume"));
+                return out;
+            }
+        }
+        // Batch map: symbol -> series
+        Object nested = asMap.get(symbol);
+        if (nested instanceof Map<?, ?> series) {
+            return slimHistory(series, symbol);
+        }
+        if (nested instanceof List<?> list) {
+            out.putAll(PayloadSlim.lastN(list, "bars", PayloadSlim.HISTORY_BARS,
+                    "time", "date", "open", "high", "low", "close", "volume"));
+            return out;
+        }
+        out.putAll(PayloadSlim.pick(asMap, "symbol", "from", "to", "interval", "timeFrame"));
+        return out;
+    }
+
+    @SuppressWarnings("unchecked")
+    Map<String, Object> slimIndices(Object raw) {
+        if (raw instanceof List<?> list) {
+            return PayloadSlim.mapList(list, "indices", 10,
+                    "symbol", "name", "ltp", "lastPrice", "price", "change", "changePct", "changePercent");
+        }
+        Map<String, Object> asMap = objectMapper.convertValue(raw, Map.class);
+        if (asMap == null) {
+            return Map.of("indices", List.of(), "count", 0);
+        }
+        if (asMap.get("indices") instanceof List<?> list) {
+            return PayloadSlim.mapList(list, "indices", 10,
+                    "symbol", "name", "ltp", "lastPrice", "price", "change", "changePct", "changePercent");
+        }
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (Map.Entry<String, Object> e : asMap.entrySet()) {
+            Map<String, Object> row = PayloadSlim.pickLoose(e.getValue(),
+                    "symbol", "name", "ltp", "lastPrice", "price", "change", "changePct", "changePercent");
+            row.putIfAbsent("symbol", e.getKey());
+            rows.add(row);
+        }
+        return PayloadSlim.mapList(rows, "indices", 10,
+                "symbol", "name", "ltp", "lastPrice", "price", "change", "changePct", "changePercent");
     }
 }

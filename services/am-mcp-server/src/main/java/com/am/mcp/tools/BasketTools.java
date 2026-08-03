@@ -2,6 +2,7 @@ package com.am.mcp.tools;
 
 import com.am.mcp.client.BasketApiClient;
 import com.am.mcp.config.AmMcpProperties;
+import com.am.mcp.util.PayloadSlim;
 import com.am.mcp.util.ResponseHelper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,8 @@ public class BasketTools {
                 body.put("etfQuery", etfQuery);
             }
             body.put("userHoldings", List.of());
-            return response.toJson(basketApiClient.getOpportunities(body));
+            return response.toJson(PayloadSlim.slimBasket(
+                    basketApiClient.getOpportunities(body), PayloadSlim.BASKET_LIMIT));
         } catch (Exception e) {
             return response.errorJson("get_basket_opportunities", e);
         }
@@ -66,7 +68,8 @@ public class BasketTools {
         try {
             Map<String, Object> body = baseBody(portfolioId, userId);
             body.put("userHoldings", List.of());
-            return response.toJson(basketApiClient.getExposure(body));
+            return response.toJson(PayloadSlim.slimBasket(
+                    basketApiClient.getExposure(body), PayloadSlim.BASKET_LIMIT));
         } catch (Exception e) {
             return response.errorJson("get_basket_exposure", e);
         }
@@ -85,7 +88,8 @@ public class BasketTools {
             @ToolParam(description = "Portfolio UUID.") String portfolioId,
             @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
-            return response.toJson(basketApiClient.getAllocations(baseBody(portfolioId, userId)));
+            return response.toJson(PayloadSlim.slimBasket(
+                    basketApiClient.getAllocations(baseBody(portfolioId, userId)), PayloadSlim.BASKET_LIMIT));
         } catch (Exception e) {
             return response.errorJson("get_basket_allocations", e);
         }
@@ -110,7 +114,8 @@ public class BasketTools {
             Map<String, Object> body = baseBody(portfolioId, userId);
             body.put("etfIsin", etfIsin);
             body.put("userHoldings", List.of());
-            return response.toJson(basketApiClient.getPreview(body));
+            return response.toJson(PayloadSlim.slimBasket(
+                    basketApiClient.getPreview(body), PayloadSlim.BASKET_LIMIT));
         } catch (Exception e) {
             return response.errorJson("get_basket_preview", e);
         }
@@ -148,7 +153,8 @@ public class BasketTools {
             Map<String, Object> body = new HashMap<>();
             body.put("investmentAmount", investmentAmount);
             body.put("opportunity", opportunity);
-            return response.toJson(basketApiClient.calculateQuantities(body));
+            return response.toJson(PayloadSlim.slimBasket(
+                    basketApiClient.calculateQuantities(body), PayloadSlim.BASKET_LIMIT));
         } catch (Exception e) {
             return response.errorJson("calculate_basket_quantities", e);
         }

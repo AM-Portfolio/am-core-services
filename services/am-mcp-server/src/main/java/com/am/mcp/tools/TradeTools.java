@@ -6,6 +6,7 @@ import com.am.analysis.adapter.model.AnalysisHolding;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.domain.trade.TradeTransaction;
 import com.am.mcp.config.AmMcpProperties;
+import com.am.mcp.util.PayloadSlim;
 import com.am.mcp.util.ResponseHelper;
 import com.am.trade.client.service.TradeClientService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -16,6 +17,7 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,6 +33,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TradeTools {
 
+    private static final String[] TRADE_KEYS = {
+            "tradeId", "symbol", "type", "quantity", "price", "date", "status", "pnl", "pnlPercentage", "portfolioId"
+    };
+
     private final TradeClientService tradeClientService;
     private final AnalysisRepository analysisRepository;
     private final AmMcpProperties props;
@@ -45,15 +51,12 @@ public class TradeTools {
     @CircuitBreaker(name = "am-trade", fallbackMethod = "activityFallback")
     public String getRecentActivity(
             @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId,
-            @ToolParam(required = false, description = "Number of recent items (default 20, max 100).") Integer limit) {
+            @ToolParam(required = false, description = "Number of recent items (default 20, max 40).") Integer limit) {
         try {
             String uid = resolve(userId);
-            int count = (limit != null && limit > 0) ? Math.min(limit, 100) : 20;
+            int count = PayloadSlim.clampLimit(limit, PayloadSlim.TRADE_LIMIT, PayloadSlim.TRADE_HARD_MAX);
             List<TradeTransaction> trades = tradeClientService.getRecentTrades(uid, 0, count);
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("activities", trades);
-            result.put("count", trades.size());
-            return response.toJson(result);
+            return response.toJson(slimTrades(trades, "activities"));
         } catch (Exception e) {
             return response.errorJson("get_recent_activity", e);
         }
@@ -74,22 +77,19 @@ public class TradeTools {
             @ToolParam(description = "Stock symbol or partial name (e.g. 'RELIANCE', 'HDFC', 'TCS').") String symbol) {
         try {
             String uid = resolve(userId);
-            List<TradeTransaction> filtered = tradeClientService.getTradesBySymbol(uid, symbol, 0, 50);
+            List<TradeTransaction> filtered = tradeClientService.getTradesBySymbol(uid, symbol, 0, PayloadSlim.TRADE_HARD_MAX);
             if (filtered.isEmpty()) {
-                // Fallback: recent trades filtered client-side
                 filtered = tradeClientService.getRecentTrades(uid, 0, 100).stream()
                         .filter(t -> t.getSymbol() != null
                                 && t.getSymbol().toLowerCase().contains(symbol.toLowerCase()))
+                        .limit(PayloadSlim.TRADE_HARD_MAX)
                         .collect(Collectors.toList());
             }
             if (filtered.isEmpty()) {
                 return response.failure("get_trade_history", "NOT_FOUND",
                         "No trade history found for '" + symbol + "'", false, null);
             }
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("trades", filtered);
-            result.put("count", filtered.size());
-            return response.toJson(result);
+            return response.toJson(slimTrades(filtered, "trades"));
         } catch (Exception e) {
             return response.errorJson("get_trade_history", e);
         }
@@ -168,7 +168,10 @@ public class TradeTools {
             if (portfolioId != null && !portfolioId.isBlank()) {
                 filters.put("portfolioId", portfolioId);
             }
-            return response.toJson(tradeClientService.filterTrades(filters));
+            return response.toJson(PayloadSlim.slimNestedListPayload(
+                    tradeClientService.filterTrades(filters),
+                    PayloadSlim.TRADE_HARD_MAX,
+                    TRADE_KEYS));
         } catch (Exception e) {
             return response.errorJson("filter_trades", e);
         }
@@ -194,7 +197,10 @@ public class TradeTools {
             if (portfolioId != null && !portfolioId.isBlank()) {
                 filters.put("portfolioId", portfolioId);
             }
-            return response.toJson(tradeClientService.filterTrades(filters));
+            return response.toJson(PayloadSlim.slimNestedListPayload(
+                    tradeClientService.filterTrades(filters),
+                    PayloadSlim.TRADE_HARD_MAX,
+                    TRADE_KEYS));
         } catch (Exception e) {
             return response.errorJson("get_trades_by_date_range", e);
         }
@@ -212,7 +218,10 @@ public class TradeTools {
     public String getTradeMetrics(
             @ToolParam(description = "Trade portfolio UUID.") String portfolioId) {
         try {
-            return response.toJson(tradeClientService.getTradeMetrics(portfolioId));
+            return response.toJson(PayloadSlim.slimNestedListPayload(
+                    tradeClientService.getTradeMetrics(portfolioId),
+                    PayloadSlim.TRADE_LIMIT,
+                    TRADE_KEYS));
         } catch (Exception e) {
             return response.errorJson("get_trade_metrics", e);
         }
@@ -230,7 +239,10 @@ public class TradeTools {
     public String getTradePortfolioSummaries(
             @ToolParam(description = "Trade portfolio UUID.") String portfolioId) {
         try {
-            return response.toJson(tradeClientService.getTradePortfolioSummary(portfolioId));
+            return response.toJson(PayloadSlim.slimNestedListPayload(
+                    tradeClientService.getTradePortfolioSummary(portfolioId),
+                    PayloadSlim.TRADE_LIMIT,
+                    TRADE_KEYS));
         } catch (Exception e) {
             return response.errorJson("get_trade_portfolio_summaries", e);
         }
@@ -238,6 +250,25 @@ public class TradeTools {
 
     public String tradeSummaryFallback(String p, Exception e) {
         return response.unavailable("am-trade (portfolio summary)");
+    }
+
+    static Map<String, Object> slimTrades(List<TradeTransaction> trades, String listKey) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (TradeTransaction t : trades) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("tradeId", t.getTradeId());
+            row.put("symbol", t.getSymbol());
+            row.put("type", t.getType());
+            row.put("quantity", t.getQuantity());
+            row.put("price", t.getPrice());
+            row.put("date", t.getDate());
+            row.put("status", t.getStatus());
+            row.put("pnl", t.getPnl());
+            row.put("pnlPercentage", t.getPnlPercentage());
+            row.put("portfolioId", t.getPortfolioId());
+            rows.add(row);
+        }
+        return PayloadSlim.mapList(rows, listKey, PayloadSlim.TRADE_HARD_MAX, TRADE_KEYS);
     }
 
     private String resolve(String userId) {

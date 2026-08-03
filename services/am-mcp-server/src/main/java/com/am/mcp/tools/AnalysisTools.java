@@ -66,8 +66,13 @@ public class AnalysisTools {
 
             Map<String, Object> resultMap = new LinkedHashMap<>();
             int size = slim.size();
-            resultMap.put("gainers", slim.subList(0, Math.min(5, size)));
-            resultMap.put("losers", slim.subList(Math.max(0, size - 5), size));
+            List<Map<String, Object>> gainers = slim.subList(0, Math.min(5, size));
+            List<Map<String, Object>> losers = slim.subList(Math.max(0, size - 5), size);
+            resultMap.put("gainers", gainers);
+            resultMap.put("losers", losers);
+            List<Map<String, Object>> movers = new java.util.ArrayList<>(gainers);
+            movers.addAll(losers);
+            resultMap.put("movers", movers);
             return response.toJson(resultMap);
         } catch (Exception e) {
             return response.errorJson("get_top_movers", e);
@@ -99,6 +104,10 @@ public class AnalysisTools {
             Map<String, Object> sectorResult = new LinkedHashMap<>();
             sectorResult.put("sectorAllocation", sectorMap);
             sectorResult.put("sectorsCount", sectorMap.size());
+            List<Map<String, Object>> sectors = sectorMap.entrySet().stream()
+                    .map(e -> Map.<String, Object>of("sector", e.getKey(), "count", e.getValue()))
+                    .collect(Collectors.toList());
+            sectorResult.put("sectors", sectors);
             return response.toJson(sectorResult);
         } catch (Exception e) {
             return response.errorJson("get_sector_allocation", e);
@@ -125,7 +134,13 @@ public class AnalysisTools {
                     .flatMap(e -> e.getHoldings().stream())
                     .filter(h -> h.getClassification() != null && h.getClassification().getMarketCapType() != null)
                     .collect(Collectors.groupingBy(h -> h.getClassification().getMarketCapType(), Collectors.counting()));
-            return response.toJson(Map.of("marketCapAllocation", capMap));
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("marketCapAllocation", capMap);
+            List<Map<String, Object>> allocation = capMap.entrySet().stream()
+                    .map(e -> Map.<String, Object>of("sector", e.getKey(), "count", e.getValue()))
+                    .collect(Collectors.toList());
+            result.put("allocation", allocation);
+            return response.toJson(result);
         } catch (Exception e) {
             return response.errorJson("get_market_cap_allocation", e);
         }

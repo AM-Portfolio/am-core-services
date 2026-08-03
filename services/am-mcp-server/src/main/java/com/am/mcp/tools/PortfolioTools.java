@@ -1,14 +1,12 @@
 package com.am.mcp.tools;
 
 import com.am.mcp.client.PortfolioRawClient;
+import com.am.mcp.util.PayloadSlim;
 import com.am.mcp.util.ResponseHelper;
 import com.am.portfolio.client.api.PortfolioAnalyticsApi;
-import com.am.portfolio.client.api.PortfolioManagementApi;
 import com.am.portfolio.client.model.AdvancedAnalyticsRequest;
-import com.am.portfolio.client.model.PortfolioBasicInfo;
-import com.am.portfolio.client.model.PortfolioHoldings;
-import com.am.portfolio.client.model.PortfolioModelV1;
 import com.am.portfolio.client.model.PortfolioSummaryV1;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,10 +30,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PortfolioTools {
 
-    private final PortfolioManagementApi portfolioManagementApi;
     private final PortfolioAnalyticsApi portfolioAnalyticsApi;
     private final PortfolioRawClient portfolioRawClient;
     private final ResponseHelper response;
+    private final ObjectMapper objectMapper;
 
     @Tool(name = "get_portfolio_summary", description = """
             [portfolio] Get overall portfolio performance for the authenticated user.
@@ -127,9 +125,8 @@ public class PortfolioTools {
         try {
             String pid = blankToNull(portfolioId);
             log.info("[MCP] get_holdings portfolioId={}", pid);
-            PortfolioHoldings holdings = portfolioManagementApi.getPortfolioHoldings(
-                    pid, null, null, null);
-            return response.toJson(holdings);
+            Map<String, Object> holdings = portfolioRawClient.getPortfolioHoldings(pid);
+            return response.toJson(slimHoldings(holdings));
         } catch (Exception e) {
             log.error("Failed to fetch holdings", e);
             return response.errorJson("get_holdings", e);
@@ -138,6 +135,53 @@ public class PortfolioTools {
 
     public String holdingsFallback(String portfolioId, Exception e) {
         return response.unavailable("am-portfolio (holdings)");
+    }
+
+    /**
+     * Compact holdings for MCP/chat: top rows by current value so payload stays under max chars.
+     */
+    static Map<String, Object> slimHoldings(Map<String, Object> raw) {
+        Map<String, Object> slim = new LinkedHashMap<>();
+        if (raw.containsKey("lastUpdated")) {
+            slim.put("lastUpdated", raw.get("lastUpdated"));
+        }
+        Object equity = raw.get("equityHoldings");
+        if (!(equity instanceof List<?> list)) {
+            slim.put("count", 0);
+            slim.put("holdings", List.of());
+            return slim;
+        }
+        List<Map<String, Object>> rows = new java.util.ArrayList<>();
+        for (Object item : list) {
+            if (!(item instanceof Map<?, ?> m)) {
+                continue;
+            }
+            Map<String, Object> row = new LinkedHashMap<>();
+            for (String key : List.of(
+                    "symbol", "name", "quantity", "currentValue",
+                    "gainLossPercentage", "portfolioName")) {
+                if (m.containsKey(key)) {
+                    row.put(key, m.get(key));
+                }
+            }
+            if (!row.isEmpty()) {
+                rows.add(row);
+            }
+        }
+        rows.sort((a, b) -> Double.compare(asDouble(b.get("currentValue")), asDouble(a.get("currentValue"))));
+        int limit = PayloadSlim.HOLDINGS_LIMIT;
+        boolean truncated = rows.size() > limit;
+        slim.put("count", rows.size());
+        slim.put("truncated", truncated);
+        slim.put("holdings", truncated ? List.copyOf(rows.subList(0, limit)) : List.copyOf(rows));
+        return slim;
+    }
+
+    private static double asDouble(Object value) {
+        if (value instanceof Number n) {
+            return n.doubleValue();
+        }
+        return 0.0;
     }
 
     @Tool(name = "get_holding_detail", description = """
@@ -151,25 +195,25 @@ public class PortfolioTools {
     public String getHoldingDetail(
             @ToolParam(description = "Stock symbol (e.g. 'RELIANCE', 'HDFC', 'TCS').") String symbol) {
         try {
-            List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails();
-            for (PortfolioBasicInfo p : portfolios) {
-                PortfolioHoldings holdings = portfolioManagementApi.getPortfolioHoldings(
-                        p.getPortfolioId(), null, null, null);
-                if (holdings.getEquityHoldings() != null) {
-                    var match = holdings.getEquityHoldings().stream()
-                            .filter(h -> h.getSymbol() != null && h.getSymbol().equalsIgnoreCase(symbol))
-                            .findFirst();
-                    if (match.isPresent()) {
-                        Map<String, Object> result = new LinkedHashMap<>();
-                        result.put("portfolioId", p.getPortfolioId());
-                        result.put("holding", match.get());
-                        return response.toJson(result);
-                    }
-                }
+            Map<String, Object> holdings = portfolioRawClient.getPortfolioHoldings(null);
+            Map<String, Object> match = findHoldingBySymbol(holdings, symbol);
+            if (match == null) {
+                return response.failure("get_holding_detail", "NOT_FOUND",
+                        "No holding found matching '" + symbol + "'", false,
+                        "Check the symbol with get_holdings or search_instruments.");
             }
-            return response.failure("get_holding_detail", "NOT_FOUND",
-                    "No holding found matching '" + symbol + "'", false,
-                    "Check the symbol with get_holdings or search_instruments.");
+            Map<String, Object> result = new LinkedHashMap<>();
+            if (match.containsKey("portfolioId")) {
+                result.put("portfolioId", match.get("portfolioId"));
+            }
+            if (match.containsKey("portfolioName")) {
+                result.put("portfolioName", match.get("portfolioName"));
+            }
+            result.put("holding", PayloadSlim.pick(match,
+                    "symbol", "name", "quantity", "currentValue", "investmentCost",
+                    "gainLoss", "gainLossPercentage", "currentPrice", "averageBuyingPrice",
+                    "sector", "marketCapCategory", "portfolioName", "portfolioId"));
+            return response.toJson(result);
         } catch (Exception e) {
             log.error("Failed to fetch holding detail for symbol {}", symbol, e);
             return response.errorJson("get_holding_detail", e);
@@ -178,6 +222,32 @@ public class PortfolioTools {
 
     public String holdingDetailFallback(String symbol, Exception e) {
         return response.unavailable("am-portfolio (holding detail)");
+    }
+
+    static Map<String, Object> findHoldingBySymbol(Map<String, Object> raw, String symbol) {
+        if (symbol == null || symbol.isBlank() || raw == null) {
+            return null;
+        }
+        Object equity = raw.get("equityHoldings");
+        if (!(equity instanceof List<?> list)) {
+            return null;
+        }
+        for (Object item : list) {
+            if (!(item instanceof Map<?, ?> m)) {
+                continue;
+            }
+            Object sym = m.get("symbol");
+            if (sym != null && symbol.equalsIgnoreCase(String.valueOf(sym))) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                for (Map.Entry<?, ?> e : m.entrySet()) {
+                    if (e.getKey() != null) {
+                        row.put(String.valueOf(e.getKey()), e.getValue());
+                    }
+                }
+                return row;
+            }
+        }
+        return null;
     }
 
     @Tool(name = "get_portfolio_overviews", description = """
@@ -189,11 +259,10 @@ public class PortfolioTools {
     public String getPortfolioOverviews() {
         try {
             log.info("[MCP] get_portfolio_overviews called");
-            List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails();
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("portfolios", portfolios);
-            result.put("count", portfolios.size());
-            return response.toJson(result);
+            List<Map<String, Object>> portfolios = portfolioRawClient.getPortfolioBasicDetails();
+            Map<String, Object> slim = PayloadSlim.mapList(
+                    portfolios, "portfolios", 50, "portfolioId", "portfolioName");
+            return response.toJson(slim);
         } catch (Exception e) {
             log.error("Failed to fetch portfolio overviews", e);
             return response.errorJson("get_portfolio_overviews", e);
@@ -213,8 +282,12 @@ public class PortfolioTools {
     public String getPortfolioById(
             @ToolParam(description = "Portfolio UUID.") String portfolioId) {
         try {
-            PortfolioModelV1 model = portfolioManagementApi.getPortfolioById(portfolioId);
-            return response.toJson(model);
+            Map<String, Object> model = portfolioRawClient.getPortfolioById(portfolioId);
+            return response.toJson(PayloadSlim.pick(model,
+                    "id", "name", "portfolioId", "portfolioName",
+                    "investmentValue", "currentValue", "totalGainLoss",
+                    "totalGainLossPercentage", "todayGainLoss", "todayGainLossPercentage",
+                    "broker", "brokerType", "lastUpdated", "totalAssets"));
         } catch (Exception e) {
             log.error("Failed to fetch portfolio by id {}", portfolioId, e);
             return response.errorJson("get_portfolio_by_id", e);
@@ -245,7 +318,20 @@ public class PortfolioTools {
             req.setFromDate(from);
             req.setToDate(to);
             req.setTimeFrame(AdvancedAnalyticsRequest.TimeFrameEnum._1_M);
-            return response.toJson(portfolioAnalyticsApi.getAdvancedAnalytics(portfolioId, req));
+            Object analytics = portfolioAnalyticsApi.getAdvancedAnalytics(portfolioId, req);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> asMap = objectMapper.convertValue(analytics, Map.class);
+            Map<String, Object> slim = PayloadSlim.pick(asMap,
+                    "portfolioId", "fromDate", "toDate", "timeFrame",
+                    "totalReturn", "totalReturnPercentage", "volatility", "sharpeRatio",
+                    "maxDrawdown", "beta", "alpha", "performance");
+            if (slim.isEmpty() && asMap != null) {
+                slim = PayloadSlim.pick(asMap, asMap.keySet().stream().limit(20).toArray(String[]::new));
+                slim.remove("series");
+                slim.remove("dailyReturns");
+                slim.remove("holdings");
+            }
+            return response.toJson(slim);
         } catch (Exception e) {
             log.error("Failed advanced analytics for {}", portfolioId, e);
             return response.errorJson("get_portfolio_advanced_analytics", e);
