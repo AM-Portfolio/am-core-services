@@ -218,13 +218,14 @@ public class AnalysisAggregator {
                         Double qty  = h.getInvestment() != null ? h.getInvestment().getQuantity() : 1.0;
                         if (qty == null || qty <= 0) qty = 1.0;
 
-                        if (curP != null && curP > 0 && avgP != null && avgP > 0) {
-                            calcVal += curP * qty;
-                            calcInv += avgP * qty;
-                        } else if (h.getInvestment() != null) {
-                            calcVal += h.getInvestment().getCurrentValue() != null ? h.getInvestment().getCurrentValue() : 0.0;
-                            calcInv += h.getInvestment().getInvestmentValue() != null ? h.getInvestment().getInvestmentValue() : 0.0;
-                        }
+                        double itemInv = (avgP != null && avgP > 0) ? (avgP * qty) : 
+                                (h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null ? h.getInvestment().getInvestmentValue() : 0.0);
+                        
+                        double itemVal = (curP != null && curP > 0) ? (curP * qty) :
+                                (h.getInvestment() != null && h.getInvestment().getCurrentValue() != null && h.getInvestment().getCurrentValue() > 0 ? h.getInvestment().getCurrentValue() : itemInv);
+
+                        calcVal += itemVal;
+                        calcInv += itemInv;
                     }
                 }
 
