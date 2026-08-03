@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,31 +47,11 @@ public class PortfolioTools {
     public String getPortfolioSummary(
             @ToolParam(required = false, description = "Optional portfolio UUID. Omit to summarise all portfolios.") String portfolioId) {
         try {
-            log.info("[MCP] get_portfolio_summary portfolioId={}", portfolioId);
-            if (portfolioId != null && !portfolioId.isBlank()) {
-                PortfolioSummaryV1 summary = portfolioManagementApi.getPortfolioSummary(
-                        portfolioId, null, null, null);
-                return response.toJson(summary);
-            }
-            List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails();
-            List<Object> summaries = new ArrayList<>();
-            for (PortfolioBasicInfo p : portfolios) {
-                try {
-                    PortfolioSummaryV1 s = portfolioManagementApi.getPortfolioSummary(
-                            p.getPortfolioId(), null, null, null);
-                    Map<String, Object> row = new LinkedHashMap<>();
-                    row.put("portfolioId", p.getPortfolioId());
-                    row.put("name", p.getPortfolioName());
-                    row.put("summary", s);
-                    summaries.add(row);
-                } catch (Exception e) {
-                    log.warn("Summary failed for portfolio {}: {}", p.getPortfolioId(), e.getMessage());
-                }
-            }
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("portfolios", summaries);
-            result.put("count", summaries.size());
-            return response.toJson(result);
+            String pid = blankToNull(portfolioId);
+            log.info("[MCP] get_portfolio_summary portfolioId={}", pid);
+            PortfolioSummaryV1 summary = portfolioManagementApi.getPortfolioSummary(
+                    pid, null, null, null);
+            return response.toJson(summary);
         } catch (Exception e) {
             log.error("Failed to fetch portfolio summary", e);
             return response.errorJson("get_portfolio_summary", e);
@@ -94,31 +73,11 @@ public class PortfolioTools {
     public String getHoldings(
             @ToolParam(required = false, description = "Optional portfolio UUID. Omit for all portfolios.") String portfolioId) {
         try {
-            log.info("[MCP] get_holdings portfolioId={}", portfolioId);
-            if (portfolioId != null && !portfolioId.isBlank()) {
-                PortfolioHoldings holdings = portfolioManagementApi.getPortfolioHoldings(
-                        portfolioId, null, null, null);
-                return response.toJson(holdings);
-            }
-            List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails();
-            List<Object> all = new ArrayList<>();
-            for (PortfolioBasicInfo p : portfolios) {
-                try {
-                    PortfolioHoldings h = portfolioManagementApi.getPortfolioHoldings(
-                            p.getPortfolioId(), null, null, null);
-                    Map<String, Object> row = new LinkedHashMap<>();
-                    row.put("portfolioId", p.getPortfolioId());
-                    row.put("name", p.getPortfolioName());
-                    row.put("holdings", h);
-                    all.add(row);
-                } catch (Exception e) {
-                    log.warn("Holdings failed for portfolio {}: {}", p.getPortfolioId(), e.getMessage());
-                }
-            }
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("portfolios", all);
-            result.put("count", all.size());
-            return response.toJson(result);
+            String pid = blankToNull(portfolioId);
+            log.info("[MCP] get_holdings portfolioId={}", pid);
+            PortfolioHoldings holdings = portfolioManagementApi.getPortfolioHoldings(
+                    pid, null, null, null);
+            return response.toJson(holdings);
         } catch (Exception e) {
             log.error("Failed to fetch holdings", e);
             return response.errorJson("get_holdings", e);
@@ -243,5 +202,12 @@ public class PortfolioTools {
 
     public String advancedAnalyticsFallback(String portfolioId, String fromDate, String toDate, Exception e) {
         return response.unavailable("am-portfolio (advanced analytics)");
+    }
+
+    static String blankToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value;
     }
 }

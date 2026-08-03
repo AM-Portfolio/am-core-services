@@ -48,6 +48,7 @@ Oversized payloads return `RESPONSE_TOO_LARGE` (valid JSON), never truncated mid
 - Prefer the inbound JWT (`UserContext`) for outbound portfolio/market/trade calls.
 - `userId` tool args are **optional** where present; server resolves JWT `sub` then config default.
 - Do not rely on email as `userId` unless backends expect it.
+- `get_portfolio_summary` / `get_holdings`: omit `portfolioId` for a single all-user call to `/v1/portfolios/summary` or `/holdings`. Do not invent empty `{portfolios:[],count:0}` on partial failure.
 
 ## Tool catalog rules
 
