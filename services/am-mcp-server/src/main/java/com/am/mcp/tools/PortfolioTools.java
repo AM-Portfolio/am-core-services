@@ -46,7 +46,7 @@ public class PortfolioTools {
             """)
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "portfolioSummaryFallback")
     public String getPortfolioSummary(
-            @ToolParam(description = "Optional portfolio UUID. Omit to summarise all portfolios.") String portfolioId) {
+            @ToolParam(required = false, description = "Optional portfolio UUID. Omit to summarise all portfolios.") String portfolioId) {
         try {
             log.info("[MCP] get_portfolio_summary portfolioId={}", portfolioId);
             if (portfolioId != null && !portfolioId.isBlank()) {
@@ -92,7 +92,7 @@ public class PortfolioTools {
             """)
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "holdingsFallback")
     public String getHoldings(
-            @ToolParam(description = "Optional portfolio UUID. Omit for all portfolios.") String portfolioId) {
+            @ToolParam(required = false, description = "Optional portfolio UUID. Omit for all portfolios.") String portfolioId) {
         try {
             log.info("[MCP] get_holdings portfolioId={}", portfolioId);
             if (portfolioId != null && !portfolioId.isBlank()) {
@@ -223,8 +223,8 @@ public class PortfolioTools {
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "advancedAnalyticsFallback")
     public String getPortfolioAdvancedAnalytics(
             @ToolParam(description = "Portfolio UUID.") String portfolioId,
-            @ToolParam(description = "Start date YYYY-MM-DD (optional).") String fromDate,
-            @ToolParam(description = "End date YYYY-MM-DD (optional).") String toDate) {
+            @ToolParam(required = false, description = "Start date YYYY-MM-DD (optional).") String fromDate,
+            @ToolParam(required = false, description = "End date YYYY-MM-DD (optional).") String toDate) {
         try {
             AdvancedAnalyticsRequest req = new AdvancedAnalyticsRequest();
             LocalDate to = (toDate != null && !toDate.isBlank())

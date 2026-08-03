@@ -10,7 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Utility: serialize tool responses and emit a consistent error envelope.
+ * Utility: serialize tool responses with a consistent envelope.
+ * Success: {@code {ok:true, data:...}}  Error: {@code {ok:false, error,...}}.
  * MCP tools must always return String — never throw from {@code @Tool} methods.
  */
 @Slf4j
@@ -21,29 +22,42 @@ public class ResponseHelper {
     private final ObjectMapper objectMapper;
     private final AmMcpProperties props;
 
+    /** Domain payload wrapped as success envelope (preferred for all tools). */
     public String toJson(Object data) {
-        try {
-            return truncate(objectMapper.writeValueAsString(data));
-        } catch (Exception e) {
-            return failure("serialization", "SERIALIZATION_ERROR", e.getMessage(), false, null);
-        }
+        return success(data);
     }
 
     public String success(Object data) {
         Map<String, Object> envelope = new LinkedHashMap<>();
         envelope.put("ok", true);
         envelope.put("data", data);
-        return toJson(envelope);
+        try {
+            return truncateValid(objectMapper.writeValueAsString(envelope));
+        } catch (Exception e) {
+            return failure("serialization", "SERIALIZATION_ERROR", e.getMessage(), false, null);
+        }
     }
 
-    public String truncate(String json) {
+    /**
+     * If over max chars, return a valid JSON failure instead of splicing mid-string.
+     */
+    String truncateValid(String json) {
         int max = props.getMcp().getMaxResponseChars();
         if (json.length() <= max) {
             return json;
         }
-        log.debug("Response truncated from {} to {} chars", json.length(), max);
-        return json.substring(0, max)
-                + " ... [TRUNCATED: use more specific filters to narrow results]\"";
+        log.debug("Response truncated from {} to envelope (max {})", json.length(), max);
+        return failure(
+                "response",
+                "RESPONSE_TOO_LARGE",
+                "Tool result exceeded " + max + " chars; narrow filters or request a smaller slice.",
+                false,
+                "Use more specific filters (symbol, date range, portfolioId, limit).");
+    }
+
+    /** @deprecated use {@link #truncateValid(String)}; kept for callers that need raw check */
+    public String truncate(String json) {
+        return truncateValid(json);
     }
 
     public String errorJson(String tool, Exception e) {

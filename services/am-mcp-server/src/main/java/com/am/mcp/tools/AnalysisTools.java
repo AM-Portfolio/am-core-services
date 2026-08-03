@@ -41,8 +41,8 @@ public class AnalysisTools {
             """)
     @CircuitBreaker(name = "am-analysis", fallbackMethod = "topMoversFallback")
     public String getTopMovers(
-            @ToolParam(description = "User ID.") String userId,
-            @ToolParam(description = "Ignored for now — returns all-time P&L ranking.") String timeFrame) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId,
+            @ToolParam(required = false, description = "Ignored for now — returns all-time P&L ranking.") String timeFrame) {
         try {
             String uid = resolve(userId);
             log.info("[MCP] get_top_movers userId={}", uid);
@@ -87,7 +87,7 @@ public class AnalysisTools {
             """)
     @CircuitBreaker(name = "am-analysis", fallbackMethod = "sectorFallback")
     public String getSectorAllocation(
-            @ToolParam(description = "User ID.") String userId) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             String uid = resolve(userId);
             List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING);
@@ -116,7 +116,7 @@ public class AnalysisTools {
             """)
     @CircuitBreaker(name = "am-analysis", fallbackMethod = "marketCapFallback")
     public String getMarketCapAllocation(
-            @ToolParam(description = "User ID.") String userId) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             String uid = resolve(userId);
             List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING);

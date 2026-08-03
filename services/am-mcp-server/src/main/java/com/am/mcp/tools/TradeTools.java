@@ -44,8 +44,8 @@ public class TradeTools {
             """)
     @CircuitBreaker(name = "am-trade", fallbackMethod = "activityFallback")
     public String getRecentActivity(
-            @ToolParam(description = "User ID.") String userId,
-            @ToolParam(description = "Number of recent items (default 20, max 100).") Integer limit) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId,
+            @ToolParam(required = false, description = "Number of recent items (default 20, max 100).") Integer limit) {
         try {
             String uid = resolve(userId);
             int count = (limit != null && limit > 0) ? Math.min(limit, 100) : 20;
@@ -70,7 +70,7 @@ public class TradeTools {
             """)
     @CircuitBreaker(name = "am-trade", fallbackMethod = "historyFallback")
     public String getTradeHistory(
-            @ToolParam(description = "User ID.") String userId,
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId,
             @ToolParam(description = "Stock symbol or partial name (e.g. 'RELIANCE', 'HDFC', 'TCS').") String symbol) {
         try {
             String uid = resolve(userId);
@@ -107,7 +107,7 @@ public class TradeTools {
             """)
     @CircuitBreaker(name = "am-analysis", fallbackMethod = "pnlFallback")
     public String getUnrealisedPnl(
-            @ToolParam(description = "User ID.") String userId) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             String uid = resolve(userId);
             List<AnalysisEntity> entities = analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING);
@@ -154,9 +154,9 @@ public class TradeTools {
             """)
     @CircuitBreaker(name = "am-trade", fallbackMethod = "filterFallback")
     public String filterTrades(
-            @ToolParam(description = "Optional stock symbol.") String symbol,
-            @ToolParam(description = "Optional status (e.g. OPEN, CLOSED).") String status,
-            @ToolParam(description = "Optional portfolio UUID.") String portfolioId) {
+            @ToolParam(required = false, description = "Optional stock symbol.") String symbol,
+            @ToolParam(required = false, description = "Optional status (e.g. OPEN, CLOSED).") String status,
+            @ToolParam(required = false, description = "Optional portfolio UUID.") String portfolioId) {
         try {
             Map<String, Object> filters = new HashMap<>();
             if (symbol != null && !symbol.isBlank()) {
@@ -186,7 +186,7 @@ public class TradeTools {
     public String getTradesByDateRange(
             @ToolParam(description = "Start date YYYY-MM-DD.") String fromDate,
             @ToolParam(description = "End date YYYY-MM-DD.") String toDate,
-            @ToolParam(description = "Optional portfolio UUID.") String portfolioId) {
+            @ToolParam(required = false, description = "Optional portfolio UUID.") String portfolioId) {
         try {
             Map<String, Object> filters = new HashMap<>();
             filters.put("fromDate", fromDate);

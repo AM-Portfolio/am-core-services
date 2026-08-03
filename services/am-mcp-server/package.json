@@ -1,8 +1,13 @@
 {
-    "name": "am-mcp-server-inspector",
-    "version": "1.0.0",
-    "description": "Inspector scripts for AM MCP Server",
-    "scripts": {
-        "inspect": "npx -y @modelcontextprotocol/inspector java -jar target/am-mcp-server-1.0.0-SNAPSHOT.jar --spring.main.banner-mode=off --logging.level.root=OFF --server.port=8096"
-    }
+  "name": "am-mcp-server-inspector",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Inspector scripts for AM MCP Server",
+  "scripts": {
+    "inspect": "npx -y @modelcontextprotocol/inspector java -jar target/am-mcp-server-1.0.0-SNAPSHOT.jar --spring.main.banner-mode=off --logging.level.root=OFF --server.port=8096",
+    "list-tools": "python scripts/list_tools.py",
+    "list-tools:json": "python scripts/list_tools.py --json",
+    "list-tools:dev": "python scripts/list_tools.py --base https://am-dev.asrax.in/mcp --auth-url https://am-dev.asrax.in/identity",
+    "list-tools:local": "python scripts/list_tools.py --base http://127.0.0.1:8080 --auth-url http://127.0.0.1:8113"
+  }
 }

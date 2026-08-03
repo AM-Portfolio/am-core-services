@@ -88,9 +88,9 @@ public class MarketTools {
     @CircuitBreaker(name = "am-market", fallbackMethod = "histFallback")
     public String getHistoricalData(
             @ToolParam(description = "Stock symbol (e.g. 'RELIANCE').") String symbol,
-            @ToolParam(description = "DAY, WEEK, or MONTH (default: DAY).") String interval,
-            @ToolParam(description = "Start date YYYY-MM-DD (optional).") String fromDate,
-            @ToolParam(description = "End date YYYY-MM-DD (optional).") String toDate) {
+            @ToolParam(required = false, description = "DAY, WEEK, or MONTH (default: DAY).") String interval,
+            @ToolParam(required = false, description = "Start date YYYY-MM-DD (optional).") String fromDate,
+            @ToolParam(required = false, description = "End date YYYY-MM-DD (optional).") String toDate) {
         try {
             TimeFrame tf = switch ((interval != null ? interval.toUpperCase() : "DAY")) {
                 case "WEEK", "1W" -> TimeFrame.WEEK;
@@ -118,9 +118,9 @@ public class MarketTools {
               """)
     @CircuitBreaker(name = "am-market", fallbackMethod = "moversFallback")
     public String getMarketMovers(
-            @ToolParam(description = "GAINERS or LOSERS (optional).") String type,
-            @ToolParam(description = "Max results (default 10).") Integer limit,
-            @ToolParam(description = "Index symbol e.g. NIFTY 50 (optional).") String indexSymbol) {
+            @ToolParam(required = false, description = "GAINERS or LOSERS (optional).") String type,
+            @ToolParam(required = false, description = "Max results (default 10).") Integer limit,
+            @ToolParam(required = false, description = "Index symbol e.g. NIFTY 50 (optional).") String indexSymbol) {
         try {
             List<Map<String, Object>> movers = marketDataClientService.getMovers(
                     type, limit != null ? limit : 10, indexSymbol, null, null);
@@ -145,8 +145,8 @@ public class MarketTools {
               """)
     @CircuitBreaker(name = "am-market", fallbackMethod = "sectorPerfFallback")
     public String getSectorPerformance(
-            @ToolParam(description = "Index symbol e.g. NIFTY 50 (optional).") String indexSymbol,
-            @ToolParam(description = "Time frame e.g. DAY (optional).") String timeFrame) {
+            @ToolParam(required = false, description = "Index symbol e.g. NIFTY 50 (optional).") String indexSymbol,
+            @ToolParam(required = false, description = "Time frame e.g. DAY (optional).") String timeFrame) {
         try {
             List<Map<String, Object>> sectors = marketDataClientService.getSectorPerformance(
                     indexSymbol, timeFrame, null);
@@ -168,7 +168,7 @@ public class MarketTools {
               """)
     @CircuitBreaker(name = "am-market", fallbackMethod = "indicesFallback")
     public String getIndicesData(
-            @ToolParam(description = "Comma-separated index symbols (optional).") String symbols) {
+            @ToolParam(required = false, description = "Comma-separated index symbols (optional).") String symbols) {
         try {
             List<String> list;
             if (symbols != null && !symbols.isBlank()) {

@@ -3,8 +3,6 @@ package com.am.mcp.tools;
 import com.am.mcp.client.BasketApiClient;
 import com.am.mcp.config.AmMcpProperties;
 import com.am.mcp.util.ResponseHelper;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,7 @@ import java.util.Map;
 
 /**
  * Basket domain MCP tools — ETF replication / exposure / allocation.
- * Multi-step: call get_basket_preview before calculate_basket_quantities.
+ * calculate_basket_quantities rebuilds opportunity server-side from etfIsin + portfolioId.
  */
 @Slf4j
 @Service
@@ -30,7 +28,6 @@ public class BasketTools {
     private final BasketApiClient basketApiClient;
     private final AmMcpProperties props;
     private final ResponseHelper response;
-    private final ObjectMapper objectMapper;
 
     @Tool(name = "get_basket_opportunities", description = """
             [basket] Find ETF basket opportunities that match the user's holdings.
@@ -40,8 +37,8 @@ public class BasketTools {
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "opportunitiesFallback")
     public String getBasketOpportunities(
             @ToolParam(description = "Portfolio UUID.") String portfolioId,
-            @ToolParam(description = "Optional ETF search query (e.g. 'NIFTY').") String etfQuery,
-            @ToolParam(description = "Optional user ID (defaults from config).") String userId) {
+            @ToolParam(required = false, description = "Optional ETF search query (e.g. 'NIFTY').") String etfQuery,
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             Map<String, Object> body = baseBody(portfolioId, userId);
             if (etfQuery != null && !etfQuery.isBlank()) {
@@ -65,7 +62,7 @@ public class BasketTools {
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "exposureFallback")
     public String getBasketExposure(
             @ToolParam(description = "Portfolio UUID.") String portfolioId,
-            @ToolParam(description = "Optional user ID.") String userId) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             Map<String, Object> body = baseBody(portfolioId, userId);
             body.put("userHoldings", List.of());
@@ -86,7 +83,7 @@ public class BasketTools {
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "allocationsFallback")
     public String getBasketAllocations(
             @ToolParam(description = "Portfolio UUID.") String portfolioId,
-            @ToolParam(description = "Optional user ID.") String userId) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             return response.toJson(basketApiClient.getAllocations(baseBody(portfolioId, userId)));
         } catch (Exception e) {
@@ -100,14 +97,15 @@ public class BasketTools {
 
     @Tool(name = "get_basket_preview", description = """
             [basket] Preview how an ETF basket maps to the user's holdings (composition + weights).
-            Call this BEFORE calculate_basket_quantities and pass the full preview response as opportunityJson.
             Use this when asked: "Preview NIFTYBEES basket", "Show ETF composition vs my holdings."
+            For share quantities, call calculate_basket_quantities with the same etfIsin + portfolioId + amount
+            (server rebuilds opportunity; do not copy this JSON into another tool).
             """)
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "previewFallback")
     public String getBasketPreview(
             @ToolParam(description = "ETF ISIN.") String etfIsin,
             @ToolParam(description = "Portfolio UUID.") String portfolioId,
-            @ToolParam(description = "Optional user ID.") String userId) {
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             Map<String, Object> body = baseBody(portfolioId, userId);
             body.put("etfIsin", etfIsin);
@@ -123,21 +121,30 @@ public class BasketTools {
     }
 
     @Tool(name = "calculate_basket_quantities", description = """
-            [basket] Calculate share quantities for a target investment amount given a BasketOpportunity.
-            REQUIRES: call get_basket_preview first and pass its full JSON as opportunityJson.
+            [basket] Calculate share quantities for a target investment amount.
+            Pass etfIsin + portfolioId + investmentAmount; the server fetches the basket opportunity
+            (same as get_basket_preview) then calculates quantities. Do not pass JSON blobs.
             Use this when asked: "How many shares to buy for 50000 in this basket?"
             """)
     @CircuitBreaker(name = "am-portfolio", fallbackMethod = "calculateFallback")
     public String calculateBasketQuantities(
             @ToolParam(description = "Investment amount (must be > 0).") Double investmentAmount,
-            @ToolParam(description = "Full BasketOpportunity JSON string from get_basket_preview.") String opportunityJson) {
+            @ToolParam(description = "ETF ISIN.") String etfIsin,
+            @ToolParam(description = "Portfolio UUID.") String portfolioId,
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId) {
         try {
             if (investmentAmount == null || investmentAmount <= 0) {
                 return response.failure("calculate_basket_quantities", "BAD_REQUEST",
                         "investmentAmount is required and must be > 0", false, null);
             }
-            Map<String, Object> opportunity = objectMapper.readValue(
-                    opportunityJson, new TypeReference<Map<String, Object>>() {});
+            if (etfIsin == null || etfIsin.isBlank() || portfolioId == null || portfolioId.isBlank()) {
+                return response.failure("calculate_basket_quantities", "BAD_REQUEST",
+                        "etfIsin and portfolioId are required", false, null);
+            }
+            Map<String, Object> previewBody = baseBody(portfolioId, userId);
+            previewBody.put("etfIsin", etfIsin);
+            previewBody.put("userHoldings", List.of());
+            Object opportunity = basketApiClient.getPreview(previewBody);
             Map<String, Object> body = new HashMap<>();
             body.put("investmentAmount", investmentAmount);
             body.put("opportunity", opportunity);
@@ -147,7 +154,7 @@ public class BasketTools {
         }
     }
 
-    public String calculateFallback(Double a, String o, Exception e) {
+    public String calculateFallback(Double a, String i, String p, String u, Exception e) {
         return response.unavailable("am-portfolio (basket calculate)");
     }
 

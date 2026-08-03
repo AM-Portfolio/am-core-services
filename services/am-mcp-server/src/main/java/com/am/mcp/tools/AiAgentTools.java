@@ -46,9 +46,9 @@ public class AiAgentTools {
               """)
     @CircuitBreaker(name = "am-ai-agent", fallbackMethod = "agentFallback")
     public String askFinanceAgent(
-            @ToolParam(description = "User ID.") String userId,
+            @ToolParam(required = false, description = "Optional user ID; defaults from JWT.") String userId,
             @ToolParam(description = "Natural-language finance question.") String question,
-            @ToolParam(description = "Session ID for conversation continuity (optional).") String sessionId) {
+            @ToolParam(required = false, description = "Session ID for conversation continuity (optional).") String sessionId) {
         try {
             String uid = resolve(userId);
             String url = props.getServices().getAiAgentUrl() + props.getServices().getAiAgentChatPath();
@@ -71,8 +71,7 @@ public class AiAgentTools {
                         "Empty response from fin-portfolio-agent", true, null);
             }
 
-            Object msg = resp.get("message");
-            return msg != null ? msg.toString() : response.toJson(resp);
+            return response.success(resp);
         } catch (Exception e) {
             log.error("ask_finance_agent failed", e);
             return response.errorJson("ask_finance_agent", e);

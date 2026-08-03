@@ -1,240 +1,714 @@
 {
-  "info": {
-    "_postman_id": "am-mcp-server-collection",
-    "name": "AM MCP Server",
-    "description": "API collection for am-mcp-server.\n\nThe MCP Server exposes AI tool endpoints for the LLM agent layer. It calls downstream services (portfolio, analysis, market, trade) and returns structured JSON for AI consumption.\n\nTools are grouped by domain:\n- **Analysis**: top movers, sector allocation, market cap allocation\n- **Portfolio**: holdings, summary\n- **Market**: quotes, historical data\n- **Trade**: trade history\n- **AI Agent**: general agent invocation\n\nSelect an environment from the dropdown:\n- **Local**: Direct local service on port 8080\n- **Dev**: dev.am.asrax.in\n- **Preprod**: am.asrax.in\n- **Prod**: am.munish.org",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Health & Infra",
-      "item": [
-        {
-          "name": "Health Check",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{mcp_url}}/actuator/health",
-              "host": ["{{mcp_url}}"],
-              "path": ["actuator", "health"]
-            }
-          }
-        },
-        {
-          "name": "Swagger UI",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{mcp_url}}/swagger-ui/index.html",
-              "host": ["{{mcp_url}}"],
-              "path": ["swagger-ui", "index.html"]
-            }
-          }
-        },
-        {
-          "name": "OpenAPI Spec",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{mcp_url}}/api-docs",
-              "host": ["{{mcp_url}}"],
-              "path": ["api-docs"]
-            }
-          }
-        },
-        {
-          "name": "Circuit Breaker Metrics",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{mcp_url}}/actuator/circuitbreakers",
-              "host": ["{{mcp_url}}"],
-              "path": ["actuator", "circuitbreakers"]
-            },
-            "description": "View state of all Resilience4j circuit breakers (am-analysis, am-market, am-trade, am-ai-agent)."
-          }
-        }
-      ]
-    },
-    {
-      "name": "Analysis Tools (MCP)",
-      "description": "MCP tools for the analysis domain. These are called by the AI agent layer.",
-      "item": [
-        {
-          "name": "Get Top Movers",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"timeFrame\": \"1D\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_top_movers",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_top_movers"]
-            },
-            "description": "Returns top 5 gainers and top 5 losers in the user's portfolio by total P&L percentage.\n\nFields returned: symbol, gainLossPct, dayChangePct, totalValue"
-          }
-        },
-        {
-          "name": "Get Sector Allocation",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"userId\": \"{{user_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_sector_allocation",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_sector_allocation"]
-            },
-            "description": "Returns sector-wise breakdown (IT, Banking, Pharma etc.) with holding count per sector."
-          }
-        },
-        {
-          "name": "Get Market Cap Allocation",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"userId\": \"{{user_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_market_cap_allocation",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_market_cap_allocation"]
-            },
-            "description": "Returns large-cap, mid-cap, and small-cap distribution of the portfolio by holding count."
-          }
-        }
-      ]
-    },
-    {
-      "name": "Portfolio Tools (MCP)",
-      "item": [
-        {
-          "name": "Get Portfolio Summary",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_portfolio_summary",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_portfolio_summary"]
-            }
-          }
-        },
-        {
-          "name": "Get Holdings",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_holdings",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_holdings"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Market Tools (MCP)",
-      "item": [
-        {
-          "name": "Get Stock Quote",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"symbol\": \"RELIANCE\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_stock_quote",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_stock_quote"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Trade Tools (MCP)",
-      "item": [
-        {
-          "name": "Get Trade History",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
-            },
-            "url": {
-              "raw": "{{mcp_url}}/v1/mcp/tools/get_trade_history",
-              "host": ["{{mcp_url}}"],
-              "path": ["v1", "mcp", "tools", "get_trade_history"]
-            }
-          }
-        }
-      ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8080",
-      "description": "Override per environment"
-    },
-    {
-      "key": "jwt_token",
-      "value": "paste-your-token-here"
-    },
-    {
-      "key": "user_id",
-      "value": "ssd2658"
-    },
-    {
-      "key": "portfolio_id",
-      "value": "163d0143-4fcb-480c-ac20-622f14e0e293"
-    }
-  ]
+    "info":  {
+                 "_postman_id":  "f8cf29f2-5cf9-4f2b-8857-042b2d98d372",
+                 "name":  "AM MCP Server",
+                 "description":  "API collection for am-mcp-server.\n\nThe MCP Server exposes AI tool endpoints for the LLM agent layer. It calls downstream services (portfolio, analysis, market, trade) and returns structured JSON for AI consumption.\n\nTools are grouped by domain:\n- **Analysis**: top movers, sector allocation, market cap allocation\n- **Portfolio**: holdings, summary\n- **Market**: quotes, historical data\n- **Trade**: trade history\n- **AI Agent**: general agent invocation\n\nSelect an environment from the dropdown:\n- **Local**: Direct local service on port 8080\n- **Dev**: dev.am.asrax.in\n- **Preprod**: am.asrax.in\n- **Prod**: am.munish.org\n\n## MCP tools/list\nUse folder **MCP Protocol (tools/list)** against Dev: `https://am-dev.asrax.in/mcp`. Requires Bearer JWT. Tool catalog is returned on the SSE stream after request **4 List tools**.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                 "createdAt":  "2026-04-26T06:08:52.000Z",
+                 "updatedAt":  "2026-08-02T19:44:14.000Z",
+                 "lastUpdatedBy":  "3526384",
+                 "uid":  "3526384-f8cf29f2-5cf9-4f2b-8857-042b2d98d372"
+             },
+    "item":  [
+                 {
+                     "name":  "Health \u0026 Infra",
+                     "item":  [
+                                  {
+                                      "name":  "Health Check",
+                                      "id":  "ede3d836-8039-44a3-b41c-6176c7b08c79",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/actuator/health",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "health"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-ede3d836-8039-44a3-b41c-6176c7b08c79"
+                                  },
+                                  {
+                                      "name":  "Swagger UI",
+                                      "id":  "f9bc93fb-b3d6-4ad6-a2b4-4f44eb60ec51",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/swagger-ui/index.html",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "swagger-ui",
+                                                                               "index.html"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-f9bc93fb-b3d6-4ad6-a2b4-4f44eb60ec51"
+                                  },
+                                  {
+                                      "name":  "OpenAPI Spec",
+                                      "id":  "044ab400-2142-4478-9b14-6e7c2a416936",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api-docs",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api-docs"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-044ab400-2142-4478-9b14-6e7c2a416936"
+                                  },
+                                  {
+                                      "name":  "Circuit Breaker Metrics",
+                                      "id":  "0bc3e7d5-ea98-4232-ba5d-9faae3de0bdd",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/actuator/circuitbreakers",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "actuator",
+                                                                               "circuitbreakers"
+                                                                           ]
+                                                              },
+                                                      "description":  "View state of all Resilience4j circuit breakers (am-analysis, am-market, am-trade, am-ai-agent)."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-0bc3e7d5-ea98-4232-ba5d-9faae3de0bdd"
+                                  }
+                              ],
+                     "id":  "db1e9a38-68fb-4fb7-9cb4-6a4f3950b416",
+                     "createdAt":  "2026-04-26T06:08:52.000Z",
+                     "updatedAt":  "2026-04-26T06:08:52.000Z",
+                     "uid":  "3526384-db1e9a38-68fb-4fb7-9cb4-6a4f3950b416"
+                 },
+                 {
+                     "name":  "MCP Protocol (tools/list)",
+                     "item":  [
+                                  {
+                                      "name":  "1 Open SSE",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "// Best-effort parse if Postman returns buffered SSE text",
+                                                                                    "const text = pm.response.text() || \u0027\u0027;",
+                                                                                    "const idMatch = text.match(/^id:\\\\s*(.+)$/m);",
+                                                                                    "const epMatch = text.match(/event:\\\\s*endpoint[\\\\s\\\\S]*?data:\\\\s*(\\\\S+)/);",
+                                                                                    "if (idMatch) {",
+                                                                                    "  pm.collectionVariables.set(\u0027mcp_session_id\u0027, idMatch[1].trim());",
+                                                                                    "  console.log(\u0027mcp_session_id\u0027, idMatch[1].trim());",
+                                                                                    "}",
+                                                                                    "if (epMatch) {",
+                                                                                    "  let path = epMatch[1].trim();",
+                                                                                    "  // strip query if present; sessionId goes in mcp_session_id",
+                                                                                    "  const q = path.indexOf(\u0027?\u0027);",
+                                                                                    "  if (q \u003e= 0) {",
+                                                                                    "    const qs = path.substring(q + 1);",
+                                                                                    "    path = path.substring(0, q);",
+                                                                                    "    const sid = qs.match(/sessionId=([^\u0026]+)/);",
+                                                                                    "    if (sid) pm.collectionVariables.set(\u0027mcp_session_id\u0027, decodeURIComponent(sid[1]));",
+                                                                                    "  }",
+                                                                                    "  pm.collectionVariables.set(\u0027mcp_message_path\u0027, path);",
+                                                                                    "  console.log(\u0027mcp_message_path\u0027, path);",
+                                                                                    "}"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "id":  "04078d71-a244-4a79-9c42-8d6e4d85bee3",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "text/event-stream"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/sse",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "sse"
+                                                                           ]
+                                                              },
+                                                      "description":  "Opens the MCP SSE session. Keep this tab/request open while sending initialize and tools/list. Parse id: and event:endpoint into mcp_session_id / mcp_message_path."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-08-02T19:44:14.000Z",
+                                      "updatedAt":  "2026-08-02T19:44:14.000Z",
+                                      "uid":  "3526384-04078d71-a244-4a79-9c42-8d6e4d85bee3"
+                                  },
+                                  {
+                                      "name":  "2 Initialize",
+                                      "id":  "f5f41ea9-2192-4889-8923-a8671d3bbfa8",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\\n  \"jsonrpc\": \"2.0\",\\n  \"id\": 1,\\n  \"method\": \"initialize\",\\n  \"params\": {\\n    \"protocolVersion\": \"2024-11-05\",\\n    \"capabilities\": {},\\n    \"clientInfo\": { \"name\": \"postman\", \"version\": \"1.0\" }\\n  }\\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/{{mcp_message_path}}?sessionId={{mcp_session_id}}",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{mcp_message_path}}"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "sessionId",
+                                                                                    "value":  "{{mcp_session_id}}"
+                                                                                }
+                                                                            ]
+                                                              },
+                                                      "description":  "JSON-RPC initialize. Response arrives on the open SSE stream (id=1)."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-08-02T19:44:14.000Z",
+                                      "updatedAt":  "2026-08-02T19:44:14.000Z",
+                                      "uid":  "3526384-f5f41ea9-2192-4889-8923-a8671d3bbfa8"
+                                  },
+                                  {
+                                      "name":  "3 Initialized notification",
+                                      "id":  "7243b773-2e90-4741-8e10-e94fb603a705",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\\n  \"jsonrpc\": \"2.0\",\\n  \"method\": \"notifications/initialized\",\\n  \"params\": {}\\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/{{mcp_message_path}}?sessionId={{mcp_session_id}}",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{mcp_message_path}}"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "sessionId",
+                                                                                    "value":  "{{mcp_session_id}}"
+                                                                                }
+                                                                            ]
+                                                              },
+                                                      "description":  "Required MCP notification after initialize succeeds."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-08-02T19:44:14.000Z",
+                                      "updatedAt":  "2026-08-02T19:44:14.000Z",
+                                      "uid":  "3526384-7243b773-2e90-4741-8e10-e94fb603a705"
+                                  },
+                                  {
+                                      "name":  "4 List tools",
+                                      "id":  "9eadc9de-8787-4a5b-a093-3c3abf3ef1d5",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\\n  \"jsonrpc\": \"2.0\",\\n  \"id\": 2,\\n  \"method\": \"tools/list\",\\n  \"params\": {}\\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/{{mcp_message_path}}?sessionId={{mcp_session_id}}",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{mcp_message_path}}"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "sessionId",
+                                                                                    "value":  "{{mcp_session_id}}"
+                                                                                }
+                                                                            ]
+                                                              },
+                                                      "description":  "Returns all registered MCP tools. Watch the SSE stream for JSON-RPC result id=2 with result.tools[].name / description / inputSchema."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-08-02T19:44:14.000Z",
+                                      "updatedAt":  "2026-08-02T19:44:14.000Z",
+                                      "uid":  "3526384-9eadc9de-8787-4a5b-a093-3c3abf3ef1d5"
+                                  }
+                              ],
+                     "id":  "86ce7ab8-b70e-476d-9c47-28249d410de0",
+                     "description":  "Real MCP discovery over SSE (not the legacy /api/v1/mcp/tools/* stubs).\n\nHow to run against Dev:\n1. Set environment base to https://am-dev.asrax.in (or set collection var mcp_url).\n2. Put a user JWT in jwt_token (Identity API key exchange or login).\n3. Send **1 Open SSE** and keep the request open. From the stream, copy:\n   - session id from lines starting with `id:` into mcp_session_id\n   - message path from `event: endpoint` data into mcp_message_path (usually /message)\n4. Send **2 Initialize**, then **3 Initialized notification**, then **4 List tools**.\n5. Tool names/schemas arrive on the SSE stream as JSON-RPC result for id=2 (method tools/list).\n\nPublic Dev URL: https://am-dev.asrax.in/mcp/sse",
+                     "createdAt":  "2026-08-02T19:44:14.000Z",
+                     "updatedAt":  "2026-08-02T19:44:14.000Z",
+                     "uid":  "3526384-86ce7ab8-b70e-476d-9c47-28249d410de0"
+                 },
+                 {
+                     "name":  "Analysis Tools (MCP)",
+                     "item":  [
+                                  {
+                                      "name":  "Get Top Movers",
+                                      "id":  "bb9dd177-9d28-4d11-9449-567fc8fa817e",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"userId\": \"{{user_id}}\",\n    \"timeFrame\": \"1D\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_top_movers",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_top_movers"
+                                                                           ]
+                                                              },
+                                                      "description":  "Returns top 5 gainers and top 5 losers in the user\u0027s portfolio by total P\u0026L percentage.\n\nFields returned: symbol, gainLossPct, dayChangePct, totalValue"
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-bb9dd177-9d28-4d11-9449-567fc8fa817e"
+                                  },
+                                  {
+                                      "name":  "Get Sector Allocation",
+                                      "id":  "fcacd23c-f98d-4543-99a6-9e07a7847887",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"userId\": \"{{user_id}}\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_sector_allocation",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_sector_allocation"
+                                                                           ]
+                                                              },
+                                                      "description":  "Returns sector-wise breakdown (IT, Banking, Pharma etc.) with holding count per sector."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-fcacd23c-f98d-4543-99a6-9e07a7847887"
+                                  },
+                                  {
+                                      "name":  "Get Market Cap Allocation",
+                                      "id":  "0a43d867-336c-46b1-9564-9d485feea3b7",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"userId\": \"{{user_id}}\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_market_cap_allocation",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_market_cap_allocation"
+                                                                           ]
+                                                              },
+                                                      "description":  "Returns large-cap, mid-cap, and small-cap distribution of the portfolio by holding count."
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-0a43d867-336c-46b1-9564-9d485feea3b7"
+                                  }
+                              ],
+                     "id":  "52df332f-9f16-4eef-9fd6-e40436d71533",
+                     "description":  "MCP tools for the analysis domain. These are called by the AI agent layer.",
+                     "createdAt":  "2026-04-26T06:08:52.000Z",
+                     "updatedAt":  "2026-04-26T06:08:52.000Z",
+                     "uid":  "3526384-52df332f-9f16-4eef-9fd6-e40436d71533"
+                 },
+                 {
+                     "name":  "Portfolio Tools (MCP)",
+                     "item":  [
+                                  {
+                                      "name":  "Get Portfolio Summary",
+                                      "id":  "ebd5ceae-f4e4-4280-90e5-66b3377e2bc2",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_portfolio_summary",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_portfolio_summary"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-ebd5ceae-f4e4-4280-90e5-66b3377e2bc2"
+                                  },
+                                  {
+                                      "name":  "Get Holdings",
+                                      "id":  "f0748e4c-c9bf-4fb8-93b9-acedb856f99f",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_holdings",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_holdings"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-f0748e4c-c9bf-4fb8-93b9-acedb856f99f"
+                                  }
+                              ],
+                     "id":  "1417e990-fb2c-4809-a54c-420cd7574e7f",
+                     "createdAt":  "2026-04-26T06:08:52.000Z",
+                     "updatedAt":  "2026-04-26T06:08:52.000Z",
+                     "uid":  "3526384-1417e990-fb2c-4809-a54c-420cd7574e7f"
+                 },
+                 {
+                     "name":  "Market Tools (MCP)",
+                     "item":  [
+                                  {
+                                      "name":  "Get Stock Quote",
+                                      "id":  "b3d3b423-fc58-4805-ab0d-d46e05079f9b",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"symbol\": \"RELIANCE\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_stock_quote",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_stock_quote"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-b3d3b423-fc58-4805-ab0d-d46e05079f9b"
+                                  }
+                              ],
+                     "id":  "1dba5eab-6fcb-4ac0-b9be-083ca5cad9f4",
+                     "createdAt":  "2026-04-26T06:08:52.000Z",
+                     "updatedAt":  "2026-04-26T06:08:52.000Z",
+                     "uid":  "3526384-1dba5eab-6fcb-4ac0-b9be-083ca5cad9f4"
+                 },
+                 {
+                     "name":  "Trade Tools (MCP)",
+                     "item":  [
+                                  {
+                                      "name":  "Get Trade History",
+                                      "id":  "7b7790c2-49cd-44a6-ab69-daab282110f3",
+                                      "protocolProfileBehavior":  {
+                                                                      "disableBodyPruning":  true
+                                                                  },
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Authorization",
+                                                                         "value":  "Bearer {{jwt_token}}"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n    \"userId\": \"{{user_id}}\",\n    \"portfolioId\": \"{{portfolio_id}}\"\n}"
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{mcp_url}}/api/v1/mcp/tools/get_trade_history",
+                                                                  "host":  [
+                                                                               "{{mcp_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "api",
+                                                                               "v1",
+                                                                               "mcp",
+                                                                               "tools",
+                                                                               "get_trade_history"
+                                                                           ]
+                                                              }
+                                                  },
+                                      "response":  [
+
+                                                   ],
+                                      "createdAt":  "2026-04-26T06:08:52.000Z",
+                                      "updatedAt":  "2026-04-26T06:08:52.000Z",
+                                      "uid":  "3526384-7b7790c2-49cd-44a6-ab69-daab282110f3"
+                                  }
+                              ],
+                     "id":  "9253ce8e-7575-4ff1-8f86-83d099ad3971",
+                     "createdAt":  "2026-04-26T06:08:52.000Z",
+                     "updatedAt":  "2026-04-26T06:08:52.000Z",
+                     "uid":  "3526384-9253ce8e-7575-4ff1-8f86-83d099ad3971"
+                 }
+             ],
+    "variable":  [
+                     {
+                         "key":  "mcp_url",
+                         "value":  "https://am-dev.asrax.in/mcp"
+                     },
+                     {
+                         "key":  "jwt_token",
+                         "value":  "paste-your-token-here"
+                     },
+                     {
+                         "key":  "base_url",
+                         "value":  "https://am-dev.asrax.in",
+                         "description":  "Override per environment"
+                     },
+                     {
+                         "key":  "mcp_message_path",
+                         "value":  "/message"
+                     },
+                     {
+                         "key":  "mcp_session_id",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "portfolio_id",
+                         "value":  "163d0143-4fcb-480c-ac20-622f14e0e293"
+                     },
+                     {
+                         "key":  "user_id",
+                         "value":  "ssd2658"
+                     }
+                 ]
 }
