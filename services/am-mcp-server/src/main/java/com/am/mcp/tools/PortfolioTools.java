@@ -1,5 +1,6 @@
 package com.am.mcp.tools;
 
+import com.am.mcp.client.PortfolioRawClient;
 import com.am.mcp.util.ResponseHelper;
 import com.am.portfolio.client.api.PortfolioAnalyticsApi;
 import com.am.portfolio.client.api.PortfolioManagementApi;
@@ -33,6 +34,7 @@ public class PortfolioTools {
 
     private final PortfolioManagementApi portfolioManagementApi;
     private final PortfolioAnalyticsApi portfolioAnalyticsApi;
+    private final PortfolioRawClient portfolioRawClient;
     private final ResponseHelper response;
 
     @Tool(name = "get_portfolio_summary", description = """
@@ -49,9 +51,8 @@ public class PortfolioTools {
         try {
             String pid = blankToNull(portfolioId);
             log.info("[MCP] get_portfolio_summary portfolioId={}", pid);
-            PortfolioSummaryV1 summary = portfolioManagementApi.getPortfolioSummary(
-                    pid, null, null, null);
-            return response.toJson(summary);
+            Map<String, Object> summary = portfolioRawClient.getPortfolioSummary(pid);
+            return response.toJson(slimSummary(summary));
         } catch (Exception e) {
             log.error("Failed to fetch portfolio summary", e);
             return response.errorJson("get_portfolio_summary", e);
@@ -60,6 +61,57 @@ public class PortfolioTools {
 
     public String portfolioSummaryFallback(String portfolioId, Exception e) {
         return response.unavailable("am-portfolio (portfolio summary)");
+    }
+
+    /**
+     * Keep chat/MCP payloads under max response size: scalars + broker names only
+     * (full marketCap/sector trees are huge).
+     */
+    static Map<String, Object> slimSummary(Map<String, Object> summary) {
+        Map<String, Object> slim = new LinkedHashMap<>();
+        for (String key : List.of(
+                "investmentValue",
+                "currentValue",
+                "totalGainLoss",
+                "totalGainLossPercentage",
+                "todayGainLoss",
+                "todayGainLossPercentage",
+                "totalAssets",
+                "gainersCount",
+                "losersCount",
+                "todayGainersCount",
+                "todayLosersCount",
+                "lastUpdated")) {
+            if (summary.containsKey(key)) {
+                slim.put(key, summary.get(key));
+            }
+        }
+        Object brokers = summary.get("brokerPortfolios");
+        if (brokers instanceof Map<?, ?> brokerMap && !brokerMap.isEmpty()) {
+            slim.put("brokers", brokerMap.keySet());
+        }
+        return slim;
+    }
+
+    /** @deprecated typed-model path kept for unit tests of scalar shaping */
+    static Map<String, Object> slimSummary(PortfolioSummaryV1 summary) {
+        Map<String, Object> raw = new LinkedHashMap<>();
+        raw.put("investmentValue", summary.getInvestmentValue());
+        raw.put("currentValue", summary.getCurrentValue());
+        raw.put("totalGainLoss", summary.getTotalGainLoss());
+        raw.put("totalGainLossPercentage", summary.getTotalGainLossPercentage());
+        raw.put("todayGainLoss", summary.getTodayGainLoss());
+        raw.put("todayGainLossPercentage", summary.getTodayGainLossPercentage());
+        raw.put("totalAssets", summary.getTotalAssets());
+        raw.put("gainersCount", summary.getGainersCount());
+        raw.put("losersCount", summary.getLosersCount());
+        raw.put("todayGainersCount", summary.getTodayGainersCount());
+        raw.put("todayLosersCount", summary.getTodayLosersCount());
+        raw.put("lastUpdated", summary.getLastUpdated());
+        if (summary.getBrokerPortfolios() != null) {
+            raw.put("brokerPortfolios", summary.getBrokerPortfolios());
+        }
+        return slimSummary(raw);
     }
 
     @Tool(name = "get_holdings", description = """

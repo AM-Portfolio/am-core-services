@@ -1,6 +1,7 @@
 package com.am.mcp.config;
 
 import com.am.mcp.auth.AuthTokenProvider;
+import com.am.mcp.jackson.PortfolioObjectMappers;
 import com.am.observability.http.TraceContextSdkInterceptor;
 import com.am.portfolio.client.api.PortfolioAnalyticsApi;
 import com.am.portfolio.client.api.PortfolioManagementApi;
@@ -26,6 +27,7 @@ public class PortfolioSdkConfig {
 
         client.setConnectTimeout(Duration.ofMillis(props.getTimeouts().getConnectMs()));
         client.setReadTimeout(Duration.ofMillis(props.getTimeouts().getReadMs()));
+        client.setObjectMapper(PortfolioObjectMappers.create());
 
         client.setRequestInterceptor(composeInterceptor(authTokenProvider, traceInterceptorProvider.getIfAvailable()));
 
