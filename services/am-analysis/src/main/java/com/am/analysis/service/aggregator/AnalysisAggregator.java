@@ -429,6 +429,16 @@ public class AnalysisAggregator {
 
             Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
             if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
+                try {
+                    org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+                    String fallbackUrl = "http://am-market-data:8080/v1/market-data/quotes?symbols=" + symbolsCsv;
+                    rawResponse = restTemplate.getForObject(fallbackUrl, Map.class);
+                } catch (Exception ex) {
+                    log.warn("[Aggregator] Direct fallback to am-market-data failed: {}", ex.getMessage());
+                }
+            }
+
+            if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
                 return Map.of();
             }
 
