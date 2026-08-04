@@ -112,21 +112,16 @@ public class TopMoversAnalysisService {
                 log.info("[TopMovers] Zero daily movement for userId={} tf={}. Falling back to overall holding performance ranking.",
                         userId, normalizedTf);
                 gainers = holdings.stream()
+                        .filter(h -> resolveOverallReturnMetric(h) > 0)
                         .sorted((h1, h2) -> Double.compare(resolveOverallReturnMetric(h2), resolveOverallReturnMetric(h1)))
                         .limit(10)
                         .toList();
 
                 losers = holdings.stream()
+                        .filter(h -> resolveOverallReturnMetric(h) < 0)
                         .sorted((h1, h2) -> Double.compare(resolveOverallReturnMetric(h1), resolveOverallReturnMetric(h2)))
                         .limit(10)
                         .toList();
-
-                if (losers.isEmpty() && holdings.size() > 1) {
-                    losers = holdings.stream()
-                            .sorted((h1, h2) -> Double.compare(resolveOverallReturnMetric(h1), resolveOverallReturnMetric(h2)))
-                            .limit(Math.min(5, holdings.size() / 2))
-                            .toList();
-                }
             }
 
             return buildTopMoversResponseFromHoldings(gainers, losers, normalizedTf, totalPortfolioValue);

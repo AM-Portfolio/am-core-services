@@ -64,6 +64,16 @@ public class ActivityItem {
     private Double dayChange;           // Intraday change in value
     private Double dayChangePercent;    // Intraday change %
 
+    @com.fasterxml.jackson.annotation.JsonProperty("isPositive")
+    public Boolean isPositive() {
+        return profitLoss != null ? profitLoss >= 0 : true;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("profitLossPercentage")
+    public Double getProfitLossPercentage() {
+        return profitLossPercent;
+    }
+
     /**
      * WIN  = profitable position (profitLoss > 0)
      * LOSS = losing position    (profitLoss < 0)
