@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Aggregates data from am-portfolio (AnalysisRepository) and am-trade
  * (TradeClientService).
+ * Re-trigger CI/CD pipeline build.
  *
  * Key design rules:
  * 1. am-portfolio is the source of truth for live holdings & market values.
