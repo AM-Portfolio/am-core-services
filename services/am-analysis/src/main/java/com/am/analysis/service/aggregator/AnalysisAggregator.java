@@ -43,6 +43,7 @@ public class AnalysisAggregator {
 
     private final AnalysisEntityLoadService entityLoadService;
     private final TradeClientService tradeClientService;
+    private final MarketDataClientService marketDataClientService;
     private final FlowLogger flowLogger;
 
     // ─────────────────────────────────────────────────────────────────────
@@ -63,8 +64,13 @@ public class AnalysisAggregator {
         if (tradePortfolios == null)
             tradePortfolios = Collections.emptyList();
 
-        if (liveTicks != null && !liveTicks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(amPortfolios, liveTicks);
+        Map<String, LivePriceTick> ticksToUse = liveTicks;
+        if (ticksToUse == null || ticksToUse.isEmpty()) {
+            ticksToUse = fetchLiveTicksForEntities(amPortfolios);
+        }
+
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(amPortfolios, ticksToUse);
         }
 
         return buildOverallSummary(amPortfolios, tradePortfolios, isComplete);
@@ -151,11 +157,10 @@ public class AnalysisAggregator {
 
         // ── Trade portfolios NOT already covered by am-portfolio ───
         for (TradePortfolio tp : tradePortfolios) {
-            // Skip if this trade portfolio is linked to an am-portfolio (avoid
-            // double-count)
-            if (tp.getExternalPortfolioId() != null && coveredPortfolioIds.contains(tp.getExternalPortfolioId())) {
-                log.debug("[Aggregator] Skipping trade portfolio {} — already covered by am-portfolio {}",
-                        tp.getId(), tp.getExternalPortfolioId());
+            // Skip if this trade portfolio is linked to an am-portfolio (avoid double-count)
+            if ((tp.getId() != null && coveredPortfolioIds.contains(tp.getId())) ||
+                (tp.getExternalPortfolioId() != null && coveredPortfolioIds.contains(tp.getExternalPortfolioId()))) {
+                log.debug("[Aggregator] Skipping trade portfolio {} — already covered by am-portfolio", tp.getId());
                 continue;
             }
             BigDecimal val = tp.getTotalValue() != null ? tp.getTotalValue() : BigDecimal.ZERO;
@@ -395,6 +400,49 @@ public class AnalysisAggregator {
                 "cause", ex.getClass().getSimpleName(),
                 "cause.message", ex.getMessage());
         return null;
+    }
+
+    /**
+     * Helper to fetch live quotes for all holdings across entities when liveTicks is not passed.
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, LivePriceTick> fetchLiveTicksForEntities(List<AnalysisEntity> entities) {
+        if (entities == null || entities.isEmpty()) return Map.of();
+        try {
+            List<String> symbols = entities.stream()
+                    .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
+                    .map(h -> h.getIdentity() != null ? h.getIdentity().getSymbol() : null)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .toList();
+
+            if (symbols.isEmpty()) return Map.of();
+
+            String symbolsCsv = String.join(",", symbols);
+            Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
+            if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
+                return Map.of();
+            }
+
+            Object quotesObj = rawResponse.containsKey("quotes") ? rawResponse.get("quotes") : rawResponse;
+            if (quotesObj instanceof Map<?, ?> quotesMap) {
+                Map<String, LivePriceTick> result = new HashMap<>();
+                for (Map.Entry<?, ?> entry : quotesMap.entrySet()) {
+                    String sym = String.valueOf(entry.getKey());
+                    if (entry.getValue() instanceof Map<?, ?> qData) {
+                        Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue() : null;
+                        Double prev  = qData.get("previousClose") != null ? ((Number) qData.get("previousClose")).doubleValue() : null;
+                        if (price != null && price > 0) {
+                            result.put(sym, new LivePriceTick(price, prev));
+                        }
+                    }
+                }
+                return result;
+            }
+        } catch (Exception e) {
+            log.warn("[Aggregator] Failed to fetch live ticks for entities: {}", e.getMessage());
+        }
+        return Map.of();
     }
 
     /**
