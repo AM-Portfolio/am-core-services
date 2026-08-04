@@ -13,6 +13,7 @@ import com.am.domain.trade.PortfolioOverview;
 import com.am.domain.trade.TradePortfolio;
 import com.am.observability.flow.FlowLogger;
 import com.am.trade.client.service.TradeClientService;
+import com.am.market.client.service.MarketDataClientService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
