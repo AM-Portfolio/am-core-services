@@ -420,8 +420,8 @@ public class TopMoversAnalysisService {
         if (h.getInvestment() == null) {
             return null;
         }
-        // 1. Prefer live day-change percentage when market data is available
-        if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null) {
+        // 1. Prefer live day-change percentage when non-zero market data is available
+        if (h.getMarket() != null && h.getMarket().getDayChangePercentage() != null && h.getMarket().getDayChangePercentage() != 0.0) {
             return h.getMarket().getDayChangePercentage();
         }
         // 2. Try to compute from current price vs previous close
