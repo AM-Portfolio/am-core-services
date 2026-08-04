@@ -100,30 +100,14 @@ public class AnalysisAggregator {
             if (entity.getPerformance() == null)
                 continue;
 
-            double calcVal = 0.0;
-            double calcInv = 0.0;
-            if (entity.getHoldings() != null) {
-                for (AnalysisHolding h : entity.getHoldings()) {
-                    Double curP = h.getMarket() != null ? h.getMarket().getCurrentPrice() : null;
-                    Double avgP = h.getInvestment() != null ? h.getInvestment().getAveragePrice() : null;
-                    Double qty  = h.getInvestment() != null ? h.getInvestment().getQuantity() : 1.0;
-                    if (qty == null || qty <= 0) qty = 1.0;
-
-                    double itemInv = (avgP != null && avgP > 0) ? (avgP * qty) : 
-                            (h.getInvestment() != null && h.getInvestment().getInvestmentValue() != null ? h.getInvestment().getInvestmentValue() : 0.0);
-                    
-                    double itemVal = (curP != null && curP > 0) ? (curP * qty) :
-                            (h.getInvestment() != null && h.getInvestment().getCurrentValue() != null && h.getInvestment().getCurrentValue() > 0 ? h.getInvestment().getCurrentValue() : itemInv);
-
-                    calcVal += itemVal;
-                    calcInv += itemInv;
-                }
+            BigDecimal val = toBd(entity.getPerformance().getTotalValue());
+            BigDecimal inv = toBd(entity.getPerformance().getTotalInvestment());
+            BigDecimal dc = toBd(entity.getPerformance().getDayChange());
+            BigDecimal gl = toBd(entity.getPerformance().getTotalGainLoss());
+            if (gl.compareTo(BigDecimal.ZERO) == 0 && val.compareTo(inv) != 0) {
+                gl = val.subtract(inv);
             }
 
-            BigDecimal val = calcVal > 0 ? BigDecimal.valueOf(calcVal) : toBd(entity.getPerformance().getTotalValue());
-            BigDecimal inv = calcInv > 0 ? BigDecimal.valueOf(calcInv) : toBd(entity.getPerformance().getTotalInvestment());
-            BigDecimal dc = toBd(entity.getPerformance().getDayChange());
-            BigDecimal gl = val.subtract(inv);
             double glPct = inv.compareTo(BigDecimal.ONE) >= 0
                     ? gl.divide(inv, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue()
                     : 0.0;
