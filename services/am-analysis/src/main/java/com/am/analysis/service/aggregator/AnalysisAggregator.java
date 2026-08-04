@@ -419,7 +419,29 @@ public class AnalysisAggregator {
 
             if (symbols.isEmpty()) return Map.of();
 
-            String symbolsCsv = String.join(",", symbols);
+            // Resolve ISINs (12-char codes) to NSE tickers
+            List<String> isins = symbols.stream()
+                    .filter(s -> s.length() == 12 && s.matches("[A-Z]{2}[A-Z0-9]{10}"))
+                    .toList();
+
+            Map<String, String> isinToTicker = Map.of();
+            if (!isins.isEmpty()) {
+                try {
+                    isinToTicker = marketDataClientService.resolveIsinsToTickers(isins);
+                } catch (Exception e) {
+                    log.warn("[Aggregator] ISIN resolution failed: {}", e.getMessage());
+                }
+            }
+
+            List<String> tickersToFetch = new ArrayList<>();
+            for (String sym : symbols) {
+                String resolved = isinToTicker.get(sym);
+                tickersToFetch.add(resolved != null ? resolved : sym);
+            }
+
+            String symbolsCsv = String.join(",", tickersToFetch.stream().distinct().toList());
+            if (symbolsCsv.isBlank()) return Map.of();
+
             Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
             if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
                 return Map.of();
@@ -428,9 +450,12 @@ public class AnalysisAggregator {
             Object quotesObj = rawResponse.containsKey("quotes") ? rawResponse.get("quotes") : rawResponse;
             if (quotesObj instanceof Map<?, ?> quotesMap) {
                 Map<String, LivePriceTick> result = new HashMap<>();
-                for (Map.Entry<?, ?> entry : quotesMap.entrySet()) {
-                    String sym = String.valueOf(entry.getKey());
-                    if (entry.getValue() instanceof Map<?, ?> qData) {
+                for (String sym : symbols) {
+                    String ticker = isinToTicker.getOrDefault(sym, sym);
+                    Object quoteData = quotesMap.get(ticker);
+                    if (quoteData == null) quoteData = quotesMap.get(sym);
+
+                    if (quoteData instanceof Map<?, ?> qData) {
                         Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue() : null;
                         Double prev  = qData.get("previousClose") != null ? ((Number) qData.get("previousClose")).doubleValue() : null;
                         if (price != null && price > 0) {
