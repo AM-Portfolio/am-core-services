@@ -459,7 +459,9 @@ public class AnalysisAggregator {
                         Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue() : null;
                         Double prev  = qData.get("previousClose") != null ? ((Number) qData.get("previousClose")).doubleValue() : null;
                         if (price != null && price > 0) {
-                            result.put(sym, new LivePriceTick(price, prev));
+                            LivePriceTick liveTick = new LivePriceTick(price, prev);
+                            result.put(sym, liveTick);
+                            result.put(ticker, liveTick);
                         }
                     }
                 }
