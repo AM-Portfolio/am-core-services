@@ -31,3 +31,9 @@ CI_ARCHITECTURE.md
 QUICKSTART.md
 RUN_GUIDE.md
 DOCKER_DEV_GUIDE.md
+
+# Local Dev Scripts and Credentials (never in Docker image)
+maven-settings.xml
+maven_settings.xml
+scratch/
+*.ps1
