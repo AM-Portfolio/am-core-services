@@ -87,8 +87,7 @@ am:
       debounce-ms: 60000
 
   services:
-    market-data:
-      url: ${MARKET_DATA_URL:http://localhost:8092} # Default to standard port, can be overridden
+    market-data-url: ${MARKET_DATA_URL:http://localhost:8092}
 
 # Resilience4j Circuit Breaker Configuration
 resilience4j:
