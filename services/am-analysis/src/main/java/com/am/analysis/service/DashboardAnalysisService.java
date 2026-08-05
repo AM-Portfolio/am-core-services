@@ -128,8 +128,12 @@ public class DashboardAnalysisService {
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
         EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
         List<AnalysisEntity> entities = loadResult.entities();
-        if (liveTicks != null && !liveTicks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(entities, liveTicks);
+        Map<String, LivePriceTick> ticksToUse = liveTicks;
+        if (ticksToUse == null || ticksToUse.isEmpty()) {
+            ticksToUse = aggregator.fetchLiveTicksForEntities(entities);
+        }
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticksToUse);
         }
         log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 

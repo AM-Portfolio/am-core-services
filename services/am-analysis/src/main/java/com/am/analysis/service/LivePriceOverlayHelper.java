@@ -139,7 +139,13 @@ public final class LivePriceOverlayHelper {
             return;
         }
         for (AnalysisEntity entity : entities) {
+            org.slf4j.LoggerFactory.getLogger(LivePriceOverlayHelper.class)
+                    .info("[Overlay] Applying ticks for entity: {}, holdings: {}", 
+                    entity.getId(), entity.getHoldings() != null ? entity.getHoldings().size() : 0);
             apply(entity, ticks, window);
+            org.slf4j.LoggerFactory.getLogger(LivePriceOverlayHelper.class)
+                    .info("[Overlay] After apply, entity {} totalValue: {}", 
+                    entity.getId(), entity.getPerformance() != null ? entity.getPerformance().getTotalValue() : null);
         }
     }
 

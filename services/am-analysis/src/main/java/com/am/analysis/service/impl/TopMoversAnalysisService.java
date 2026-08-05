@@ -257,28 +257,33 @@ public class TopMoversAnalysisService {
                     .toList();
 
             Map<String, String> isinToTicker = new HashMap<>(); // ISIN -> NSE ticker
-            List<String> tickersToFetch = new java.util.ArrayList<>(holdingSymbols);
+            List<String> tickersToFetch = new java.util.ArrayList<>();
 
             if (!isins.isEmpty()) {
                 // Step 2: Resolve ISINs to tickers via security search
                 try {
                     isinToTicker = marketDataClientService.resolveIsinsToTickers(isins);
-                    if (isinToTicker != null && !isinToTicker.isEmpty()) {
-                        tickersToFetch.clear();
-                        for (String sym : holdingSymbols) {
-                            String resolved = isinToTicker.get(sym);
-                            tickersToFetch.add(resolved != null ? resolved : sym);
-                        }
-                        log.info("[TopMovers] Resolved {}/{} ISINs to tickers: {}",
-                                isinToTicker.size(), isins.size(), isinToTicker);
-                    }
                 } catch (Exception e) {
                     log.warn("[TopMovers] ISIN->ticker resolution failed: {}", e.getMessage());
                 }
             }
 
+            for (String sym : holdingSymbols) {
+                String resolved = isinToTicker.get(sym);
+                if (resolved != null) {
+                    tickersToFetch.add(resolved);
+                } else {
+                    tickersToFetch.add(sym);
+                    String fallback = resolveFallbackTicker(sym, portfolios);
+                    if (fallback != null) {
+                        tickersToFetch.add(fallback);
+                    }
+                }
+            }
+
             // Step 3: Fetch live quotes for resolved tickers
             String symbolsCsv = tickersToFetch.stream().distinct().collect(Collectors.joining(","));
+            log.info("[TopMovers] Fetching quotes for symbolsCsv: {}", symbolsCsv);
             if (symbolsCsv.isBlank()) {
                 return result;
             }
@@ -289,6 +294,8 @@ public class TopMoversAnalysisService {
             }
 
             Map<String, Object> quotes = rawResponse;
+            log.info("[TopMovers] rawResponse keys: {}, quotes map keys: {}", rawResponse.keySet(), 
+                    rawResponse.get("quotes") instanceof Map ? ((Map)rawResponse.get("quotes")).keySet() : "N/A");
             if (rawResponse.containsKey("quotes") && rawResponse.get("quotes") instanceof Map) {
                 quotes = (Map<String, Object>) rawResponse.get("quotes");
             }
@@ -296,19 +303,34 @@ public class TopMoversAnalysisService {
             // Step 4: Build ticks and apply dayChange% directly to holdings
             for (String originalSym : holdingSymbols) {
                 String ticker = isinToTicker.getOrDefault(originalSym, originalSym);
+                String fallback = resolveFallbackTicker(originalSym, portfolios);
                 Object quoteObj = quotes.get(ticker);
+                if (quoteObj == null) {
+                    quoteObj = quotes.get(originalSym);
+                }
+                if (quoteObj == null && fallback != null) {
+                    quoteObj = quotes.get(fallback);
+                }
+
                 if (quoteObj instanceof Map) {
                     Map<String, Object> q = (Map<String, Object>) quoteObj;
                     Double lastPrice = toDouble(q.get("lastPrice"));
                     Double prevClose = toDouble(q.get("previousClose"));
+                    if (prevClose == null || prevClose == 0.0) {
+                        if (q.get("ohlc") instanceof Map<?, ?> ohlc) {
+                            prevClose = toDouble(ohlc.get("open"));
+                        }
+                    }
                     Double changePercent = toDouble(q.get("changePercent"));
                     if (changePercent == null && lastPrice != null && prevClose != null && prevClose > 0) {
                         changePercent = ((lastPrice - prevClose) / prevClose) * 100.0;
                     }
                     if (lastPrice != null && lastPrice > 0) {
-                        result.put(originalSym, new LivePriceTick(lastPrice, prevClose != null ? prevClose : lastPrice));
-                        if (!ticker.equals(originalSym)) {
-                            result.put(ticker, new LivePriceTick(lastPrice, prevClose != null ? prevClose : lastPrice));
+                        LivePriceTick tick = new LivePriceTick(lastPrice, prevClose != null ? prevClose : lastPrice);
+                        result.put(originalSym, tick);
+                        result.put(ticker, tick);
+                        if (fallback != null) {
+                            result.put(fallback, tick);
                         }
                         // Directly stamp dayChange% and live prices onto holdings
                         applyDayChangeToHoldings(portfolios, originalSym, ticker,
@@ -321,6 +343,30 @@ public class TopMoversAnalysisService {
             log.warn("[TopMovers] Failed to build live ticks from quotes: {}", e.getMessage());
         }
         return result;
+    }
+
+    private String resolveFallbackTicker(String isin, List<AnalysisEntity> portfolios) {
+        if (isin == null || !isin.startsWith("IN") || portfolios == null) return null;
+        for (AnalysisEntity entity : portfolios) {
+            if (entity.getHoldings() == null) continue;
+            for (com.am.analysis.adapter.model.AnalysisHolding h : entity.getHoldings()) {
+                if (h.getIdentity() != null && isin.equalsIgnoreCase(h.getIdentity().getSymbol())) {
+                    String name = h.getIdentity().getCompanyName();
+                    if (name != null) {
+                        if (name.contains("GOLDBONDS2029SR-VIII") || name.contains("GOLDBONDS")) return "SGBD29VIII";
+                        if (name.contains("- HEALTHY")) return "HEALTHY";
+                        if (name.contains("- GROWWDEFNC")) return "GROWWDEFNC";
+                        if (name.contains("- GROWWRAIL")) return "GROWWRAIL";
+                        if (name.contains("- MOHEALTH")) return "MOHEALTH";
+                        if (name.contains("GOLD BEES") || name.contains("GOLDBEES")) return "GOLDBEES";
+                        if (name.contains("NIFTY BEES") || name.contains("NIFTYBEES")) return "NIFTYBEES";
+                        if (name.contains("VODAFONE IDEA") || name.contains("VODAFONE IDEA-EQ")) return "IDEA";
+                        if (name.contains("RAIL VIKAS") || name.contains("RVNL")) return "RVNL";
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /** Stamps live market stats directly onto matched holdings (by ISIN or ticker). */

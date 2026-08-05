@@ -72,7 +72,10 @@ public class AnalysisAggregator {
         }
 
         if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            log.info("[Aggregator] applying live ticks: {}", ticksToUse.keySet());
             LivePriceOverlayHelper.applyAll(amPortfolios, ticksToUse);
+        } else {
+            log.warn("[Aggregator] ticksToUse is empty or null after fetchLiveTicksForEntities!");
         }
 
         return buildOverallSummary(amPortfolios, tradePortfolios, isComplete);
@@ -206,12 +209,16 @@ public class AnalysisAggregator {
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
         List<PortfolioOverview> overviews = new ArrayList<>();
-
-        List<AnalysisEntity> amPortfolios = fetchPortfolioEntities(userId);
+        List<AnalysisEntity> entities = fetchPortfolioEntities(userId);
         Set<String> coveredIds = new HashSet<>();
 
-        if (amPortfolios != null) {
-            for (AnalysisEntity entity : amPortfolios) {
+        Map<String, LivePriceTick> ticksToUse = fetchLiveTicksForEntities(entities);
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticksToUse);
+        }
+
+        if (entities != null) {
+            for (AnalysisEntity entity : entities) {
                 if (entity.getPerformance() == null)
                     continue;
                 String pid = entity.getSourceId();
@@ -392,7 +399,7 @@ public class AnalysisAggregator {
      * Helper to fetch live quotes for all holdings across entities when liveTicks is not passed.
      */
     @SuppressWarnings("unchecked")
-    private Map<String, LivePriceTick> fetchLiveTicksForEntities(List<AnalysisEntity> entities) {
+    public Map<String, LivePriceTick> fetchLiveTicksForEntities(List<AnalysisEntity> entities) {
         if (entities == null || entities.isEmpty()) return Map.of();
         try {
             List<String> symbols = entities.stream()
@@ -421,43 +428,56 @@ public class AnalysisAggregator {
             List<String> tickersToFetch = new ArrayList<>();
             for (String sym : symbols) {
                 String resolved = isinToTicker.get(sym);
-                tickersToFetch.add(resolved != null ? resolved : sym);
-            }
-
-            String symbolsCsv = String.join(",", tickersToFetch.stream().distinct().toList());
-            if (symbolsCsv.isBlank()) return Map.of();
-
-            Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
-            if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
-                try {
-                    org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
-                    String fallbackUrl = "http://am-market-data:8080/v1/market-data/quotes?symbols=" + symbolsCsv;
-                    rawResponse = restTemplate.getForObject(fallbackUrl, Map.class);
-                } catch (Exception ex) {
-                    log.warn("[Aggregator] Direct fallback to am-market-data failed: {}", ex.getMessage());
+                if (resolved != null) {
+                    tickersToFetch.add(resolved);
+                } else {
+                    tickersToFetch.add(sym);
+                    String fallback = resolveFallbackTicker(sym, entities);
+                    if (fallback != null) {
+                        tickersToFetch.add(fallback);
+                    }
                 }
             }
 
+            String symbolsCsv = String.join(",", tickersToFetch.stream().filter(Objects::nonNull).distinct().toList());
+            if (symbolsCsv.isBlank()) return Map.of();
+
+            Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
             if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
                 return Map.of();
             }
 
             Object quotesObj = rawResponse.containsKey("quotes") ? rawResponse.get("quotes") : rawResponse;
+            log.info("[Aggregator] getQuotes rawResponse keys: {}, quotesObj type: {}", rawResponse.keySet(), quotesObj.getClass().getSimpleName());
             if (quotesObj instanceof Map<?, ?> quotesMap) {
                 Map<String, LivePriceTick> result = new HashMap<>();
                 for (String sym : symbols) {
                     String ticker = isinToTicker.getOrDefault(sym, sym);
+                    String fallback = resolveFallbackTicker(sym, entities);
+
                     Object quoteData = quotesMap.get(ticker);
                     if (quoteData == null) quoteData = quotesMap.get(sym);
+                    if (quoteData == null && fallback != null) quoteData = quotesMap.get(fallback);
 
                     if (quoteData instanceof Map<?, ?> qData) {
                         Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue() : null;
                         Double prev  = qData.get("previousClose") != null ? ((Number) qData.get("previousClose")).doubleValue() : null;
+                        if (prev == null || prev == 0.0) {
+                            if (qData.get("ohlc") instanceof Map<?, ?> ohlc) {
+                                prev = ohlc.get("open") != null ? ((Number) ohlc.get("open")).doubleValue() : null;
+                            }
+                        }
                         if (price != null && price > 0) {
                             LivePriceTick liveTick = new LivePriceTick(price, prev);
+                            log.info("[Aggregator] Put liveTick for sym={}, ticker={}, fallback={} -> {}", sym, ticker, fallback, liveTick);
                             result.put(sym, liveTick);
                             result.put(ticker, liveTick);
+                            if (fallback != null) result.put(fallback, liveTick);
+                        } else {
+                            log.warn("[Aggregator] Price was null or <= 0 for sym={}", sym);
                         }
+                    } else {
+                        log.warn("[Aggregator] quoteData is NOT a Map for sym={}, type={}", sym, quoteData != null ? quoteData.getClass().getSimpleName() : "null");
                     }
                 }
                 return result;
@@ -466,6 +486,30 @@ public class AnalysisAggregator {
             log.warn("[Aggregator] Failed to fetch live ticks for entities: {}", e.getMessage());
         }
         return Map.of();
+    }
+
+    private String resolveFallbackTicker(String isin, List<AnalysisEntity> entities) {
+        if (isin == null || !isin.startsWith("IN") || entities == null) return null;
+        for (AnalysisEntity entity : entities) {
+            if (entity.getHoldings() == null) continue;
+            for (AnalysisHolding h : entity.getHoldings()) {
+                if (h.getIdentity() != null && isin.equalsIgnoreCase(h.getIdentity().getSymbol())) {
+                    String name = h.getIdentity().getCompanyName();
+                    if (name != null) {
+                        if (name.contains("GOLDBONDS2029SR-VIII") || name.contains("GOLDBONDS")) return "SGBD29VIII";
+                        if (name.contains("- HEALTHY")) return "HEALTHY";
+                        if (name.contains("- GROWWDEFNC")) return "GROWWDEFNC";
+                        if (name.contains("- GROWWRAIL")) return "GROWWRAIL";
+                        if (name.contains("- MOHEALTH")) return "MOHEALTH";
+                        if (name.contains("GOLD BEES") || name.contains("GOLDBEES")) return "GOLDBEES";
+                        if (name.contains("NIFTY BEES") || name.contains("NIFTYBEES")) return "NIFTYBEES";
+                        if (name.contains("VODAFONE IDEA")) return "IDEA";
+                        if (name.contains("RAIL VIKAS")) return "RVNL";
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
