@@ -43,18 +43,36 @@ public class ActivityItem {
     private String exchange;        // e.g. "NSE", "BSE", "NASDAQ"
     private String sector;          // e.g. "Technology" — used for filter grouping
 
-    // ── Position Details ──────────────────────────────────────────────────
     private Double quantity;        // Number of shares/units held
     private Double avgBuyingPrice;  // Average cost basis per unit
     private Double currentPrice;    // Live market price per unit
     private Double investmentValue; // Total cost (qty × avgBuyingPrice)
     private Double currentValue;    // Current market value (qty × currentPrice)
 
+    @com.fasterxml.jackson.annotation.JsonProperty("amount")
+    public String getAmount() {
+        Double val = currentValue != null && currentValue > 0 ? currentValue : investmentValue;
+        if (val != null && val >= 0) {
+            return String.format("₹%,.2f", val);
+        }
+        return null;
+    }
+
     // ── P&L ───────────────────────────────────────────────────────────────
     private Double profitLoss;          // Absolute P&L (currentValue - investmentValue)
     private Double profitLossPercent;   // % gain/loss on investment
     private Double dayChange;           // Intraday change in value
     private Double dayChangePercent;    // Intraday change %
+
+    @com.fasterxml.jackson.annotation.JsonProperty("isPositive")
+    public Boolean isPositive() {
+        return profitLoss != null ? profitLoss >= 0 : true;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("profitLossPercentage")
+    public Double getProfitLossPercentage() {
+        return profitLossPercent;
+    }
 
     /**
      * WIN  = profitable position (profitLoss > 0)

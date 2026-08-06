@@ -5,11 +5,13 @@ on:
     branches: ["main", "develop", "test/**", "feature/**", "hotfix/**", "fix/**"]
     paths:
       - 'services/am-analysis/**'
+      - 'libraries/am-analysis-adapter/**'
       - '.github/workflows/am-analysis.yml'
   pull_request:
     branches: ["main", "develop", "test/**", "feature/**", "hotfix/**", "fix/**"]
     paths:
       - 'services/am-analysis/**'
+      - 'libraries/am-analysis-adapter/**'
       - '.github/workflows/am-analysis.yml'
   workflow_dispatch:
 

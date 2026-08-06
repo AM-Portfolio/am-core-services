@@ -139,7 +139,13 @@ public final class LivePriceOverlayHelper {
             return;
         }
         for (AnalysisEntity entity : entities) {
+            org.slf4j.LoggerFactory.getLogger(LivePriceOverlayHelper.class)
+                    .info("[Overlay] Applying ticks for entity: {}, holdings: {}", 
+                    entity.getId(), entity.getHoldings() != null ? entity.getHoldings().size() : 0);
             apply(entity, ticks, window);
+            org.slf4j.LoggerFactory.getLogger(LivePriceOverlayHelper.class)
+                    .info("[Overlay] After apply, entity {} totalValue: {}", 
+                    entity.getId(), entity.getPerformance() != null ? entity.getPerformance().getTotalValue() : null);
         }
     }
 
@@ -303,14 +309,21 @@ public final class LivePriceOverlayHelper {
         double qty = inv.getQuantity() != null ? inv.getQuantity() : 0.0;
         double avgBuy = inferAveragePrice(inv);
         double investmentValue = inv.getInvestmentValue() != null ? inv.getInvestmentValue() : 0.0;
+        if (investmentValue <= 0 && avgBuy > 0 && qty > 0) {
+            investmentValue = avgBuy * qty;
+            inv.setInvestmentValue(investmentValue);
+        }
 
-        double price = market.getCurrentPrice() != null ? market.getCurrentPrice() : 0.0;
+        double price = market.getCurrentPrice() != null && market.getCurrentPrice() > 0 ? market.getCurrentPrice() : 0.0;
         Double tickReference = null;
         LivePriceTick tick = resolveTick(symbol, ticks);
-        if (tick != null) {
+        if (tick != null && tick.lastPrice() > 0) {
             price = tick.lastPrice();
             market.setCurrentPrice(price);
             tickReference = tick.previousClose();
+        } else if (price <= 0 && avgBuy > 0) {
+            price = avgBuy;
+            market.setCurrentPrice(price);
         }
 
         Double referencePrice = intraday
@@ -338,12 +351,12 @@ public final class LivePriceOverlayHelper {
                 ? (intraday
                     ? computeDailyChangeAmount(qty, price, referencePrice)
                     : computePeriodChangeAmount(qty, price, referencePrice, window))
-                : existingDayChange;
+                : (existingDayChange != null ? existingDayChange : 0.0);
         Double periodChangePct = referencePrice != null
                 ? (intraday
                     ? computeDailyChangePercent(price, referencePrice)
                     : computePeriodChangePercent(price, referencePrice, window))
-                : existingDayChangePct;
+                : (existingDayChangePct != null ? existingDayChangePct : 0.0);
 
         inv.setCurrentValue(currentValue);
         inv.setProfitLoss(profitLoss);

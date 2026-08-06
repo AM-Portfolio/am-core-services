@@ -13,6 +13,7 @@ import com.am.domain.trade.PortfolioOverview;
 import com.am.domain.trade.TradePortfolio;
 import com.am.observability.flow.FlowLogger;
 import com.am.trade.client.service.TradeClientService;
+import com.am.market.client.service.MarketDataClientService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +26,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Aggregates data from am-portfolio (AnalysisRepository) and am-trade (TradeClientService).
+ * Aggregates data from am-portfolio (AnalysisRepository) and am-trade
+ * (TradeClientService).
+ * Re-trigger CI/CD pipeline build.
  *
  * Key design rules:
- *  1. am-portfolio is the source of truth for live holdings & market values.
- *  2. am-trade fills in trade-specific portfolios NOT already linked via externalPortfolioId.
- *  3. de-duplication: Trade portfolios whose externalPortfolioId matches an am-portfolio ID are SKIPPED.
- *  4. Resilience: CB on each source. isComplete=false when either degrades.
+ * 1. am-portfolio is the source of truth for live holdings & market values.
+ * 2. am-trade fills in trade-specific portfolios NOT already linked via
+ * externalPortfolioId.
+ * 3. de-duplication: Trade portfolios whose externalPortfolioId matches an
+ * am-portfolio ID are SKIPPED.
+ * 4. Resilience: CB on each source. isComplete=false when either degrades.
  */
 @Component
 @Slf4j
@@ -40,6 +45,7 @@ public class AnalysisAggregator {
 
     private final AnalysisEntityLoadService entityLoadService;
     private final TradeClientService tradeClientService;
+    private final MarketDataClientService marketDataClientService;
     private final FlowLogger flowLogger;
 
     // ─────────────────────────────────────────────────────────────────────
@@ -51,23 +57,33 @@ public class AnalysisAggregator {
     }
 
     public DashboardSummary getOverallSummary(String userId, Map<String, LivePriceTick> liveTicks) {
-        List<AnalysisEntity> amPortfolios     = fetchPortfolioEntities(userId);
-        List<TradePortfolio>  tradePortfolios  = fetchTradePortfolios(userId);
+        List<AnalysisEntity> amPortfolios = fetchPortfolioEntities(userId);
+        List<TradePortfolio> tradePortfolios = fetchTradePortfolios(userId);
 
         boolean isComplete = amPortfolios != null && tradePortfolios != null;
-        if (amPortfolios  == null) amPortfolios  = Collections.emptyList();
-        if (tradePortfolios == null) tradePortfolios = Collections.emptyList();
+        if (amPortfolios == null)
+            amPortfolios = Collections.emptyList();
+        if (tradePortfolios == null)
+            tradePortfolios = Collections.emptyList();
 
-        if (liveTicks != null && !liveTicks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(amPortfolios, liveTicks);
+        Map<String, LivePriceTick> ticksToUse = liveTicks;
+        if (ticksToUse == null || ticksToUse.isEmpty()) {
+            ticksToUse = fetchLiveTicksForEntities(amPortfolios);
+        }
+
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            log.info("[Aggregator] applying live ticks: {}", ticksToUse.keySet());
+            LivePriceOverlayHelper.applyAll(amPortfolios, ticksToUse);
+        } else {
+            log.warn("[Aggregator] ticksToUse is empty or null after fetchLiveTicksForEntities!");
         }
 
         return buildOverallSummary(amPortfolios, tradePortfolios, isComplete);
     }
 
     private DashboardSummary buildOverallSummary(List<AnalysisEntity> amPortfolios,
-                                                 List<TradePortfolio> tradePortfolios,
-                                                 boolean isComplete) {
+            List<TradePortfolio> tradePortfolios,
+            boolean isComplete) {
 
         // IDs already covered by am-portfolio (de-duplication guard)
         Set<String> coveredPortfolioIds = amPortfolios.stream()
@@ -75,40 +91,55 @@ public class AnalysisAggregator {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        BigDecimal totalValue    = BigDecimal.ZERO;
+        BigDecimal totalValue = BigDecimal.ZERO;
         BigDecimal totalInvested = BigDecimal.ZERO;
-        BigDecimal dayChange     = BigDecimal.ZERO;
+        BigDecimal dayChange = BigDecimal.ZERO;
         int totalHoldings = 0;
 
         List<DashboardSummary.PortfolioBreakdown> breakdowns = new ArrayList<>();
 
         // ── AM Portfolio entities (live holdings) ──────────────────
         for (AnalysisEntity entity : amPortfolios) {
-            if (entity.getPerformance() == null) continue;
+            if (entity.getPerformance() == null)
+                continue;
 
-            BigDecimal val  = toBd(entity.getPerformance().getTotalValue());
-            BigDecimal inv  = toBd(entity.getPerformance().getTotalInvestment());
-            BigDecimal dc   = toBd(entity.getPerformance().getDayChange());
-            BigDecimal gl   = val.subtract(inv);
-            double     glPct = inv.compareTo(BigDecimal.ZERO) > 0
-                    ? gl.divide(inv, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue() : 0.0;
+            BigDecimal val = toBd(entity.getPerformance().getTotalValue());
+            BigDecimal inv = toBd(entity.getPerformance().getTotalInvestment());
+            BigDecimal dc = toBd(entity.getPerformance().getDayChange());
+            BigDecimal gl = toBd(entity.getPerformance().getTotalGainLoss());
+            if (gl.compareTo(BigDecimal.ZERO) == 0 && val.compareTo(inv) != 0) {
+                gl = val.subtract(inv);
+            }
+
+            double glPct = inv.compareTo(BigDecimal.ONE) >= 0
+                    ? gl.divide(inv, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue()
+                    : 0.0;
+
+            Double rawDayChangePct = entity.getPerformance().getDayChangePercentage();
+            double dayChangePct = rawDayChangePct != null ? rawDayChangePct : 0.0;
+
             int holdings = entity.getHoldings() != null ? entity.getHoldings().size() : 0;
 
-            totalValue    = totalValue.add(val);
+            totalValue = totalValue.add(val);
             totalInvested = totalInvested.add(inv);
-            dayChange     = dayChange.add(dc);
-            totalHoldings += holdings;
+            dayChange = dayChange.add(dc);
+            String pid = (entity.getSourceId() != null && !entity.getSourceId().isBlank())
+                    ? entity.getSourceId()
+                    : "unassigned";
+            String pname = (entity.getSourceId() != null && !entity.getSourceId().isBlank())
+                    ? entity.getSourceId()
+                    : "Unassigned Holdings";
 
             breakdowns.add(DashboardSummary.PortfolioBreakdown.builder()
-                    .portfolioId(entity.getSourceId())
-                    .portfolioName(entity.getSourceId())  // enrich with real name if available
+                    .portfolioId(pid)
+                    .portfolioName(pname)
                     .portfolioType("Long Term")
                     .currentValue(val)
                     .investedValue(inv)
                     .gainLoss(gl)
                     .gainLossPercent(glPct)
                     .dayChange(dc)
-                    .dayChangePercent(entity.getPerformance().getDayChangePercentage())
+                    .dayChangePercent(dayChangePct)
                     .holdingCount(holdings)
                     .build());
         }
@@ -116,16 +147,16 @@ public class AnalysisAggregator {
         // ── Trade portfolios NOT already covered by am-portfolio ───
         for (TradePortfolio tp : tradePortfolios) {
             // Skip if this trade portfolio is linked to an am-portfolio (avoid double-count)
-            if (tp.getExternalPortfolioId() != null && coveredPortfolioIds.contains(tp.getExternalPortfolioId())) {
-                log.debug("[Aggregator] Skipping trade portfolio {} — already covered by am-portfolio {}",
-                        tp.getId(), tp.getExternalPortfolioId());
+            if ((tp.getId() != null && coveredPortfolioIds.contains(tp.getId())) ||
+                (tp.getExternalPortfolioId() != null && coveredPortfolioIds.contains(tp.getExternalPortfolioId()))) {
+                log.debug("[Aggregator] Skipping trade portfolio {} — already covered by am-portfolio", tp.getId());
                 continue;
             }
-            BigDecimal val = tp.getTotalValue()   != null ? tp.getTotalValue()   : BigDecimal.ZERO;
+            BigDecimal val = tp.getTotalValue() != null ? tp.getTotalValue() : BigDecimal.ZERO;
             BigDecimal inv = tp.getTotalInvested() != null ? tp.getTotalInvested() : BigDecimal.ZERO;
-            BigDecimal gl  = tp.getCurrentPnl()   != null ? tp.getCurrentPnl()   : BigDecimal.ZERO;
+            BigDecimal gl = tp.getCurrentPnl() != null ? tp.getCurrentPnl() : BigDecimal.ZERO;
 
-            totalValue    = totalValue.add(val);
+            totalValue = totalValue.add(val);
             totalInvested = totalInvested.add(inv);
 
             breakdowns.add(DashboardSummary.PortfolioBreakdown.builder()
@@ -143,16 +174,16 @@ public class AnalysisAggregator {
         BigDecimal totalGainLoss = totalValue.subtract(totalInvested);
         double totalGainLossPct = totalInvested.compareTo(BigDecimal.ZERO) > 0
                 ? totalGainLoss.divide(totalInvested, 4, RoundingMode.HALF_UP)
-                               .multiply(BigDecimal.valueOf(100)).doubleValue()
+                        .multiply(BigDecimal.valueOf(100)).doubleValue()
                 : 0.0;
         BigDecimal base = totalValue.subtract(dayChange);
         double dayChangePct = base.compareTo(BigDecimal.ZERO) > 0
                 ? dayChange.divide(base, 4, RoundingMode.HALF_UP)
-                           .multiply(BigDecimal.valueOf(100)).doubleValue()
+                        .multiply(BigDecimal.valueOf(100)).doubleValue()
                 : 0.0;
 
         // ── Best / Worst performers (from live holdings) ────────────
-        DashboardSummary.PerformerItem best  = resolveBestPerformer(amPortfolios);
+        DashboardSummary.PerformerItem best = resolveBestPerformer(amPortfolios);
         DashboardSummary.PerformerItem worst = resolveWorstPerformer(amPortfolios);
 
         return DashboardSummary.builder()
@@ -178,44 +209,82 @@ public class AnalysisAggregator {
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
         List<PortfolioOverview> overviews = new ArrayList<>();
-
-        List<AnalysisEntity> amPortfolios = fetchPortfolioEntities(userId);
+        List<AnalysisEntity> entities = fetchPortfolioEntities(userId);
         Set<String> coveredIds = new HashSet<>();
 
-        if (amPortfolios != null) {
-            for (AnalysisEntity entity : amPortfolios) {
-                if (entity.getPerformance() == null) continue;
+        Map<String, LivePriceTick> ticksToUse = fetchLiveTicksForEntities(entities);
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticksToUse);
+        }
+
+        if (entities != null) {
+            for (AnalysisEntity entity : entities) {
+                if (entity.getPerformance() == null)
+                    continue;
                 String pid = entity.getSourceId();
                 coveredIds.add(pid);
 
                 int holdingCount = entity.getHoldings() != null ? entity.getHoldings().size() : 0;
                 List<String> topSymbols = entity.getHoldings() != null
                         ? entity.getHoldings().stream()
-                            .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
-                            .sorted(Comparator.comparingDouble(h ->
-                                    -(h.getInvestment() != null && h.getInvestment().getCurrentValue() != null
-                                      ? h.getInvestment().getCurrentValue() : 0.0)))
-                            .limit(3)
-                            .map(h -> h.getIdentity().getSymbol())
-                            .collect(Collectors.toList())
+                                .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
+                                .sorted(Comparator.comparingDouble(
+                                        h -> -(h.getInvestment() != null && h.getInvestment().getCurrentValue() != null
+                                                ? h.getInvestment().getCurrentValue()
+                                                : 0.0)))
+                                .limit(3)
+                                .map(h -> h.getIdentity().getSymbol())
+                                .collect(Collectors.toList())
                         : Collections.emptyList();
 
-                BigDecimal val = toBd(entity.getPerformance().getTotalValue());
-                BigDecimal inv = toBd(entity.getPerformance().getTotalInvestment());
-                BigDecimal gl  = val.subtract(inv);
+                double calcVal = 0.0;
+                double calcInv = 0.0;
+                if (entity.getHoldings() != null) {
+                    for (AnalysisHolding h : entity.getHoldings()) {
+                        Double curP = h.getMarket() != null ? h.getMarket().getCurrentPrice() : null;
+                        Double avgP = h.getInvestment() != null ? h.getInvestment().getAveragePrice() : null;
+                        Double qty = h.getInvestment() != null ? h.getInvestment().getQuantity() : 1.0;
+                        if (qty == null || qty <= 0)
+                            qty = 1.0;
+
+                        if (curP != null && curP > 0 && avgP != null && avgP > 0) {
+                            calcVal += curP * qty;
+                            calcInv += avgP * qty;
+                        } else if (h.getInvestment() != null) {
+                            calcVal += h.getInvestment().getCurrentValue() != null ? h.getInvestment().getCurrentValue()
+                                    : 0.0;
+                            calcInv += h.getInvestment().getInvestmentValue() != null
+                                    ? h.getInvestment().getInvestmentValue()
+                                    : 0.0;
+                        }
+                    }
+                }
+
+                BigDecimal val = calcVal > 0 ? BigDecimal.valueOf(calcVal)
+                        : toBd(entity.getPerformance().getTotalValue());
+                BigDecimal inv = calcInv > 0 ? BigDecimal.valueOf(calcInv)
+                        : toBd(entity.getPerformance().getTotalInvestment());
+                BigDecimal gl = val.subtract(inv);
+
+                double totalGainLossPct = inv.compareTo(BigDecimal.ZERO) > 0
+                        ? gl.doubleValue() / inv.doubleValue() * 100.0
+                        : 0.0;
+
+                Double rawDayChangePct = entity.getPerformance().getDayChangePercentage();
+                double dayChangePct = rawDayChangePct != null ? rawDayChangePct : 0.0;
 
                 overviews.add(PortfolioOverview.builder()
                         .portfolioId(pid)
-                        .portfolioName(pid)  // enrich with real name if name stored separately
+                        .portfolioName(pid) // enrich with real name if name stored separately
                         .type("Long Term")
                         .portfolioCount(1)
                         .holdingCount(holdingCount)
                         .totalValue(val)
                         .investedValue(inv)
                         .totalReturn(gl)
-                        .returnPercentage(entity.getPerformance().getTotalGainLossPercentage())
+                        .returnPercentage(totalGainLossPct)
                         .dayChange(toBd(entity.getPerformance().getDayChange()))
-                        .dayChangePercentage(entity.getPerformance().getDayChangePercentage())
+                        .dayChangePercentage(dayChangePct)
                         .topSymbols(topSymbols)
                         .build());
             }
@@ -225,9 +294,10 @@ public class AnalysisAggregator {
         if (tradePortfolios != null) {
             for (TradePortfolio tp : tradePortfolios) {
                 // Skip trade portfolios already represented by am-portfolio
-                if (tp.getExternalPortfolioId() != null && coveredIds.contains(tp.getExternalPortfolioId())) continue;
+                if (tp.getExternalPortfolioId() != null && coveredIds.contains(tp.getExternalPortfolioId()))
+                    continue;
 
-                BigDecimal val = tp.getTotalValue()   != null ? tp.getTotalValue()   : BigDecimal.ZERO;
+                BigDecimal val = tp.getTotalValue() != null ? tp.getTotalValue() : BigDecimal.ZERO;
                 BigDecimal inv = tp.getTotalInvested() != null ? tp.getTotalInvested() : BigDecimal.ZERO;
 
                 overviews.add(PortfolioOverview.builder()
@@ -325,7 +395,127 @@ public class AnalysisAggregator {
         return null;
     }
 
-    /** Null-safe Double → BigDecimal (Mongo performance fields are often partially populated). */
+    /**
+     * Helper to fetch live quotes for all holdings across entities when liveTicks is not passed.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, LivePriceTick> fetchLiveTicksForEntities(List<AnalysisEntity> entities) {
+        if (entities == null || entities.isEmpty()) return Map.of();
+        try {
+            List<String> symbols = entities.stream()
+                    .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
+                    .map(h -> h.getIdentity() != null ? h.getIdentity().getSymbol() : null)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .toList();
+
+            if (symbols.isEmpty()) return Map.of();
+
+            // Resolve ISINs (12-char codes) to NSE tickers
+            List<String> isins = symbols.stream()
+                    .filter(s -> s.length() == 12 && s.matches("[A-Z]{2}[A-Z0-9]{10}"))
+                    .toList();
+
+            Map<String, String> isinToTicker = Map.of();
+            if (!isins.isEmpty()) {
+                try {
+                    isinToTicker = marketDataClientService.resolveIsinsToTickers(isins);
+                } catch (Exception e) {
+                    log.warn("[Aggregator] ISIN resolution failed: {}", e.getMessage());
+                }
+            }
+
+            List<String> tickersToFetch = new ArrayList<>();
+            for (String sym : symbols) {
+                String resolved = isinToTicker.get(sym);
+                if (resolved != null) {
+                    tickersToFetch.add(resolved);
+                } else {
+                    tickersToFetch.add(sym);
+                    String fallback = resolveFallbackTicker(sym, entities);
+                    if (fallback != null) {
+                        tickersToFetch.add(fallback);
+                    }
+                }
+            }
+
+            String symbolsCsv = String.join(",", tickersToFetch.stream().filter(Objects::nonNull).distinct().toList());
+            if (symbolsCsv.isBlank()) return Map.of();
+
+            Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
+            if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
+                return Map.of();
+            }
+
+            Object quotesObj = rawResponse.containsKey("quotes") ? rawResponse.get("quotes") : rawResponse;
+            log.info("[Aggregator] getQuotes rawResponse keys: {}, quotesObj type: {}", rawResponse.keySet(), quotesObj.getClass().getSimpleName());
+            if (quotesObj instanceof Map<?, ?> quotesMap) {
+                Map<String, LivePriceTick> result = new HashMap<>();
+                for (String sym : symbols) {
+                    String ticker = isinToTicker.getOrDefault(sym, sym);
+                    String fallback = resolveFallbackTicker(sym, entities);
+
+                    Object quoteData = quotesMap.get(ticker);
+                    if (quoteData == null) quoteData = quotesMap.get(sym);
+                    if (quoteData == null && fallback != null) quoteData = quotesMap.get(fallback);
+
+                    if (quoteData instanceof Map<?, ?> qData) {
+                        Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue() : null;
+                        Double prev  = qData.get("previousClose") != null ? ((Number) qData.get("previousClose")).doubleValue() : null;
+                        if (prev == null || prev == 0.0) {
+                            if (qData.get("ohlc") instanceof Map<?, ?> ohlc) {
+                                prev = ohlc.get("open") != null ? ((Number) ohlc.get("open")).doubleValue() : null;
+                            }
+                        }
+                        if (price != null && price > 0) {
+                            LivePriceTick liveTick = new LivePriceTick(price, prev);
+                            log.info("[Aggregator] Put liveTick for sym={}, ticker={}, fallback={} -> {}", sym, ticker, fallback, liveTick);
+                            result.put(sym, liveTick);
+                            result.put(ticker, liveTick);
+                            if (fallback != null) result.put(fallback, liveTick);
+                        } else {
+                            log.warn("[Aggregator] Price was null or <= 0 for sym={}", sym);
+                        }
+                    } else {
+                        log.warn("[Aggregator] quoteData is NOT a Map for sym={}, type={}", sym, quoteData != null ? quoteData.getClass().getSimpleName() : "null");
+                    }
+                }
+                return result;
+            }
+        } catch (Exception e) {
+            log.warn("[Aggregator] Failed to fetch live ticks for entities: {}", e.getMessage());
+        }
+        return Map.of();
+    }
+
+    private String resolveFallbackTicker(String isin, List<AnalysisEntity> entities) {
+        if (isin == null || !isin.startsWith("IN") || entities == null) return null;
+        for (AnalysisEntity entity : entities) {
+            if (entity.getHoldings() == null) continue;
+            for (AnalysisHolding h : entity.getHoldings()) {
+                if (h.getIdentity() != null && isin.equalsIgnoreCase(h.getIdentity().getSymbol())) {
+                    String name = h.getIdentity().getCompanyName();
+                    if (name != null) {
+                        if (name.contains("GOLDBONDS2029SR-VIII") || name.contains("GOLDBONDS")) return "SGBD29VIII";
+                        if (name.contains("- HEALTHY")) return "HEALTHY";
+                        if (name.contains("- GROWWDEFNC")) return "GROWWDEFNC";
+                        if (name.contains("- GROWWRAIL")) return "GROWWRAIL";
+                        if (name.contains("- MOHEALTH")) return "MOHEALTH";
+                        if (name.contains("GOLD BEES") || name.contains("GOLDBEES")) return "GOLDBEES";
+                        if (name.contains("NIFTY BEES") || name.contains("NIFTYBEES")) return "NIFTYBEES";
+                        if (name.contains("VODAFONE IDEA")) return "IDEA";
+                        if (name.contains("RAIL VIKAS")) return "RVNL";
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Null-safe Double → BigDecimal (Mongo performance fields are often partially
+     * populated).
+     */
     private static BigDecimal toBd(Double value) {
         return value != null ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
     }

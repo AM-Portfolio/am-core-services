@@ -1,5 +1,4 @@
-# Production environment overrides for am-analysis
-# Service-level Ingress (same model as am-identity).
+# CI rebuild trigger: 2026-07-29-redeploy-analysis
 environment: prod
 
 replicaCount: 1
@@ -7,10 +6,21 @@ replicaCount: 1
 resources:
   limits:
     cpu: 1000m
-    memory: 1024Mi
+    memory: 768Mi
   requests:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 200m
+    memory: 384Mi
+
+probes:
+  port: 8080
+  startup:
+    path: "/actuator/health"
+    failureThreshold: 30 # 30 * 10s = 300s (5 minutes) to allow for slow Spring Boot startup
+    periodSeconds: 10
+  liveness:
+    path: "/actuator/health"
+  readiness:
+    path: "/actuator/health"
 
 ingress:
   enabled: true
@@ -53,3 +63,5 @@ env:
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MARKET_DATA_URL: "https://am.asrax.in/market"
+# Keeps full C2 compilation for max calculation speed while skipping slow startup pre-initializers
+  JAVA_OPTS: "-Xms384m -Xmx512m -XX:+UseStringDeduplication -Dspring.backgroundpreinitializer.ignore=true"

@@ -128,8 +128,12 @@ public class DashboardAnalysisService {
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
         EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
         List<AnalysisEntity> entities = loadResult.entities();
-        if (liveTicks != null && !liveTicks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(entities, liveTicks);
+        Map<String, LivePriceTick> ticksToUse = liveTicks;
+        if (ticksToUse == null || ticksToUse.isEmpty()) {
+            ticksToUse = aggregator.fetchLiveTicksForEntities(entities);
+        }
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticksToUse);
         }
         log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
@@ -192,7 +196,13 @@ public class DashboardAnalysisService {
     private ActivityItem mapHoldingToActivity(AnalysisHolding holding, String portfolioId, String portfolioName, LocalDateTime lastUpdated) {
         if (holding.getIdentity() == null) return null;
 
-        String symbol      = holding.getIdentity().getSymbol();
+        String symbol = holding.getIdentity().getSymbol();
+        if (!StringUtils.hasText(symbol)) {
+            symbol = StringUtils.hasText(holding.getIdentity().getIsin())
+                    ? holding.getIdentity().getIsin()
+                    : holding.getIdentity().getName();
+        }
+
         String companyName = StringUtils.hasText(holding.getIdentity().getCompanyName())
                 ? holding.getIdentity().getCompanyName()
                 : holding.getIdentity().getName();
@@ -202,15 +212,29 @@ public class DashboardAnalysisService {
         InvestmentStats inv = holding.getInvestment();
         MarketStats     mkt = holding.getMarket();
 
-        Double avgBuyingPrice  = inv != null ? inv.getAveragePrice()         : null;
         Double quantity        = inv != null ? inv.getQuantity()              : null;
         Double investmentValue = inv != null ? inv.getInvestmentValue()       : null;
+        Double avgBuyingPrice  = inv != null ? inv.getAveragePrice()         : null;
+
+        if ((avgBuyingPrice == null || avgBuyingPrice == 0.0) 
+                && investmentValue != null && quantity != null && quantity > 0) {
+            avgBuyingPrice = investmentValue / quantity;
+        }
+
         Double currentValue    = inv != null ? inv.getCurrentValue()          : null;
         Double profitLoss      = inv != null ? inv.getProfitLoss()            : null;
         Double profitLossPct   = inv != null ? inv.getProfitLossPercentage()  : null;
         Double currentPrice    = mkt != null ? mkt.getCurrentPrice()          : null;
         Double dayChange       = mkt != null ? mkt.getDayChange()             : null;
         Double dayChangePct    = mkt != null ? mkt.getDayChangePercentage()   : null;
+
+        if (currentPrice != null && currentPrice > 0 && avgBuyingPrice != null && avgBuyingPrice > 0) {
+            double qty = (quantity != null && quantity > 0) ? quantity : 1.0;
+            currentValue = currentPrice * qty;
+            investmentValue = avgBuyingPrice * qty;
+            profitLoss = currentValue - investmentValue;
+            profitLossPct = ((currentPrice - avgBuyingPrice) / avgBuyingPrice) * 100.0;
+        }
 
         String status = ActivityItem.resolveStatus(profitLoss);
 
