@@ -2,7 +2,7 @@ name: Analysis Publish
 
 on:
   push:
-    branches: ["main", "develop", "test/**", "feature/**", "hotfix/**", "fix/**"]
+    branches: ["master", "develop", "test/**", "feature/**", "hotfix/**", "fix/**"]
     paths:
       - 'services/am-analysis/**'
       - 'libraries/am-analysis-adapter/**'
