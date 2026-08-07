@@ -12,7 +12,7 @@ resources:
     cpu: 250m
     memory: 256Mi
 
-# Vault enabled — injects auth credentials at runtime
+# Vault enabled â€” injects auth credentials at runtime
 vault:
   enabled: true
   role: "am-backend-role"
@@ -55,3 +55,7 @@ ingress:
       paths:
         - path: /mcp
           pathType: Prefix
+
+global:
+  image:
+    tag: "29318309590"

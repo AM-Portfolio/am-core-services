@@ -1,0 +1,21 @@
+apiVersion: am.argocd/v1
+kind: ServiceDeploy
+service: am-mcp-server
+enabled: true
+owners: core
+source:
+  repo: am-core-services
+  path: services/am-mcp-server/argocd.yaml
+chart:
+  repoURL: https://github.com/AM-Portfolio/am-pipelines.git
+  path: services/am-mcp-server/argocd.yaml
+  targetRevision: main
+helm:
+  releaseName: am-mcp-server
+  valuesPath: services/am-mcp-server/helm
+valuesRepoURL: https://github.com/AM-Portfolio/am-core-services.git
+valuesTargetRevision: main
+envs:
+  prod:
+    enabled: true
+    namespace: am-apps-prod

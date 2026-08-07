@@ -27,7 +27,7 @@ ingress:
         - path: /analysis
           pathType: Prefix
 
-# Vault enabled — injects all secrets at runtime
+# Vault enabled â€” injects all secrets at runtime
 vault:
   enabled: true
   role: "am-backend-role"
@@ -53,3 +53,7 @@ env:
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   MARKET_DATA_URL: "https://am.asrax.in/market"
+
+global:
+  image:
+    tag: "31098091614"
