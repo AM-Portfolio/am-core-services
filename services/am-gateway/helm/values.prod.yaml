@@ -20,7 +20,7 @@ probes:
   readiness:
     path: "/actuator/health"
 
-# Vault enabled — role and token management now handled centrally
+# Vault enabled â€” role and token management now handled centrally
 vault:
   enabled: true
   secretPaths:
@@ -63,3 +63,7 @@ ingress:
           pathType: Prefix
         - path: /gateway
           pathType: Prefix
+
+global:
+  image:
+    tag: "30454499836"
