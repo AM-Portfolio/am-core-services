@@ -489,26 +489,8 @@ public class AnalysisAggregator {
     }
 
     private String resolveFallbackTicker(String isin, List<AnalysisEntity> entities) {
-        if (isin == null || !isin.startsWith("IN") || entities == null) return null;
-        for (AnalysisEntity entity : entities) {
-            if (entity.getHoldings() == null) continue;
-            for (AnalysisHolding h : entity.getHoldings()) {
-                if (h.getIdentity() != null && isin.equalsIgnoreCase(h.getIdentity().getSymbol())) {
-                    String name = h.getIdentity().getCompanyName();
-                    if (name != null) {
-                        if (name.contains("GOLDBONDS2029SR-VIII") || name.contains("GOLDBONDS")) return "SGBD29VIII";
-                        if (name.contains("- HEALTHY")) return "HEALTHY";
-                        if (name.contains("- GROWWDEFNC")) return "GROWWDEFNC";
-                        if (name.contains("- GROWWRAIL")) return "GROWWRAIL";
-                        if (name.contains("- MOHEALTH")) return "MOHEALTH";
-                        if (name.contains("GOLD BEES") || name.contains("GOLDBEES")) return "GOLDBEES";
-                        if (name.contains("NIFTY BEES") || name.contains("NIFTYBEES")) return "NIFTYBEES";
-                        if (name.contains("VODAFONE IDEA")) return "IDEA";
-                        if (name.contains("RAIL VIKAS")) return "RVNL";
-                    }
-                }
-            }
-        }
+        // All ETFs, bonds, and standard securities are now resolved dynamically via MongoDB and Upstox ISIN matching.
+        // We no longer need hardcoded mappings inside the Java code.
         return null;
     }
 
