@@ -217,6 +217,23 @@ public class AnalysisAggregator {
             LivePriceOverlayHelper.applyAll(entities, ticksToUse);
         }
 
+        Map<String, String> isinToTicker = Map.of();
+        if (entities != null) {
+            List<String> isins = entities.stream()
+                    .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
+                    .map(h -> h.getIdentity() != null ? h.getIdentity().getSymbol() : null)
+                    .filter(s -> s != null && s.length() == 12 && s.matches("[A-Z]{2}[A-Z0-9]{10}"))
+                    .distinct()
+                    .toList();
+            if (!isins.isEmpty()) {
+                try {
+                    isinToTicker = marketDataClientService.resolveIsinsToTickers(isins);
+                } catch (Exception e) {
+                    log.warn("[Aggregator] ISIN resolution failed in overviews: {}", e.getMessage());
+                }
+            }
+        }
+
         if (entities != null) {
             for (AnalysisEntity entity : entities) {
                 if (entity.getPerformance() == null)
@@ -225,6 +242,7 @@ public class AnalysisAggregator {
                 coveredIds.add(pid);
 
                 int holdingCount = entity.getHoldings() != null ? entity.getHoldings().size() : 0;
+                final Map<String, String> finalIsinToTicker = isinToTicker;
                 List<String> topSymbols = entity.getHoldings() != null
                         ? entity.getHoldings().stream()
                                 .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
@@ -233,9 +251,13 @@ public class AnalysisAggregator {
                                                 ? h.getInvestment().getCurrentValue()
                                                 : 0.0)))
                                 .limit(3)
-                                .map(h -> h.getIdentity().getSymbol())
+                                .map(h -> {
+                                    String sym = h.getIdentity().getSymbol();
+                                    return finalIsinToTicker.getOrDefault(sym, sym);
+                                })
                                 .collect(Collectors.toList())
                         : Collections.emptyList();
+
 
                 double calcVal = 0.0;
                 double calcInv = 0.0;
