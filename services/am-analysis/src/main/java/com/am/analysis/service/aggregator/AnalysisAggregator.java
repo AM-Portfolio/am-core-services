@@ -260,6 +260,7 @@ public class AnalysisAggregator {
                                 .collect(Collectors.toList())
                         : Collections.emptyList();
 
+
                 double calcVal = 0.0;
                 double calcInv = 0.0;
                 if (entity.getHoldings() != null) {
