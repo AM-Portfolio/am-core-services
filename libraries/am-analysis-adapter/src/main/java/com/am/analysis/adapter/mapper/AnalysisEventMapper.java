@@ -103,17 +103,26 @@ public class AnalysisEventMapper {
                                                         : (invVal > 0 ? (pnl / invVal) * 100.0 : 0.0);
 
                                         String sym = (equity.getSymbol() != null && !equity.getSymbol().isBlank())
-                                                        ? equity.getSymbol()
+                                                        ? equity.getSymbol().trim()
                                                         : (equity.getIsin() != null && !equity.getIsin().isBlank()
-                                                                        ? equity.getIsin()
+                                                                        ? equity.getIsin().trim()
                                                                         : equity.getName());
+
+                                        // If broker sent ISIN as symbol, keep it in isin field for downstream lookups.
+                                        String isin = equity.getIsin();
+                                        if (isin == null || isin.isBlank()) {
+                                                if (sym != null && sym.length() == 12
+                                                                && sym.matches("[A-Z]{2}[A-Z0-9]{10}")) {
+                                                        isin = sym.toUpperCase();
+                                                }
+                                        }
 
                                         return AnalysisHolding.builder()
                                                         .identity(HoldingIdentity.builder()
                                                                         .symbol(sym)
                                                                         .name(equity.getName())
                                                                         .assetClass("EQUITY")
-                                                                        .isin(equity.getIsin())
+                                                                        .isin(isin)
                                                                         .companyName(equity.getCompanyName())
                                                                         .exchange(equity.getExchange())
                                                                         .build())
