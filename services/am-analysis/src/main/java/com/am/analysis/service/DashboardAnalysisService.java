@@ -57,15 +57,11 @@ public class DashboardAnalysisService {
     private final AnalysisBusinessMetrics businessMetrics;
 
     public DashboardSummary getSummary(String userId) {
-        return snapshotService.load(userId, DashboardWidgetType.SUMMARY, DashboardSummary.class)
-                .orElseGet(() -> {
-                    log.info("[Summary] Snapshot miss for user {}, computing live", userId);
-                    DashboardSummary summary = aggregator.getOverallSummary(userId);
-                    if (summary != null) {
-                        snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
-                    }
-                    return summary;
-                });
+        DashboardSummary summary = aggregator.getOverallSummary(userId);
+        if (summary != null) {
+            snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
+        }
+        return summary;
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
@@ -104,15 +100,11 @@ public class DashboardAnalysisService {
                 !StringUtils.hasText(filter.getSector()) && !StringUtils.hasText(filter.getPortfolioName());
 
         if (isDefaultFilter) {
-            return snapshotService.load(userId, DashboardWidgetType.ACTIVITY, RecentActivityResponse.class)
-                    .orElseGet(() -> {
-                        log.info("[Activity] Snapshot miss for user {}, computing live", userId);
-                        RecentActivityResponse response = getRecentActivityUncached(userId, filter);
-                        if (response != null) {
-                            snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, response);
-                        }
-                        return response;
-                    });
+            RecentActivityResponse response = getRecentActivityUncached(userId, filter);
+            if (response != null) {
+                snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, response);
+            }
+            return response;
         }
         return getRecentActivityUncached(userId, filter);
     }
@@ -205,10 +197,6 @@ public class DashboardAnalysisService {
                     : holding.getIdentity().getName();
         }
 
-        String companyName = StringUtils.hasText(holding.getIdentity().getCompanyName())
-                ? holding.getIdentity().getCompanyName()
-                : holding.getIdentity().getName();
-
         String symbol = storedSymbol;
         if (LivePriceOverlayHelper.looksLikeIsin(storedSymbol) && isinToTicker != null) {
             String ticker = isinToTicker.get(storedSymbol.trim().toUpperCase());
@@ -217,10 +205,10 @@ public class DashboardAnalysisService {
             }
             if (StringUtils.hasText(ticker)) {
                 symbol = ticker;
-            } else if (StringUtils.hasText(companyName)) {
-                symbol = companyName;
             }
         }
+
+        String companyName = resolveActivityCompanyName(holding, symbol);
         String exchange = holding.getIdentity().getExchange();
         String sector   = holding.getClassification() != null ? holding.getClassification().getSector() : null;
 
@@ -254,8 +242,7 @@ public class DashboardAnalysisService {
         String status = ActivityItem.resolveStatus(profitLoss);
 
         // Human-readable title
-        String title = symbol != null ? symbol : "Unknown";
-        if (companyName != null) title = companyName;
+        String title = companyName != null ? companyName : (symbol != null ? symbol : "Unknown");
 
         String description = buildDescription(quantity, avgBuyingPrice, profitLossPct);
 
@@ -282,6 +269,24 @@ public class DashboardAnalysisService {
                 .description(description)
                 .timestamp(lastUpdated != null ? lastUpdated : LocalDateTime.now())
                 .build();
+    }
+
+    private String resolveActivityCompanyName(AnalysisHolding holding, String symbol) {
+        if (holding == null || holding.getIdentity() == null) {
+            return null;
+        }
+        if (StringUtils.hasText(holding.getIdentity().getCompanyName())
+                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getCompanyName())) {
+            return holding.getIdentity().getCompanyName();
+        }
+        if (StringUtils.hasText(holding.getIdentity().getName())
+                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getName())) {
+            return holding.getIdentity().getName();
+        }
+        if (symbol != null && !AnalysisAggregator.looksLikeIsin(symbol)) {
+            return symbol;
+        }
+        return null;
     }
 
     private String buildDescription(Double quantity, Double avgPrice, Double profitLossPct) {
@@ -345,10 +350,12 @@ public class DashboardAnalysisService {
     // ─────────────────────────────────────────────────────────────────────
 
     public void publishDashboardUpdate(String userId) {
-        publishDashboardSummary(userId);
-        publishDashboardActivity(userId);
-        publishDashboardAllocation(userId);
-        publishDashboardMovers(userId);
+        EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
+        Map<String, LivePriceTick> ticks = aggregator.fetchLiveTicksForEntities(loadResult.entities());
+        publishDashboardSummary(userId, ticks);
+        publishDashboardActivity(userId, ticks);
+        publishDashboardAllocation(userId, ticks);
+        publishDashboardMovers(userId, ticks);
     }
 
     /** Immediate push of all 5 dashboard widgets on subscribe (no debounce). */
