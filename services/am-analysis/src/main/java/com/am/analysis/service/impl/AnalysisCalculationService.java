@@ -225,14 +225,18 @@ public class AnalysisCalculationService {
                     .build();
         }
 
+        Map<String, String> isinAliases = buildIsinAliases(symbols);
+        List<String> symbolsForFetch = expandSymbolsForHistoricalFetch(symbols, isinAliases);
+
             // 3. Batch Fetch Market Data
         Map<String, HistoricalData> marketDataMap = Collections.emptyMap();
         long fetchStart = System.currentTimeMillis();
         try {
-            log.info("[PerfCalc] Fetching market data for {} symbols...", symbols.size());
+            log.info("[PerfCalc] Fetching market data for {} symbols ({} after ISIN expansion)...",
+                    symbols.size(), symbolsForFetch.size());
             
             marketDataMap = marketDataService.getHistoricalDataBatch(
-                String.join(",", symbols), 
+                String.join(",", symbolsForFetch), 
                 fromDate.toString(), 
                 toDate.toString(), 
                 TimeFrame.DAY
@@ -255,9 +259,56 @@ public class AnalysisCalculationService {
             log.warn("[PerfCalc] No market data returned for Entity {}. Building synthetic chart from stored holding values.", entityId);
             return buildSyntheticPerformance(entity, timeFrame);
         }
-        PerformanceResponse response = performanceCalculator.calculate(entity, timeFrame, marketDataMap, fromDate, toDate);
+        marketDataMap = aliasMarketDataByIsin(marketDataMap, isinAliases);
+        PerformanceResponse response = performanceCalculator.calculate(
+                entity, timeFrame, marketDataMap, fromDate, toDate, isinAliases);
         log.info("[PerfCalc] Calculation completed in {} ms. Total Return: {}%", (System.currentTimeMillis() - startTime), response.getTotalReturnPercentage());
         return response;
+    }
+
+    private Map<String, String> buildIsinAliases(List<String> symbols) {
+        List<String> isins = symbols.stream()
+                .filter(s -> s != null && s.length() == 12 && s.matches("[A-Z]{2}[A-Z0-9]{10}"))
+                .distinct()
+                .collect(Collectors.toList());
+        if (isins.isEmpty()) {
+            return Map.of();
+        }
+        try {
+            return marketDataService.resolveIsinsToTickers(isins);
+        } catch (Exception e) {
+            log.warn("[PerfCalc] ISIN resolution failed: {}", e.getMessage());
+            return Map.of();
+        }
+    }
+
+    private List<String> expandSymbolsForHistoricalFetch(List<String> symbols, Map<String, String> isinAliases) {
+        Set<String> expanded = new LinkedHashSet<>();
+        for (String sym : symbols) {
+            if (sym == null || sym.isBlank()) {
+                continue;
+            }
+            expanded.add(sym);
+            String ticker = isinAliases.get(sym);
+            if (ticker != null && !ticker.isBlank()) {
+                expanded.add(ticker);
+            }
+        }
+        return new ArrayList<>(expanded);
+    }
+
+    private Map<String, HistoricalData> aliasMarketDataByIsin(
+            Map<String, HistoricalData> marketDataMap, Map<String, String> isinAliases) {
+        if (marketDataMap == null || marketDataMap.isEmpty() || isinAliases == null || isinAliases.isEmpty()) {
+            return marketDataMap != null ? marketDataMap : Map.of();
+        }
+        Map<String, HistoricalData> aliased = new HashMap<>(marketDataMap);
+        isinAliases.forEach((isin, ticker) -> {
+            if (ticker != null && aliased.containsKey(ticker) && !aliased.containsKey(isin)) {
+                aliased.put(isin, aliased.get(ticker));
+            }
+        });
+        return aliased;
     }
 
     /**

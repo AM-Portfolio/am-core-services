@@ -39,6 +39,9 @@ class PerformanceAnalysisServiceTest {
     @Mock
     private com.am.analysis.service.validator.AnalysisAccessValidator accessValidator;
 
+    @Mock
+    private com.am.analysis.service.aggregator.AnalysisAggregator aggregator;
+
     @InjectMocks
     private PerformanceAnalysisService performanceAnalysisService;
 
