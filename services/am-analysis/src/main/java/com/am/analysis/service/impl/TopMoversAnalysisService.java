@@ -545,9 +545,17 @@ public class TopMoversAnalysisService {
             List<com.am.analysis.adapter.model.AnalysisHolding> losers,
             String timeFrame,
             double totalPortfolioValue) {
+        // One batch lookup for any ISIN-shaped keys still stored in legacy holdings.
+        Map<String, String> isinToTicker = buildIsinToTickerMap(
+                java.util.stream.Stream.concat(gainers.stream(), losers.stream()).toList());
+
         return TopMoversResponse.builder()
-                .gainers(gainers.stream().map(h -> mapToMoverItem(h, timeFrame, totalPortfolioValue)).toList())
-                .losers(losers.stream().map(h -> mapToMoverItem(h, timeFrame, totalPortfolioValue)).toList())
+                .gainers(gainers.stream()
+                        .map(h -> mapToMoverItem(h, timeFrame, totalPortfolioValue, isinToTicker))
+                        .toList())
+                .losers(losers.stream()
+                        .map(h -> mapToMoverItem(h, timeFrame, totalPortfolioValue, isinToTicker))
+                        .toList())
                 .timeFrame(timeFrame)
                 .build();
     }
@@ -574,17 +582,99 @@ public class TopMoversAnalysisService {
         if (h == null || h.getIdentity() == null) return null;
         String sym = h.getIdentity().getSymbol();
         if (org.springframework.util.StringUtils.hasText(sym)) {
-            return sym;
+            return sym.trim();
         }
         if (org.springframework.util.StringUtils.hasText(h.getIdentity().getIsin())) {
-            return h.getIdentity().getIsin();
+            return h.getIdentity().getIsin().trim();
         }
         return h.getIdentity().getName();
     }
 
-    private TopMoversResponse.MoverItem mapToMoverItem(com.am.analysis.adapter.model.AnalysisHolding h, String timeFrame, double totalPortfolioValue) {
-        String symbol = resolveSymbol(h) != null ? resolveSymbol(h) : "UNKNOWN";
-        String name = (h.getIdentity() != null && h.getIdentity().getName() != null) ? h.getIdentity().getName() : symbol;
+    /**
+     * Dashboard ticker column: prefer exchange symbol; map legacy ISIN keys via market-data lookup.
+     */
+    private String resolveDisplayTicker(
+            com.am.analysis.adapter.model.AnalysisHolding h, Map<String, String> isinToTicker) {
+        String raw = resolveSymbol(h);
+        if (raw == null || raw.isBlank()) {
+            return "UNKNOWN";
+        }
+        String upper = raw.trim().toUpperCase();
+        if (looksLikeIsin(upper)) {
+            String mapped = isinToTicker.get(upper);
+            if (mapped != null && !mapped.isBlank()) {
+                return mapped;
+            }
+            if (h.getIdentity() != null && org.springframework.util.StringUtils.hasText(h.getIdentity().getIsin())) {
+                mapped = isinToTicker.get(h.getIdentity().getIsin().trim().toUpperCase());
+                if (mapped != null && !mapped.isBlank()) {
+                    return mapped;
+                }
+            }
+        }
+        return upper;
+    }
+
+    /**
+     * Human-readable label: company name first, then short name — never prefer raw ISIN as the only label.
+     */
+    private String resolveDisplayName(com.am.analysis.adapter.model.AnalysisHolding h, String displayTicker) {
+        if (h == null || h.getIdentity() == null) {
+            return displayTicker;
+        }
+        if (org.springframework.util.StringUtils.hasText(h.getIdentity().getCompanyName())) {
+            return h.getIdentity().getCompanyName().trim();
+        }
+        if (org.springframework.util.StringUtils.hasText(h.getIdentity().getName())) {
+            return h.getIdentity().getName().trim();
+        }
+        return displayTicker;
+    }
+
+    /** Batch ISIN → ticker; fail-open (empty map) so movers API still returns holdings. */
+    private Map<String, String> buildIsinToTickerMap(List<com.am.analysis.adapter.model.AnalysisHolding> holdings) {
+        if (holdings == null || holdings.isEmpty()) {
+            return Map.of();
+        }
+        List<String> isins = holdings.stream()
+                .map(h -> h.getIdentity())
+                .filter(java.util.Objects::nonNull)
+                .map(id -> {
+                    if (looksLikeIsin(id.getSymbol())) {
+                        return id.getSymbol().trim().toUpperCase();
+                    }
+                    if (looksLikeIsin(id.getIsin())) {
+                        return id.getIsin().trim().toUpperCase();
+                    }
+                    return null;
+                })
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .toList();
+        if (isins.isEmpty()) {
+            return Map.of();
+        }
+        try {
+            return marketDataClientService.resolveIsinsToTickers(isins);
+        } catch (Exception ex) {
+            log.warn("[TopMovers] Batch ISIN→ticker lookup failed: {}", ex.getMessage());
+            return Map.of();
+        }
+    }
+
+    private static boolean looksLikeIsin(String value) {
+        return value != null
+                && value.length() == 12
+                && value.matches("[A-Z]{2}[A-Z0-9]{10}");
+    }
+
+    private TopMoversResponse.MoverItem mapToMoverItem(
+            com.am.analysis.adapter.model.AnalysisHolding h,
+            String timeFrame,
+            double totalPortfolioValue,
+            Map<String, String> isinToTicker) {
+        String symbol = resolveDisplayTicker(h, isinToTicker);
+        String name = resolveDisplayName(h, symbol);
         Double currentPrice = (h.getMarket() != null && h.getMarket().getCurrentPrice() != null) ? h.getMarket().getCurrentPrice() : 0.0;
         
         double pct = resolveChangeMetric(h, timeFrame);

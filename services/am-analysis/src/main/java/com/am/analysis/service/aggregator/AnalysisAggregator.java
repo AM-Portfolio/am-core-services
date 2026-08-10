@@ -146,9 +146,11 @@ public class AnalysisAggregator {
 
         // ── Trade portfolios NOT already covered by am-portfolio ───
         for (TradePortfolio tp : tradePortfolios) {
-            // Skip if this trade portfolio is linked to an am-portfolio (avoid double-count)
+            // Skip if this trade portfolio is linked to an am-portfolio (avoid
+            // double-count)
             if ((tp.getId() != null && coveredPortfolioIds.contains(tp.getId())) ||
-                (tp.getExternalPortfolioId() != null && coveredPortfolioIds.contains(tp.getExternalPortfolioId()))) {
+                    (tp.getExternalPortfolioId() != null
+                            && coveredPortfolioIds.contains(tp.getExternalPortfolioId()))) {
                 log.debug("[Aggregator] Skipping trade portfolio {} — already covered by am-portfolio", tp.getId());
                 continue;
             }
@@ -217,6 +219,23 @@ public class AnalysisAggregator {
             LivePriceOverlayHelper.applyAll(entities, ticksToUse);
         }
 
+        Map<String, String> isinToTicker = Map.of();
+        if (entities != null) {
+            List<String> isins = entities.stream()
+                    .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
+                    .map(h -> h.getIdentity() != null ? h.getIdentity().getSymbol() : null)
+                    .filter(s -> s != null && s.length() == 12 && s.matches("[A-Z]{2}[A-Z0-9]{10}"))
+                    .distinct()
+                    .toList();
+            if (!isins.isEmpty()) {
+                try {
+                    isinToTicker = marketDataClientService.resolveIsinsToTickers(isins);
+                } catch (Exception e) {
+                    log.warn("[Aggregator] ISIN resolution failed in overviews: {}", e.getMessage());
+                }
+            }
+        }
+
         if (entities != null) {
             for (AnalysisEntity entity : entities) {
                 if (entity.getPerformance() == null)
@@ -225,6 +244,7 @@ public class AnalysisAggregator {
                 coveredIds.add(pid);
 
                 int holdingCount = entity.getHoldings() != null ? entity.getHoldings().size() : 0;
+                final Map<String, String> finalIsinToTicker = isinToTicker;
                 List<String> topSymbols = entity.getHoldings() != null
                         ? entity.getHoldings().stream()
                                 .filter(h -> h.getIdentity() != null && h.getIdentity().getSymbol() != null)
@@ -233,7 +253,10 @@ public class AnalysisAggregator {
                                                 ? h.getInvestment().getCurrentValue()
                                                 : 0.0)))
                                 .limit(3)
-                                .map(h -> h.getIdentity().getSymbol())
+                                .map(h -> {
+                                    String sym = h.getIdentity().getSymbol();
+                                    return finalIsinToTicker.getOrDefault(sym, sym);
+                                })
                                 .collect(Collectors.toList())
                         : Collections.emptyList();
 
@@ -396,11 +419,13 @@ public class AnalysisAggregator {
     }
 
     /**
-     * Helper to fetch live quotes for all holdings across entities when liveTicks is not passed.
+     * Helper to fetch live quotes for all holdings across entities when liveTicks
+     * is not passed.
      */
     @SuppressWarnings("unchecked")
     public Map<String, LivePriceTick> fetchLiveTicksForEntities(List<AnalysisEntity> entities) {
-        if (entities == null || entities.isEmpty()) return Map.of();
+        if (entities == null || entities.isEmpty())
+            return Map.of();
         try {
             List<String> symbols = entities.stream()
                     .flatMap(e -> e.getHoldings() != null ? e.getHoldings().stream() : java.util.stream.Stream.empty())
@@ -409,7 +434,8 @@ public class AnalysisAggregator {
                     .distinct()
                     .toList();
 
-            if (symbols.isEmpty()) return Map.of();
+            if (symbols.isEmpty())
+                return Map.of();
 
             // Resolve ISINs (12-char codes) to NSE tickers
             List<String> isins = symbols.stream()
@@ -440,7 +466,8 @@ public class AnalysisAggregator {
             }
 
             String symbolsCsv = String.join(",", tickersToFetch.stream().filter(Objects::nonNull).distinct().toList());
-            if (symbolsCsv.isBlank()) return Map.of();
+            if (symbolsCsv.isBlank())
+                return Map.of();
 
             Map<String, Object> rawResponse = marketDataClientService.getQuotes(symbolsCsv, "1D", Boolean.FALSE);
             if (rawResponse == null || rawResponse.isEmpty() || rawResponse.containsKey("error")) {
@@ -448,7 +475,8 @@ public class AnalysisAggregator {
             }
 
             Object quotesObj = rawResponse.containsKey("quotes") ? rawResponse.get("quotes") : rawResponse;
-            log.info("[Aggregator] getQuotes rawResponse keys: {}, quotesObj type: {}", rawResponse.keySet(), quotesObj.getClass().getSimpleName());
+            log.info("[Aggregator] getQuotes rawResponse keys: {}, quotesObj type: {}", rawResponse.keySet(),
+                    quotesObj.getClass().getSimpleName());
             if (quotesObj instanceof Map<?, ?> quotesMap) {
                 Map<String, LivePriceTick> result = new HashMap<>();
                 for (String sym : symbols) {
@@ -456,12 +484,17 @@ public class AnalysisAggregator {
                     String fallback = resolveFallbackTicker(sym, entities);
 
                     Object quoteData = quotesMap.get(ticker);
-                    if (quoteData == null) quoteData = quotesMap.get(sym);
-                    if (quoteData == null && fallback != null) quoteData = quotesMap.get(fallback);
+                    if (quoteData == null)
+                        quoteData = quotesMap.get(sym);
+                    if (quoteData == null && fallback != null)
+                        quoteData = quotesMap.get(fallback);
 
                     if (quoteData instanceof Map<?, ?> qData) {
-                        Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue() : null;
-                        Double prev  = qData.get("previousClose") != null ? ((Number) qData.get("previousClose")).doubleValue() : null;
+                        Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue()
+                                : null;
+                        Double prev = qData.get("previousClose") != null
+                                ? ((Number) qData.get("previousClose")).doubleValue()
+                                : null;
                         if (prev == null || prev == 0.0) {
                             if (qData.get("ohlc") instanceof Map<?, ?> ohlc) {
                                 prev = ohlc.get("open") != null ? ((Number) ohlc.get("open")).doubleValue() : null;
@@ -469,15 +502,18 @@ public class AnalysisAggregator {
                         }
                         if (price != null && price > 0) {
                             LivePriceTick liveTick = new LivePriceTick(price, prev);
-                            log.info("[Aggregator] Put liveTick for sym={}, ticker={}, fallback={} -> {}", sym, ticker, fallback, liveTick);
+                            log.info("[Aggregator] Put liveTick for sym={}, ticker={}, fallback={} -> {}", sym, ticker,
+                                    fallback, liveTick);
                             result.put(sym, liveTick);
                             result.put(ticker, liveTick);
-                            if (fallback != null) result.put(fallback, liveTick);
+                            if (fallback != null)
+                                result.put(fallback, liveTick);
                         } else {
                             log.warn("[Aggregator] Price was null or <= 0 for sym={}", sym);
                         }
                     } else {
-                        log.warn("[Aggregator] quoteData is NOT a Map for sym={}, type={}", sym, quoteData != null ? quoteData.getClass().getSimpleName() : "null");
+                        log.warn("[Aggregator] quoteData is NOT a Map for sym={}, type={}", sym,
+                                quoteData != null ? quoteData.getClass().getSimpleName() : "null");
                     }
                 }
                 return result;
@@ -489,7 +525,8 @@ public class AnalysisAggregator {
     }
 
     private String resolveFallbackTicker(String isin, List<AnalysisEntity> entities) {
-        // All ETFs, bonds, and standard securities are now resolved dynamically via MongoDB and Upstox ISIN matching.
+        // All ETFs, bonds, and standard securities are now resolved dynamically via
+        // MongoDB and Upstox ISIN matching.
         // We no longer need hardcoded mappings inside the Java code.
         return null;
     }
@@ -501,5 +538,6 @@ public class AnalysisAggregator {
     private static BigDecimal toBd(Double value) {
         return value != null ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
     }
-    // Trigger CI/CD: Redeploying analysis aggregator after database proxy restoration
+    // Trigger CI/CD: Redeploying analysis aggregator after database proxy
+    // restoration
 }

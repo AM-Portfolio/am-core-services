@@ -153,7 +153,10 @@ public class AnalysisCalculationService {
         return items;
     }
 
-    @Cacheable(value = "performance", key = "#a0.sourceId + '_' + #a1 + '_' + (#a0.lastUpdated != null ? #a0.lastUpdated.toString() : 'null') + '_' + T(java.time.LocalDate).now().toString()")
+    // Include ownerId so dashboard "ALL" aggregate charts are cached per user (not shared globally).
+    @Cacheable(
+            value = "performance",
+            key = "(#a0.ownerId != null ? #a0.ownerId : #a0.id) + '_' + #a0.sourceId + '_' + #a1 + '_' + (#a0.lastUpdated != null ? #a0.lastUpdated.toString() : 'null') + '_' + T(java.time.LocalDate).now().toString()")
     public PerformanceResponse calculatePerformance(AnalysisEntity entity, String timeFrame) {
         long startTime = System.currentTimeMillis();
         String entityId = entity.getSourceId();
