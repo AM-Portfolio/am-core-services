@@ -10,13 +10,13 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.1.7-SNAPSHOT</version>
+        <version>1.1.8-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>com.am.libraries</groupId>
     <artifactId>am-observability-lib</artifactId>
-    <version>1.1.7-SNAPSHOT</version>
+    <version>1.1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>AM Observability Library</name>
     <description>Distributed tracing (Micrometer + OTel W3C), Prometheus metrics, and JSON structured logging for AM services</description>
