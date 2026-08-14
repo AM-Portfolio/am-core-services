@@ -524,10 +524,66 @@ public class AnalysisAggregator {
         return Map.of();
     }
 
-    private String resolveFallbackTicker(String isin, List<AnalysisEntity> entities) {
-        // All ETFs, bonds, and standard securities are now resolved dynamically via
-        // MongoDB and Upstox ISIN matching.
-        // We no longer need hardcoded mappings inside the Java code.
+    /**
+     * Applies live quote overlay to in-memory entities (same path as summary/overviews).
+     */
+    public void applyLiveOverlay(List<AnalysisEntity> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return;
+        }
+        Map<String, LivePriceTick> ticks = fetchLiveTicksForEntities(entities);
+        if (!ticks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticks);
+        }
+    }
+
+    public static boolean looksLikeIsin(String symbol) {
+        return symbol != null && symbol.length() == 12 && symbol.matches("[A-Z]{2}[A-Z0-9]{10}");
+    }
+
+    public Map<String, String> resolveIsinToTickerMap(List<String> symbols) {
+        if (symbols == null || symbols.isEmpty()) {
+            return Map.of();
+        }
+        List<String> isins = symbols.stream()
+                .filter(AnalysisAggregator::looksLikeIsin)
+                .distinct()
+                .toList();
+        if (isins.isEmpty()) {
+            return Map.of();
+        }
+        try {
+            return marketDataClientService.resolveIsinsToTickers(isins);
+        } catch (Exception e) {
+            log.warn("[Aggregator] ISIN resolution failed: {}", e.getMessage());
+            return Map.of();
+        }
+    }
+
+    private String resolveFallbackTicker(String sym, List<AnalysisEntity> entities) {
+        if (sym == null || entities == null || !looksLikeIsin(sym)) {
+            return null;
+        }
+        for (AnalysisEntity entity : entities) {
+            if (entity.getHoldings() == null) {
+                continue;
+            }
+            for (AnalysisHolding h : entity.getHoldings()) {
+                if (h.getIdentity() == null) {
+                    continue;
+                }
+                String holdingSymbol = h.getIdentity().getSymbol();
+                String holdingIsin = h.getIdentity().getIsin();
+                boolean matches = sym.equalsIgnoreCase(holdingSymbol)
+                        || (holdingIsin != null && sym.equalsIgnoreCase(holdingIsin));
+                if (!matches) {
+                    continue;
+                }
+                if (holdingSymbol != null && !looksLikeIsin(holdingSymbol)) {
+                    return holdingSymbol.trim().toUpperCase();
+                }
+            }
+        }
         return null;
     }
 

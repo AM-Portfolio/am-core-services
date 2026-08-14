@@ -5,6 +5,7 @@ import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.model.components.PerformanceSummary;
 import com.am.analysis.adapter.repository.AnalysisRepository;
 import com.am.analysis.dto.PerformanceResponse;
+import com.am.analysis.service.aggregator.AnalysisAggregator;
 import com.am.analysis.service.load.AnalysisEntityLoadService;
 import com.am.analysis.service.load.BootstrapTrigger;
 import com.am.analysis.service.load.EntityLoadRequest;
@@ -14,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +31,7 @@ public class PerformanceAnalysisService {
     private final AnalysisEntityLoadService entityLoadService;
     private final AnalysisCalculationService calculationService;
     private final AnalysisAccessValidator accessValidator;
+    private final AnalysisAggregator aggregator;
 
     public PerformanceResponse getPerformance(String id, AnalysisEntityType type, String timeFrame, String userId) {
         if (type == AnalysisEntityType.PORTFOLIO && (id == null || "ALL".equalsIgnoreCase(id) || "GLOBAL".equalsIgnoreCase(id))) {
@@ -39,7 +44,10 @@ public class PerformanceAnalysisService {
             if (result.empty()) {
                 return emptyPerformance(id, timeFrame);
             }
-            return calculationService.calculatePerformance(result.entities().get(0), timeFrame);
+            AnalysisEntity entity = result.entities().get(0);
+            aggregator.applyLiveOverlay(List.of(entity));
+            return alignChartWithLiveTotal(
+                    calculationService.calculatePerformance(entity, timeFrame), entity);
         }
 
         String compositeId = type.name() + "_" + id;
@@ -48,7 +56,10 @@ public class PerformanceAnalysisService {
         if (entityOpt.isPresent()) {
             accessValidator.verifyAccess(entityOpt.get(), userId);
             log.debug("Entity found for Performance: ID={}, Type={}, TimeFrame={}, User={}", id, type, timeFrame, userId);
-            return calculationService.calculatePerformance(entityOpt.get(), timeFrame);
+            AnalysisEntity entity = entityOpt.get();
+            aggregator.applyLiveOverlay(List.of(entity));
+            return alignChartWithLiveTotal(
+                    calculationService.calculatePerformance(entity, timeFrame), entity);
         }
 
         log.warn("Entity not found for Performance: ID={}, Type={}, User={}", id, type, userId);
@@ -62,6 +73,8 @@ public class PerformanceAnalysisService {
         if (portfolios.isEmpty()) {
             return emptyPerformance("ALL", timeFrame);
         }
+
+        aggregator.applyLiveOverlay(portfolios);
 
         double totalValue = portfolios.stream()
                 .filter(p -> p.getPerformance() != null && p.getPerformance().getTotalValue() != null)
@@ -95,7 +108,44 @@ public class PerformanceAnalysisService {
 
         log.info("Aggregated performance for userId={}: portfolios={}, totalValue={}, timeFrame={}",
                 userId, portfolios.size(), totalValue, timeFrame);
-        return calculationService.calculatePerformance(virtualEntity, timeFrame);
+        return alignChartWithLiveTotal(
+                calculationService.calculatePerformance(virtualEntity, timeFrame), virtualEntity);
+    }
+
+    /**
+     * Aligns chart headline with live overlay total so performance widget matches summary.
+     */
+    private PerformanceResponse alignChartWithLiveTotal(PerformanceResponse response, AnalysisEntity entity) {
+        if (response == null || entity.getPerformance() == null || entity.getPerformance().getTotalValue() == null) {
+            return response;
+        }
+        double liveTotal = entity.getPerformance().getTotalValue();
+        BigDecimal liveValue = BigDecimal.valueOf(liveTotal).setScale(2, RoundingMode.HALF_UP);
+
+        List<PerformanceResponse.DataPoint> chartData = response.getChartData();
+        if (chartData == null || chartData.isEmpty()) {
+            chartData = List.of(PerformanceResponse.DataPoint.builder()
+                    .date(java.time.LocalDate.now())
+                    .value(liveValue)
+                    .build());
+        } else {
+            List<PerformanceResponse.DataPoint> updated = new ArrayList<>(chartData);
+            PerformanceResponse.DataPoint last = updated.get(updated.size() - 1);
+            updated.set(updated.size() - 1, PerformanceResponse.DataPoint.builder()
+                    .date(last.getDate())
+                    .value(liveValue)
+                    .build());
+            chartData = updated;
+        }
+
+        return PerformanceResponse.builder()
+                .portfolioId(response.getPortfolioId())
+                .timeFrame(response.getTimeFrame())
+                .totalReturnPercentage(response.getTotalReturnPercentage())
+                .totalReturnValue(response.getTotalReturnValue())
+                .chartData(chartData)
+                .errorMessage(response.getErrorMessage())
+                .build();
     }
 
     private PerformanceResponse emptyPerformance(String id, String timeFrame) {
