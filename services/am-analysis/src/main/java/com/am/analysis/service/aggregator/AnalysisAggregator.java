@@ -372,6 +372,16 @@ public class AnalysisAggregator {
                 .build();
     }
 
+    public void applyLiveOverlay(List<AnalysisEntity> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return;
+        }
+        Map<String, LivePriceTick> ticks = fetchLiveTicksForEntities(entities);
+        if (ticks != null && !ticks.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticks);
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────
     // Circuit-breaker-protected fetches
     // ─────────────────────────────────────────────────────────────────────
