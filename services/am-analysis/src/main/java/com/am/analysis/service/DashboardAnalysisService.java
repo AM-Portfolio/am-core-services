@@ -57,15 +57,12 @@ public class DashboardAnalysisService {
     private final AnalysisBusinessMetrics businessMetrics;
 
     public DashboardSummary getSummary(String userId) {
-        return snapshotService.load(userId, DashboardWidgetType.SUMMARY, DashboardSummary.class)
-                .orElseGet(() -> {
-                    log.info("[Summary] Snapshot miss for user {}, computing live", userId);
-                    DashboardSummary summary = aggregator.getOverallSummary(userId);
-                    if (summary != null) {
-                        snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
-                    }
-                    return summary;
-                });
+        log.info("[Summary] Computing live summary for user {}", userId);
+        DashboardSummary summary = aggregator.getOverallSummary(userId);
+        if (summary != null) {
+            snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
+        }
+        return summary;
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
