@@ -27,6 +27,14 @@ public final class LivePriceOverlayHelper {
     private LivePriceOverlayHelper() {
     }
 
+    public static boolean looksLikeIsin(String value) {
+        if (value == null) {
+            return false;
+        }
+        String trimmed = value.trim();
+        return trimmed.length() == 12 && trimmed.matches("[A-Z]{2}[A-Z0-9]{10}");
+    }
+
     /** Infer average buy when Mongo holdings omit averagePrice. */
     public static double inferAveragePrice(InvestmentStats inv) {
         if (inv == null) {

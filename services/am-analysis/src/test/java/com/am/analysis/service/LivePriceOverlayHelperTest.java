@@ -18,6 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class LivePriceOverlayHelperTest {
 
     @Test
+    void looksLikeIsin_detectsStandardIsin() {
+        assertEquals(true, LivePriceOverlayHelper.looksLikeIsin("IN0020210228"));
+        assertEquals(false, LivePriceOverlayHelper.looksLikeIsin("SGBD29VIII"));
+        assertEquals(false, LivePriceOverlayHelper.looksLikeIsin(null));
+    }
+
+    @Test
     void resolveTick_matchesPrefixedSymbol() {
         Map<String, LivePriceTick> ticks = Map.of("ITC", new LivePriceTick(289.28, 289.85));
 
