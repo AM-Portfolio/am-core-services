@@ -635,6 +635,4 @@ public class AnalysisAggregator {
     private static BigDecimal toBd(Double value) {
         return value != null ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
     }
-    // Trigger CI/CD: Redeploying analysis aggregator after database proxy
-    // restoration
 }
