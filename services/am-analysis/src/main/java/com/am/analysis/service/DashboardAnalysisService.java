@@ -57,11 +57,15 @@ public class DashboardAnalysisService {
     private final AnalysisBusinessMetrics businessMetrics;
 
     public DashboardSummary getSummary(String userId) {
-        DashboardSummary summary = aggregator.getOverallSummary(userId);
-        if (summary != null) {
-            snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
-        }
-        return summary;
+        return snapshotService.load(userId, DashboardWidgetType.SUMMARY, DashboardSummary.class)
+                .orElseGet(() -> {
+                    log.info("[Summary] Snapshot miss for user {}, computing live", userId);
+                    DashboardSummary summary = aggregator.getOverallSummary(userId);
+                    if (summary != null) {
+                        snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
+                    }
+                    return summary;
+                });
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
@@ -100,11 +104,15 @@ public class DashboardAnalysisService {
                 !StringUtils.hasText(filter.getSector()) && !StringUtils.hasText(filter.getPortfolioName());
 
         if (isDefaultFilter) {
-            RecentActivityResponse response = getRecentActivityUncached(userId, filter);
-            if (response != null) {
-                snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, response);
-            }
-            return response;
+            return snapshotService.load(userId, DashboardWidgetType.ACTIVITY, RecentActivityResponse.class)
+                    .orElseGet(() -> {
+                        log.info("[Activity] Snapshot miss for user {}, computing live", userId);
+                        RecentActivityResponse response = getRecentActivityUncached(userId, filter);
+                        if (response != null) {
+                            snapshotService.persist(userId, DashboardWidgetType.ACTIVITY, response);
+                        }
+                        return response;
+                    });
         }
         return getRecentActivityUncached(userId, filter);
     }
@@ -127,6 +135,7 @@ public class DashboardAnalysisService {
         if (ticksToUse != null && !ticksToUse.isEmpty()) {
             LivePriceOverlayHelper.applyAll(entities, ticksToUse);
         }
+        Map<String, String> isinToTicker = aggregator.resolveIsinDisplayTickers(entities);
         log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
         // 2. Flatten all holdings across all portfolios → ActivityItems
@@ -140,7 +149,7 @@ public class DashboardAnalysisService {
             if (entity.getHoldings() == null) continue;
 
             for (AnalysisHolding holding : entity.getHoldings()) {
-                ActivityItem item = mapHoldingToActivity(holding, portfolioId, portfolioName, lastUpdated);
+                ActivityItem item = mapHoldingToActivity(holding, portfolioId, portfolioName, lastUpdated, isinToTicker);
                 if (item != null) allItems.add(item);
             }
         }
@@ -185,17 +194,33 @@ public class DashboardAnalysisService {
     // Mapping
     // ─────────────────────────────────────────────────────────────────────
 
-    private ActivityItem mapHoldingToActivity(AnalysisHolding holding, String portfolioId, String portfolioName, LocalDateTime lastUpdated) {
+    private ActivityItem mapHoldingToActivity(AnalysisHolding holding, String portfolioId, String portfolioName,
+                                              LocalDateTime lastUpdated, Map<String, String> isinToTicker) {
         if (holding.getIdentity() == null) return null;
 
-        String symbol = holding.getIdentity().getSymbol();
-        if (!StringUtils.hasText(symbol)) {
-            symbol = StringUtils.hasText(holding.getIdentity().getIsin())
+        String storedSymbol = holding.getIdentity().getSymbol();
+        if (!StringUtils.hasText(storedSymbol)) {
+            storedSymbol = StringUtils.hasText(holding.getIdentity().getIsin())
                     ? holding.getIdentity().getIsin()
                     : holding.getIdentity().getName();
         }
 
-        String companyName = resolveActivityCompanyName(holding, symbol);
+        String companyName = StringUtils.hasText(holding.getIdentity().getCompanyName())
+                ? holding.getIdentity().getCompanyName()
+                : holding.getIdentity().getName();
+
+        String symbol = storedSymbol;
+        if (LivePriceOverlayHelper.looksLikeIsin(storedSymbol) && isinToTicker != null) {
+            String ticker = isinToTicker.get(storedSymbol.trim().toUpperCase());
+            if (!StringUtils.hasText(ticker) && StringUtils.hasText(holding.getIdentity().getIsin())) {
+                ticker = isinToTicker.get(holding.getIdentity().getIsin().trim().toUpperCase());
+            }
+            if (StringUtils.hasText(ticker)) {
+                symbol = ticker;
+            } else if (StringUtils.hasText(companyName)) {
+                symbol = companyName;
+            }
+        }
         String exchange = holding.getIdentity().getExchange();
         String sector   = holding.getClassification() != null ? holding.getClassification().getSector() : null;
 
@@ -229,7 +254,8 @@ public class DashboardAnalysisService {
         String status = ActivityItem.resolveStatus(profitLoss);
 
         // Human-readable title
-        String title = companyName != null ? companyName : (symbol != null ? symbol : "Unknown");
+        String title = symbol != null ? symbol : "Unknown";
+        if (companyName != null) title = companyName;
 
         String description = buildDescription(quantity, avgBuyingPrice, profitLossPct);
 
@@ -256,24 +282,6 @@ public class DashboardAnalysisService {
                 .description(description)
                 .timestamp(lastUpdated != null ? lastUpdated : LocalDateTime.now())
                 .build();
-    }
-
-    private String resolveActivityCompanyName(AnalysisHolding holding, String symbol) {
-        if (holding == null || holding.getIdentity() == null) {
-            return null;
-        }
-        if (StringUtils.hasText(holding.getIdentity().getCompanyName())
-                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getCompanyName())) {
-            return holding.getIdentity().getCompanyName();
-        }
-        if (StringUtils.hasText(holding.getIdentity().getName())
-                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getName())) {
-            return holding.getIdentity().getName();
-        }
-        if (symbol != null && !AnalysisAggregator.looksLikeIsin(symbol)) {
-            return symbol;
-        }
-        return null;
     }
 
     private String buildDescription(Double quantity, Double avgPrice, Double profitLossPct) {
@@ -337,12 +345,10 @@ public class DashboardAnalysisService {
     // ─────────────────────────────────────────────────────────────────────
 
     public void publishDashboardUpdate(String userId) {
-        EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
-        Map<String, LivePriceTick> ticks = aggregator.fetchLiveTicksForEntities(loadResult.entities());
-        publishDashboardSummary(userId, ticks);
-        publishDashboardActivity(userId, ticks);
-        publishDashboardAllocation(userId, ticks);
-        publishDashboardMovers(userId, ticks);
+        publishDashboardSummary(userId);
+        publishDashboardActivity(userId);
+        publishDashboardAllocation(userId);
+        publishDashboardMovers(userId);
     }
 
     /** Immediate push of all 5 dashboard widgets on subscribe (no debounce). */
