@@ -35,6 +35,38 @@ public final class LivePriceOverlayHelper {
         return trimmed.length() == 12 && trimmed.matches("[A-Z]{2}[A-Z0-9]{10}");
     }
 
+    /**
+     * Trading symbol stored on the holding in Mongo (portfolio/watchlist), not a name guess.
+     * Used when the quote key is an ISIN and identity.symbol is already the NSE ticker.
+     */
+    public static String storedTradingSymbolFromHoldings(String isinOrSymbol, Collection<AnalysisEntity> entities) {
+        if (isinOrSymbol == null || entities == null || !looksLikeIsin(isinOrSymbol)) {
+            return null;
+        }
+        String target = isinOrSymbol.trim();
+        for (AnalysisEntity entity : entities) {
+            if (entity == null || entity.getHoldings() == null) {
+                continue;
+            }
+            for (AnalysisHolding h : entity.getHoldings()) {
+                if (h == null || h.getIdentity() == null) {
+                    continue;
+                }
+                String holdingSymbol = h.getIdentity().getSymbol();
+                String holdingIsin = h.getIdentity().getIsin();
+                boolean matches = target.equalsIgnoreCase(holdingSymbol)
+                        || (holdingIsin != null && target.equalsIgnoreCase(holdingIsin));
+                if (!matches) {
+                    continue;
+                }
+                if (holdingSymbol != null && !looksLikeIsin(holdingSymbol)) {
+                    return holdingSymbol.trim().toUpperCase(Locale.ROOT);
+                }
+            }
+        }
+        return null;
+    }
+
     /** Infer average buy when Mongo holdings omit averagePrice. */
     public static double inferAveragePrice(InvestmentStats inv) {
         if (inv == null) {

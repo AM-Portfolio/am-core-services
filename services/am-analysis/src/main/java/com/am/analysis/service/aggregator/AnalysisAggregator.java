@@ -468,9 +468,9 @@ public class AnalysisAggregator {
                     tickersToFetch.add(resolved);
                 } else {
                     tickersToFetch.add(sym);
-                    String fallback = resolveFallbackTicker(sym, entities);
-                    if (fallback != null) {
-                        tickersToFetch.add(fallback);
+                    String storedTicker = LivePriceOverlayHelper.storedTradingSymbolFromHoldings(sym, entities);
+                    if (storedTicker != null) {
+                        tickersToFetch.add(storedTicker);
                     }
                 }
             }
@@ -491,13 +491,13 @@ public class AnalysisAggregator {
                 Map<String, LivePriceTick> result = new HashMap<>();
                 for (String sym : symbols) {
                     String ticker = isinToTicker.getOrDefault(sym, sym);
-                    String fallback = resolveFallbackTicker(sym, entities);
+                    String storedTicker = LivePriceOverlayHelper.storedTradingSymbolFromHoldings(sym, entities);
 
                     Object quoteData = quotesMap.get(ticker);
                     if (quoteData == null)
                         quoteData = quotesMap.get(sym);
-                    if (quoteData == null && fallback != null)
-                        quoteData = quotesMap.get(fallback);
+                    if (quoteData == null && storedTicker != null)
+                        quoteData = quotesMap.get(storedTicker);
 
                     if (quoteData instanceof Map<?, ?> qData) {
                         Double price = qData.get("lastPrice") != null ? ((Number) qData.get("lastPrice")).doubleValue()
@@ -512,12 +512,12 @@ public class AnalysisAggregator {
                         }
                         if (price != null && price > 0) {
                             LivePriceTick liveTick = new LivePriceTick(price, prev);
-                            log.info("[Aggregator] Put liveTick for sym={}, ticker={}, fallback={} -> {}", sym, ticker,
-                                    fallback, liveTick);
+                            log.info("[Aggregator] Put liveTick for sym={}, ticker={}, storedTicker={} -> {}", sym, ticker,
+                                    storedTicker, liveTick);
                             result.put(sym, liveTick);
                             result.put(ticker, liveTick);
-                            if (fallback != null)
-                                result.put(fallback, liveTick);
+                            if (storedTicker != null)
+                                result.put(storedTicker, liveTick);
                         } else {
                             log.warn("[Aggregator] Price was null or <= 0 for sym={}", sym);
                         }
@@ -598,38 +598,6 @@ public class AnalysisAggregator {
             log.warn("[Aggregator] ISIN resolution failed: {}", e.getMessage());
             return Map.of();
         }
-    }
-
-    /**
-     * Searches through the list of loaded entities to find a non-ISIN symbol (like INFY)
-     * that corresponds to the given target symbol/ISIN. Used as an offline fallback when
-     * the market data resolver is unavailable.
-     */
-    private String resolveFallbackTicker(String sym, List<AnalysisEntity> entities) {
-        if (sym == null || entities == null || !looksLikeIsin(sym)) {
-            return null;
-        }
-        for (AnalysisEntity entity : entities) {
-            if (entity.getHoldings() == null) {
-                continue;
-            }
-            for (AnalysisHolding h : entity.getHoldings()) {
-                if (h.getIdentity() == null) {
-                    continue;
-                }
-                String holdingSymbol = h.getIdentity().getSymbol();
-                String holdingIsin = h.getIdentity().getIsin();
-                boolean matches = sym.equalsIgnoreCase(holdingSymbol)
-                        || (holdingIsin != null && sym.equalsIgnoreCase(holdingIsin));
-                if (!matches) {
-                    continue;
-                }
-                if (holdingSymbol != null && !looksLikeIsin(holdingSymbol)) {
-                    return holdingSymbol.trim().toUpperCase();
-                }
-            }
-        }
-        return null;
     }
 
     /**

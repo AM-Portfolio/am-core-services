@@ -274,9 +274,9 @@ public class TopMoversAnalysisService {
                     tickersToFetch.add(resolved);
                 } else {
                     tickersToFetch.add(sym);
-                    String fallback = resolveFallbackTicker(sym, portfolios);
-                    if (fallback != null) {
-                        tickersToFetch.add(fallback);
+                    String storedTicker = LivePriceOverlayHelper.storedTradingSymbolFromHoldings(sym, portfolios);
+                    if (storedTicker != null) {
+                        tickersToFetch.add(storedTicker);
                     }
                 }
             }
@@ -303,13 +303,13 @@ public class TopMoversAnalysisService {
             // Step 4: Build ticks and apply dayChange% directly to holdings
             for (String originalSym : holdingSymbols) {
                 String ticker = isinToTicker.getOrDefault(originalSym, originalSym);
-                String fallback = resolveFallbackTicker(originalSym, portfolios);
+                String storedTicker = LivePriceOverlayHelper.storedTradingSymbolFromHoldings(originalSym, portfolios);
                 Object quoteObj = quotes.get(ticker);
                 if (quoteObj == null) {
                     quoteObj = quotes.get(originalSym);
                 }
-                if (quoteObj == null && fallback != null) {
-                    quoteObj = quotes.get(fallback);
+                if (quoteObj == null && storedTicker != null) {
+                    quoteObj = quotes.get(storedTicker);
                 }
 
                 if (quoteObj instanceof Map) {
@@ -329,8 +329,8 @@ public class TopMoversAnalysisService {
                         LivePriceTick tick = new LivePriceTick(lastPrice, prevClose != null ? prevClose : lastPrice);
                         result.put(originalSym, tick);
                         result.put(ticker, tick);
-                        if (fallback != null) {
-                            result.put(fallback, tick);
+                        if (storedTicker != null) {
+                            result.put(storedTicker, tick);
                         }
                         // Directly stamp dayChange% and live prices onto holdings
                         applyDayChangeToHoldings(portfolios, originalSym, ticker,
@@ -343,30 +343,6 @@ public class TopMoversAnalysisService {
             log.warn("[TopMovers] Failed to build live ticks from quotes: {}", e.getMessage());
         }
         return result;
-    }
-
-    private String resolveFallbackTicker(String isin, List<AnalysisEntity> portfolios) {
-        if (isin == null || !isin.startsWith("IN") || portfolios == null) return null;
-        for (AnalysisEntity entity : portfolios) {
-            if (entity.getHoldings() == null) continue;
-            for (com.am.analysis.adapter.model.AnalysisHolding h : entity.getHoldings()) {
-                if (h.getIdentity() != null && isin.equalsIgnoreCase(h.getIdentity().getSymbol())) {
-                    String name = h.getIdentity().getCompanyName();
-                    if (name != null) {
-                        if (name.contains("GOLDBONDS2029SR-VIII") || name.contains("GOLDBONDS")) return "SGBD29VIII";
-                        if (name.contains("- HEALTHY")) return "HEALTHY";
-                        if (name.contains("- GROWWDEFNC")) return "GROWWDEFNC";
-                        if (name.contains("- GROWWRAIL")) return "GROWWRAIL";
-                        if (name.contains("- MOHEALTH")) return "MOHEALTH";
-                        if (name.contains("GOLD BEES") || name.contains("GOLDBEES")) return "GOLDBEES";
-                        if (name.contains("NIFTY BEES") || name.contains("NIFTYBEES")) return "NIFTYBEES";
-                        if (name.contains("VODAFONE IDEA") || name.contains("VODAFONE IDEA-EQ")) return "IDEA";
-                        if (name.contains("RAIL VIKAS") || name.contains("RVNL")) return "RVNL";
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /** Stamps live market stats directly onto matched holdings (by ISIN or ticker). */
