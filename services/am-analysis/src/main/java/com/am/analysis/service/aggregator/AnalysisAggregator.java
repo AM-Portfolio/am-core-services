@@ -569,18 +569,6 @@ public class AnalysisAggregator {
         }
     }
 
-    /**
-     * Fetches live market prices (ticks) and overlays them directly onto the in-memory AnalysisEntity holdings.
-     */
-    public void applyLiveOverlay(List<AnalysisEntity> entities) {
-        if (entities == null || entities.isEmpty()) {
-            return;
-        }
-        Map<String, LivePriceTick> ticks = fetchLiveTicksForEntities(entities);
-        if (!ticks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(entities, ticks);
-        }
-    }
 
     /**
      * Checks if a symbol string matches the standard 12-character alphanumeric ISIN format (e.g., INE009A01021).

@@ -496,6 +496,24 @@ public class DashboardAnalysisService {
         }
     }
 
+    private String resolveActivityCompanyName(AnalysisHolding holding, String symbol) {
+        if (holding == null || holding.getIdentity() == null) {
+            return null;
+        }
+        if (StringUtils.hasText(holding.getIdentity().getCompanyName())
+                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getCompanyName())) {
+            return holding.getIdentity().getCompanyName();
+        }
+        if (StringUtils.hasText(holding.getIdentity().getName())
+                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getName())) {
+            return holding.getIdentity().getName();
+        }
+        if (symbol != null && !AnalysisAggregator.looksLikeIsin(symbol)) {
+            return symbol;
+        }
+        return null;
+    }
+
     @lombok.Data
     @lombok.AllArgsConstructor
     @lombok.NoArgsConstructor
