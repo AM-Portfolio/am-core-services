@@ -534,6 +534,10 @@ public class AnalysisAggregator {
         return Map.of();
     }
 
+    /**
+     * Resolves ISINs extracted from a list of complex AnalysisEntity objects (by searching through
+     * their nested holdings) to their corresponding readable stock ticker symbols (e.g. INFY).
+     */
     public Map<String, String> resolveIsinDisplayTickers(List<AnalysisEntity> entities) {
         if (entities == null || entities.isEmpty()) {
             return Map.of();
@@ -566,7 +570,7 @@ public class AnalysisAggregator {
     }
 
     /**
-     * Applies live quote overlay to in-memory entities (same path as summary/overviews).
+     * Fetches live market prices (ticks) and overlays them directly onto the in-memory AnalysisEntity holdings.
      */
     public void applyLiveOverlay(List<AnalysisEntity> entities) {
         if (entities == null || entities.isEmpty()) {
@@ -578,10 +582,17 @@ public class AnalysisAggregator {
         }
     }
 
+    /**
+     * Checks if a symbol string matches the standard 12-character alphanumeric ISIN format (e.g., INE009A01021).
+     */
     public static boolean looksLikeIsin(String symbol) {
         return symbol != null && symbol.length() == 12 && symbol.matches("[A-Z]{2}[A-Z0-9]{10}");
     }
 
+    /**
+     * Resolves a flat list of raw String symbols (filtering out those that are not ISINs)
+     * to their corresponding readable stock ticker symbols.
+     */
     public Map<String, String> resolveIsinToTickerMap(List<String> symbols) {
         if (symbols == null || symbols.isEmpty()) {
             return Map.of();
@@ -601,6 +612,11 @@ public class AnalysisAggregator {
         }
     }
 
+    /**
+     * Searches through the list of loaded entities to find a non-ISIN symbol (like INFY)
+     * that corresponds to the given target symbol/ISIN. Used as an offline fallback when
+     * the market data resolver is unavailable.
+     */
     private String resolveFallbackTicker(String sym, List<AnalysisEntity> entities) {
         if (sym == null || entities == null || !looksLikeIsin(sym)) {
             return null;
