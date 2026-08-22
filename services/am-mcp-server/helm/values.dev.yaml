@@ -52,11 +52,16 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.priority: "200"
     traefik.ingress.kubernetes.io/router.middlewares: >-
       am-apps-dev-dev-global-cors@kubernetescrd,
       am-apps-dev-dev-strip-prefix@kubernetescrd
   hosts:
     - host: am-dev.asrax.in
       paths:
+        # Strip /mcp -> /sse. SSE endpoint event announces /message (absolute),
+        # so also route /message to this service (strip is a no-op for that path).
         - path: /mcp
+          pathType: Prefix
+        - path: /message
           pathType: Prefix
