@@ -37,7 +37,7 @@ ingress:
         - path: /analysis
           pathType: Prefix
 
-# Vault enabled — injects all secrets at runtime
+# Vault enabled - injects all secrets at runtime
 vault:
   enabled: true
   role: "am-backend-role"

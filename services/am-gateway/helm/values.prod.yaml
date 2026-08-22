@@ -20,7 +20,7 @@ probes:
   readiness:
     path: "/actuator/health"
 
-# Vault enabled — role and token management now handled centrally
+# Vault enabled - role and token management now handled centrally
 vault:
   enabled: true
   secretPaths:
