@@ -33,7 +33,7 @@ vault:
     service-oauth:
       path: "apps/data/preprod/services/am-mcp-server"
 
-# Non-secret env vars pointing to preprod cluster services
+# Public HTTPS on am-preprod.asrax.in (Traefik strip-prefix). Image tag comes from CI/Helm.
 env:
   SPRING_PROFILES_ACTIVE: "preprod"
   KAFKA_BOOTSTRAP_SERVERS: "kafka.infra.svc.cluster.local:9092"
@@ -41,17 +41,17 @@ env:
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
   SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
   REDIS_PORT: "6379"
-  AM_AUTH_URL: "http://am-identity.am-apps-preprod.svc.cluster.local:8080"
-
-  AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-preprod.svc.cluster.local:8100"
-  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-preprod.svc.cluster.local:8060"
+  AM_AUTH_URL: "https://am-preprod.asrax.in/identity"
+  AM_AI_AGENT_URL: "https://am-preprod.asrax.in/ai"
+  AM_PORTFOLIO_URL: "https://am-preprod.asrax.in/portfolio"
+  AM_TRADE_URL: "https://am-preprod.asrax.in/trade"
+  MARKET_DATA_URL: "https://am-preprod.asrax.in/market"
   AM_DEFAULT_USER: "user1"
   AM_TOOLS_ANALYSIS_ENABLED: "true"
   AM_TOOLS_MARKET_ENABLED: "true"
   AM_TOOLS_PORTFOLIO_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
-  MARKET_DATA_URL: "https://am-preprod.asrax.in/market"
 
 ingress:
   enabled: true
@@ -59,10 +59,14 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.priority: "200"
     traefik.ingress.kubernetes.io/router.middlewares: >-
-      am-apps-preprod-global-cors@kubernetescrd
+      am-apps-preprod-global-cors@kubernetescrd,
+      am-apps-preprod-strip-prefix-apps@kubernetescrd
   hosts:
     - host: am-preprod.asrax.in
       paths:
         - path: /mcp
+          pathType: Prefix
+        - path: /message
           pathType: Prefix
