@@ -27,18 +27,17 @@ vault:
     service-oauth:
       path: "apps/data/dev/services/am-mcp-server"
 
-# Dev-specific env vars (point to dev cluster services)
+# Public HTTPS on am-dev.asrax.in (Traefik strip-prefix). Image tag comes from CI/Helm.
 env:
   SPRING_PROFILES_ACTIVE: "dev"
   SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
   REDIS_PORT: "6379"
-  AM_AUTH_URL: "http://am-identity.am-apps-dev.svc.cluster.local:8080"
-  # fin-portfolio-agent not yet in cluster — use am-fin-agent chat until Phase 2 cutover
-  AM_AI_AGENT_URL: "http://am-fin-agent.am-apps-dev.svc.cluster.local:8080"
+  AM_AUTH_URL: "https://am-dev.asrax.in/identity"
+  AM_AI_AGENT_URL: "https://am-dev.asrax.in/ai"
   AM_AI_AGENT_CHAT_PATH: "/v1/ai/chat"
-  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-dev.svc.cluster.local:8080"
-  AM_TRADE_URL: "http://am-trade-management-service.am-apps-dev.svc.cluster.local:8080"
-  MARKET_DATA_URL: "http://am-market-data.am-apps-dev.svc.cluster.local:8080"
+  AM_PORTFOLIO_URL: "https://am-dev.asrax.in/portfolio"
+  AM_TRADE_URL: "https://am-dev.asrax.in/trade"
+  MARKET_DATA_URL: "https://am-dev.asrax.in/market"
   AM_TOOLS_ANALYSIS_ENABLED: "true"
   AM_TOOLS_MARKET_ENABLED: "true"
   AM_TOOLS_PORTFOLIO_ENABLED: "true"
