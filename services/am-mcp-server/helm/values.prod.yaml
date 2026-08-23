@@ -32,14 +32,15 @@ vault:
     service-oauth:
       path: "apps/data/prod/services/am-mcp-server"
 
-# Non-secret env vars pointing to prod cluster services
+# Public HTTPS on am.asrax.in (Traefik strip-prefix). Image tag comes from CI/Helm, not here.
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
-  AM_AUTH_URL: "http://am-identity.am-apps-prod.svc.cluster.local:8080"
-  AM_AI_AGENT_URL: "http://am-ai-agent.am-apps-prod.svc.cluster.local:8100"
-  AM_PORTFOLIO_URL: "http://am-portfolio.am-apps-prod.svc.cluster.local:8060"
+  AM_AUTH_URL: "https://am.asrax.in/identity"
+  AM_AI_AGENT_URL: "https://am.asrax.in/ai"
+  AM_PORTFOLIO_URL: "https://am.asrax.in/portfolio"
+  AM_TRADE_URL: "https://am.asrax.in/trade"
   MARKET_DATA_URL: "https://am.asrax.in/market"
 
 ingress:
@@ -48,10 +49,14 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.priority: "200"
     traefik.ingress.kubernetes.io/router.middlewares: >-
-      am-apps-prod-global-cors@kubernetescrd
+      am-apps-prod-global-cors@kubernetescrd,
+      am-apps-prod-strip-prefix-apps@kubernetescrd
   hosts:
     - host: am.asrax.in
       paths:
         - path: /mcp
+          pathType: Prefix
+        - path: /message
           pathType: Prefix
