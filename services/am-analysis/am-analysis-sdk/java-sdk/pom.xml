@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
+        <version>1.1.9-SNAPSHOT</version>
         <relativePath>../../../../pom.xml</relativePath>
     </parent>
 
@@ -12,7 +12,7 @@
     <artifactId>am-analysis-client</artifactId>
     <packaging>jar</packaging>
     <name>am-analysis-client</name>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.9-SNAPSHOT</version>
     <url>https://github.com/openapitools/openapi-generator</url>
     <description>OpenAPI Java</description>
     <scm>

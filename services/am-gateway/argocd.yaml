@@ -1,0 +1,21 @@
+apiVersion: am.argocd/v1
+kind: ServiceDeploy
+service: am-gateway
+enabled: true
+owners: core
+source:
+  repo: am-core-services
+  path: services/am-gateway/argocd.yaml
+chart:
+  repoURL: https://github.com/AM-Portfolio/am-pipelines.git
+  path: helm/universal-chart
+  targetRevision: main
+helm:
+  releaseName: am-gateway
+  valuesPath: services/am-gateway/helm
+valuesRepoURL: https://github.com/AM-Portfolio/am-core-services.git
+valuesTargetRevision: main
+envs:
+  prod:
+    enabled: true
+    namespace: am-apps-prod

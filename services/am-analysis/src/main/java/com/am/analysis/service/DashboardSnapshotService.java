@@ -55,7 +55,13 @@ public class DashboardSnapshotService {
             log.debug("[Snapshot] Redis MISS {} user {} — loading MongoDB", widget, userId);
             Optional<DashboardSnapshot> dbSnapshotOpt = repository.findByUserIdAndWidget(userId, widget);
             if (dbSnapshotOpt.isPresent()) {
-                String payloadJson = dbSnapshotOpt.get().getPayloadJson();
+                DashboardSnapshot dbSnapshot = dbSnapshotOpt.get();
+                if (isExpired(dbSnapshot.getCalculatedAt())) {
+                    log.info("[Snapshot] Mongo snapshot expired {} user {} calculatedAt={}",
+                            widget, userId, dbSnapshot.getCalculatedAt());
+                    return Optional.empty();
+                }
+                String payloadJson = dbSnapshot.getPayloadJson();
                 T data = objectMapper.readValue(payloadJson, payloadType);
                 redisTemplate.opsForValue().set(redisKey, payloadJson, REDIS_TTL);
                 return Optional.of(data);
@@ -64,5 +70,12 @@ public class DashboardSnapshotService {
             log.error("[Snapshot] Failed to load {} for user {}", widget, userId, ex);
         }
         return Optional.empty();
+    }
+
+    static boolean isExpired(java.time.LocalDateTime calculatedAt) {
+        if (calculatedAt == null) {
+            return true;
+        }
+        return calculatedAt.isBefore(java.time.LocalDateTime.now().minus(REDIS_TTL));
     }
 }

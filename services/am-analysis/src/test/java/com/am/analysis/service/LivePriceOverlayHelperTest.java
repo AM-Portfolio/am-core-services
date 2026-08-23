@@ -14,8 +14,35 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class LivePriceOverlayHelperTest {
+
+    @Test
+    void looksLikeIsin_detectsStandardIsin() {
+        assertEquals(true, LivePriceOverlayHelper.looksLikeIsin("IN0020210228"));
+        assertEquals(false, LivePriceOverlayHelper.looksLikeIsin("SGBD29VIII"));
+        assertEquals(false, LivePriceOverlayHelper.looksLikeIsin(null));
+    }
+
+    @Test
+    void storedTradingSymbolFromHoldings_usesMongoTickerNotCompanyName() {
+        AnalysisHolding holding = AnalysisHolding.builder()
+                .identity(HoldingIdentity.builder()
+                        .symbol("GROWWDEFNC")
+                        .isin("INF666M01IO8")
+                        .companyName("should-not-be-parsed")
+                        .build())
+                .build();
+        AnalysisEntity entity = AnalysisEntity.builder()
+                .type(AnalysisEntityType.PORTFOLIO)
+                .holdings(List.of(holding))
+                .build();
+
+        assertEquals("GROWWDEFNC",
+                LivePriceOverlayHelper.storedTradingSymbolFromHoldings("INF666M01IO8", List.of(entity)));
+        assertNull(LivePriceOverlayHelper.storedTradingSymbolFromHoldings("INF666M01IO8", List.of()));
+    }
 
     @Test
     void resolveTick_matchesPrefixedSymbol() {

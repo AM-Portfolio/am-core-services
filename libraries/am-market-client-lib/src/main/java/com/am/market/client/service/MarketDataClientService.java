@@ -60,6 +60,28 @@ public class MarketDataClientService {
         return Collections.emptyMap();
     }
 
+    public Map<String, String> resolveIsinsToTickers(List<String> isins) {
+        if (isins == null || isins.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        try {
+            SecuritySearchRequest request = new SecuritySearchRequest();
+            request.setSymbols(isins);
+            List<SecurityDocument> response = securityExplorerApi.searchAdvanced(request);
+            if (response != null) {
+                return response.stream()
+                        .filter(doc -> doc.getKey() != null && doc.getKey().getSymbol() != null && doc.getKey().getIsin() != null)
+                        .collect(Collectors.toMap(
+                                doc -> doc.getKey().getIsin(),
+                                doc -> doc.getKey().getSymbol(),
+                                (existing, replacement) -> existing));
+            }
+        } catch (Exception e) {
+            log.error("Failed to resolve ISINs: {}", e.getMessage(), e);
+        }
+        return Collections.emptyMap();
+    }
+
     public Map<String, Object> getQuotes(String symbols, String timeFrame, Boolean refresh) {
         try {
             return marketDataApi.getQuotes(symbols, timeFrame, refresh);

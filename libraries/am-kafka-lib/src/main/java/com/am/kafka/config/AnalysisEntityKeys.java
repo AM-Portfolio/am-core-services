@@ -14,7 +14,7 @@ public final class AnalysisEntityKeys {
     }
 
     public static boolean isGlobalSourceId(String sourceId) {
-        return GLOBAL_SOURCE_ID.equals(sourceId);
+        return GLOBAL_SOURCE_ID.equals(sourceId) || "all".equalsIgnoreCase(sourceId);
     }
 
     /** Mongo {@code AnalysisEntity.id} for a portfolio watch target. */

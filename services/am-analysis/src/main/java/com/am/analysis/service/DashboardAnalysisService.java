@@ -57,15 +57,12 @@ public class DashboardAnalysisService {
     private final AnalysisBusinessMetrics businessMetrics;
 
     public DashboardSummary getSummary(String userId) {
-        return snapshotService.load(userId, DashboardWidgetType.SUMMARY, DashboardSummary.class)
-                .orElseGet(() -> {
-                    log.info("[Summary] Snapshot miss for user {}, computing live", userId);
-                    DashboardSummary summary = aggregator.getOverallSummary(userId);
-                    if (summary != null) {
-                        snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
-                    }
-                    return summary;
-                });
+        log.info("[Summary] Computing live summary for user {}", userId);
+        DashboardSummary summary = aggregator.getOverallSummary(userId);
+        if (summary != null) {
+            snapshotService.persist(userId, DashboardWidgetType.SUMMARY, summary);
+        }
+        return summary;
     }
 
     public List<PortfolioOverview> getPortfolioOverviews(String userId) {
@@ -128,9 +125,14 @@ public class DashboardAnalysisService {
         // 1. Load all analysis entities for this user (PORTFOLIO type = live holdings)
         EntityLoadResult loadResult = entityLoadService.loadPortfoliosForUser(userId, BootstrapTrigger.DASHBOARD);
         List<AnalysisEntity> entities = loadResult.entities();
-        if (liveTicks != null && !liveTicks.isEmpty()) {
-            LivePriceOverlayHelper.applyAll(entities, liveTicks);
+        Map<String, LivePriceTick> ticksToUse = liveTicks;
+        if (ticksToUse == null || ticksToUse.isEmpty()) {
+            ticksToUse = aggregator.fetchLiveTicksForEntities(entities);
         }
+        if (ticksToUse != null && !ticksToUse.isEmpty()) {
+            LivePriceOverlayHelper.applyAll(entities, ticksToUse);
+        }
+        Map<String, String> isinToTicker = aggregator.resolveIsinDisplayTickers(entities);
         log.debug("[DashboardAnalysisService] Found {} analysis entities for userId: {}", entities.size(), userId);
 
         // 2. Flatten all holdings across all portfolios → ActivityItems
@@ -144,7 +146,7 @@ public class DashboardAnalysisService {
             if (entity.getHoldings() == null) continue;
 
             for (AnalysisHolding holding : entity.getHoldings()) {
-                ActivityItem item = mapHoldingToActivity(holding, portfolioId, portfolioName, lastUpdated);
+                ActivityItem item = mapHoldingToActivity(holding, portfolioId, portfolioName, lastUpdated, isinToTicker);
                 if (item != null) allItems.add(item);
             }
         }
@@ -189,28 +191,58 @@ public class DashboardAnalysisService {
     // Mapping
     // ─────────────────────────────────────────────────────────────────────
 
-    private ActivityItem mapHoldingToActivity(AnalysisHolding holding, String portfolioId, String portfolioName, LocalDateTime lastUpdated) {
+    private ActivityItem mapHoldingToActivity(AnalysisHolding holding, String portfolioId, String portfolioName,
+                                              LocalDateTime lastUpdated, Map<String, String> isinToTicker) {
         if (holding.getIdentity() == null) return null;
 
-        String symbol      = holding.getIdentity().getSymbol();
-        String companyName = StringUtils.hasText(holding.getIdentity().getCompanyName())
-                ? holding.getIdentity().getCompanyName()
-                : holding.getIdentity().getName();
+        String storedSymbol = holding.getIdentity().getSymbol();
+        if (!StringUtils.hasText(storedSymbol)) {
+            storedSymbol = StringUtils.hasText(holding.getIdentity().getIsin())
+                    ? holding.getIdentity().getIsin()
+                    : holding.getIdentity().getName();
+        }
+
+        String symbol = storedSymbol;
+        if (LivePriceOverlayHelper.looksLikeIsin(storedSymbol) && isinToTicker != null) {
+            String ticker = isinToTicker.get(storedSymbol.trim().toUpperCase());
+            if (!StringUtils.hasText(ticker) && StringUtils.hasText(holding.getIdentity().getIsin())) {
+                ticker = isinToTicker.get(holding.getIdentity().getIsin().trim().toUpperCase());
+            }
+            if (StringUtils.hasText(ticker)) {
+                symbol = ticker;
+            }
+        }
+
+        String companyName = resolveActivityCompanyName(holding, symbol);
         String exchange = holding.getIdentity().getExchange();
         String sector   = holding.getClassification() != null ? holding.getClassification().getSector() : null;
 
         InvestmentStats inv = holding.getInvestment();
         MarketStats     mkt = holding.getMarket();
 
-        Double avgBuyingPrice  = inv != null ? inv.getAveragePrice()         : null;
         Double quantity        = inv != null ? inv.getQuantity()              : null;
         Double investmentValue = inv != null ? inv.getInvestmentValue()       : null;
+        Double avgBuyingPrice  = inv != null ? inv.getAveragePrice()         : null;
+
+        if ((avgBuyingPrice == null || avgBuyingPrice == 0.0) 
+                && investmentValue != null && quantity != null && quantity > 0) {
+            avgBuyingPrice = investmentValue / quantity;
+        }
+
         Double currentValue    = inv != null ? inv.getCurrentValue()          : null;
         Double profitLoss      = inv != null ? inv.getProfitLoss()            : null;
         Double profitLossPct   = inv != null ? inv.getProfitLossPercentage()  : null;
         Double currentPrice    = mkt != null ? mkt.getCurrentPrice()          : null;
         Double dayChange       = mkt != null ? mkt.getDayChange()             : null;
         Double dayChangePct    = mkt != null ? mkt.getDayChangePercentage()   : null;
+
+        if (currentPrice != null && currentPrice > 0 && avgBuyingPrice != null && avgBuyingPrice > 0) {
+            double qty = (quantity != null && quantity > 0) ? quantity : 1.0;
+            currentValue = currentPrice * qty;
+            investmentValue = avgBuyingPrice * qty;
+            profitLoss = currentValue - investmentValue;
+            profitLossPct = ((currentPrice - avgBuyingPrice) / avgBuyingPrice) * 100.0;
+        }
 
         String status = ActivityItem.resolveStatus(profitLoss);
 
@@ -462,6 +494,24 @@ public class DashboardAnalysisService {
                 businessMetrics.dashboardWidgetPublish("movers", "failure");
             }
         }
+    }
+
+    private String resolveActivityCompanyName(AnalysisHolding holding, String symbol) {
+        if (holding == null || holding.getIdentity() == null) {
+            return null;
+        }
+        if (StringUtils.hasText(holding.getIdentity().getCompanyName())
+                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getCompanyName())) {
+            return holding.getIdentity().getCompanyName();
+        }
+        if (StringUtils.hasText(holding.getIdentity().getName())
+                && !AnalysisAggregator.looksLikeIsin(holding.getIdentity().getName())) {
+            return holding.getIdentity().getName();
+        }
+        if (symbol != null && !AnalysisAggregator.looksLikeIsin(symbol)) {
+            return symbol;
+        }
+        return null;
     }
 
     @lombok.Data

@@ -8,13 +8,13 @@
     <parent>
         <groupId>com.am</groupId>
         <artifactId>am-core-services</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
+        <version>1.1.9-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>com.am.services</groupId>
     <artifactId>am-analysis</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>AM Analysis Service</name>
@@ -22,16 +22,16 @@
 
     <properties>
         <!-- Per-artifact published versions (bump independently) -->
-        <am.common-lib.version>1.1.3-SNAPSHOT</am.common-lib.version>
-        <am.observability-lib.version>1.1.3-SNAPSHOT</am.observability-lib.version>
-        <am.kafka-lib.version>1.1.3-SNAPSHOT</am.kafka-lib.version>
-        <am.market-domain.version>1.1.3-SNAPSHOT</am.market-domain.version>
-        <am.analysis-adapter.version>1.1.3-SNAPSHOT</am.analysis-adapter.version>
-        <am.security-lib.version>1.1.3-SNAPSHOT</am.security-lib.version>
-        <am.cache-lib.version>1.1.3-SNAPSHOT</am.cache-lib.version>
-        <am.feign-lib.version>1.1.3-SNAPSHOT</am.feign-lib.version>
-        <am.market-client-lib.version>1.1.3-SNAPSHOT</am.market-client-lib.version>
-        <am.trade-client-lib.version>1.1.3-SNAPSHOT</am.trade-client-lib.version>
+        <am.common-lib.version>1.1.5-SNAPSHOT</am.common-lib.version>
+        <am.observability-lib.version>1.1.5-SNAPSHOT</am.observability-lib.version>
+        <am.kafka-lib.version>1.1.5-SNAPSHOT</am.kafka-lib.version>
+        <am.market-domain.version>1.1.5-SNAPSHOT</am.market-domain.version>
+        <am.analysis-adapter.version>1.1.5-SNAPSHOT</am.analysis-adapter.version>
+        <am.security-lib.version>1.1.5-SNAPSHOT</am.security-lib.version>
+        <am.cache-lib.version>1.1.5-SNAPSHOT</am.cache-lib.version>
+        <am.feign-lib.version>1.1.5-SNAPSHOT</am.feign-lib.version>
+        <am.market-client-lib.version>1.1.5-SNAPSHOT</am.market-client-lib.version>
+        <am.trade-client-lib.version>1.1.5-SNAPSHOT</am.trade-client-lib.version>
     </properties>
 
     <dependencies>
@@ -62,54 +62,54 @@
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-common-lib</artifactId>
-            <version>${am.common-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-observability-lib</artifactId>
-            <version>${am.observability-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-kafka-lib</artifactId>
-            <version>${am.kafka-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.domain</groupId>
             <artifactId>am-market-domain</artifactId>
-            <version>${am.market-domain.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-analysis-adapter</artifactId>
-            <version>${am.analysis-adapter.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-security-lib</artifactId>
-            <version>${am.security-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-cache-lib</artifactId>
-            <version>${am.cache-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-feign-lib</artifactId>
-            <version>${am.feign-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Market Data Client Library -->
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-market-client-lib</artifactId>
-            <version>${am.market-client-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.am.libraries</groupId>
             <artifactId>am-trade-client-lib</artifactId>
-            <version>${am.trade-client-lib.version}</version>
+            <version>${project.version}</version>
         </dependency>
         
         <!-- Feign Client -->
@@ -133,7 +133,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Testing -->
@@ -181,6 +180,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

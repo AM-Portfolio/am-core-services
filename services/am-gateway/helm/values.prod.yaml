@@ -1,6 +1,6 @@
 # Production environment overrides for am-gateway
 # Service-level Ingress (same model as am-identity).
-# CI rebuild trigger: 2026-07-14
+# CI rebuild trigger: 2026-07-29-redeploy-gateway
 environment: prod
 language: java
 
@@ -20,7 +20,7 @@ probes:
   readiness:
     path: "/actuator/health"
 
-# Vault enabled — role and token management now handled centrally
+# Vault enabled - role and token management now handled centrally
 vault:
   enabled: true
   secretPaths:
@@ -43,6 +43,8 @@ env:
   SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka.infra-prod.svc.cluster.local:9092"
+  SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"kafkaUser\" password=\"kafkaPassword123!\";"
   MARKET_DATA_URL: "https://am.asrax.in/market"
 
 ingress:

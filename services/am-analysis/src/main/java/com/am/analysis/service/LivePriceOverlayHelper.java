@@ -27,6 +27,46 @@ public final class LivePriceOverlayHelper {
     private LivePriceOverlayHelper() {
     }
 
+    public static boolean looksLikeIsin(String value) {
+        if (value == null) {
+            return false;
+        }
+        String trimmed = value.trim();
+        return trimmed.length() == 12 && trimmed.matches("[A-Z]{2}[A-Z0-9]{10}");
+    }
+
+    /**
+     * Trading symbol stored on the holding in Mongo (portfolio/watchlist), not a name guess.
+     * Used when the quote key is an ISIN and identity.symbol is already the NSE ticker.
+     */
+    public static String storedTradingSymbolFromHoldings(String isinOrSymbol, Collection<AnalysisEntity> entities) {
+        if (isinOrSymbol == null || entities == null || !looksLikeIsin(isinOrSymbol)) {
+            return null;
+        }
+        String target = isinOrSymbol.trim();
+        for (AnalysisEntity entity : entities) {
+            if (entity == null || entity.getHoldings() == null) {
+                continue;
+            }
+            for (AnalysisHolding h : entity.getHoldings()) {
+                if (h == null || h.getIdentity() == null) {
+                    continue;
+                }
+                String holdingSymbol = h.getIdentity().getSymbol();
+                String holdingIsin = h.getIdentity().getIsin();
+                boolean matches = target.equalsIgnoreCase(holdingSymbol)
+                        || (holdingIsin != null && target.equalsIgnoreCase(holdingIsin));
+                if (!matches) {
+                    continue;
+                }
+                if (holdingSymbol != null && !looksLikeIsin(holdingSymbol)) {
+                    return holdingSymbol.trim().toUpperCase(Locale.ROOT);
+                }
+            }
+        }
+        return null;
+    }
+
     /** Infer average buy when Mongo holdings omit averagePrice. */
     public static double inferAveragePrice(InvestmentStats inv) {
         if (inv == null) {
@@ -139,7 +179,13 @@ public final class LivePriceOverlayHelper {
             return;
         }
         for (AnalysisEntity entity : entities) {
+            org.slf4j.LoggerFactory.getLogger(LivePriceOverlayHelper.class)
+                    .info("[Overlay] Applying ticks for entity: {}, holdings: {}", 
+                    entity.getId(), entity.getHoldings() != null ? entity.getHoldings().size() : 0);
             apply(entity, ticks, window);
+            org.slf4j.LoggerFactory.getLogger(LivePriceOverlayHelper.class)
+                    .info("[Overlay] After apply, entity {} totalValue: {}", 
+                    entity.getId(), entity.getPerformance() != null ? entity.getPerformance().getTotalValue() : null);
         }
     }
 
@@ -303,14 +349,21 @@ public final class LivePriceOverlayHelper {
         double qty = inv.getQuantity() != null ? inv.getQuantity() : 0.0;
         double avgBuy = inferAveragePrice(inv);
         double investmentValue = inv.getInvestmentValue() != null ? inv.getInvestmentValue() : 0.0;
+        if (investmentValue <= 0 && avgBuy > 0 && qty > 0) {
+            investmentValue = avgBuy * qty;
+            inv.setInvestmentValue(investmentValue);
+        }
 
-        double price = market.getCurrentPrice() != null ? market.getCurrentPrice() : 0.0;
+        double price = market.getCurrentPrice() != null && market.getCurrentPrice() > 0 ? market.getCurrentPrice() : 0.0;
         Double tickReference = null;
         LivePriceTick tick = resolveTick(symbol, ticks);
-        if (tick != null) {
+        if (tick != null && tick.lastPrice() > 0) {
             price = tick.lastPrice();
             market.setCurrentPrice(price);
             tickReference = tick.previousClose();
+        } else if (price <= 0 && avgBuy > 0) {
+            price = avgBuy;
+            market.setCurrentPrice(price);
         }
 
         Double referencePrice = intraday
@@ -338,12 +391,12 @@ public final class LivePriceOverlayHelper {
                 ? (intraday
                     ? computeDailyChangeAmount(qty, price, referencePrice)
                     : computePeriodChangeAmount(qty, price, referencePrice, window))
-                : existingDayChange;
+                : (existingDayChange != null ? existingDayChange : 0.0);
         Double periodChangePct = referencePrice != null
                 ? (intraday
                     ? computeDailyChangePercent(price, referencePrice)
                     : computePeriodChangePercent(price, referencePrice, window))
-                : existingDayChangePct;
+                : (existingDayChangePct != null ? existingDayChangePct : 0.0);
 
         inv.setCurrentValue(currentValue);
         inv.setProfitLoss(profitLoss);

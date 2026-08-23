@@ -131,6 +131,9 @@ jobs:
             enable common-lib libraries/am-common-lib
           fi
           if grep -q '^analysis-adapter=true' "$GITHUB_OUTPUT"; then
+            enable common-lib libraries/am-common-lib
+            enable observability-lib libraries/am-observability-lib
+            enable api-core-lib libraries/am-api-core-lib
             enable kafka-lib libraries/am-kafka-lib
             enable market-domain domain/am-market-domain
             enable portfolio-domain domain/am-portfolio-domain

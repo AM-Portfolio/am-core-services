@@ -17,6 +17,11 @@ public class PerformanceCalculator {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PerformanceCalculator.class);
 
     public PerformanceResponse calculate(AnalysisEntity entity, String timeFrame, Map<String, HistoricalData> marketDataMap, LocalDate fromDate, LocalDate toDate) {
+        return calculate(entity, timeFrame, marketDataMap, fromDate, toDate, Map.of());
+    }
+
+    public PerformanceResponse calculate(AnalysisEntity entity, String timeFrame, Map<String, HistoricalData> marketDataMap,
+                                         LocalDate fromDate, LocalDate toDate, Map<String, String> isinAliases) {
         log.info("[PerfCalc] Starting Performance Calculation: Portfolio={}, TimeFrame={}, Range=[{} to {}]", 
                 entity.getSourceId(), timeFrame, fromDate, toDate);
         
@@ -56,7 +61,7 @@ public class PerformanceCalculator {
                 log.trace("[PerfCalc] Symbol={} - Qty={} at {}", sym, qtyAtDate, currentDate);
                 Double avgPrice = (holding.getInvestment() != null) ? holding.getInvestment().getAveragePrice() : null;
                 
-                NavigableMap<LocalDate, Double> history = priceHistoryMap.get(sym);
+                NavigableMap<LocalDate, Double> history = lookupPriceHistory(sym, priceHistoryMap, isinAliases);
                 if (history != null) {
                     Map.Entry<LocalDate, Double> priceEntry = history.floorEntry(currentDate);
                     
@@ -68,11 +73,18 @@ public class PerformanceCalculator {
                         dailyInvestedValue += (cost * qtyAtDate);
                         
                         hasData = true; 
-                    } else {
-                        // Log only once per symbol/day combo if needed, or aggregate
                     }
+                } else if (currentDate.equals(toDate)
+                        && holding.getMarket() != null
+                        && holding.getMarket().getCurrentPrice() != null
+                        && holding.getMarket().getCurrentPrice() > 0) {
+                    double price = holding.getMarket().getCurrentPrice();
+                    dailyTotalValue += (price * qtyAtDate);
+                    double cost = (avgPrice != null && avgPrice > 0) ? avgPrice : price;
+                    dailyInvestedValue += (cost * qtyAtDate);
+                    hasData = true;
                 } else {
-                     if (currentDate.equals(toDate)) { // Log missing data only for the last day to avoid spam
+                     if (currentDate.equals(toDate)) {
                          log.trace("[PerfCalc] No price history found for symbol: {}", sym);
                      }
                 }
@@ -198,7 +210,27 @@ public class PerformanceCalculator {
         return priceHistoryMap;
     }
 
-    private PerformanceResponse buildResponse(AnalysisEntity entity, String timeFrame, List<PerformanceResponse.DataPoint> chartData, 
+    private NavigableMap<LocalDate, Double> lookupPriceHistory(
+            String sym,
+            Map<String, NavigableMap<LocalDate, Double>> priceHistoryMap,
+            Map<String, String> isinAliases) {
+        NavigableMap<LocalDate, Double> history = priceHistoryMap.get(sym);
+        if (history != null) {
+            return history;
+        }
+        if (isinAliases != null) {
+            String ticker = isinAliases.get(sym);
+            if (ticker != null) {
+                history = priceHistoryMap.get(ticker);
+                if (history != null) {
+                    return history;
+                }
+            }
+        }
+        return null;
+    }
+
+    private PerformanceResponse buildResponse(AnalysisEntity entity, String timeFrame, List<PerformanceResponse.DataPoint> chartData,
                                             BigDecimal firstValue, BigDecimal lastValue, double firstInvested, double lastInvested) {
         
         double totalReturnPct = 0.0;
