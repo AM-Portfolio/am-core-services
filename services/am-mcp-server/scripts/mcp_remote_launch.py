@@ -11,7 +11,7 @@ Fallback (human / break-glass):
 
 Env:
   AM_MCP_SSE_URL      default https://am-dev.asrax.in/mcp/sse
-  KEYCLOAK_TOKEN_URL  default http://auth.munish.org/auth/realms/am-dev-realm/protocol/openid-connect/token
+  KEYCLOAK_TOKEN_URL  default https://auth.asrax.in/auth/realms/am-dev-realm/protocol/openid-connect/token
   AM_AUTH_LOGIN_URL   default https://am-dev.asrax.in/identity/auth/login
   AM_MCP_PF_PORT / AM_IDENTITY_PF_PORT / KUBECONFIG — only for localhost SSE
 """
@@ -165,7 +165,7 @@ def main() -> int:
     sse_url = os.environ.get("AM_MCP_SSE_URL", "https://am-dev.asrax.in/mcp/sse")
     token_url = os.environ.get(
         "KEYCLOAK_TOKEN_URL",
-        "http://auth.munish.org/auth/realms/am-dev-realm/protocol/openid-connect/token",
+        "https://auth.asrax.in/auth/realms/am-dev-realm/protocol/openid-connect/token",
     )
     login_url = os.environ.get(
         "AM_AUTH_LOGIN_URL", "https://am-dev.asrax.in/identity/auth/login"
@@ -201,8 +201,10 @@ def main() -> int:
         print("npx not found on PATH", file=sys.stderr)
         return 1
 
-    # Cursor/Windows: no spaces in --header args (mangled otherwise).
-    # Force SSE — http-first tries OAuth /register and fails against am-mcp-server.
+    # Cursor/Windows: no spaces in --header argv (npx.cmd mangles them).
+    # mcp-remote expands ${MCP_REMOTE_AUTH} after parse.
+    env = os.environ.copy()
+    env["MCP_REMOTE_AUTH"] = f"Bearer {token}"
     cmd = [
         npx,
         "-y",
@@ -211,11 +213,13 @@ def main() -> int:
         "--transport",
         "sse-only",
         "--header",
-        f"Authorization:Bearer {token}",
+        "Authorization:${MCP_REMOTE_AUTH}",
+        "--header",
+        "User-Agent:am-asrax-mcp",
     ]
     if sse_url.startswith("http://"):
         cmd.append("--allow-http")
-    return subprocess.call(cmd)
+    return subprocess.call(cmd, env=env)
 
 
 if __name__ == "__main__":
