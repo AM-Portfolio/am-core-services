@@ -27,5 +27,7 @@ jobs:
       build_context: '.'
       preprod_namespace: 'am-apps-preprod'
       prod_namespace: 'am-apps-prod'
-      deploy_prod: true
+      deploy_preprod: false
+      deploy_prod: false
+      gitops_write_preprod: true
     secrets: inherit
