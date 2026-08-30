@@ -15,12 +15,21 @@ class UserIdResolverTest {
     }
 
     @Test
-    void prefersExplicitArg() {
+    void prefersJwtOverArg() {
         AmMcpProperties props = new AmMcpProperties();
         props.getDefaults().setUserId("default-user");
         UserContext.setUserId("jwt-user");
 
+        assertThat(UserIdResolver.resolve("arg-user", props)).isEqualTo("jwt-user");
+    }
+
+    @Test
+    void usesArgWhenNoJwt() {
+        AmMcpProperties props = new AmMcpProperties();
+        props.getDefaults().setUserId("default-user");
+
         assertThat(UserIdResolver.resolve("arg-user", props)).isEqualTo("arg-user");
+        assertThat(UserIdResolver.resolve("  ", props)).isEqualTo("default-user");
     }
 
     @Test

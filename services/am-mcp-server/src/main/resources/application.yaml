@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: am-mcp-server
+  mvc:
+    async:
+      # SSE GET /sse is async. Default 30s kills the stream before tools/call returns
+      # ("response object has been recycled"). Must exceed fin-agent TOOL_TIMEOUT_SECONDS.
+      request-timeout: ${SPRING_MVC_ASYNC_REQUEST_TIMEOUT:300000}
   jackson:
     deserialization:
       fail-on-unknown-properties: false

@@ -28,7 +28,8 @@ import java.util.Map;
 
 /**
  * Portfolio domain MCP tools.
- * Identity comes from the inbound user JWT (AuthTokenProvider → Bearer).
+ * Identity: inbound JWT sub, else optional userId arg (fin-agent sends JWT sub because
+ * MCP tool execution often runs off the SSE request thread).
  * Summary/holdings are sourced from am-analysis HOLDING entities (equity book),
  * not am-portfolio's raw model (which can include stale F&amp;O rows).
  */
@@ -54,9 +55,13 @@ public class PortfolioTools {
             """)
     @CircuitBreaker(name = "am-analysis", fallbackMethod = "portfolioSummaryFallback")
     public String getPortfolioSummary(
-            @ToolParam(description = "Optional portfolio UUID. Omit to summarise all portfolios.") String portfolioId) {
+            @ToolParam(description = "Optional portfolio UUID. Omit to summarise all portfolios.", required = false)
+            String portfolioId,
+            @ToolParam(description = "Authenticated user id. Ignored when a user JWT is present on the request.",
+                    required = false)
+            String userId) {
         try {
-            String uid = UserIdResolver.resolve(null, props);
+            String uid = UserIdResolver.resolve(userId, props);
             log.info("[MCP] get_portfolio_summary userId={} portfolioId={}", uid, portfolioId);
             List<AnalysisEntity> entities = PortfolioAnalysisAggregator.filterByPortfolioId(
                     analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING),
@@ -77,7 +82,7 @@ public class PortfolioTools {
         }
     }
 
-    public String portfolioSummaryFallback(String portfolioId, Exception e) {
+    public String portfolioSummaryFallback(String portfolioId, String userId, Exception e) {
         return response.unavailable("am-analysis (portfolio summary)");
     }
 
@@ -90,9 +95,13 @@ public class PortfolioTools {
             """)
     @CircuitBreaker(name = "am-analysis", fallbackMethod = "holdingsFallback")
     public String getHoldings(
-            @ToolParam(description = "Optional portfolio UUID. Omit for all portfolios.") String portfolioId) {
+            @ToolParam(description = "Optional portfolio UUID. Omit for all portfolios.", required = false)
+            String portfolioId,
+            @ToolParam(description = "Authenticated user id. Ignored when a user JWT is present on the request.",
+                    required = false)
+            String userId) {
         try {
-            String uid = UserIdResolver.resolve(null, props);
+            String uid = UserIdResolver.resolve(userId, props);
             log.info("[MCP] get_holdings userId={} portfolioId={}", uid, portfolioId);
             List<AnalysisEntity> entities = PortfolioAnalysisAggregator.filterByPortfolioId(
                     analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING),
@@ -116,7 +125,7 @@ public class PortfolioTools {
         }
     }
 
-    public String holdingsFallback(String portfolioId, Exception e) {
+    public String holdingsFallback(String portfolioId, String userId, Exception e) {
         return response.unavailable("am-analysis (holdings)");
     }
 
