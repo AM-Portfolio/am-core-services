@@ -39,9 +39,6 @@ public class AnalysisEntityLoadService {
     @Value("${app.demo.portfolio-id:}")
     private String demoPortfolioId;
 
-    @Value("${app.demo.owner-id:admin}")
-    private String demoOwnerId;
-
     public EntityLoadResult loadAll(EntityLoadRequest request) {
         return loadPortfoliosForUser(request.userId(), request.triggerSource());
     }
@@ -86,11 +83,12 @@ public class AnalysisEntityLoadService {
         if (portfolios.isEmpty()) {
             // Demo portfolio injection logic
             if (demoPortfolioId != null && !demoPortfolioId.isBlank() && !hasDismissedDemo(userId)) {
-                String demoEntityId = AnalysisEntityKeys.portfolioEntityId(demoPortfolioId, demoOwnerId);
+                String demoEntityId = AnalysisEntityKeys.portfolioEntityId(demoPortfolioId, null);
                 Optional<AnalysisEntity> demoOpt = repository.findById(demoEntityId);
                 if (demoOpt.isPresent()) {
+                    AnalysisEntity clonedDemo = cloneDemoEntity(demoOpt.get(), userId);
                     portfolios = new ArrayList<>();
-                    portfolios.add(demoOpt.get());
+                    portfolios.add(clonedDemo);
                     log.info("[EntityLoad] Injected demo portfolio {} for user {}", demoPortfolioId, userId);
                 }
             }
@@ -133,5 +131,18 @@ public class AnalysisEntityLoadService {
                 ? BOOTSTRAP_SOURCE_WS
                 : BOOTSTRAP_SOURCE_HTTP;
         return portfolioBootstrapTrigger.requestBootstrap(userId, portfolioId, source, null);
+    }
+
+    private AnalysisEntity cloneDemoEntity(AnalysisEntity source, String newOwnerId) {
+        AnalysisEntity clone = new AnalysisEntity();
+        clone.setId(source.getId());
+        clone.setSourceId(source.getSourceId());
+        clone.setType(source.getType());
+        clone.setOwnerId(newOwnerId);
+        clone.setPerformance(source.getPerformance());
+        clone.setHoldings(source.getHoldings());
+        clone.setAdditionalStats(source.getAdditionalStats());
+        clone.setLifecycle(source.getLifecycle());
+        return clone;
     }
 }
