@@ -12,8 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * Single entry point for loading PORTFOLIO {@link AnalysisEntity} records from Mongo.
@@ -31,6 +34,13 @@ public class AnalysisEntityLoadService {
     private final AnalysisAccessValidator accessValidator;
     private final PortfolioBootstrapTrigger portfolioBootstrapTrigger;
     private final FlowLogger flowLogger;
+    private final StringRedisTemplate redisTemplate;
+
+    @Value("${app.demo.portfolio-id:f969745c-f492-4b86-88ed-6588e9f28bb3}")
+    private String demoPortfolioId;
+
+    @Value("${app.demo.owner-id:admin}")
+    private String demoOwnerId;
 
     public EntityLoadResult loadAll(EntityLoadRequest request) {
         return loadPortfoliosForUser(request.userId(), request.triggerSource());
@@ -73,6 +83,19 @@ public class AnalysisEntityLoadService {
                 .filter(p -> p.getSourceId() == null || !AnalysisEntityKeys.isGlobalSourceId(p.getSourceId()))
                 .collect(Collectors.toList());
 
+        if (portfolios.isEmpty()) {
+            // Demo portfolio injection logic
+            if (demoPortfolioId != null && !demoPortfolioId.isBlank() && !hasDismissedDemo(userId)) {
+                String demoEntityId = AnalysisEntityKeys.portfolioEntityId(demoPortfolioId, demoOwnerId);
+                Optional<AnalysisEntity> demoOpt = repository.findById(demoEntityId);
+                if (demoOpt.isPresent()) {
+                    portfolios = new ArrayList<>();
+                    portfolios.add(demoOpt.get());
+                    log.info("[EntityLoad] Injected demo portfolio {} for user {}", demoPortfolioId, userId);
+                }
+            }
+        }
+
         if (!portfolios.isEmpty()) {
             flowLogger.step("analysis.entity_load.found",
                     "userId", userId,
@@ -84,6 +107,17 @@ public class AnalysisEntityLoadService {
         log.warn("[EntityLoad] No portfolio analysis entities for userId={}", userId);
         boolean bootstrapRequested = fireBootstrap(userId, null, trigger);
         return EntityLoadResult.empty(bootstrapRequested);
+    }
+
+    private boolean hasDismissedDemo(String userId) {
+        if (redisTemplate == null) return false;
+        try {
+            String val = redisTemplate.opsForValue().get("demo:dismissed:" + userId);
+            return "true".equalsIgnoreCase(val);
+        } catch (Exception e) {
+            log.warn("[EntityLoad] Failed to check demo dismissed status in Redis for {}: {}", userId, e.getMessage());
+            return false;
+        }
     }
 
     public Optional<AnalysisEntity> loadGlobalPortfolio(String userId) {
