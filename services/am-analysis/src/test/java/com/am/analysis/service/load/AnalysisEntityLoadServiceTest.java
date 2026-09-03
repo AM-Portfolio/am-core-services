@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,11 +32,14 @@ class AnalysisEntityLoadServiceTest {
     @Mock
     private FlowLogger flowLogger;
 
+    @Mock
+    private StringRedisTemplate redisTemplate;
+
     private AnalysisEntityLoadService service;
 
     @BeforeEach
     void setUp() {
-        service = new AnalysisEntityLoadService(repository, accessValidator, portfolioBootstrapTrigger, flowLogger);
+        service = new AnalysisEntityLoadService(repository, accessValidator, portfolioBootstrapTrigger, flowLogger, redisTemplate);
     }
 
     @Test
