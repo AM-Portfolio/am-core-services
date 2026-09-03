@@ -81,8 +81,8 @@ public class AnalysisEntityLoadService {
                 .collect(Collectors.toList());
 
         if (portfolios.isEmpty()) {
-            // Demo portfolio injection logic
-            if (demoPortfolioId != null && !demoPortfolioId.isBlank() && !hasDismissedDemo(userId)) {
+            // Demo portfolio injection — shown until the user has any real portfolio analysis entity
+            if (demoPortfolioId != null && !demoPortfolioId.isBlank()) {
                 String demoEntityId = AnalysisEntityKeys.portfolioEntityId(demoPortfolioId, null);
                 Optional<AnalysisEntity> demoOpt = repository.findById(demoEntityId);
                 if (demoOpt.isPresent()) {
@@ -105,17 +105,6 @@ public class AnalysisEntityLoadService {
         log.warn("[EntityLoad] No portfolio analysis entities for userId={}", userId);
         boolean bootstrapRequested = fireBootstrap(userId, null, trigger);
         return EntityLoadResult.empty(bootstrapRequested);
-    }
-
-    private boolean hasDismissedDemo(String userId) {
-        if (redisTemplate == null) return false;
-        try {
-            String val = redisTemplate.opsForValue().get("demo:dismissed:" + userId);
-            return "true".equalsIgnoreCase(val);
-        } catch (Exception e) {
-            log.warn("[EntityLoad] Failed to check demo dismissed status in Redis for {}: {}", userId, e.getMessage());
-            return false;
-        }
     }
 
     public Optional<AnalysisEntity> loadGlobalPortfolio(String userId) {
