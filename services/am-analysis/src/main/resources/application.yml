@@ -51,6 +51,11 @@ logging:
     org.springframework.kafka: INFO
     org.apache.kafka: INFO
 
+app:
+  demo:
+    # Shared demo portfolio shown on dashboard for users with 0 portfolios. Set via DEMO_PORTFOLIO_ID in Helm.
+    portfolio-id: ${DEMO_PORTFOLIO_ID:}
+
 am:
   security:
     enabled: true
