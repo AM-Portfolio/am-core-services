@@ -60,9 +60,7 @@ vault:
 # Non-secret env vars
 env:
   SPRING_PROFILES_ACTIVE: "prod"
-  DEMO_PORTFOLIO_ID: "f969745c-f492-4b86-88ed-6588e9f28bb3"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
-  MARKET_DATA_URL: "https://am.asrax.in/market"
 # Keeps full C2 compilation for max calculation speed while skipping slow startup pre-initializers
   JAVA_OPTS: "-Xms384m -Xmx512m -XX:+UseStringDeduplication -Dspring.backgroundpreinitializer.ignore=true"
