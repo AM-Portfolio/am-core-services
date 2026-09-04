@@ -1,13 +1,18 @@
 package com.am.mcp.tools;
 
+import com.am.analysis.adapter.model.AnalysisEntity;
+import com.am.analysis.adapter.model.AnalysisEntityType;
+import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.mcp.config.AmMcpProperties;
+import com.am.mcp.util.PortfolioAnalysisAggregator;
 import com.am.mcp.util.ResponseHelper;
+import com.am.mcp.util.UserIdResolver;
 import com.am.portfolio.client.api.PortfolioAnalyticsApi;
 import com.am.portfolio.client.api.PortfolioManagementApi;
 import com.am.portfolio.client.model.AdvancedAnalyticsRequest;
 import com.am.portfolio.client.model.PortfolioBasicInfo;
 import com.am.portfolio.client.model.PortfolioHoldings;
 import com.am.portfolio.client.model.PortfolioModelV1;
-import com.am.portfolio.client.model.PortfolioSummaryV1;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +22,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Portfolio domain MCP tools.
- * Identity comes from the inbound user JWT (AuthTokenProvider → Bearer).
+ * Identity: inbound JWT sub, else optional userId arg (fin-agent sends JWT sub because
+ * MCP tool execution often runs off the SSE request thread).
+ * Summary/holdings are sourced from am-analysis HOLDING entities (equity book),
+ * not am-portfolio's raw model (which can include stale F&amp;O rows).
  */
 @Slf4j
 @Service
@@ -34,6 +41,8 @@ public class PortfolioTools {
 
     private final PortfolioManagementApi portfolioManagementApi;
     private final PortfolioAnalyticsApi portfolioAnalyticsApi;
+    private final AnalysisRepository analysisRepository;
+    private final AmMcpProperties props;
     private final ResponseHelper response;
 
     @Tool(name = "get_portfolio_summary", description = """
@@ -44,43 +53,37 @@ public class PortfolioTools {
               "What are my total returns?", "How much have I made/lost?"
             Optional portfolioId: pass a specific portfolio UUID, or omit for all portfolios.
             """)
-    @CircuitBreaker(name = "am-portfolio", fallbackMethod = "portfolioSummaryFallback")
+    @CircuitBreaker(name = "am-analysis", fallbackMethod = "portfolioSummaryFallback")
     public String getPortfolioSummary(
-            @ToolParam(description = "Optional portfolio UUID. Omit to summarise all portfolios.") String portfolioId) {
+            @ToolParam(description = "Optional portfolio UUID. Omit to summarise all portfolios.", required = false)
+            String portfolioId,
+            @ToolParam(description = "Authenticated user id. Ignored when a user JWT is present on the request.",
+                    required = false)
+            String userId) {
         try {
-            log.info("[MCP] get_portfolio_summary portfolioId={}", portfolioId);
-            if (portfolioId != null && !portfolioId.isBlank()) {
-                PortfolioSummaryV1 summary = portfolioManagementApi.getPortfolioSummary(
-                        portfolioId, null, null, null);
-                return response.toJson(summary);
-            }
-            List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails();
-            List<Object> summaries = new ArrayList<>();
-            for (PortfolioBasicInfo p : portfolios) {
-                try {
-                    PortfolioSummaryV1 s = portfolioManagementApi.getPortfolioSummary(
-                            p.getPortfolioId(), null, null, null);
-                    Map<String, Object> row = new LinkedHashMap<>();
-                    row.put("portfolioId", p.getPortfolioId());
-                    row.put("name", p.getPortfolioName());
-                    row.put("summary", s);
-                    summaries.add(row);
-                } catch (Exception e) {
-                    log.warn("Summary failed for portfolio {}: {}", p.getPortfolioId(), e.getMessage());
+            String uid = UserIdResolver.resolve(userId, props);
+            log.info("[MCP] get_portfolio_summary userId={} portfolioId={}", uid, portfolioId);
+            List<AnalysisEntity> entities = PortfolioAnalysisAggregator.filterByPortfolioId(
+                    analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING),
+                    portfolioId);
+            // Equity books are stored as PORTFOLIO entities with nested holdings when HOLDING is empty.
+            if (entities.isEmpty() || PortfolioAnalysisAggregator.listHoldings(entities).isEmpty()) {
+                List<AnalysisEntity> portfolios = PortfolioAnalysisAggregator.filterByPortfolioId(
+                        analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.PORTFOLIO),
+                        portfolioId);
+                if (!portfolios.isEmpty()) {
+                    entities = portfolios;
                 }
             }
-            Map<String, Object> result = new LinkedHashMap<>();
-            result.put("portfolios", summaries);
-            result.put("count", summaries.size());
-            return response.toJson(result);
+            return response.toJson(PortfolioAnalysisAggregator.summarize(entities));
         } catch (Exception e) {
             log.error("Failed to fetch portfolio summary", e);
             return response.errorJson("get_portfolio_summary", e);
         }
     }
 
-    public String portfolioSummaryFallback(String portfolioId, Exception e) {
-        return response.unavailable("am-portfolio (portfolio summary)");
+    public String portfolioSummaryFallback(String portfolioId, String userId, Exception e) {
+        return response.unavailable("am-analysis (portfolio summary)");
     }
 
     @Tool(name = "get_holdings", description = """
@@ -90,34 +93,31 @@ public class PortfolioTools {
               "What stocks do I own?", "Show me my holdings", "What is in my portfolio?"
             Optional portfolioId: pass a specific portfolio UUID, or omit for all.
             """)
-    @CircuitBreaker(name = "am-portfolio", fallbackMethod = "holdingsFallback")
+    @CircuitBreaker(name = "am-analysis", fallbackMethod = "holdingsFallback")
     public String getHoldings(
-            @ToolParam(description = "Optional portfolio UUID. Omit for all portfolios.") String portfolioId) {
+            @ToolParam(description = "Optional portfolio UUID. Omit for all portfolios.", required = false)
+            String portfolioId,
+            @ToolParam(description = "Authenticated user id. Ignored when a user JWT is present on the request.",
+                    required = false)
+            String userId) {
         try {
-            log.info("[MCP] get_holdings portfolioId={}", portfolioId);
-            if (portfolioId != null && !portfolioId.isBlank()) {
-                PortfolioHoldings holdings = portfolioManagementApi.getPortfolioHoldings(
-                        portfolioId, null, null, null);
-                return response.toJson(holdings);
-            }
-            List<PortfolioBasicInfo> portfolios = portfolioManagementApi.getPortfolioBasicDetails();
-            List<Object> all = new ArrayList<>();
-            for (PortfolioBasicInfo p : portfolios) {
-                try {
-                    PortfolioHoldings h = portfolioManagementApi.getPortfolioHoldings(
-                            p.getPortfolioId(), null, null, null);
-                    Map<String, Object> row = new LinkedHashMap<>();
-                    row.put("portfolioId", p.getPortfolioId());
-                    row.put("name", p.getPortfolioName());
-                    row.put("holdings", h);
-                    all.add(row);
-                } catch (Exception e) {
-                    log.warn("Holdings failed for portfolio {}: {}", p.getPortfolioId(), e.getMessage());
+            String uid = UserIdResolver.resolve(userId, props);
+            log.info("[MCP] get_holdings userId={} portfolioId={}", uid, portfolioId);
+            List<AnalysisEntity> entities = PortfolioAnalysisAggregator.filterByPortfolioId(
+                    analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING),
+                    portfolioId);
+            if (entities.isEmpty() || PortfolioAnalysisAggregator.listHoldings(entities).isEmpty()) {
+                List<AnalysisEntity> portfolios = PortfolioAnalysisAggregator.filterByPortfolioId(
+                        analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.PORTFOLIO),
+                        portfolioId);
+                if (!portfolios.isEmpty()) {
+                    entities = portfolios;
                 }
             }
+            List<Map<String, Object>> holdings = PortfolioAnalysisAggregator.listHoldings(entities);
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("portfolios", all);
-            result.put("count", all.size());
+            result.put("holdings", holdings);
+            result.put("count", holdings.size());
             return response.toJson(result);
         } catch (Exception e) {
             log.error("Failed to fetch holdings", e);
@@ -125,8 +125,8 @@ public class PortfolioTools {
         }
     }
 
-    public String holdingsFallback(String portfolioId, Exception e) {
-        return response.unavailable("am-portfolio (holdings)");
+    public String holdingsFallback(String portfolioId, String userId, Exception e) {
+        return response.unavailable("am-analysis (holdings)");
     }
 
     @Tool(name = "get_holding_detail", description = """
