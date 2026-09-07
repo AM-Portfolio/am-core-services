@@ -30,7 +30,7 @@ vault:
 # Public HTTPS on am-dev.asrax.in (Traefik strip-prefix). Image tag comes from CI/Helm.
 env:
   SPRING_PROFILES_ACTIVE: "dev"
-  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/analysis"
   REDIS_PORT: "6379"
   AM_AUTH_URL: "https://am-dev.asrax.in/identity"
   AM_AI_AGENT_URL: "https://am-dev.asrax.in/ai"

@@ -13,20 +13,22 @@ service:
   port: 8080
 
 # Health probe configuration (Spring Boot Actuator)
+# Use /liveness and /readiness groups — NOT aggregate /actuator/health (Mongo/Redis
+# failures must not kill the pod; startup can exceed 2 min on prod).
 probes:
   port: 8080
   liveness:
-    path: /actuator/health
-    initialDelaySeconds: 60
+    path: /actuator/health/liveness
+    initialDelaySeconds: 150
     periodSeconds: 30
-    timeoutSeconds: 10
-    failureThreshold: 3
-  readiness:
-    path: /actuator/health
-    initialDelaySeconds: 30
-    periodSeconds: 10
     timeoutSeconds: 5
-    failureThreshold: 3
+    failureThreshold: 5
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 140
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 6
 
 # Ingress (disabled by default)
 ingress:
@@ -72,6 +74,7 @@ env:
   AM_AI_AGENT_URL: "http://localhost:8100"
   AM_PORTFOLIO_URL: "http://localhost:8060"
   AM_DEFAULT_USER: "user1"
+  SPRING_DATA_MONGODB_DATABASE: "analysis"
   AM_TOOLS_PORTFOLIO_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_MARKET_ENABLED: "true"

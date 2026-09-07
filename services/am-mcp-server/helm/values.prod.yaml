@@ -42,6 +42,7 @@ env:
   AM_PORTFOLIO_URL: "https://am.asrax.in/portfolio"
   AM_TRADE_URL: "https://am.asrax.in/trade"
   MARKET_DATA_URL: "https://am.asrax.in/market"
+  SPRING_DATA_MONGODB_DATABASE: "analysis"
 
 ingress:
   enabled: true

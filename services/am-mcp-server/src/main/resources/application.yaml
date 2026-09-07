@@ -21,7 +21,8 @@ spring:
   data:
     mongodb:
       uri: ${SPRING_DATA_MONGODB_URI:mongodb://admin:password123@localhost:27017/?authSource=admin}
-      database: ${SPRING_DATA_MONGODB_DATABASE:mcp}
+      # Must be the am-analysis database (collection analysis_data), not a leftover "mcp" db.
+      database: ${SPRING_DATA_MONGODB_DATABASE:analysis}
     redis:
       host: ${REDIS_HOSTNAME:localhost}
       port: ${REDIS_PORT:6379}

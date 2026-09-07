@@ -63,18 +63,12 @@ public class PortfolioTools {
         try {
             String uid = UserIdResolver.resolve(userId, props);
             log.info("[MCP] get_portfolio_summary userId={} portfolioId={}", uid, portfolioId);
-            List<AnalysisEntity> entities = PortfolioAnalysisAggregator.filterByPortfolioId(
+            List<AnalysisEntity> entities = PortfolioAnalysisAggregator.resolveBookEntities(
                     analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING),
+                    analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.PORTFOLIO),
                     portfolioId);
-            // Equity books are stored as PORTFOLIO entities with nested holdings when HOLDING is empty.
-            if (entities.isEmpty() || PortfolioAnalysisAggregator.listHoldings(entities).isEmpty()) {
-                List<AnalysisEntity> portfolios = PortfolioAnalysisAggregator.filterByPortfolioId(
-                        analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.PORTFOLIO),
-                        portfolioId);
-                if (!portfolios.isEmpty()) {
-                    entities = portfolios;
-                }
-            }
+            log.info("[MCP] get_portfolio_summary resolved entities={} rows={}",
+                    entities.size(), PortfolioAnalysisAggregator.listHoldings(entities).size());
             return response.toJson(PortfolioAnalysisAggregator.summarize(entities));
         } catch (Exception e) {
             log.error("Failed to fetch portfolio summary", e);
@@ -103,18 +97,12 @@ public class PortfolioTools {
         try {
             String uid = UserIdResolver.resolve(userId, props);
             log.info("[MCP] get_holdings userId={} portfolioId={}", uid, portfolioId);
-            List<AnalysisEntity> entities = PortfolioAnalysisAggregator.filterByPortfolioId(
+            List<AnalysisEntity> entities = PortfolioAnalysisAggregator.resolveBookEntities(
                     analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.HOLDING),
+                    analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.PORTFOLIO),
                     portfolioId);
-            if (entities.isEmpty() || PortfolioAnalysisAggregator.listHoldings(entities).isEmpty()) {
-                List<AnalysisEntity> portfolios = PortfolioAnalysisAggregator.filterByPortfolioId(
-                        analysisRepository.findByOwnerIdAndType(uid, AnalysisEntityType.PORTFOLIO),
-                        portfolioId);
-                if (!portfolios.isEmpty()) {
-                    entities = portfolios;
-                }
-            }
             List<Map<String, Object>> holdings = PortfolioAnalysisAggregator.listHoldings(entities);
+            log.info("[MCP] get_holdings resolved rows={}", holdings.size());
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("holdings", holdings);
             result.put("count", holdings.size());

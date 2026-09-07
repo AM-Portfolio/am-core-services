@@ -56,6 +56,31 @@ class PortfolioAnalysisAggregatorTest {
     }
 
     @Test
+    void resolveBookEntitiesPrefersPortfolioWhenMoreNestedRows() {
+        AnalysisEntity staleFo = AnalysisEntity.builder()
+                .sourceId("1048NFL26-F")
+                .type(AnalysisEntityType.HOLDING)
+                .performance(PerformanceSummary.builder()
+                        .totalInvestment(0.0)
+                        .totalValue(0.0)
+                        .build())
+                .build();
+        AnalysisEntity portfolio = AnalysisEntity.builder()
+                .sourceId("pf-1")
+                .type(AnalysisEntityType.PORTFOLIO)
+                .holdings(List.of(
+                        holding("RELIANCE", 100_000.0, 110_000.0, 10.0),
+                        holding("TCS", 50_000.0, 55_000.0, 10.0)))
+                .build();
+
+        List<AnalysisEntity> resolved = PortfolioAnalysisAggregator.resolveBookEntities(
+                List.of(staleFo), List.of(portfolio), null);
+
+        assertThat(resolved).containsExactly(portfolio);
+        assertThat(PortfolioAnalysisAggregator.listHoldings(resolved)).hasSize(2);
+    }
+
+    @Test
     void filterByPortfolioId() {
         AnalysisEntity a = AnalysisEntity.builder().sourceId("pf-a").build();
         AnalysisEntity b = AnalysisEntity.builder().sourceId("pf-b").build();

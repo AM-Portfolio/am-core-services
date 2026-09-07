@@ -30,6 +30,28 @@ public final class PortfolioAnalysisAggregator {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Prefer the analysis book that matches the dashboard: PORTFOLIO docs with nested
+     * equity holdings often have the full book, while flat HOLDING docs may include a
+     * single stale F&amp;O row that blocks the portfolio fallback.
+     */
+    public static List<AnalysisEntity> resolveBookEntities(
+            List<AnalysisEntity> holdingDocs,
+            List<AnalysisEntity> portfolioDocs,
+            String portfolioId) {
+        List<AnalysisEntity> holdings = filterByPortfolioId(holdingDocs, portfolioId);
+        List<AnalysisEntity> portfolios = filterByPortfolioId(portfolioDocs, portfolioId);
+        int holdingRows = listHoldings(holdings).size();
+        int portfolioRows = listHoldings(portfolios).size();
+        if (portfolioRows > holdingRows) {
+            return portfolios;
+        }
+        if (holdingRows > 0) {
+            return holdings;
+        }
+        return portfolios.isEmpty() ? holdings : portfolios;
+    }
+
     public static Map<String, Object> summarize(List<AnalysisEntity> entities) {
         double invested = 0;
         double current = 0;

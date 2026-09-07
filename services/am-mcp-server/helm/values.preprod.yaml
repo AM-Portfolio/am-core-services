@@ -39,7 +39,7 @@ env:
   KAFKA_BOOTSTRAP_SERVERS: "kafka.infra.svc.cluster.local:9092"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
   KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
-  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/mcp"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongodb.infra.svc.cluster.local:27017/analysis"
   REDIS_PORT: "6379"
   AM_AUTH_URL: "https://am-preprod.asrax.in/identity"
   AM_AI_AGENT_URL: "https://am-preprod.asrax.in/ai"
