@@ -15,19 +15,26 @@ service:
 # Health probe configuration (Spring Boot Actuator)
 # Use /liveness and /readiness groups — NOT aggregate /actuator/health (Mongo/Redis
 # failures must not kill the pod; startup can exceed 2 min on prod).
+# readiness timeout must exceed MongoHealthIndicator (~30s) or kube interrupts the check.
 probes:
   port: 8080
+  startup:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
   liveness:
     path: /actuator/health/liveness
-    initialDelaySeconds: 150
+    initialDelaySeconds: 0
     periodSeconds: 30
     timeoutSeconds: 5
     failureThreshold: 5
   readiness:
     path: /actuator/health/readiness
-    initialDelaySeconds: 140
+    initialDelaySeconds: 0
     periodSeconds: 15
-    timeoutSeconds: 10
+    timeoutSeconds: 35
     failureThreshold: 6
 
 # Ingress (disabled by default)

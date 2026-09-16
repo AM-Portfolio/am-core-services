@@ -32,7 +32,31 @@ vault:
     service-oauth:
       path: "apps/data/prod/services/am-mcp-server"
 
+# Probe overrides: Argo prod syncs values from master; keep these explicit so a
+# short aggregate /actuator/health timeout cannot CrashLoop a ~90s Java startup.
+probes:
+  port: 8080
+  startup:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+  liveness:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 0
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 5
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 0
+    periodSeconds: 15
+    timeoutSeconds: 35
+    failureThreshold: 6
+
 # Public HTTPS on am.asrax.in (Traefik strip-prefix). Image tag comes from CI/Helm, not here.
+# Mongo URI comes from Vault apps/data/prod/infra/mongodb (agent inject overrides env).
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
