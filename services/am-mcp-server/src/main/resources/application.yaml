@@ -158,8 +158,10 @@ management:
       probes:
         enabled: true
       group:
+        # Do not gate readiness on mongo/redis — external mongo can time out on
+        # new pods during rolling updates and CrashLoop the rollout (probe 503).
         readiness:
-          include: mongo,redis,readinessState
+          include: readinessState
         liveness:
           include: livenessState
   metrics:

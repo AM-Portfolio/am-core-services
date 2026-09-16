@@ -57,6 +57,7 @@ probes:
 
 # Public HTTPS on am.asrax.in (Traefik strip-prefix). Image tag comes from CI/Helm, not here.
 # Mongo URI comes from Vault apps/data/prod/infra/mongodb (agent inject overrides env).
+# Force readiness group without mongo so a flaky Contabo handshake cannot block rollout.
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
@@ -67,6 +68,7 @@ env:
   AM_TRADE_URL: "https://am.asrax.in/trade"
   MARKET_DATA_URL: "https://am.asrax.in/market"
   SPRING_DATA_MONGODB_DATABASE: "analysis"
+  MANAGEMENT_ENDPOINT_HEALTH_GROUP_READINESS_INCLUDE: "readinessState"
 
 ingress:
   enabled: true
