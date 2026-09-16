@@ -1,0 +1,188 @@
+{
+  "info": {
+    "_postman_id": "am-mcp-tools-prod-fixed",
+    "name": "AM MCP Tools — Prod (Fixed URLs)",
+    "description": "Prod REST smoke tests for fin-agent tools.\n\n**Auth (required):**\n1. Select environment **AM MCP Tools — Prod** (top-right)\n2. `access_token` must be JWT only — no `Bearer ` prefix\n3. Collection pre-request script injects `Authorization: Bearer {{access_token}}` on every request\n\n**Market gotchas (prod):**\n- `get_market_movers` → use `/market/v1/analysis/movers` (NOT `market-analytics/movers` — that path 500s)\n- `type` must be lowercase: `gainers`, `losers`, or `all`\n- `get_indices_data` → POST body is a raw JSON **array** of strings; add `?forceRefresh=false`\n- Valid index symbols: run **get_available_indices** first (`SENSEX` is not in NSE list)\n\nIf you still get 401: re-run **00 Setup → Login** or paste a fresh token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const token = pm.environment.get('access_token') || pm.collectionVariables.get('access_token');",
+          "if (token) {",
+          "  const bare = token.replace(/^Bearer\\s+/i, '').trim();",
+          "  pm.request.headers.upsert({ key: 'Authorization', value: 'Bearer ' + bare });",
+          "  pm.collectionVariables.set('access_token', bare);",
+          "} else {",
+          "  console.warn('Missing access_token — select AM MCP Tools — Prod environment');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://am.asrax.in" },
+    { "key": "access_token", "value": "" },
+    { "key": "user_id", "value": "670116d7-8683-4f35-bdb6-7cf6fb122068" },
+    { "key": "symbol", "value": "RELIANCE" }
+  ],
+  "item": [
+    {
+      "name": "00 Setup",
+      "item": [
+        {
+          "name": "Login (saves access_token)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "if (pm.response.code === 200) {",
+                "  const b = pm.response.json();",
+                "  const tok = b.access_token || (b.data && b.data.access_token);",
+                "  if (tok) {",
+                "    const bare = tok.replace(/^Bearer\\s+/i, '').trim();",
+                "    pm.collectionVariables.set('access_token', bare);",
+                "    pm.environment.set('access_token', bare);",
+                "  }",
+                "}",
+                "pm.test('Login 200', () => pm.response.to.have.status(200));"
+              ]
+            }
+          }],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"{{test_email}}\",\n  \"password\": \"{{test_password}}\"\n}" },
+            "url": "{{base_url}}/identity/auth/login"
+          }
+        },
+        {
+          "name": "MCP Health (no auth)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": "{{base_url}}/mcp/actuator/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Portfolio",
+      "item": [{
+        "name": "get_portfolio_summary",
+        "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+          "url": "{{base_url}}/analysis/v1/analysis/dashboard/summary"
+        }
+      }]
+    },
+    {
+      "name": "Market",
+      "item": [
+        {
+          "name": "get_stock_quote",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/market/v1/market-data/quotes?symbols={{symbol}}&refresh=true&timeFrame=5m"
+          }
+        },
+        {
+          "name": "get_available_indices",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/market/v1/indices/available"
+          }
+        },
+        {
+          "name": "get_market_movers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/market/v1/analysis/movers?type=gainers&limit=10&indexSymbol=NIFTY%2050",
+              "host": ["{{base_url}}"],
+              "path": ["market", "v1", "analysis", "movers"],
+              "query": [
+                { "key": "type", "value": "gainers", "description": "gainers | losers | all (lowercase)" },
+                { "key": "limit", "value": "10" },
+                { "key": "indexSymbol", "value": "NIFTY 50" },
+                { "key": "timeFrame", "value": "1D", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_market_movers (unified gainers+losers)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/market/v1/analysis/movers?type=all&limit=10&indexSymbol=NIFTY%2050"
+          }
+        },
+        {
+          "name": "get_indices_data",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\"NIFTY 50\", \"NIFTY BANK\"]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/market/v1/indices/batch?forceRefresh=false",
+              "host": ["{{base_url}}"],
+              "path": ["market", "v1", "indices", "batch"],
+              "query": [{ "key": "forceRefresh", "value": "false" }]
+            }
+          }
+        },
+        {
+          "name": "search_instruments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/market/v1/securities/search?query=HDFC"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trade",
+      "item": [{
+        "name": "get_recent_activity",
+        "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+          "url": "{{base_url}}/analysis/v1/analysis/dashboard/recent-activity?page=0&size=10"
+        }
+      }]
+    },
+    {
+      "name": "Analysis",
+      "item": [{
+        "name": "get_top_movers",
+        "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+          "url": "{{base_url}}/analysis/v1/analysis/dashboard/top-movers?timeFrame=1D"
+        }
+      }]
+    }
+  ]
+}

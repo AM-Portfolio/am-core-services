@@ -122,8 +122,12 @@ public class MarketTools {
             @ToolParam(description = "Max results (default 10).") Integer limit,
             @ToolParam(description = "Index symbol e.g. NIFTY 50 (optional).") String indexSymbol) {
         try {
+            String resolvedType = (type != null && !type.isBlank()) ? type.toUpperCase() : "GAINERS";
+            int resolvedLimit = limit != null && limit > 0 ? limit : 10;
+            String resolvedIndex = (indexSymbol != null && !indexSymbol.isBlank()) ? indexSymbol : "NIFTY 50";
+            log.info("[MCP] get_market_movers type={} limit={} index={}", resolvedType, resolvedLimit, resolvedIndex);
             List<Map<String, Object>> movers = marketDataClientService.getMovers(
-                    type, limit != null ? limit : 10, indexSymbol, null, null);
+                    resolvedType, resolvedLimit, resolvedIndex, null, null);
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("movers", movers);
             result.put("count", movers.size());
