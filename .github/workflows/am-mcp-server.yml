@@ -28,5 +28,5 @@ jobs:
       build_context: '.'
       preprod_namespace: 'am-apps-preprod'
       prod_namespace: 'am-apps-prod'
-      deploy_prod: true
+      contabo_approve: true
     secrets: inherit
