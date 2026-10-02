@@ -29,8 +29,13 @@ public class PortfolioEventListener {
             PortfolioUpdateEvent event = objectMapper.readValue(message,
                     PortfolioUpdateEvent.class);
 
-            var entity = mapper.mapPortfolioEvent(event);
-            ingestionService.ingest(entity);
+            if ("DELETE".equalsIgnoreCase(event.getAction())) {
+                log.info("Deleting analysis data for portfolioId={}", event.getPortfolioId());
+                ingestionService.delete(event.getPortfolioId(), event.getUserId());
+            } else {
+                var entity = mapper.mapPortfolioEvent(event);
+                ingestionService.ingest(entity);
+            }
         } catch (Exception e) {
             log.error("Failed to process portfolio event", e);
         }

@@ -24,6 +24,7 @@ public class PortfolioUpdateEvent {
     private String spanId;
     private String userId;
     private String portfolioId;
+    private String action;
 
     // Aggregated summary data
     private BigDecimal totalValue;

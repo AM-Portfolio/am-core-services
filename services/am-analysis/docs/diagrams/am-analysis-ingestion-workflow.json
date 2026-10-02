@@ -1,0 +1,62 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AM Analysis Data Ingestion & Fanout Workflow",
+    "animation": "trace",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "output": "am-analysis-ingestion-workflow.html"
+  },
+  "lanes": [
+    { "id": "external", "label": "External & Broker" },
+    { "id": "listeners", "label": "Consumers" },
+    { "id": "core", "label": "Core & Storage" }
+  ],
+  "phases": [
+    { "id": "publish", "label": "Upstream Publish", "fromCol": 0, "toCol": 1 },
+    { "id": "process", "label": "Consume & Persist", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "delivery", "label": "Fan-out & Delivery", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "nodes": [
+    { "id": "portfolio", "lane": "external", "col": 0, "type": "backend", "label": "Portfolio Svc", "sublabel": "Source of Truth", "width": 110 },
+    
+    { "id": "topic_in", "lane": "external", "col": 1, "type": "messagebus", "label": "am-portfolio-update", "sublabel": "Kafka Topic", "width": 140 },
+    
+    { "id": "listener_ingest", "lane": "listeners", "col": 2, "type": "backend", "label": "Ingest Listener", "sublabel": "PortfolioEventListener", "width": 140 },
+    
+    { "id": "listener_dash", "lane": "listeners", "col": 3, "type": "backend", "label": "Dashboard Listener", "sublabel": "DashboardUpdate", "width": 140 },
+    { "id": "mongo", "lane": "core", "col": 3, "type": "database", "label": "Analysis DB", "sublabel": "MongoDB Cache", "width": 110 },
+    
+    { "id": "dash_svc", "lane": "core", "col": 4, "type": "backend", "label": "Dashboard Svc", "sublabel": "Aggregation", "width": 110 },
+    { "id": "topic_out", "lane": "external", "col": 4, "type": "messagebus", "label": "am-dashboard-summary", "sublabel": "Kafka Topic", "width": 150 },
+    
+    { "id": "gateway", "lane": "external", "col": 5, "type": "frontend", "label": "WebSocket Gateway", "sublabel": "UI Push", "width": 140 }
+  ],
+  "edges": [
+    { "id": "port-topic", "from": "portfolio", "to": "topic_in", "label": "publishes state", "variant": "default" },
+    
+    { "id": "topic-ingest", "from": "topic_in", "to": "listener_ingest", "label": "consumes", "variant": "emphasis" },
+    { "id": "topic-dash", "from": "topic_in", "to": "listener_dash", "label": "triggers", "variant": "dashed" },
+    
+    { "id": "ingest-mongo", "from": "listener_ingest", "to": "mongo", "label": "save() projection", "variant": "emphasis" },
+    { "id": "dash-svc", "from": "listener_dash", "to": "dash_svc", "label": "request update", "variant": "default" },
+    
+    { "id": "svc-mongo", "from": "dash_svc", "to": "mongo", "label": "read portfolios", "variant": "dashed" },
+    
+    { "id": "svc-out", "from": "dash_svc", "to": "topic_out", "label": "publish widgets", "variant": "emphasis" },
+    { "id": "out-gateway", "from": "topic_out", "to": "gateway", "label": "relay", "variant": "default" }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Deletion Bug",
+      "items": [
+        "Listener only calls save().",
+        "If a portfolio is deleted upstream,",
+        "no delete() command is sent here.",
+        "Causes ghost data on the dashboard."
+      ]
+    }
+  ]
+}

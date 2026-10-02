@@ -1,0 +1,68 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AM Analysis Service Workflow",
+    "animation": "trace",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "output": "am-analysis-workflow.html"
+  },
+  "lanes": [
+    { "id": "client", "label": "Client Layer" },
+    { "id": "api", "label": "API & Orchestration" },
+    { "id": "compute", "label": "Compute & Aggregation" },
+    { "id": "data", "label": "Data Load & Resolvers" }
+  ],
+  "phases": [
+    { "id": "request", "label": "API Request", "fromCol": 0, "toCol": 2 },
+    { "id": "process", "label": "Orchestration & Compute", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "data_events", "label": "Aggregation & Output", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["user", "controller", "validator", "orchestrator", "calculator", "aggregator", "dashboard"],
+  "nodes": [
+    { "id": "user", "lane": "client", "col": 0, "type": "external", "label": "Clients", "sublabel": "Web / Mobile", "width": 100 },
+    { "id": "controller", "lane": "api", "col": 1, "type": "frontend", "label": "Controller", "sublabel": "REST", "width": 110 },
+    { "id": "validator", "lane": "api", "col": 2, "type": "security", "label": "Validator", "sublabel": "Security Check", "width": 110 },
+    { "id": "orchestrator", "lane": "api", "col": 3, "type": "backend", "label": "Orchestrator", "sublabel": "Coordinator", "width": 110 },
+    
+    { "id": "calculator", "lane": "compute", "col": 3, "type": "backend", "label": "Calculator", "sublabel": "Compute", "width": 110 },
+    { "id": "aggregator", "lane": "compute", "col": 4, "type": "backend", "label": "Aggregator", "sublabel": "Consolidate", "width": 110 },
+    { "id": "dashboard", "lane": "compute", "col": 5, "type": "backend", "label": "Dashboard", "sublabel": "Snapshot", "width": 110 },
+    
+    { "id": "resolver", "lane": "data", "col": 3, "type": "backend", "label": "GlobalResolver", "sublabel": "Resolve", "width": 110 },
+    { "id": "loader", "lane": "data", "col": 4, "type": "database", "label": "DataLoader", "sublabel": "Fetch State", "width": 110 }
+  ],
+  "edges": [
+    { "id": "user-api", "from": "user", "to": "controller", "variant": "emphasis" },
+    { "id": "api-val", "from": "controller", "to": "validator", "label": "auth & validate", "variant": "security" },
+    { "id": "val-orch", "from": "validator", "to": "orchestrator", "label": "dispatch", "variant": "emphasis" },
+    
+    { "id": "calc-resolver", "from": "calculator", "to": "resolver", "label": "resolve context", "variant": "default" },
+    { "id": "resolver-loader", "from": "resolver", "to": "loader", "label": "load entities", "variant": "default" },
+    
+    { "id": "orch-calc", "from": "orchestrator", "to": "calculator", "label": "run compute", "variant": "emphasis" },
+    { "id": "calc-agg", "from": "calculator", "to": "aggregator", "label": "aggregate", "variant": "emphasis" },
+    { "id": "agg-dash", "from": "aggregator", "to": "dashboard", "label": "generate snapshot", "variant": "default" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Demand-Driven Orchestration",
+      "items": [
+        "The DemandDrivenOrchestrator lazily evaluates performance and allocations to save compute.",
+        "Calculations leverage PerformanceCalculator and AnalysisAggregator to consolidate portfolio metrics.",
+        "AnalysisEntityLoadService handles data fetching from persistence layers."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Streaming and Async Events",
+      "items": [
+        "PortfolioStreamItemListener consumes market/trade updates.",
+        "PortfolioStreamingService triggers partial recalculations for live price overlays.",
+        "DashboardUpdateListener maintains fresh snapshots for fast client dashboard rendering."
+      ]
+    }
+  ]
+}

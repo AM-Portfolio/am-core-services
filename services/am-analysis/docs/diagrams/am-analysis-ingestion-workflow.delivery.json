@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "b03e1522-11b4-4d20-8674-9a378e679293",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "c:\\Asrax\\Asrax\\am-core-services\\services\\am-analysis\\docs\\diagrams\\am-analysis-ingestion-workflow.json",
+  "output": "C:\\Asrax\\Asrax\\am-core-services\\services\\am-analysis\\docs\\diagrams\\am-analysis-ingestion-workflow.html",
+  "specification": {
+    "sha256": "8fa08ffa689b557da6922f98f7faee3d6f350ed9d338269d415b5c16aec60640",
+    "bytes": 3233
+  },
+  "artifact": {
+    "sha256": "ab5f4f3ea0f8d59f9cffe3a6a1100ffc2d44849bcb11c5cf67bd842e3dfdcafe",
+    "bytes": 758792
+  }
+}
