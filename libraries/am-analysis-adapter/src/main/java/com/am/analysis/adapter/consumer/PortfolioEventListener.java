@@ -21,7 +21,7 @@ public class PortfolioEventListener {
     private final AnalysisIngestionService ingestionService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE, groupId = "am-analysis-group")
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE, groupId = "${spring.kafka.consumer.group-id:am-analysis-group-v2}")
     public void listen(String message) {
         log.info("Received Portfolio Update Event: {}", message);
         try {
