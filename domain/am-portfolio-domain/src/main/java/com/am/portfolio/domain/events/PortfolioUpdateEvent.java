@@ -35,5 +35,4 @@ public class PortfolioUpdateEvent {
 
     private LocalDateTime timestamp;
 }
-
 // event trigger -2
