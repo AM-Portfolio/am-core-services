@@ -30,6 +30,12 @@ public class PortfolioEventListener {
                     PortfolioUpdateEvent.class);
 
             var entity = mapper.mapPortfolioEvent(event);
+
+            if ("DELETE".equalsIgnoreCase(event.getAction())) {
+                ingestionService.delete(entity.getId());
+                return;
+            }
+
             ingestionService.ingest(entity);
         } catch (Exception e) {
             log.error("Failed to process portfolio event", e);

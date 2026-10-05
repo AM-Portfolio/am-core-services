@@ -32,4 +32,5 @@ public class PortfolioUpdateEvent {
     private Double todayGainLossPercentage;
 
     private LocalDateTime timestamp;
+    private String action;
 }

@@ -23,4 +23,11 @@ public class AnalysisIngestionService {
         log.info("[AnalysisIngestionService] Successfully persisted {} to MongoDB", entity.getSourceId());
         eventPublisher.publishEvent(new AnalysisEntityIngestedEvent(this, entity));
     }
+
+    public void delete(String id) {
+        log.info("Deleting analysis data for id: {}", id);
+        repository.deleteById(id);
+        log.info("[AnalysisIngestionService] Successfully deleted {} from MongoDB", id);
+        // We could publish a deleted event here if necessary, but skipping for now
+    }
 }
