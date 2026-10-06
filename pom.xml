@@ -270,9 +270,9 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                         <parameters>true</parameters>
-                        <proc>full</proc>
+                        <!-- <proc>full</proc> -->
                         <compilerArgs>
-                            <arg>-proc:full</arg>
+                            <!-- <arg>-proc:full</arg> -->
                         </compilerArgs>
                         <annotationProcessorPaths>
                             <path>
