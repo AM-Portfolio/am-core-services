@@ -43,6 +43,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AnalysisAggregator {
 
+    private static final String DEMO_DISPLAY_NAME = "Demo Portfolio";
+
     private final AnalysisEntityLoadService entityLoadService;
     private final TradeClientService tradeClientService;
     private final MarketDataClientService marketDataClientService;
@@ -89,6 +91,8 @@ public class AnalysisAggregator {
         Set<String> coveredPortfolioIds = amPortfolios.stream()
                 .map(AnalysisEntity::getSourceId)
                 .filter(Objects::nonNull)
+                .filter(s -> !s.isBlank())
+                .map(s -> s.trim().toLowerCase())
                 .collect(Collectors.toSet());
 
         BigDecimal totalValue = BigDecimal.ZERO;
@@ -145,13 +149,29 @@ public class AnalysisAggregator {
         }
 
         // ── Trade portfolios NOT already covered by am-portfolio ───
+        Set<String> seenTradeIds = new HashSet<>();
         for (TradePortfolio tp : tradePortfolios) {
+            if (tp == null) {
+                continue;
+            }
+            // Dedup identical trade rows (same id twice from client/cache)
+            if (tp.getId() != null && !tp.getId().isBlank()) {
+                String tid = tp.getId().trim().toLowerCase();
+                if (!seenTradeIds.add(tid)) {
+                    log.debug("[Aggregator] Skipping duplicate trade portfolio id={}", tp.getId());
+                    continue;
+                }
+            }
             // Skip if this trade portfolio is linked to an am-portfolio (avoid
-            // double-count)
-            if ((tp.getId() != null && coveredPortfolioIds.contains(tp.getId())) ||
-                    (tp.getExternalPortfolioId() != null
-                            && coveredPortfolioIds.contains(tp.getExternalPortfolioId()))) {
+            // double-count). Match id + externalPortfolioId case-insensitively.
+            if (isCoveredByAmPortfolio(tp, coveredPortfolioIds)) {
                 log.debug("[Aggregator] Skipping trade portfolio {} — already covered by am-portfolio", tp.getId());
+                continue;
+            }
+            // Empty users get analysis Demo inject + trade Demo inject with the same
+            // shared UUID; if id mapping fails, name still identifies the demo.
+            if (DEMO_DISPLAY_NAME.equalsIgnoreCase(tp.getName()) && !amPortfolios.isEmpty()) {
+                log.debug("[Aggregator] Skipping trade Demo Portfolio — analysis already has portfolio entities");
                 continue;
             }
             BigDecimal val = tp.getTotalValue() != null ? tp.getTotalValue() : BigDecimal.ZERO;
@@ -315,10 +335,28 @@ public class AnalysisAggregator {
 
         List<TradePortfolio> tradePortfolios = fetchTradePortfolios(userId);
         if (tradePortfolios != null) {
+            Set<String> coveredLower = coveredIds.stream()
+                    .filter(Objects::nonNull)
+                    .map(s -> s.trim().toLowerCase())
+                    .collect(Collectors.toSet());
+            Set<String> seenTradeIds = new HashSet<>();
             for (TradePortfolio tp : tradePortfolios) {
-                // Skip trade portfolios already represented by am-portfolio
-                if (tp.getExternalPortfolioId() != null && coveredIds.contains(tp.getExternalPortfolioId()))
+                if (tp == null) {
                     continue;
+                }
+                if (tp.getId() != null && !tp.getId().isBlank()) {
+                    String tid = tp.getId().trim().toLowerCase();
+                    if (!seenTradeIds.add(tid)) {
+                        continue;
+                    }
+                }
+                // Skip trade portfolios already represented by am-portfolio (id OR external)
+                if (isCoveredByAmPortfolio(tp, coveredLower)) {
+                    continue;
+                }
+                if (DEMO_DISPLAY_NAME.equalsIgnoreCase(tp.getName()) && !coveredLower.isEmpty()) {
+                    continue;
+                }
 
                 BigDecimal val = tp.getTotalValue() != null ? tp.getTotalValue() : BigDecimal.ZERO;
                 BigDecimal inv = tp.getTotalInvested() != null ? tp.getTotalInvested() : BigDecimal.ZERO;
@@ -606,5 +644,18 @@ public class AnalysisAggregator {
      */
     private static BigDecimal toBd(Double value) {
         return value != null ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
+    }
+
+    /** coveredIds must already be lower-cased. */
+    private static boolean isCoveredByAmPortfolio(TradePortfolio tp, Set<String> coveredIdsLower) {
+        if (coveredIdsLower == null || coveredIdsLower.isEmpty() || tp == null) {
+            return false;
+        }
+        if (tp.getId() != null && !tp.getId().isBlank()
+                && coveredIdsLower.contains(tp.getId().trim().toLowerCase())) {
+            return true;
+        }
+        return tp.getExternalPortfolioId() != null && !tp.getExternalPortfolioId().isBlank()
+                && coveredIdsLower.contains(tp.getExternalPortfolioId().trim().toLowerCase());
     }
 }

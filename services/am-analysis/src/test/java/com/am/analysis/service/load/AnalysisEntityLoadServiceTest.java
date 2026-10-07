@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AnalysisEntityLoadServiceTest {
+
+    private static final String DEMO_ID = "00000000-0000-0000-0000-000000000001";
 
     @Mock
     private AnalysisRepository repository;
@@ -40,6 +43,7 @@ class AnalysisEntityLoadServiceTest {
     @BeforeEach
     void setUp() {
         service = new AnalysisEntityLoadService(repository, accessValidator, portfolioBootstrapTrigger, flowLogger, redisTemplate);
+        ReflectionTestUtils.setField(service, "demoPortfolioId", DEMO_ID);
     }
 
     @Test
@@ -91,6 +95,49 @@ class AnalysisEntityLoadServiceTest {
 
         assertTrue(result.empty());
         verify(portfolioBootstrapTrigger).requestBootstrap(eq("user1"), isNull(), anyString(), isNull());
+    }
+
+    @Test
+    void loadPortfoliosForUser_stripsDemoWhenRealPortfolioPresent() {
+        AnalysisEntity demo = AnalysisEntity.builder()
+                .id("PORTFOLIO_" + DEMO_ID)
+                .sourceId(DEMO_ID)
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("user1")
+                .build();
+        AnalysisEntity upstox = AnalysisEntity.builder()
+                .id("PORTFOLIO_upstox-1")
+                .sourceId("upstox-1")
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("user1")
+                .build();
+        when(repository.findByOwnerIdAndType("user1", AnalysisEntityType.PORTFOLIO))
+                .thenReturn(List.of(demo, upstox));
+
+        EntityLoadResult result = service.loadPortfoliosForUser("user1", BootstrapTrigger.DASHBOARD);
+
+        assertFalse(result.empty());
+        assertEquals(1, result.entities().size());
+        assertEquals("upstox-1", result.entities().get(0).getSourceId());
+        verify(portfolioBootstrapTrigger, never()).requestBootstrap(any(), any(), any(), any());
+    }
+
+    @Test
+    void loadPortfoliosForUser_keepsDemoWhenOnlyDemoPresent() {
+        AnalysisEntity demo = AnalysisEntity.builder()
+                .id("PORTFOLIO_" + DEMO_ID)
+                .sourceId(DEMO_ID)
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("user1")
+                .build();
+        when(repository.findByOwnerIdAndType("user1", AnalysisEntityType.PORTFOLIO))
+                .thenReturn(List.of(demo));
+
+        EntityLoadResult result = service.loadPortfoliosForUser("user1", BootstrapTrigger.DASHBOARD);
+
+        assertFalse(result.empty());
+        assertEquals(1, result.entities().size());
+        assertEquals(DEMO_ID, result.entities().get(0).getSourceId());
     }
 
     @Test

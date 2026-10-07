@@ -74,6 +74,62 @@ public class AnalysisAggregatorTest {
     }
 
     @Test
+    void getOverallSummary_skipsTradeWhenSameIdAsAmPortfolio() {
+        AnalysisEntity amPortfolio = new AnalysisEntity();
+        amPortfolio.setSourceId("demo-uuid");
+        amPortfolio.setPerformance(PerformanceSummary.builder()
+                .totalValue(1599.0)
+                .totalInvestment(1599.0)
+                .dayChange(0.0)
+                .build());
+
+        TradePortfolio tradeDemo = TradePortfolio.builder()
+                .id("demo-uuid")
+                .name("Demo Portfolio")
+                .totalValue(new BigDecimal("1599.0"))
+                .totalInvested(new BigDecimal("1599.0"))
+                .currentPnl(BigDecimal.ZERO)
+                .build();
+
+        when(entityLoadService.loadPortfoliosForUser(eq("user-demo"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(amPortfolio), false));
+        when(tradeClientService.getPortfolios("user-demo"))
+                .thenReturn(List.of(tradeDemo));
+
+        DashboardSummary summary = aggregator.getOverallSummary("user-demo");
+
+        assertEquals(1, summary.getTotalPortfolios());
+        assertEquals(new BigDecimal("1599.0"), summary.getTotalValue());
+    }
+
+    @Test
+    void getOverallSummary_skipsTradeDemoByNameWhenAmAlreadyPresent() {
+        AnalysisEntity amPortfolio = new AnalysisEntity();
+        amPortfolio.setSourceId("other-id");
+        amPortfolio.setPerformance(PerformanceSummary.builder()
+                .totalValue(1599.0)
+                .totalInvestment(1599.0)
+                .build());
+
+        TradePortfolio tradeDemo = TradePortfolio.builder()
+                .id("trade-demo-row")
+                .name("Demo Portfolio")
+                .totalValue(new BigDecimal("1599.0"))
+                .totalInvested(new BigDecimal("1599.0"))
+                .build();
+
+        when(entityLoadService.loadPortfoliosForUser(eq("user-demo"), any()))
+                .thenReturn(EntityLoadResult.of(List.of(amPortfolio), false));
+        when(tradeClientService.getPortfolios("user-demo"))
+                .thenReturn(List.of(tradeDemo));
+
+        DashboardSummary summary = aggregator.getOverallSummary("user-demo");
+
+        assertEquals(1, summary.getTotalPortfolios());
+        assertEquals(new BigDecimal("1599.0"), summary.getTotalValue());
+    }
+
+    @Test
     void getPortfolioOverviews_toleratesNullPerformanceAmounts() {
         AnalysisEntity amPortfolio = new AnalysisEntity();
         amPortfolio.setSourceId("p-null");

@@ -80,6 +80,23 @@ public class AnalysisEntityLoadService {
                 .filter(p -> p.getSourceId() == null || !AnalysisEntityKeys.isGlobalSourceId(p.getSourceId()))
                 .collect(Collectors.toList());
 
+        // Same policy as portfolio list: demo only when the user has zero real books.
+        // Stale DEMO AnalysisEntity rows (older fan-out) must not sum with Upstox on the dashboard.
+        if (demoPortfolioId != null && !demoPortfolioId.isBlank()) {
+            boolean hasReal = portfolios.stream()
+                    .anyMatch(p -> p.getSourceId() != null && !demoPortfolioId.equals(p.getSourceId()));
+            if (hasReal) {
+                int before = portfolios.size();
+                portfolios = portfolios.stream()
+                        .filter(p -> p.getSourceId() == null || !demoPortfolioId.equals(p.getSourceId()))
+                        .collect(Collectors.toList());
+                if (portfolios.size() < before) {
+                    log.info("[EntityLoad] Stripped {} demo analysis entit(y/ies) for user {} (real portfolios present)",
+                            before - portfolios.size(), userId);
+                }
+            }
+        }
+
         if (portfolios.isEmpty()) {
             // Demo portfolio injection — shown until the user has any real portfolio analysis entity
             if (demoPortfolioId != null && !demoPortfolioId.isBlank()) {
