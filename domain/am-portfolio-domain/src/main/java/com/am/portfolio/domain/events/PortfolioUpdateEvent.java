@@ -20,8 +20,6 @@ public class PortfolioUpdateEvent {
     private UUID id;
     private String userId;
     private String portfolioId;
-    /** CREATE/UPDATE/DELETE — DELETE removes the analysis entity instead of ingesting. */
-    private String action;
 
     // Core Data
     private List<EquityModel> equities;

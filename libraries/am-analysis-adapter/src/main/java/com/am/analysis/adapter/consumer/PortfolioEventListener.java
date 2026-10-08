@@ -25,13 +25,9 @@ public class PortfolioEventListener {
     public void listen(String message) {
         log.info("Received Portfolio Update Event: {}", message);
         try {
+            // 2. Deserialization
             PortfolioUpdateEvent event = objectMapper.readValue(message,
                     PortfolioUpdateEvent.class);
-
-            if (event.getAction() != null && "DELETE".equalsIgnoreCase(event.getAction().trim())) {
-                ingestionService.deletePortfolio(event);
-                return;
-            }
 
             var entity = mapper.mapPortfolioEvent(event);
             ingestionService.ingest(entity);
