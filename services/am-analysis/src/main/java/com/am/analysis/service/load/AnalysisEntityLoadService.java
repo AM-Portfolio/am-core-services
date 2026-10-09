@@ -80,6 +80,24 @@ public class AnalysisEntityLoadService {
                 .filter(p -> p.getSourceId() == null || !AnalysisEntityKeys.isGlobalSourceId(p.getSourceId()))
                 .collect(Collectors.toList());
 
+        // Same policy as portfolio list: demo only when the user has zero real books.
+        // Stale DEMO AnalysisEntity rows (older fan-out) must not sum with Upstox on the dashboard.
+        if (demoPortfolioId != null && !demoPortfolioId.isBlank()) {
+            boolean hasReal = portfolios.stream()
+                    .anyMatch(p -> p.getSourceId() != null && !demoPortfolioId.equals(p.getSourceId()));
+            if (hasReal) {
+                int before = portfolios.size();
+                portfolios = portfolios.stream()
+                        .filter(p -> p.getSourceId() == null || !demoPortfolioId.equals(p.getSourceId()))
+                        .collect(Collectors.toList());
+                if (portfolios.size() < before) {
+                    log.info("[EntityLoad] Stripped {} demo analysis entit(y/ies) for user {} (real portfolios present)",
+                            before - portfolios.size(), userId);
+                }
+            }
+        }
+
+        boolean demoInjected = false;
         if (portfolios.isEmpty()) {
             // Demo portfolio injection — shown until the user has any real portfolio analysis entity
             if (demoPortfolioId != null && !demoPortfolioId.isBlank()) {
@@ -89,17 +107,25 @@ public class AnalysisEntityLoadService {
                     AnalysisEntity clonedDemo = cloneDemoEntity(demoOpt.get(), userId);
                     portfolios = new ArrayList<>();
                     portfolios.add(clonedDemo);
+                    demoInjected = true;
                     log.info("[EntityLoad] Injected demo portfolio {} for user {}", demoPortfolioId, userId);
                 }
             }
         }
 
         if (!portfolios.isEmpty()) {
+            // Demo fill must not block recovery: still request bootstrap so am-portfolio can
+            // republish real books onto am-portfolio-update for analysis ingest.
+            boolean bootstrapRequested = false;
+            if (demoInjected) {
+                bootstrapRequested = fireBootstrap(userId, null, trigger);
+            }
             flowLogger.step("analysis.entity_load.found",
                     "userId", userId,
                     "scope", "ALL",
-                    "count", portfolios.size());
-            return EntityLoadResult.of(portfolios, false);
+                    "count", portfolios.size(),
+                    "bootstrap_requested", bootstrapRequested);
+            return EntityLoadResult.of(portfolios, bootstrapRequested);
         }
 
         log.warn("[EntityLoad] No portfolio analysis entities for userId={}", userId);

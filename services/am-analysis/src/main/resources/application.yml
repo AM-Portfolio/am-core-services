@@ -13,8 +13,8 @@ spring:
       auto-startup: ${AM_KAFKA_ENABLED:true}
     trade-topic: ${KAFKA_TRADE_TOPIC:am-trade}
     consumer:
-      group-id: am-analysis-group
-      auto-offset-reset: latest
+      group-id: am-analysis-group-v2
+      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
