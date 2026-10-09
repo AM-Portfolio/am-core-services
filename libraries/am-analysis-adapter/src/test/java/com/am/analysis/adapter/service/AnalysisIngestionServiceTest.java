@@ -52,13 +52,47 @@ class AnalysisIngestionServiceTest {
                 .sourceId(PORTFOLIO_ID)
                 .type(AnalysisEntityType.PORTFOLIO)
                 .ownerId(USER_ID)
+                .brokerType("GROWW")
+                .portfolioName("Groww")
                 .build();
+        when(repository.findByOwnerIdAndType(USER_ID, AnalysisEntityType.PORTFOLIO))
+                .thenReturn(java.util.List.of());
 
         service.ingest(entity);
 
         verify(repository).save(entity);
         verify(eventPublisher).publishEvent(any(AnalysisEntityIngestedEvent.class));
         verify(dashboardRefreshPort, timeout(2000)).publishDashboardUpdate(USER_ID);
+    }
+
+    @Test
+    void ingest_sameBrokerReupload_remapsOntoExistingAndDeletesDuplicate() {
+        String oldId = "22222222-2222-2222-2222-222222222222";
+        AnalysisEntity existing = AnalysisEntity.builder()
+                .id("PORTFOLIO_" + oldId)
+                .sourceId(oldId)
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId(USER_ID)
+                .brokerType("GROW")
+                .portfolioName("Groww")
+                .build();
+        AnalysisEntity incoming = AnalysisEntity.builder()
+                .id("PORTFOLIO_" + PORTFOLIO_ID)
+                .sourceId(PORTFOLIO_ID)
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId(USER_ID)
+                .brokerType("GROWW")
+                .portfolioName("Groww")
+                .build();
+        when(repository.findByOwnerIdAndType(USER_ID, AnalysisEntityType.PORTFOLIO))
+                .thenReturn(java.util.List.of(existing));
+
+        service.ingest(incoming);
+
+        verify(repository).delete(existing);
+        assertEquals("PORTFOLIO_" + oldId, incoming.getId());
+        assertEquals(oldId, incoming.getSourceId());
+        verify(repository).save(incoming);
     }
 
     @Test
@@ -86,6 +120,8 @@ class AnalysisIngestionServiceTest {
                 .type(AnalysisEntityType.PORTFOLIO)
                 .ownerId(USER_ID)
                 .build();
+        when(repository.findByOwnerIdAndType(USER_ID, AnalysisEntityType.PORTFOLIO))
+                .thenReturn(java.util.List.of());
 
         service.ingest(entity);
 

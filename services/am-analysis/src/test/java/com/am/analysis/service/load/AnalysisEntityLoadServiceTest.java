@@ -66,6 +66,35 @@ class AnalysisEntityLoadServiceTest {
     }
 
     @Test
+    void loadPortfoliosForUser_collapsesSameBrokerDuplicates() {
+        AnalysisEntity older = AnalysisEntity.builder()
+                .id("PORTFOLIO_old")
+                .sourceId("old")
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("user1")
+                .brokerType("GROW")
+                .portfolioName("Groww")
+                .lastUpdated(java.time.LocalDateTime.now().minusDays(1))
+                .build();
+        AnalysisEntity newer = AnalysisEntity.builder()
+                .id("PORTFOLIO_new")
+                .sourceId("new")
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("user1")
+                .brokerType("GROWW")
+                .portfolioName("Groww")
+                .lastUpdated(java.time.LocalDateTime.now())
+                .build();
+        when(repository.findByOwnerIdAndType("user1", AnalysisEntityType.PORTFOLIO))
+                .thenReturn(List.of(older, newer));
+
+        EntityLoadResult result = service.loadPortfoliosForUser("user1", BootstrapTrigger.HTTP_READ);
+
+        assertEquals(1, result.entities().size());
+        assertEquals("new", result.entities().get(0).getSourceId());
+    }
+
+    @Test
     void loadPortfoliosForUser_firesBootstrapWhenEmpty() {
         when(repository.findByOwnerIdAndType("user1", AnalysisEntityType.PORTFOLIO))
                 .thenReturn(List.of());

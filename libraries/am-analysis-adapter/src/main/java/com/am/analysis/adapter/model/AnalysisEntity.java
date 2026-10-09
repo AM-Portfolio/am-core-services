@@ -25,6 +25,10 @@ public class AnalysisEntity {
     private String sourceId; // e.g., Portfolio ID, Symbol
     private AnalysisEntityType type;
     private String ownerId; // User ID
+    /** Display name from am-portfolio-update (e.g. Groww). Used for uniqueness collapse. */
+    private String portfolioName;
+    /** Broker code/enum from am-portfolio-update (e.g. GROWW). Used for uniqueness collapse. */
+    private String brokerType;
     
     // Performance Metrics Grouped
     private PerformanceSummary performance;

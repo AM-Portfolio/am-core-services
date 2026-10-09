@@ -3,6 +3,7 @@ package com.am.analysis.service.load;
 import com.am.analysis.adapter.model.AnalysisEntity;
 import com.am.analysis.adapter.model.AnalysisEntityType;
 import com.am.analysis.adapter.repository.AnalysisRepository;
+import com.am.analysis.adapter.service.PortfolioIdentity;
 import com.am.analysis.service.bootstrap.PortfolioBootstrapTrigger;
 import com.am.analysis.service.validator.AnalysisAccessValidator;
 import com.am.kafka.config.AnalysisEntityKeys;
@@ -97,6 +98,15 @@ public class AnalysisEntityLoadService {
             }
         }
 
+        // Same portfolio re-uploaded under a new Mongo UUID must not double-count on dashboard.
+        // Distinct brokers (Groww vs Upstox) stay separate; identical books keep the latest.
+        int beforeCollapse = portfolios.size();
+        portfolios = PortfolioIdentity.collapseToLatest(portfolios);
+        if (portfolios.size() < beforeCollapse) {
+            log.info("[EntityLoad] Collapsed {} duplicate portfolio entit(y/ies) for user {} ({} → {})",
+                    beforeCollapse - portfolios.size(), userId, beforeCollapse, portfolios.size());
+        }
+
         boolean demoInjected = false;
         if (portfolios.isEmpty()) {
             // Demo portfolio injection — shown until the user has any real portfolio analysis entity
@@ -154,6 +164,8 @@ public class AnalysisEntityLoadService {
         clone.setSourceId(source.getSourceId());
         clone.setType(source.getType());
         clone.setOwnerId(newOwnerId);
+        clone.setPortfolioName(source.getPortfolioName());
+        clone.setBrokerType(source.getBrokerType());
         clone.setPerformance(source.getPerformance());
         clone.setHoldings(source.getHoldings());
         clone.setAdditionalStats(source.getAdditionalStats());

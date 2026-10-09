@@ -141,7 +141,9 @@ public class DashboardAnalysisService implements DashboardRefreshPort {
         for (AnalysisEntity entity : entities) {
             // portfolioId = the canonical ID of the portfolio (sourceId)
             String portfolioId   = entity.getSourceId();
-            String portfolioName = entity.getSourceId(); // enrichment possible if name stored
+            String portfolioName = StringUtils.hasText(entity.getPortfolioName())
+                    ? entity.getPortfolioName()
+                    : entity.getSourceId();
             LocalDateTime lastUpdated = entity.getLastUpdated();
 
             if (entity.getHoldings() == null) continue;

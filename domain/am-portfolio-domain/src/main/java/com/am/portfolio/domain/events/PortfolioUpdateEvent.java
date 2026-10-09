@@ -21,6 +21,10 @@ public class PortfolioUpdateEvent {
     private String userId;
     private String portfolioId;
     private String action;
+    /** Human-readable portfolio name (e.g. Groww). Present on am-portfolio-update wire. */
+    private String name;
+    /** Broker enum/code (e.g. GROWW). Present on am-portfolio-update wire. */
+    private String brokerType;
 
     // Core Data
     private List<EquityModel> equities;
