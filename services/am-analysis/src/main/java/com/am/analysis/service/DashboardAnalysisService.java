@@ -23,6 +23,7 @@ import com.am.analysis.metrics.AnalysisBusinessMetrics;
 import com.am.analysis.service.impl.AllocationAnalysisService;
 import com.am.analysis.service.impl.PerformanceAnalysisService;
 import com.am.analysis.service.impl.TopMoversAnalysisService;
+import com.am.analysis.adapter.service.DashboardRefreshPort;
 import com.am.domain.trade.PortfolioOverview;
 import com.am.kafka.config.KafkaTopics;
 import com.am.kafka.config.Timeframe;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DashboardAnalysisService {
+public class DashboardAnalysisService implements DashboardRefreshPort {
 
     private final AnalysisAggregator aggregator;
     private final AnalysisEntityLoadService entityLoadService;
@@ -140,7 +141,9 @@ public class DashboardAnalysisService {
         for (AnalysisEntity entity : entities) {
             // portfolioId = the canonical ID of the portfolio (sourceId)
             String portfolioId   = entity.getSourceId();
-            String portfolioName = entity.getSourceId(); // enrichment possible if name stored
+            String portfolioName = StringUtils.hasText(entity.getPortfolioName())
+                    ? entity.getPortfolioName()
+                    : entity.getSourceId();
             LocalDateTime lastUpdated = entity.getLastUpdated();
 
             if (entity.getHoldings() == null) continue;

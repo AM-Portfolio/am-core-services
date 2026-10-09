@@ -62,6 +62,8 @@ public class AnalysisEventMapper {
                                 .sourceId(effectivePortfolioId)
                                 .type(AnalysisEntityType.PORTFOLIO)
                                 .ownerId(event.getUserId())
+                                .portfolioName(blankToNull(event.getName()))
+                                .brokerType(blankToNull(event.getBrokerType()))
                                 .holdings(holdings)
                                 .performance(PerformanceSummary.builder()
                                                 .totalValue(totalVal)
@@ -76,6 +78,10 @@ public class AnalysisEventMapper {
                                                 .build())
                                 .lastUpdated(event.getTimestamp() != null ? event.getTimestamp() : LocalDateTime.now())
                                 .build();
+        }
+
+        private static String blankToNull(String value) {
+                return value != null && !value.isBlank() ? value.trim() : null;
         }
 
         private List<AnalysisHolding> mapEquitiesToHoldings(List<EquityModel> equities, Double totalValue) {
