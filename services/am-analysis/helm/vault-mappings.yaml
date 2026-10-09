@@ -21,9 +21,10 @@ vault:
 
     kafka:
       mappings:
-        KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers" # kafka.infra.svc.cluster.local:9092
+        KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers" # per-env Vault apps/data/<env>/infra/kafka
         # Spring Boot binds SPRING_KAFKA_* over KAFKA_* — keep both on the same broker.
         SPRING_KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers"
+        PROJ_KAFKA_BOOTSTRAP_SERVERS: "bootstrap_servers"
         KAFKA_USERNAME: "username"
         KAFKA_PASSWORD: "password"
         KAFKA_JAAS_CONFIG: "__jaas__" # Auto-generates SCRAM login module config
