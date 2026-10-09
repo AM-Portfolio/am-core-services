@@ -128,23 +128,40 @@ public class AnalysisIngestionService {
                     portfolioId, userId);
             return;
         }
+        // Mirror am-trade-management: DELETE requires a real event userId (id scheme ignores userId).
+        if (userId == null || userId.isBlank()) {
+            log.warn("[AnalysisIngestionService] Skipping delete — blank userId portfolioId={}", portfolioId);
+            return;
+        }
 
         String entityId = AnalysisEntityKeys.portfolioEntityId(portfolioId, userId);
         log.info("[AnalysisIngestionService] Attempting to delete entity id={} for portfolioId={} userId={}",
                 entityId, portfolioId, userId);
 
-        repository.findById(entityId).ifPresentOrElse(
-            entity -> {
-                log.info("Deleting analysis data for {} (Type: {})", entity.getSourceId(), entity.getType());
-                repository.delete(entity);
-                log.info("[AnalysisIngestionService] Successfully deleted {} from MongoDB", entity.getSourceId());
-            },
-            () -> log.warn("[AnalysisIngestionService] No entity found for id={} — already deleted or never ingested (portfolioId={}, userId={})",
-                    entityId, portfolioId, userId)
-        );
+        var found = repository.findById(entityId);
+        if (found.isEmpty()) {
+            log.warn("[AnalysisIngestionService] No entity found for id={} — already deleted or never ingested (portfolioId={}, userId={})",
+                    entityId, portfolioId, userId);
+            // Legitimate DELETE of an already-gone row: still refresh so UI/cache is not stale.
+            // DashboardUpdateListener skips DELETE to avoid racing this path.
+            refreshDashboardAsync(userId);
+            return;
+        }
 
-        // Always refresh after a DELETE attempt. DashboardUpdateListener skips DELETE to avoid racing
-        // the Mongo delete; if the row was already gone, UI/cache can still be stale without this.
+        AnalysisEntity entity = found.get();
+        // Same ownership rule as trade-management deleteOwnedPortfolio: mismatch → no-op.
+        // Null ownerId (legacy rows) still deletes so real portfolio DELETE keeps working.
+        String ownerId = entity.getOwnerId();
+        if (ownerId != null && !ownerId.equals(userId)) {
+            log.warn("[AnalysisIngestionService] Ignoring DELETE for portfolioId={} — event userId={} != ownerId={}",
+                    portfolioId, userId, ownerId);
+            return;
+        }
+
+        log.info("Deleting analysis data for {} (Type: {})", entity.getSourceId(), entity.getType());
+        repository.delete(entity);
+        log.info("[AnalysisIngestionService] Successfully deleted {} from MongoDB", entity.getSourceId());
+
         // Async — same max.poll.interval hazard as ingest.
         refreshDashboardAsync(userId);
     }

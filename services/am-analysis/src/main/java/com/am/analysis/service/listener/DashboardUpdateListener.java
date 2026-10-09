@@ -41,8 +41,10 @@ public class DashboardUpdateListener {
                 // Skip refresh for DELETE events — PortfolioEventListener (am-analysis-group-v2)
                 // deletes Mongo then refreshes via DashboardRefreshPort. Refreshing here would
                 // race that deletion and could serve stale data one final time.
-                String action = node.has("action") ? node.get("action").asText() : null;
-                if ("DELETE".equalsIgnoreCase(action)) {
+                // Trim matches PortfolioEventListener so " delete " does not re-open that race.
+                String action = node.has("action") && !node.get("action").isNull()
+                        ? node.get("action").asText() : null;
+                if (action != null && "DELETE".equalsIgnoreCase(action.trim())) {
                     flowLogger.complete(span, "userId", userId, "skipped", "DELETE");
                     return;
                 }

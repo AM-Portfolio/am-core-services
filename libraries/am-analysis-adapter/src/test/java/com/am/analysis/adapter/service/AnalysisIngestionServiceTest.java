@@ -192,19 +192,54 @@ class AnalysisIngestionServiceTest {
     }
 
     @Test
-    void delete_blankUserId_deletesButSkipsRefresh() {
-        String entityId = AnalysisEntityKeys.portfolioEntityId(PORTFOLIO_ID, " ");
+    void delete_blankUserId_isNoOp() {
+        service.delete(PORTFOLIO_ID, " ");
+
+        verifyNoInteractions(repository);
+        verify(dashboardRefreshPort, never()).publishDashboardUpdate(anyString());
+    }
+
+    @Test
+    void delete_nullUserId_isNoOp() {
+        service.delete(PORTFOLIO_ID, null);
+
+        verifyNoInteractions(repository);
+        verify(dashboardRefreshPort, never()).publishDashboardUpdate(anyString());
+    }
+
+    @Test
+    void delete_ownerMismatch_skipsDeleteAndRefresh() {
+        String entityId = AnalysisEntityKeys.portfolioEntityId(PORTFOLIO_ID, USER_ID);
         AnalysisEntity entity = AnalysisEntity.builder()
                 .id(entityId)
                 .sourceId(PORTFOLIO_ID)
                 .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId("owner-real")
                 .build();
         when(repository.findById(entityId)).thenReturn(Optional.of(entity));
 
-        service.delete(PORTFOLIO_ID, " ");
+        service.delete(PORTFOLIO_ID, USER_ID);
+
+        verify(repository, never()).delete(any());
+        verify(dashboardRefreshPort, never()).publishDashboardUpdate(anyString());
+    }
+
+    @Test
+    void delete_nullOwnerId_stillDeletesAndRefreshes() {
+        // Legacy rows without ownerId — same allow path as trade-management.
+        String entityId = AnalysisEntityKeys.portfolioEntityId(PORTFOLIO_ID, USER_ID);
+        AnalysisEntity entity = AnalysisEntity.builder()
+                .id(entityId)
+                .sourceId(PORTFOLIO_ID)
+                .type(AnalysisEntityType.PORTFOLIO)
+                .ownerId(null)
+                .build();
+        when(repository.findById(entityId)).thenReturn(Optional.of(entity));
+
+        service.delete(PORTFOLIO_ID, USER_ID);
 
         verify(repository).delete(entity);
-        verify(dashboardRefreshPort, never()).publishDashboardUpdate(anyString());
+        verify(dashboardRefreshPort, timeout(2000)).publishDashboardUpdate(USER_ID);
     }
 
     @Test

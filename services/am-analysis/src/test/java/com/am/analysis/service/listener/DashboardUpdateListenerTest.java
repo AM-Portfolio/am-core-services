@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,18 +39,19 @@ class DashboardUpdateListenerTest {
     }
 
     @Test
-    void onPortfolioUpdate_updateAction_refreshesDashboard() {
+    void onPortfolioUpdate_updateAction_refreshesDashboardAsync() {
         listener.onPortfolioUpdate("{\"userId\":\"user-1\",\"action\":\"UPDATE\",\"portfolioId\":\"p-1\"}");
 
-        verify(dashboardService).publishDashboardUpdate("user-1");
-        verify(flowLogger).complete(eq(span), eq("userId"), eq("user-1"));
+        verify(dashboardService, timeout(2000)).publishDashboardUpdate("user-1");
+        verify(flowLogger).complete(eq(span), eq("userId"), eq("user-1"), eq("refresh"), eq("async"));
     }
 
     @Test
-    void onPortfolioUpdate_missingAction_refreshesDashboard() {
+    void onPortfolioUpdate_missingAction_refreshesDashboardAsync() {
         listener.onPortfolioUpdate("{\"userId\":\"user-1\",\"portfolioId\":\"p-1\"}");
 
-        verify(dashboardService).publishDashboardUpdate("user-1");
+        verify(dashboardService, timeout(2000)).publishDashboardUpdate("user-1");
+        verify(flowLogger).complete(eq(span), eq("userId"), eq("user-1"), eq("refresh"), eq("async"));
     }
 
     @Test
@@ -65,6 +67,14 @@ class DashboardUpdateListenerTest {
         listener.onPortfolioUpdate("{\"userId\":\"user-1\",\"action\":\"delete\",\"portfolioId\":\"p-1\"}");
 
         verify(dashboardService, never()).publishDashboardUpdate(anyString());
+    }
+
+    @Test
+    void onPortfolioUpdate_deleteActionWithWhitespace_skipsRefresh() {
+        listener.onPortfolioUpdate("{\"userId\":\"user-1\",\"action\":\" delete \",\"portfolioId\":\"p-1\"}");
+
+        verify(dashboardService, never()).publishDashboardUpdate(anyString());
+        verify(flowLogger).complete(eq(span), eq("userId"), eq("user-1"), eq("skipped"), eq("DELETE"));
     }
 
     @Test
