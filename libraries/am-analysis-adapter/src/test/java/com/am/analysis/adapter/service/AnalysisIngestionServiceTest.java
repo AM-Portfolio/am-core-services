@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -57,7 +58,7 @@ class AnalysisIngestionServiceTest {
 
         verify(repository).save(entity);
         verify(eventPublisher).publishEvent(any(AnalysisEntityIngestedEvent.class));
-        verify(dashboardRefreshPort).publishDashboardUpdate(USER_ID);
+        verify(dashboardRefreshPort, timeout(2000)).publishDashboardUpdate(USER_ID);
     }
 
     @Test
@@ -107,7 +108,7 @@ class AnalysisIngestionServiceTest {
 
         assertEquals("PORTFOLIO_" + PORTFOLIO_ID, entityId);
         verify(repository).delete(entity);
-        verify(dashboardRefreshPort).publishDashboardUpdate(USER_ID);
+        verify(dashboardRefreshPort, timeout(2000)).publishDashboardUpdate(USER_ID);
         verify(eventPublisher, never()).publishEvent(any());
     }
 
@@ -119,7 +120,7 @@ class AnalysisIngestionServiceTest {
         service.delete(PORTFOLIO_ID, USER_ID);
 
         verify(repository, never()).delete(any());
-        verify(dashboardRefreshPort).publishDashboardUpdate(USER_ID);
+        verify(dashboardRefreshPort, timeout(2000)).publishDashboardUpdate(USER_ID);
     }
 
     @Test

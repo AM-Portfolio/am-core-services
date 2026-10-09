@@ -47,8 +47,17 @@ public class DashboardUpdateListener {
                     return;
                 }
 
-                dashboardService.publishDashboardUpdate(userId);
-                flowLogger.complete(span, "userId", userId);
+                // Ack path must stay fast — heavy Redis/quote work on this thread previously
+                // ejected the consumer group (max.poll.interval) and left am-portfolio-update lagging.
+                final String refreshUserId = userId;
+                java.util.concurrent.CompletableFuture.runAsync(() -> {
+                    try {
+                        dashboardService.publishDashboardUpdate(refreshUserId);
+                    } catch (Exception ex) {
+                        log.warn("Async dashboard refresh failed userId={}: {}", refreshUserId, ex.getMessage());
+                    }
+                });
+                flowLogger.complete(span, "userId", userId, "refresh", "async");
             } catch (Exception e) {
                 flowLogger.fail(span, e);
             }

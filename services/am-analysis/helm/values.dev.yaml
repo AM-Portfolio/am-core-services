@@ -33,8 +33,15 @@ vault:
 # Dev-specific env vars (point to dev cluster services)
 env:
   SPRING_PROFILES_ACTIVE: "dev"
-  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT" # Protocol setting, not a secret
-  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256" # Mechanism setting, not a secret
+  # Must match am-portfolio / kafka-ui "dev". A stale SPRING_KAFKA_BOOTSTRAP_SERVERS
+  # pointing at kafka.asrax.in:9092 left am-analysis-group-v2 EMPTY on the real dev cluster
+  # (lag on am-portfolio-update) while the pod quietly consumed a different broker.
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-dev.asrax.in:9094"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-dev.asrax.in:9094"
+  PROJ_KAFKA_BOOTSTRAP_SERVERS: "kafka-dev.asrax.in:9094"
+  KAFKA_SECURITY_PROTOCOL: "PLAINTEXT"
+  SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
+  KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
 
 hostAliases:
   - ip: "203.174.22.129"

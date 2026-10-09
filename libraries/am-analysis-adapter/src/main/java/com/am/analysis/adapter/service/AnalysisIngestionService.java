@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -30,12 +32,9 @@ public class AnalysisIngestionService {
         log.info("[AnalysisIngestionService] Successfully persisted {} to MongoDB", entity.getSourceId());
         eventPublisher.publishEvent(new AnalysisEntityIngestedEvent(this, entity));
 
-        // Refresh after Mongo is committed so DashboardUpdateListener's parallel (often early)
-        // empty/demo push cannot be the last word for CREATE/UPDATE events.
-        String ownerId = entity.getOwnerId();
-        if (dashboardRefreshPort != null && ownerId != null && !ownerId.isBlank()) {
-            dashboardRefreshPort.publishDashboardUpdate(ownerId);
-        }
+        // Async: must not block the Kafka listener thread. Sync refresh (Redis/market quotes)
+        // previously exceeded max.poll.interval and ejected am-analysis-group-v2 from the cluster.
+        refreshDashboardAsync(entity.getOwnerId());
     }
 
     public void delete(String portfolioId, String userId) {
@@ -66,8 +65,22 @@ public class AnalysisIngestionService {
 
         // Always refresh after a DELETE attempt. DashboardUpdateListener skips DELETE to avoid racing
         // the Mongo delete; if the row was already gone, UI/cache can still be stale without this.
-        if (dashboardRefreshPort != null && userId != null && !userId.isBlank()) {
-            dashboardRefreshPort.publishDashboardUpdate(userId);
+        // Async — same max.poll.interval hazard as ingest.
+        refreshDashboardAsync(userId);
+    }
+
+    private void refreshDashboardAsync(String userId) {
+        if (dashboardRefreshPort == null || userId == null || userId.isBlank()) {
+            return;
         }
+        DashboardRefreshPort port = dashboardRefreshPort;
+        CompletableFuture.runAsync(() -> {
+            try {
+                port.publishDashboardUpdate(userId);
+            } catch (Exception e) {
+                log.warn("[AnalysisIngestionService] Async dashboard refresh failed userId={}: {}",
+                        userId, e.getMessage());
+            }
+        });
     }
 }
