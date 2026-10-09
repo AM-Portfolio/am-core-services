@@ -21,16 +21,22 @@ public class PortfolioEventListener {
     private final AnalysisIngestionService ingestionService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE, groupId = "am-analysis-group")
+    @KafkaListener(topics = com.am.kafka.config.KafkaTopics.PORTFOLIO_UPDATE, groupId = "${spring.kafka.consumer.group-id:am-analysis-group-v2}")
     public void listen(String message) {
         log.info("Received Portfolio Update Event: {}", message);
         try {
-            // 2. Deserialization
             PortfolioUpdateEvent event = objectMapper.readValue(message,
                     PortfolioUpdateEvent.class);
 
-            var entity = mapper.mapPortfolioEvent(event);
-            ingestionService.ingest(entity);
+            // Null/blank action keeps the historical ingest path (create/update unchanged).
+            String action = event.getAction();
+            if (action != null && "DELETE".equalsIgnoreCase(action.trim())) {
+                log.info("Deleting analysis data for portfolioId={}", event.getPortfolioId());
+                ingestionService.delete(event.getPortfolioId(), event.getUserId());
+            } else {
+                var entity = mapper.mapPortfolioEvent(event);
+                ingestionService.ingest(entity);
+            }
         } catch (Exception e) {
             log.error("Failed to process portfolio event", e);
         }

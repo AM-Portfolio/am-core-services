@@ -37,8 +37,29 @@ public class DashboardUpdateListener {
                     return;
                 }
                 String userId = node.get("userId").asText();
-                dashboardService.publishDashboardUpdate(userId);
-                flowLogger.complete(span, "userId", userId);
+
+                // Skip refresh for DELETE events — PortfolioEventListener (am-analysis-group-v2)
+                // deletes Mongo then refreshes via DashboardRefreshPort. Refreshing here would
+                // race that deletion and could serve stale data one final time.
+                // Trim matches PortfolioEventListener so " delete " does not re-open that race.
+                String action = node.has("action") && !node.get("action").isNull()
+                        ? node.get("action").asText() : null;
+                if (action != null && "DELETE".equalsIgnoreCase(action.trim())) {
+                    flowLogger.complete(span, "userId", userId, "skipped", "DELETE");
+                    return;
+                }
+
+                // Ack path must stay fast — heavy Redis/quote work on this thread previously
+                // ejected the consumer group (max.poll.interval) and left am-portfolio-update lagging.
+                final String refreshUserId = userId;
+                java.util.concurrent.CompletableFuture.runAsync(() -> {
+                    try {
+                        dashboardService.publishDashboardUpdate(refreshUserId);
+                    } catch (Exception ex) {
+                        log.warn("Async dashboard refresh failed userId={}: {}", refreshUserId, ex.getMessage());
+                    }
+                });
+                flowLogger.complete(span, "userId", userId, "refresh", "async");
             } catch (Exception e) {
                 flowLogger.fail(span, e);
             }

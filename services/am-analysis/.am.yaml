@@ -1,7 +1,7 @@
 # Local amctl identity — matches CI image_name
 name: am-analysis
 release: am-analysis
-image: ghcr.io/am-portfolio/am-analysis
+image: ghcr.io/am-portfolio/am-core-services/am-analysis
 runtime: java
 language: java
 dockerfile: Dockerfile
