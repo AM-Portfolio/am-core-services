@@ -70,11 +70,9 @@ public class AnalysisEventMapper {
                                                 .totalInvestment(computedTotalInvestment)
                                                 .totalGainLoss(gainLoss)
                                                 .totalGainLossPercentage(gainLossPct)
-                                                .dayChange(event.getTodayGainLoss() != null ? event.getTodayGainLoss()
-                                                                : 0.0)
-                                                .dayChangePercentage(event.getTodayGainLossPercentage() != null
-                                                                ? event.getTodayGainLossPercentage()
-                                                                : 0.0)
+                                                // Preserve null = unavailable (do not fake flat day as 0).
+                                                .dayChange(event.getTodayGainLoss())
+                                                .dayChangePercentage(event.getTodayGainLossPercentage())
                                                 .build())
                                 .lastUpdated(event.getTimestamp() != null ? event.getTimestamp() : LocalDateTime.now())
                                 .build();

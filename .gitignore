@@ -42,3 +42,8 @@ maven_settings.xml
 
 # Logs
 logs/
+
+# Helm CLI downloads (never commit binaries into chart dirs)
+**/helm.zip
+**/helm/windows-amd64/
+**/helm.exe
