@@ -1,0 +1,48 @@
+{
+  "service": "am-news",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_health",
+        "description": "[am-news] GET /actuator/health",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/actuator/health",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "health",
+        "service": "am-news",
+        "route": "ApiHealth",
+        "sdk_api": "ApiHealthApi",
+        "group": "core",
+        "param_locations": {}
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_adminOnly",
+        "description": "admin op",
+        "parameters": { "type": "object", "properties": {} }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/admin",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": { "dev": "https://am-dev.asrax.in/news" },
+        "group": "admin",
+        "param_locations": {}
+      }
+    }
+  ]
+}

@@ -4,6 +4,9 @@ import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Typed config for all 'am.*' keys in application.yaml.
  * This is the single source of truth — change application.yaml, not code.
@@ -25,6 +28,7 @@ public class AmMcpProperties {
     private final Mcp mcp = new Mcp();
     private final HttpPool httpPool = new HttpPool();
     private final Tools tools = new Tools();
+    private final ContractMcp contractMcp = new ContractMcp();
 
     // ── Nested config classes ─────────────────────────────────────────────────
 
@@ -175,6 +179,49 @@ public class AmMcpProperties {
             public void setEnabled(boolean v) {
                 this.enabled = v;
             }
+        }
+    }
+
+    /**
+     * Pack-backed contract MCP (am-specs tools.json). When enabled and packs-dir
+     * contains service tools, tools are registered alongside curated domain {@code @Tool}s.
+     */
+    @Getter
+    public static class ContractMcp {
+        private boolean enabled = false;
+        /** Directory with am-specs services/ or packages/mcp/services/ trees. */
+        private String packsDir = "";
+        /** Target env key in tool _meta.base_urls (dev|preprod|prod). */
+        private String environment = "dev";
+        /** Empty = all services that have tools.json. */
+        private List<String> services = new ArrayList<>(List.of(
+                "am-market-data", "am-news", "am-parser"));
+        /** Product groups from grouping.yaml / tools _meta.group. */
+        private List<String> groups = new ArrayList<>(List.of("core"));
+        private boolean includeAllGroups = false;
+
+        public void setEnabled(boolean v) {
+            this.enabled = v;
+        }
+
+        public void setPacksDir(String v) {
+            this.packsDir = v;
+        }
+
+        public void setEnvironment(String v) {
+            this.environment = v;
+        }
+
+        public void setServices(List<String> v) {
+            this.services = v != null ? v : new ArrayList<>();
+        }
+
+        public void setGroups(List<String> v) {
+            this.groups = v != null ? v : new ArrayList<>();
+        }
+
+        public void setIncludeAllGroups(boolean v) {
+            this.includeAllGroups = v;
         }
     }
 }

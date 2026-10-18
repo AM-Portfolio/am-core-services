@@ -97,6 +97,21 @@ am:
     max-response-chars: 8000 # Truncate tool responses — LLMs have context limits
     tool-timeout-ms: 20000 # Hard kill for any tool taking > 20s
 
+  # Pack-backed contract MCP (am-specs). Domain @Tools stay separate.
+  # Local: point packs-dir at am-specs checkout. Cluster: mount ConfigMap/PVC.
+  contract-mcp:
+    enabled: ${AM_CONTRACT_MCP_ENABLED:false}
+    packs-dir: ${AM_CONTRACT_MCP_PACKS_DIR:}
+    environment: ${AM_CONTRACT_MCP_ENV:dev}
+    # Empty list in YAML override = all services with tools.json
+    services:
+      - am-market-data
+      - am-news
+      - am-parser
+    groups:
+      - core
+    include-all-groups: ${AM_CONTRACT_MCP_ALL_GROUPS:false}
+
 # ── Connection Pool ───────────────────────────────────────────────────────────
 am.http.pool:
   max-total: 50

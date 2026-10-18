@@ -44,6 +44,10 @@ env:
   AM_TOOLS_BASKET_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
+  # Contract MCP (am-specs packs) — mount packs then set:
+  # AM_CONTRACT_MCP_ENABLED: "true"
+  # AM_CONTRACT_MCP_PACKS_DIR: "/packs/services"
+  # AM_CONTRACT_MCP_ENV: "dev"
 
 ingress:
   enabled: true

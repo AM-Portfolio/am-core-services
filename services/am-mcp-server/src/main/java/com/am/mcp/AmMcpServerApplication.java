@@ -9,11 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * A standalone Spring Boot service that exposes 12 tools to Claude via MCP (stdio).
  * Lives under am-core-services/services/ alongside am-analysis, am-gateway, etc.
  *
- * All tools use existing SDK beans (no raw HTTP for internal services):
- *   - MarketDataClientService  ← am-market-client-lib
- *   - TradeClientService       ← am-trade-client-lib
- *   - AnalysisRepository       ← am-analysis-adapter (MongoDB)
- *   - TokenExtractor           ← am-security-lib
+ * Tools:
+ *   - Domain {@code @Tool}s via client libs (market / trade / portfolio / …)
+ *   - Optional pack-backed contract tools from am-specs (see docs/CONTRACT_MCP.md)
  *
  * Enterprise features: circuit breakers, connection pooling, AOP tracing,
  * response truncation, env-var config with Spring profiles.

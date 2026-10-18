@@ -30,6 +30,11 @@ am:
     portfolio-url: ${AM_PORTFOLIO_URL:http://127.0.0.1:8060}
     trade-url: ${AM_TRADE_URL:http://127.0.0.1:8040}
     market-data-url: ${MARKET_DATA_URL:http://127.0.0.1:8050}
+  # Uncomment and set packs-dir to your am-specs/services checkout:
+  # contract-mcp:
+  #   enabled: true
+  #   packs-dir: F:/am-repos/am-repos/am-specs/services
+  #   environment: dev
 
 am.observability:
   enabled: true

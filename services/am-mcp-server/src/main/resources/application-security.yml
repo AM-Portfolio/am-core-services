@@ -10,4 +10,5 @@ am:
     public-paths:
       - "/actuator/**"
       - "/mcp/actuator/**"
+      - "/api/v1/contract-mcp/status"
 
