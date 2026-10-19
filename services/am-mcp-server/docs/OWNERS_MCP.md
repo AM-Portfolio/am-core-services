@@ -25,7 +25,19 @@ Gitops values: `services/am-mcp-server/helm` in this repo.
 Generated in am-specs; **consumed** at runtime via `am.contract-mcp.packs-dir`.  
 Details: [CONTRACT_MCP.md](CONTRACT_MCP.md).
 
+## Cursor / IDE face (product router)
+
+| Place | Owns |
+|-------|------|
+| **This service** | Fat runtime (domain `@Tool`s + all contract packs on DEV) |
+| **amctl** `ai-catalog/mcp/bridges/am_mcp_server_stdio_proxy.py` | Thin Cursor face (search → describe → call) |
+| **amctl** `ai-catalog/mcp/profiles/asrax-*.yaml` | Product vs fleet profile allowlists |
+
+Do **not** register the full pack catalog as Cursor MCP tools.  
+Do **not** add a second Java MCP process for Gemini — add an am-specs pack + product profile line.
+
 ## Rule for agents / PRs
 
 If the change is “how agents call Asrax over MCP,” edit **this service**.  
-If the change is “OpenAPI → pack JSON,” edit **am-specs**.
+If the change is “OpenAPI → pack JSON,” edit **am-specs**.  
+If the change is “how Cursor discovers product tools,” edit **amctl** router/profiles.
