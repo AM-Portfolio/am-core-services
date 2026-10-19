@@ -9,6 +9,8 @@ vault:
     mongodb:
       mappings:
         SPRING_DATA_MONGODB_URI: "url"
+        SPRING_DATA_MONGODB_DATABASE: "AM_MCP_MONGO_DATABASE"
+        MONGODB_DATABASE: "AM_MCP_MONGO_DATABASE"
     redis:
       mappings:
         REDIS_HOSTNAME: "host"

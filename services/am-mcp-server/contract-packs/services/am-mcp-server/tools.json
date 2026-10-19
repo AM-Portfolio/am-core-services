@@ -1,0 +1,1565 @@
+{
+  "service": "am-mcp-server",
+  "targets": {
+    "dev": "https://am-preprod.asrax.in/mcp",
+    "preprod": "https://am-preprod.asrax.in/mcp",
+    "prod": "https://am.asrax.in/mcp"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 29,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_health",
+        "description": "[am-mcp-server] GET /actuator/health | Health | tags: actuator | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/actuator/health",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "health",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_health",
+        "summary": "Health",
+        "tags": [
+          "actuator"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "actuator",
+        "sdk_api": "ActuatorApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_ask_finance_agent",
+        "description": "[am-mcp-server] POST /tools/ask_finance_agent | ask_finance_agent | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/ask_finance_agent",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "ask_finance_agent",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_ask_finance_agent",
+        "summary": "ask_finance_agent",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_calculate_basket_quantities",
+        "description": "[am-mcp-server] POST /tools/calculate_basket_quantities | calculate_basket_quantities | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/calculate_basket_quantities",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "calculate_basket_quantities",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_calculate_basket_quantities",
+        "summary": "calculate_basket_quantities",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_filter_trades",
+        "description": "[am-mcp-server] POST /tools/filter_trades | filter_trades | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/filter_trades",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "filter_trades",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_filter_trades",
+        "summary": "filter_trades",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_basket_allocations",
+        "description": "[am-mcp-server] POST /tools/get_basket_allocations | get_basket_allocations | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_basket_allocations",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_basket_allocations",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_basket_allocations",
+        "summary": "get_basket_allocations",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_basket_exposure",
+        "description": "[am-mcp-server] POST /tools/get_basket_exposure | get_basket_exposure | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_basket_exposure",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_basket_exposure",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_basket_exposure",
+        "summary": "get_basket_exposure",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_basket_opportunities",
+        "description": "[am-mcp-server] POST /tools/get_basket_opportunities | get_basket_opportunities | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_basket_opportunities",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_basket_opportunities",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_basket_opportunities",
+        "summary": "get_basket_opportunities",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_basket_preview",
+        "description": "[am-mcp-server] POST /tools/get_basket_preview | get_basket_preview | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_basket_preview",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_basket_preview",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_basket_preview",
+        "summary": "get_basket_preview",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_historical_data",
+        "description": "[am-mcp-server] POST /tools/get_historical_data | get_historical_data | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_historical_data",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_historical_data",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_historical_data",
+        "summary": "get_historical_data",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_holding_detail",
+        "description": "[am-mcp-server] POST /tools/get_holding_detail | get_holding_detail | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_holding_detail",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_holding_detail",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_holding_detail",
+        "summary": "get_holding_detail",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_holdings",
+        "description": "[am-mcp-server] POST /tools/get_holdings | get_holdings | tags: mcp-tools | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Optional portfolio UUID. Omit for all portfolios. \u2014 example='pf-demo-001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            },
+            "userId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Authenticated user id. Ignored when a user JWT is present on the request. \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_holdings",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_holdings",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_holdings",
+        "summary": "get_holdings",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "portfolioId",
+          "userId"
+        ],
+        "param_locations": {
+          "portfolioId": "body",
+          "userId": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_indices_data",
+        "description": "[am-mcp-server] POST /tools/get_indices_data | get_indices_data | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_indices_data",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_indices_data",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_indices_data",
+        "summary": "get_indices_data",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_market_cap_allocation",
+        "description": "[am-mcp-server] POST /tools/get_market_cap_allocation | get_market_cap_allocation | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_market_cap_allocation",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_market_cap_allocation",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_market_cap_allocation",
+        "summary": "get_market_cap_allocation",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_market_movers",
+        "description": "[am-mcp-server] POST /tools/get_market_movers | get_market_movers | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_market_movers",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_market_movers",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_market_movers",
+        "summary": "get_market_movers",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_portfolio_advanced_analytics",
+        "description": "[am-mcp-server] POST /tools/get_portfolio_advanced_analytics | get_portfolio_advanced_analytics | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_portfolio_advanced_analytics",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_portfolio_advanced_analytics",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_portfolio_advanced_analytics",
+        "summary": "get_portfolio_advanced_analytics",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_portfolio_by_id",
+        "description": "[am-mcp-server] POST /tools/get_portfolio_by_id | get_portfolio_by_id | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_portfolio_by_id",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_portfolio_by_id",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_portfolio_by_id",
+        "summary": "get_portfolio_by_id",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_portfolio_overviews",
+        "description": "[am-mcp-server] POST /tools/get_portfolio_overviews | get_portfolio_overviews | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_portfolio_overviews",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_portfolio_overviews",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_portfolio_overviews",
+        "summary": "get_portfolio_overviews",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_portfolio_summary",
+        "description": "[am-mcp-server] POST /tools/get_portfolio_summary | get_portfolio_summary | tags: mcp-tools | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Optional portfolio UUID. Omit to summarise all portfolios. \u2014 example='pf-demo-001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            },
+            "userId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Authenticated user id. Ignored when a user JWT is present on the request. \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_portfolio_summary",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_portfolio_summary",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_portfolio_summary",
+        "summary": "get_portfolio_summary",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "portfolioId",
+          "userId"
+        ],
+        "param_locations": {
+          "portfolioId": "body",
+          "userId": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_recent_activity",
+        "description": "[am-mcp-server] POST /tools/get_recent_activity | get_recent_activity | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_recent_activity",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_recent_activity",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_recent_activity",
+        "summary": "get_recent_activity",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_sector_allocation",
+        "description": "[am-mcp-server] POST /tools/get_sector_allocation | get_sector_allocation | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_sector_allocation",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_sector_allocation",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_sector_allocation",
+        "summary": "get_sector_allocation",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_sector_performance",
+        "description": "[am-mcp-server] POST /tools/get_sector_performance | get_sector_performance | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_sector_performance",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_sector_performance",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_sector_performance",
+        "summary": "get_sector_performance",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_stock_quote",
+        "description": "[am-mcp-server] POST /tools/get_stock_quote | get_stock_quote | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_stock_quote",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_stock_quote",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_stock_quote",
+        "summary": "get_stock_quote",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_top_movers",
+        "description": "[am-mcp-server] POST /tools/get_top_movers | get_top_movers | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_top_movers",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_top_movers",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_top_movers",
+        "summary": "get_top_movers",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_trade_history",
+        "description": "[am-mcp-server] POST /tools/get_trade_history | get_trade_history | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_trade_history",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_trade_history",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_trade_history",
+        "summary": "get_trade_history",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_trade_metrics",
+        "description": "[am-mcp-server] POST /tools/get_trade_metrics | get_trade_metrics | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_trade_metrics",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_trade_metrics",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_trade_metrics",
+        "summary": "get_trade_metrics",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_trade_portfolio_summaries",
+        "description": "[am-mcp-server] POST /tools/get_trade_portfolio_summaries | get_trade_portfolio_summaries | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_trade_portfolio_summaries",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_trade_portfolio_summaries",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_trade_portfolio_summaries",
+        "summary": "get_trade_portfolio_summaries",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_trades_by_date_range",
+        "description": "[am-mcp-server] POST /tools/get_trades_by_date_range | get_trades_by_date_range | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_trades_by_date_range",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_trades_by_date_range",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_trades_by_date_range",
+        "summary": "get_trades_by_date_range",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_get_unrealised_pnl",
+        "description": "[am-mcp-server] POST /tools/get_unrealised_pnl | get_unrealised_pnl | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/get_unrealised_pnl",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "get_unrealised_pnl",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_get_unrealised_pnl",
+        "summary": "get_unrealised_pnl",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_mcp_server_search_instruments",
+        "description": "[am-mcp-server] POST /tools/search_instruments | search_instruments | tags: mcp-tools | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/tools/search_instruments",
+        "base_url": "https://am-preprod.asrax.in/mcp",
+        "base_urls": {
+          "dev": "https://am-preprod.asrax.in/mcp",
+          "preprod": "https://am-preprod.asrax.in/mcp",
+          "prod": "https://am.asrax.in/mcp"
+        },
+        "op_id": "search_instruments",
+        "service": "am-mcp-server",
+        "tool_name": "api_am_mcp_server_search_instruments",
+        "summary": "search_instruments",
+        "tags": [
+          "mcp-tools"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "mcp-tools",
+        "sdk_api": "McpToolsApi",
+        "group": "other"
+      }
+    }
+  ]
+}

@@ -1,0 +1,4610 @@
+{
+  "service": "am-trade-management-service",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/trade",
+    "preprod": "https://am-preprod.asrax.in/trade",
+    "prod": "https://am.asrax.in/trade"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 98,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_findTradeReplaysByDateRange",
+        "description": "[am-trade-management-service] GET /v1/analytics/trade-replays/date-range | GET /v1/analytics/trade-replays/date-range | tags: TradeReplay | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/trade-replays/date-range",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "findTradeReplaysByDateRange",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_findTradeReplaysByDateRange",
+        "summary": "GET /v1/analytics/trade-replays/date-range",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_findTradeReplaysByPortfolioId",
+        "description": "[am-trade-management-service] GET /v1/analytics/trade-replays/portfolio/{portfolioId} | GET /v1/analytics/trade-replays/portfolio/{portfolioId} | tags: TradeReplay | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/trade-replays/portfolio/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "findTradeReplaysByPortfolioId",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_findTradeReplaysByPortfolioId",
+        "summary": "GET /v1/analytics/trade-replays/portfolio/{portfolioId}",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_findTradeReplaysByStrategyId",
+        "description": "[am-trade-management-service] GET /v1/analytics/trade-replays/strategy/{strategyId} | GET /v1/analytics/trade-replays/strategy/{strategyId} | tags: TradeReplay | PATH required: strategyId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "strategyId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 strategyId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "strategyId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/trade-replays/strategy/{strategyId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "findTradeReplaysByStrategyId",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_findTradeReplaysByStrategyId",
+        "summary": "GET /v1/analytics/trade-replays/strategy/{strategyId}",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [
+          "strategyId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "strategyId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_findTradeReplaysBySymbol",
+        "description": "[am-trade-management-service] GET /v1/analytics/trade-replays/symbol/{symbol} | GET /v1/analytics/trade-replays/symbol/{symbol} | tags: TradeReplay | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/trade-replays/symbol/{symbol}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "findTradeReplaysBySymbol",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_findTradeReplaysBySymbol",
+        "summary": "GET /v1/analytics/trade-replays/symbol/{symbol}",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_findTradeReplaysByOriginalTradeId",
+        "description": "[am-trade-management-service] GET /v1/analytics/trade-replays/trade/{tradeId} | GET /v1/analytics/trade-replays/trade/{tradeId} | tags: TradeReplay | PATH required: tradeId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tradeId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 tradeId \u2014 example='trd-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "tradeId",
+              "example": "trd-001"
+            }
+          },
+          "required": [
+            "tradeId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/trade-replays/trade/{tradeId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "findTradeReplaysByOriginalTradeId",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_findTradeReplaysByOriginalTradeId",
+        "summary": "GET /v1/analytics/trade-replays/trade/{tradeId}",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [
+          "tradeId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "tradeId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeReplayById",
+        "description": "[am-trade-management-service] GET /v1/analytics/trade-replays/{replayId} | GET /v1/analytics/trade-replays/{replayId} | tags: TradeReplay | PATH required: replayId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "replayId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 replayId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "replayId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/trade-replays/{replayId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeReplayById",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeReplayById",
+        "summary": "GET /v1/analytics/trade-replays/{replayId}",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [
+          "replayId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "replayId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteTradeReplay",
+        "description": "[am-trade-management-service] DELETE /v1/analytics/trade-replays/{replayId} | DELETE /v1/analytics/trade-replays/{replayId} | tags: TradeReplay | PATH required: replayId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "replayId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 replayId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "replayId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/analytics/trade-replays/{replayId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteTradeReplay",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteTradeReplay",
+        "summary": "DELETE /v1/analytics/trade-replays/{replayId}",
+        "tags": [
+          "TradeReplay"
+        ],
+        "path_params": [
+          "replayId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "replayId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeReplay",
+        "sdk_api": "TradeReplayApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_comparePortfolios",
+        "description": "[am-trade-management-service] GET /v1/comparison/portfolios | Compare performance between two specific portfolios | tags: TradeComparison | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/comparison/portfolios",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "comparePortfolios",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_comparePortfolios",
+        "summary": "Compare performance between two specific portfolios",
+        "tags": [
+          "TradeComparison"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeComparison",
+        "sdk_api": "TradeComparisonApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_compareStrategies",
+        "description": "[am-trade-management-service] GET /v1/comparison/strategies | Compare performance between strategies | tags: TradeComparison | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/comparison/strategies",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "compareStrategies",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_compareStrategies",
+        "summary": "Compare performance between strategies",
+        "tags": [
+          "TradeComparison"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeComparison",
+        "sdk_api": "TradeComparisonApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_compareTimePeriods",
+        "description": "[am-trade-management-service] GET /v1/comparison/time-periods | Compare performance between two time periods | tags: TradeComparison | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/comparison/time-periods",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "compareTimePeriods",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_compareTimePeriods",
+        "summary": "Compare performance between two time periods",
+        "tags": [
+          "TradeComparison"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeComparison",
+        "sdk_api": "TradeComparisonApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getMetricsWithFavoriteFilter",
+        "description": "[am-trade-management-service] GET /v1/filters/apply/{filterId} | GET /v1/filters/apply/{filterId} | tags: FavoriteFilter | PATH required: filterId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filterId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 filterId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "filterId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/filters/apply/{filterId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getMetricsWithFavoriteFilter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getMetricsWithFavoriteFilter",
+        "summary": "GET /v1/filters/apply/{filterId}",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [
+          "filterId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "filterId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteMultipleFilters",
+        "description": "[am-trade-management-service] DELETE /v1/filters/bulk | Delete multiple favorite filters | tags: FavoriteFilter | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/filters/bulk",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteMultipleFilters",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteMultipleFilters",
+        "summary": "Delete multiple favorite filters",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getDefaultFilter",
+        "description": "[am-trade-management-service] GET /v1/filters/default | Get the user's default filter | tags: FavoriteFilter | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/filters/default",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getDefaultFilter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getDefaultFilter",
+        "summary": "Get the user's default filter",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_saveCurrentFilter",
+        "description": "[am-trade-management-service] POST /v1/filters/save-current | Save current filter as favorite | tags: FavoriteFilter | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/filters/save-current",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "saveCurrentFilter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_saveCurrentFilter",
+        "summary": "Save current filter as favorite",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getFilterById",
+        "description": "[am-trade-management-service] GET /v1/filters/{filterId} | Get a specific favorite filter by ID | tags: FavoriteFilter | PATH required: filterId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filterId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 filterId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "filterId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/filters/{filterId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getFilterById",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getFilterById",
+        "summary": "Get a specific favorite filter by ID",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [
+          "filterId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "filterId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateFilter",
+        "description": "[am-trade-management-service] PUT /v1/filters/{filterId} | Update an existing favorite filter | tags: FavoriteFilter | PATH required: filterId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filterId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 filterId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "filterId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/filters/{filterId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateFilter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateFilter",
+        "summary": "Update an existing favorite filter",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [
+          "filterId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "filterId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteFilter",
+        "description": "[am-trade-management-service] DELETE /v1/filters/{filterId} | Delete a favorite filter | tags: FavoriteFilter | PATH required: filterId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filterId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 filterId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "filterId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/filters/{filterId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteFilter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteFilter",
+        "summary": "Delete a favorite filter",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [
+          "filterId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "filterId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_setDefaultFilter",
+        "description": "[am-trade-management-service] PUT /v1/filters/{filterId}/default | Set a filter as the default | tags: FavoriteFilter | PATH required: filterId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filterId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 filterId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "filterId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/filters/{filterId}/default",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "setDefaultFilter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_setDefaultFilter",
+        "summary": "Set a filter as the default",
+        "tags": [
+          "FavoriteFilter"
+        ],
+        "path_params": [
+          "filterId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "filterId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FavoriteFilter",
+        "sdk_api": "FavoriteFilterApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getDailyHeatmap",
+        "description": "[am-trade-management-service] GET /v1/heatmap/daily | Get daily profit/loss heatmap data for a specific month | tags: ProfitLossHeatmap | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/heatmap/daily",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getDailyHeatmap",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getDailyHeatmap",
+        "summary": "Get daily profit/loss heatmap data for a specific month",
+        "tags": [
+          "ProfitLossHeatmap"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ProfitLossHeatmap",
+        "sdk_api": "ProfitLossHeatmapApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getMonthlyHeatmap",
+        "description": "[am-trade-management-service] GET /v1/heatmap/monthly | Get monthly profit/loss heatmap data for a specific financial year | tags: ProfitLossHeatmap | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/heatmap/monthly",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getMonthlyHeatmap",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getMonthlyHeatmap",
+        "summary": "Get monthly profit/loss heatmap data for a specific financial year",
+        "tags": [
+          "ProfitLossHeatmap"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ProfitLossHeatmap",
+        "sdk_api": "ProfitLossHeatmapApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getYearlyHeatmap",
+        "description": "[am-trade-management-service] GET /v1/heatmap/yearly | Get yearly profit/loss heatmap data | tags: ProfitLossHeatmap | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/heatmap/yearly",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getYearlyHeatmap",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getYearlyHeatmap",
+        "summary": "Get yearly profit/loss heatmap data",
+        "tags": [
+          "ProfitLossHeatmap"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ProfitLossHeatmap",
+        "sdk_api": "ProfitLossHeatmapApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getFavoriteTemplates",
+        "description": "[am-trade-management-service] GET /v1/journal-templates/favorites | Get favorite templates for a user | tags: JournalTemplate | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal-templates/favorites",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getFavoriteTemplates",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getFavoriteTemplates",
+        "summary": "Get favorite templates for a user",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getUserCustomTemplates",
+        "description": "[am-trade-management-service] GET /v1/journal-templates/my-templates | Get user's custom templates | tags: JournalTemplate | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal-templates/my-templates",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getUserCustomTemplates",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getUserCustomTemplates",
+        "summary": "Get user's custom templates",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getRecommendedTemplates",
+        "description": "[am-trade-management-service] GET /v1/journal-templates/recommended | Get recommended templates | tags: JournalTemplate | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal-templates/recommended",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getRecommendedTemplates",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getRecommendedTemplates",
+        "summary": "Get recommended templates",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTemplate",
+        "description": "[am-trade-management-service] GET /v1/journal-templates/{templateId} | Get template by ID | tags: JournalTemplate | PATH required: templateId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "templateId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 templateId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "templateId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal-templates/{templateId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTemplate",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTemplate",
+        "summary": "Get template by ID",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [
+          "templateId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "templateId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateTemplate",
+        "description": "[am-trade-management-service] PUT /v1/journal-templates/{templateId} | PUT /v1/journal-templates/{templateId} | tags: JournalTemplate | PATH required: templateId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "templateId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 templateId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "templateId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/journal-templates/{templateId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateTemplate",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateTemplate",
+        "summary": "PUT /v1/journal-templates/{templateId}",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [
+          "templateId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "templateId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteTemplate",
+        "description": "[am-trade-management-service] DELETE /v1/journal-templates/{templateId} | DELETE /v1/journal-templates/{templateId} | tags: JournalTemplate | PATH required: templateId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "templateId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 templateId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "templateId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/journal-templates/{templateId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteTemplate",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteTemplate",
+        "summary": "DELETE /v1/journal-templates/{templateId}",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [
+          "templateId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "templateId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_toggleFavorite",
+        "description": "[am-trade-management-service] POST /v1/journal-templates/{templateId}/favorite | Toggle favorite status for a template | tags: JournalTemplate | PATH required: templateId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "templateId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 templateId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "templateId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal-templates/{templateId}/favorite",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "toggleFavorite",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_toggleFavorite",
+        "summary": "Toggle favorite status for a template",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [
+          "templateId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "templateId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_useTemplate",
+        "description": "[am-trade-management-service] POST /v1/journal-templates/{templateId}/use | POST /v1/journal-templates/{templateId}/use | tags: JournalTemplate | PATH required: templateId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "templateId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 templateId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "templateId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal-templates/{templateId}/use",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "useTemplate",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_useTemplate",
+        "summary": "POST /v1/journal-templates/{templateId}/use",
+        "tags": [
+          "JournalTemplate"
+        ],
+        "path_params": [
+          "templateId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "templateId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "JournalTemplate",
+        "sdk_api": "JournalTemplateApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getAdherence",
+        "description": "[am-trade-management-service] GET /v1/journal/adherence | Get plan adherence metrics | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/adherence",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getAdherence",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getAdherence",
+        "summary": "Get plan adherence metrics",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_bulkArchive",
+        "description": "[am-trade-management-service] POST /v1/journal/bulk/archive | Bulk archive journal entries | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/bulk/archive",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "bulkArchive",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_bulkArchive",
+        "summary": "Bulk archive journal entries",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_bulkDelete",
+        "description": "[am-trade-management-service] POST /v1/journal/bulk/delete | Bulk delete journal entries | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/bulk/delete",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "bulkDelete",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_bulkDelete",
+        "summary": "Bulk delete journal entries",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_bulkAddTags",
+        "description": "[am-trade-management-service] POST /v1/journal/bulk/tags | Bulk add tags to journal entries | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/bulk/tags",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "bulkAddTags",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_bulkAddTags",
+        "summary": "Bulk add tags to journal entries",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getJournalEntriesByDateRange",
+        "description": "[am-trade-management-service] GET /v1/journal/date-range | Get journal entries by date range | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/date-range",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getJournalEntriesByDateRange",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getJournalEntriesByDateRange",
+        "summary": "Get journal entries by date range",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_exportCsv",
+        "description": "[am-trade-management-service] GET /v1/journal/export | Export journal entries as CSV | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/export",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "exportCsv",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_exportCsv",
+        "summary": "Export journal entries as CSV",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_createFromTrades",
+        "description": "[am-trade-management-service] POST /v1/journal/from-trades | Create journal entries from existing trades | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/from-trades",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "createFromTrades",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_createFromTrades",
+        "summary": "Create journal entries from existing trades",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_importCsvFile",
+        "description": "[am-trade-management-service] POST /v1/journal/import | Import journal stubs from CSV file upload | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/import",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "importCsvFile",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_importCsvFile",
+        "summary": "Import journal stubs from CSV file upload",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getLessons",
+        "description": "[am-trade-management-service] GET /v1/journal/lessons | Get lessons learned | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/lessons",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getLessons",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getLessons",
+        "summary": "Get lessons learned",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getMistakesSummary",
+        "description": "[am-trade-management-service] GET /v1/journal/mistakes/summary | Get mistake analysis summary | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/mistakes/summary",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getMistakesSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getMistakesSummary",
+        "summary": "Get mistake analysis summary",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getReportCard",
+        "description": "[am-trade-management-service] GET /v1/journal/report-card | Get journal report card | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/report-card",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getReportCard",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getReportCard",
+        "summary": "Get journal report card",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getSummary",
+        "description": "[am-trade-management-service] GET /v1/journal/summary | Get journal summary metrics | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/summary",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getSummary",
+        "summary": "Get journal summary metrics",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getJournalEntriesByTrade",
+        "description": "[am-trade-management-service] GET /v1/journal/trade/{tradeId} | Get journal entries for a specific trade | tags: TradeJournal | PATH required: tradeId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tradeId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 tradeId \u2014 example='trd-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "tradeId",
+              "example": "trd-001"
+            }
+          },
+          "required": [
+            "tradeId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/trade/{tradeId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getJournalEntriesByTrade",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getJournalEntriesByTrade",
+        "summary": "Get journal entries for a specific trade",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "tradeId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "tradeId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getJournalEntriesByUser",
+        "description": "[am-trade-management-service] GET /v1/journal/user | Get journal entries for a user with optional filters | tags: TradeJournal | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/user",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getJournalEntriesByUser",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getJournalEntriesByUser",
+        "summary": "Get journal entries for a user with optional filters",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getJournalEntry",
+        "description": "[am-trade-management-service] GET /v1/journal/{entryId} | Get journal entry by ID | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/{entryId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getJournalEntry",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getJournalEntry",
+        "summary": "Get journal entry by ID",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateJournalEntry",
+        "description": "[am-trade-management-service] PUT /v1/journal/{entryId} | PUT /v1/journal/{entryId} | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/journal/{entryId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateJournalEntry",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateJournalEntry",
+        "summary": "PUT /v1/journal/{entryId}",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteJournalEntry",
+        "description": "[am-trade-management-service] DELETE /v1/journal/{entryId} | Delete a journal entry | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/journal/{entryId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteJournalEntry",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteJournalEntry",
+        "summary": "Delete a journal entry",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_listAttachments",
+        "description": "[am-trade-management-service] GET /v1/journal/{entryId}/attachments | List attachments for a journal entry | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/journal/{entryId}/attachments",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "listAttachments",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_listAttachments",
+        "summary": "List attachments for a journal entry",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_addAttachment",
+        "description": "[am-trade-management-service] POST /v1/journal/{entryId}/attachments | Add attachment to a journal entry | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/{entryId}/attachments",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "addAttachment",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_addAttachment",
+        "summary": "Add attachment to a journal entry",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_removeAttachment",
+        "description": "[am-trade-management-service] DELETE /v1/journal/{entryId}/attachments | Remove attachment from a journal entry | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/journal/{entryId}/attachments",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "removeAttachment",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_removeAttachment",
+        "summary": "Remove attachment from a journal entry",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateExecution",
+        "description": "[am-trade-management-service] PUT /v1/journal/{entryId}/execution | Update trade execution | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/journal/{entryId}/execution",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateExecution",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateExecution",
+        "summary": "Update trade execution",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_linkTrade",
+        "description": "[am-trade-management-service] POST /v1/journal/{entryId}/link-trade | Link journal entry to a trade | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/journal/{entryId}/link-trade",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "linkTrade",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_linkTrade",
+        "summary": "Link journal entry to a trade",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updatePostReview",
+        "description": "[am-trade-management-service] PUT /v1/journal/{entryId}/post-review | Update post-trade review | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/journal/{entryId}/post-review",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updatePostReview",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updatePostReview",
+        "summary": "Update post-trade review",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updatePrePlan",
+        "description": "[am-trade-management-service] PUT /v1/journal/{entryId}/pre-plan | Update pre-trade plan | tags: TradeJournal | PATH required: entryId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entryId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/journal/{entryId}/pre-plan",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updatePrePlan",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updatePrePlan",
+        "summary": "Update pre-trade plan",
+        "tags": [
+          "TradeJournal"
+        ],
+        "path_params": [
+          "entryId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entryId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeJournal",
+        "sdk_api": "TradeJournalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_compareMetrics",
+        "description": "[am-trade-management-service] GET /v1/metrics/compare | Get metrics comparison between two time periods | tags: TradeMetrics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/metrics/compare",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "compareMetrics",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_compareMetrics",
+        "summary": "Get metrics comparison between two time periods",
+        "tags": [
+          "TradeMetrics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeMetrics",
+        "sdk_api": "TradeMetricsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getMetricsTrends",
+        "description": "[am-trade-management-service] GET /v1/metrics/trends | Get metrics trends over time | tags: TradeMetrics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/metrics/trends",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getMetricsTrends",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getMetricsTrends",
+        "summary": "Get metrics trends over time",
+        "tags": [
+          "TradeMetrics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeMetrics",
+        "sdk_api": "TradeMetricsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getAvailableMetricTypes",
+        "description": "[am-trade-management-service] GET /v1/metrics/types | Get available metric types | tags: TradeMetrics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/metrics/types",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getAvailableMetricTypes",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getAvailableMetricTypes",
+        "summary": "Get available metric types",
+        "tags": [
+          "TradeMetrics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeMetrics",
+        "sdk_api": "TradeMetricsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getNotebookItems",
+        "description": "[am-trade-management-service] GET /v1/notebook/items | Get notebook items for a user | tags: Notebook | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/notebook/items",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getNotebookItems",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getNotebookItems",
+        "summary": "Get notebook items for a user",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_createNotebookItem",
+        "description": "[am-trade-management-service] POST /v1/notebook/items | Create a new notebook item | tags: Notebook | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/notebook/items",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "createNotebookItem",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_createNotebookItem",
+        "summary": "Create a new notebook item",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getNotebookItem",
+        "description": "[am-trade-management-service] GET /v1/notebook/items/{itemId} | Get notebook item by ID | tags: Notebook | PATH required: itemId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "itemId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 itemId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "itemId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/notebook/items/{itemId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getNotebookItem",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getNotebookItem",
+        "summary": "Get notebook item by ID",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [
+          "itemId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "itemId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateNotebookItem",
+        "description": "[am-trade-management-service] PUT /v1/notebook/items/{itemId} | PUT /v1/notebook/items/{itemId} | tags: Notebook | PATH required: itemId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "itemId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 itemId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "itemId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/notebook/items/{itemId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateNotebookItem",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateNotebookItem",
+        "summary": "PUT /v1/notebook/items/{itemId}",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [
+          "itemId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "itemId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteNotebookItem",
+        "description": "[am-trade-management-service] DELETE /v1/notebook/items/{itemId} | Delete a notebook item | tags: Notebook | PATH required: itemId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "itemId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 itemId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "itemId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/notebook/items/{itemId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteNotebookItem",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteNotebookItem",
+        "summary": "Delete a notebook item",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [
+          "itemId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "itemId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getNotebookTags",
+        "description": "[am-trade-management-service] GET /v1/notebook/tags | Get notebook tags for a user | tags: Notebook | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/notebook/tags",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getNotebookTags",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getNotebookTags",
+        "summary": "Get notebook tags for a user",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_createNotebookTag",
+        "description": "[am-trade-management-service] POST /v1/notebook/tags | Create a new notebook tag | tags: Notebook | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/notebook/tags",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "createNotebookTag",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_createNotebookTag",
+        "summary": "Create a new notebook tag",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateNotebookTag",
+        "description": "[am-trade-management-service] PUT /v1/notebook/tags/{tagId} | Update a notebook tag | tags: Notebook | PATH required: tagId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tagId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 tagId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "tagId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/notebook/tags/{tagId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateNotebookTag",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateNotebookTag",
+        "summary": "Update a notebook tag",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [
+          "tagId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "tagId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteNotebookTag",
+        "description": "[am-trade-management-service] DELETE /v1/notebook/tags/{tagId} | Delete a notebook tag | tags: Notebook | PATH required: tagId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tagId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 tagId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "tagId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/notebook/tags/{tagId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteNotebookTag",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteNotebookTag",
+        "summary": "Delete a notebook tag",
+        "tags": [
+          "Notebook"
+        ],
+        "path_params": [
+          "tagId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "tagId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Notebook",
+        "sdk_api": "NotebookApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getPortfolioSummariesForAuthenticatedUser",
+        "description": "[am-trade-management-service] GET /v1/portfolio-summary/by-owner | Get portfolio summaries by owner ID | tags: PortfolioSummary | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolio-summary/by-owner",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getPortfolioSummariesForAuthenticatedUser",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getPortfolioSummariesForAuthenticatedUser",
+        "summary": "Get portfolio summaries by owner ID",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getPortfolioSummaryByOwnerIdFallback",
+        "description": "[am-trade-management-service] GET /v1/portfolio-summary/by-owner/{ownerId} | Get portfolio summary by owner ID as fallback | tags: PortfolioSummary | PATH required: ownerId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=ownerId) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "ownerId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolio-summary/by-owner/{ownerId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getPortfolioSummaryByOwnerIdFallback",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getPortfolioSummaryByOwnerIdFallback",
+        "summary": "Get portfolio summary by owner ID as fallback",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [
+          "ownerId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "ownerId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_comparePortfolios",
+        "description": "[am-trade-management-service] GET /v1/portfolio-summary/compare | Compare multiple portfolios | tags: PortfolioSummary | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolio-summary/compare",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "comparePortfolios",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_comparePortfolios",
+        "summary": "Compare multiple portfolios",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getPortfolioSummary",
+        "description": "[am-trade-management-service] GET /v1/portfolio-summary/{portfolioId} | Get portfolio summary by ID | tags: PortfolioSummary | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolio-summary/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getPortfolioSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getPortfolioSummary",
+        "summary": "Get portfolio summary by ID",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getAssetAllocation",
+        "description": "[am-trade-management-service] GET /v1/portfolio-summary/{portfolioId}/asset-allocation | Get asset allocation for a portfolio | tags: PortfolioSummary | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolio-summary/{portfolioId}/asset-allocation",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getAssetAllocation",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getAssetAllocation",
+        "summary": "Get asset allocation for a portfolio",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getPortfolioPerformance",
+        "description": "[am-trade-management-service] GET /v1/portfolio-summary/{portfolioId}/performance | Get portfolio performance over time | tags: PortfolioSummary | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolio-summary/{portfolioId}/performance",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getPortfolioPerformance",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getPortfolioPerformance",
+        "summary": "Get portfolio performance over time",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_recalculatePortfolio",
+        "description": "[am-trade-management-service] POST /v1/portfolio-summary/{portfolioId}/recalculate | Recalculate portfolio metrics | tags: PortfolioSummary | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolio-summary/{portfolioId}/recalculate",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "recalculatePortfolio",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_recalculatePortfolio",
+        "summary": "Recalculate portfolio metrics",
+        "tags": [
+          "PortfolioSummary"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "PortfolioSummary",
+        "sdk_api": "PortfolioSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updatePortfolio",
+        "description": "[am-trade-management-service] PUT /v1/portfolios/{portfolioId} | Update an existing portfolio | tags: Portfolio | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/portfolios/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updatePortfolio",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updatePortfolio",
+        "summary": "Update an existing portfolio",
+        "tags": [
+          "Portfolio"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio",
+        "sdk_api": "PortfolioApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deletePortfolio",
+        "description": "[am-trade-management-service] DELETE /v1/portfolios/{portfolioId} | Delete a portfolio | tags: Portfolio | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/portfolios/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deletePortfolio",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deletePortfolio",
+        "summary": "Delete a portfolio",
+        "tags": [
+          "Portfolio"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio",
+        "sdk_api": "PortfolioApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getDashboardPreferences",
+        "description": "[am-trade-management-service] GET /v1/preferences/dashboard | Get user dashboard preferences | tags: UserPreferences | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/preferences/dashboard",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getDashboardPreferences",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getDashboardPreferences",
+        "summary": "Get user dashboard preferences",
+        "tags": [
+          "UserPreferences"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "UserPreferences",
+        "sdk_api": "UserPreferencesApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_saveDashboardPreferences",
+        "description": "[am-trade-management-service] POST /v1/preferences/dashboard | Save user dashboard preferences | tags: UserPreferences | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/preferences/dashboard",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "saveDashboardPreferences",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_saveDashboardPreferences",
+        "summary": "Save user dashboard preferences",
+        "tags": [
+          "UserPreferences"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "UserPreferences",
+        "sdk_api": "UserPreferencesApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_resetDashboardPreferences",
+        "description": "[am-trade-management-service] POST /v1/preferences/dashboard/reset | Reset user dashboard preferences to default | tags: UserPreferences | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/preferences/dashboard/reset",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "resetDashboardPreferences",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_resetDashboardPreferences",
+        "summary": "Reset user dashboard preferences to default",
+        "tags": [
+          "UserPreferences"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "UserPreferences",
+        "sdk_api": "UserPreferencesApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getAllActiveBasicByOwnerId",
+        "description": "[am-trade-management-service] GET /v1/trade-summary/basic/by-owner/{ownerId} | Get all active basic trade summaries for an owner | tags: TradeSummary | PATH required: ownerId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=ownerId) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "ownerId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trade-summary/basic/by-owner/{ownerId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getAllActiveBasicByOwnerId",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getAllActiveBasicByOwnerId",
+        "summary": "Get all active basic trade summaries for an owner",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [
+          "ownerId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "ownerId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getBasicTradeSummary",
+        "description": "[am-trade-management-service] GET /v1/trade-summary/basic/{id} | Get basic trade summary by ID | tags: TradeSummary | PATH required: id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trade-summary/basic/{id}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getBasicTradeSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getBasicTradeSummary",
+        "summary": "Get basic trade summary by ID",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [
+          "id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getCompositeTradeSummary",
+        "description": "[am-trade-management-service] GET /v1/trade-summary/composite/{id} | Get composite trade summary with cached metrics | tags: TradeSummary | PATH required: id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trade-summary/composite/{id}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getCompositeTradeSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getCompositeTradeSummary",
+        "summary": "Get composite trade summary with cached metrics",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [
+          "id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getDetailedTradeSummaryByBasicId",
+        "description": "[am-trade-management-service] GET /v1/trade-summary/detailed/by-basic/{basicId} | Get detailed trade summary by basic ID | tags: TradeSummary | PATH required: basicId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "basicId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 basicId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "basicId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trade-summary/detailed/by-basic/{basicId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getDetailedTradeSummaryByBasicId",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getDetailedTradeSummaryByBasicId",
+        "summary": "Get detailed trade summary by basic ID",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [
+          "basicId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "basicId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getDetailedTradeSummary",
+        "description": "[am-trade-management-service] GET /v1/trade-summary/detailed/{id} | Get detailed trade summary by ID | tags: TradeSummary | PATH required: id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trade-summary/detailed/{id}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getDetailedTradeSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getDetailedTradeSummary",
+        "summary": "Get detailed trade summary by ID",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [
+          "id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByTimePeriod",
+        "description": "[am-trade-management-service] GET /v1/trade-summary/trades | Get trade details by time period | tags: TradeSummary | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trade-summary/trades",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByTimePeriod",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByTimePeriod",
+        "summary": "Get trade details by time period",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteTradeSummary",
+        "description": "[am-trade-management-service] DELETE /v1/trade-summary/{id} | Delete a trade summary | tags: TradeSummary | PATH required: id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/trade-summary/{id}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteTradeSummary",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteTradeSummary",
+        "summary": "Delete a trade summary",
+        "tags": [
+          "TradeSummary"
+        ],
+        "path_params": [
+          "id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeSummary",
+        "sdk_api": "TradeSummaryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByDateRange",
+        "description": "[am-trade-management-service] GET /v1/trades/calendar/custom | Get trade details for a custom date range | tags: TradeManagement | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/calendar/custom",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByDateRange",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByDateRange",
+        "summary": "Get trade details for a custom date range",
+        "tags": [
+          "TradeManagement"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeManagement",
+        "sdk_api": "TradeManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByDay",
+        "description": "[am-trade-management-service] GET /v1/trades/calendar/day | Get trade details for a specific day | tags: TradeManagement | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/calendar/day",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByDay",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByDay",
+        "summary": "Get trade details for a specific day",
+        "tags": [
+          "TradeManagement"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeManagement",
+        "sdk_api": "TradeManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByFinancialYear",
+        "description": "[am-trade-management-service] GET /v1/trades/calendar/financial-year | Get trade details for a specific financial year | tags: TradeManagement | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/calendar/financial-year",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByFinancialYear",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByFinancialYear",
+        "summary": "Get trade details for a specific financial year",
+        "tags": [
+          "TradeManagement"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeManagement",
+        "sdk_api": "TradeManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByMonth",
+        "description": "[am-trade-management-service] GET /v1/trades/calendar/month | Get trade details for a specific month | tags: TradeManagement | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/calendar/month",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByMonth",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByMonth",
+        "summary": "Get trade details for a specific month",
+        "tags": [
+          "TradeManagement"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeManagement",
+        "sdk_api": "TradeManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByQuarter",
+        "description": "[am-trade-management-service] GET /v1/trades/calendar/quarter | Get trade details for a specific quarter | tags: TradeManagement | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/calendar/quarter",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByQuarter",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByQuarter",
+        "summary": "Get trade details for a specific quarter",
+        "tags": [
+          "TradeManagement"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeManagement",
+        "sdk_api": "TradeManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_addTrade",
+        "description": "[am-trade-management-service] POST /v1/trades/details | Add a new trade | tags: Trade | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/trades/details",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "addTrade",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_addTrade",
+        "summary": "Add a new trade",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_addOrUpdateTrades",
+        "description": "[am-trade-management-service] POST /v1/trades/details/batch | Add or update multiple trades | tags: Trade | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/trades/details/batch",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "addOrUpdateTrades",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_addOrUpdateTrades",
+        "summary": "Add or update multiple trades",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByTradeIds",
+        "description": "[am-trade-management-service] POST /v1/trades/details/by-ids | Get trade details by trade IDs | tags: Trade | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/trades/details/by-ids",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByTradeIds",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByTradeIds",
+        "summary": "Get trade details by trade IDs",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_filterTradeDetails",
+        "description": "[am-trade-management-service] POST /v1/trades/details/filter | Filter trade details using favorite filter configuration | tags: Trade | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/trades/details/filter",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "filterTradeDetails",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_filterTradeDetails",
+        "summary": "Filter trade details using favorite filter configuration",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByPortfolioAndSymbols",
+        "description": "[am-trade-management-service] GET /v1/trades/details/portfolio/{portfolioId} | Get trade details by portfolio ID and symbols | tags: Trade | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/details/portfolio/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByPortfolioAndSymbols",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByPortfolioAndSymbols",
+        "summary": "Get trade details by portfolio ID and symbols",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_updateTrade",
+        "description": "[am-trade-management-service] PUT /v1/trades/details/{tradeId} | Update an existing trade | tags: Trade | PATH required: tradeId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tradeId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 tradeId \u2014 example='trd-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "tradeId",
+              "example": "trd-001"
+            }
+          },
+          "required": [
+            "tradeId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/trades/details/{tradeId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "updateTrade",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_updateTrade",
+        "summary": "Update an existing trade",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [
+          "tradeId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "tradeId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_deleteTrade",
+        "description": "[am-trade-management-service] DELETE /v1/trades/details/{tradeId} | Delete an existing trade | tags: Trade | PATH required: tradeId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tradeId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 tradeId \u2014 example='trd-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "tradeId",
+              "example": "trd-001"
+            }
+          },
+          "required": [
+            "tradeId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/trades/details/{tradeId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "deleteTrade",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_deleteTrade",
+        "summary": "Delete an existing trade",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [
+          "tradeId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "tradeId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradesByFilters",
+        "description": "[am-trade-management-service] GET /v1/trades/filter | Filter trades by multiple criteria | tags: Trade | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/filter",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradesByFilters",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradesByFilters",
+        "summary": "Filter trades by multiple criteria",
+        "tags": [
+          "Trade"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Trade",
+        "sdk_api": "TradeApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_trade_management_service_getTradeDetailsByPortfolio",
+        "description": "[am-trade-management-service] GET /v1/trades/portfolio-details/{portfolioId} | Get paginated trade details for a specific portfolio | tags: TradeManagement | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/trades/portfolio-details/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/trade",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/trade",
+          "preprod": "https://am-preprod.asrax.in/trade",
+          "prod": "https://am.asrax.in/trade"
+        },
+        "op_id": "getTradeDetailsByPortfolio",
+        "service": "am-trade-management-service",
+        "tool_name": "api_am_trade_management_service_getTradeDetailsByPortfolio",
+        "summary": "Get paginated trade details for a specific portfolio",
+        "tags": [
+          "TradeManagement"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeManagement",
+        "sdk_api": "TradeManagementApi",
+        "group": "other"
+      }
+    }
+  ]
+}

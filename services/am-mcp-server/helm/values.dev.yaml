@@ -44,10 +44,11 @@ env:
   AM_TOOLS_BASKET_ENABLED: "true"
   AM_TOOLS_TRADE_ENABLED: "true"
   AM_TOOLS_AI_AGENT_ENABLED: "true"
-  # Contract MCP (am-specs packs) — mount packs then set:
-  # AM_CONTRACT_MCP_ENABLED: "true"
-  # AM_CONTRACT_MCP_PACKS_DIR: "/packs/services"
-  # AM_CONTRACT_MCP_ENV: "dev"
+  # Contract MCP — full am-specs tools.json fleet baked at /packs/services.
+  AM_CONTRACT_MCP_ENABLED: "true"
+  AM_CONTRACT_MCP_PACKS_DIR: "/packs/services"
+  AM_CONTRACT_MCP_ENV: "dev"
+  AM_CONTRACT_MCP_ALL_GROUPS: "true"
 
 ingress:
   enabled: true
@@ -56,9 +57,9 @@ ingress:
     kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.priority: "200"
+    # Agents NS middlewares (apps strip list does not include /mcp; app filter rewrites).
     traefik.ingress.kubernetes.io/router.middlewares: >-
-      am-apps-dev-dev-global-cors@kubernetescrd,
-      am-apps-dev-dev-strip-prefix@kubernetescrd
+      am-agents-dev-dev-global-cors@kubernetescrd
   hosts:
     - host: am-dev.asrax.in
       paths:

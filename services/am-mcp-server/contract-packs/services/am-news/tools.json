@@ -1,0 +1,520 @@
+{
+  "service": "am-news",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/news",
+    "preprod": "https://am-preprod.asrax.in/news",
+    "prod": "https://am.asrax.in/news"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 11,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Configure pack env once; use routes.json for controller groups (same as SDK Service).",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_health",
+        "description": "[am-news] GET /health | Health | tags: Health | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "health",
+        "service": "am-news",
+        "tool_name": "api_am_news_health",
+        "summary": "Health",
+        "tags": [
+          "Health"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Health",
+        "sdk_api": "HealthApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_ready",
+        "description": "[am-news] GET /ready | Ready | tags: Health | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/ready",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "ready",
+        "service": "am-news",
+        "tool_name": "api_am_news_ready",
+        "summary": "Ready",
+        "tags": [
+          "Health"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Health",
+        "sdk_api": "HealthApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_getCurrentAffairs",
+        "description": "[am-news] GET /v1/current-affairs | Current affairs | tags: Current affairs | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/current-affairs",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "getCurrentAffairs",
+        "service": "am-news",
+        "tool_name": "api_am_news_getCurrentAffairs",
+        "summary": "Current affairs",
+        "tags": [
+          "Current affairs"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Current affairs",
+        "sdk_api": "CurrentAffairsApi",
+        "group": "core",
+        "response_schema_ref": "CurrentAffairsResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_postInsight",
+        "description": "[am-news] POST /v1/insight | Insight | tags: Insight | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbols": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 symbols \u2014 example=['RELIANCE', 'TCS']",
+              "x-param-in": "body",
+              "x-required": false,
+              "example": [
+                "RELIANCE",
+                "TCS"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/InsightRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/insight",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "postInsight",
+        "service": "am-news",
+        "tool_name": "api_am_news_postInsight",
+        "summary": "Insight",
+        "tags": [
+          "Insight"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "symbols"
+        ],
+        "param_locations": {
+          "symbols": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Insight",
+        "sdk_api": "InsightApi",
+        "group": "core",
+        "schema_ref": "InsightRequest",
+        "x-asrax-schema": "models/InsightRequest.json",
+        "response_schema_ref": "InsightResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_getHoldings",
+        "description": "[am-news] GET /v1/holdings | Holdings news | tags: Holdings | Query optional: symbols | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbols": {
+              "type": "array",
+              "description": "[QUERY] \u2014 optional \u2014 symbols \u2014 default=[]",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": [],
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/holdings",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "getHoldings",
+        "service": "am-news",
+        "tool_name": "api_am_news_getHoldings",
+        "summary": "Holdings news",
+        "tags": [
+          "Holdings"
+        ],
+        "path_params": [],
+        "query_params": [
+          "symbols"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbols": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core",
+        "response_schema_ref": "HoldingsNewsResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_startFeed",
+        "description": "[am-news] POST /v1/admin/feed/start | Start NIFTY 50 news feed | tags: Admin | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/feed/start",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "startFeed",
+        "service": "am-news",
+        "tool_name": "api_am_news_startFeed",
+        "summary": "Start NIFTY 50 news feed",
+        "tags": [
+          "Admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Admin",
+        "sdk_api": "AdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_stopFeed",
+        "description": "[am-news] POST /v1/admin/feed/stop | Stop Feed | tags: Admin | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/feed/stop",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "stopFeed",
+        "service": "am-news",
+        "tool_name": "api_am_news_stopFeed",
+        "summary": "Stop Feed",
+        "tags": [
+          "Admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Admin",
+        "sdk_api": "AdminApi",
+        "group": "admin",
+        "response_schema_ref": "AcceptedFeedResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_getFeed",
+        "description": "[am-news] GET /v1/admin/feed | Get Feed | tags: Admin | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/admin/feed",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "getFeed",
+        "service": "am-news",
+        "tool_name": "api_am_news_getFeed",
+        "summary": "Get Feed",
+        "tags": [
+          "Admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Admin",
+        "sdk_api": "AdminApi",
+        "group": "admin",
+        "response_schema_ref": "FeedStatusResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_listRaw",
+        "description": "[am-news] GET /v1/admin/raw | List Raw | tags: Admin | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/admin/raw",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "listRaw",
+        "service": "am-news",
+        "tool_name": "api_am_news_listRaw",
+        "summary": "List Raw",
+        "tags": [
+          "Admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Admin",
+        "sdk_api": "AdminApi",
+        "group": "admin",
+        "response_schema_ref": "RawListResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_replayPending",
+        "description": "[am-news] POST /v1/admin/replay | Replay Pending | tags: Admin | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/replay",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "replayPending",
+        "service": "am-news",
+        "tool_name": "api_am_news_replayPending",
+        "summary": "Replay Pending",
+        "tags": [
+          "Admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Admin",
+        "sdk_api": "AdminApi",
+        "group": "admin",
+        "response_schema_ref": "ReplayResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_news_replayRaw",
+        "description": "[am-news] POST /v1/admin/replay/{raw_id} | Replay One | tags: Admin | PATH required: raw_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "raw_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=rawId (producer=raw_id) \u2014 rawId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "rawId"
+            }
+          },
+          "required": [
+            "raw_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/replay/{raw_id}",
+        "base_url": "https://am-dev.asrax.in/news",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/news",
+          "preprod": "https://am-preprod.asrax.in/news",
+          "prod": "https://am.asrax.in/news"
+        },
+        "op_id": "replayRaw",
+        "service": "am-news",
+        "tool_name": "api_am_news_replayRaw",
+        "summary": "Replay One",
+        "tags": [
+          "Admin"
+        ],
+        "path_params": [
+          "raw_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "raw_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Admin",
+        "sdk_api": "AdminApi",
+        "group": "admin",
+        "response_schema_ref": "ReplayResponse"
+      }
+    }
+  ]
+}

@@ -1,0 +1,337 @@
+{
+  "service": "am-analysis",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/analysis",
+    "preprod": "https://am-preprod.asrax.in/analysis",
+    "prod": "https://am.asrax.in/analysis"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 4,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_analysis_getTopMoversByEntity",
+        "description": "[am-analysis] GET /api/v1/analysis/{type}/{id}/top-movers | getTopMoversByEntity | tags: analysis-controller | PATH required: type, id | Query optional: timeFrame, groupBy | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 type",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 timeFrame",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "groupBy": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 groupBy \u2014 enum=['STOCK', 'SECTOR', 'ASSET_CLASS', 'MARKET_CAP']",
+              "x-param-in": "query",
+              "x-required": false,
+              "enum": [
+                "STOCK",
+                "SECTOR",
+                "ASSET_CLASS",
+                "MARKET_CAP"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/analysis/{type}/{id}/top-movers",
+        "base_url": "https://am-dev.asrax.in/analysis",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/analysis",
+          "preprod": "https://am-preprod.asrax.in/analysis",
+          "prod": "https://am.asrax.in/analysis"
+        },
+        "op_id": "getTopMoversByEntity",
+        "service": "am-analysis",
+        "tool_name": "api_am_analysis_getTopMoversByEntity",
+        "summary": "getTopMoversByEntity",
+        "tags": [
+          "analysis-controller"
+        ],
+        "path_params": [
+          "type",
+          "id"
+        ],
+        "query_params": [
+          "timeFrame",
+          "groupBy"
+        ],
+        "header_params": [
+          "groupBy"
+        ],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "type": "path",
+          "id": "path",
+          "timeFrame": "query",
+          "groupBy": "query"
+        },
+        "auth": "executor_injected",
+        "route": "analysis-controller",
+        "sdk_api": "AnalysisControllerApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_analysis_getPerformance",
+        "description": "[am-analysis] GET /api/v1/analysis/{type}/{id}/performance | getPerformance | tags: analysis-controller | PATH required: type, id | Query optional: timeFrame | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 type",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 timeFrame \u2014 default='1M'",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": "1M"
+            }
+          },
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/analysis/{type}/{id}/performance",
+        "base_url": "https://am-dev.asrax.in/analysis",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/analysis",
+          "preprod": "https://am-preprod.asrax.in/analysis",
+          "prod": "https://am.asrax.in/analysis"
+        },
+        "op_id": "getPerformance",
+        "service": "am-analysis",
+        "tool_name": "api_am_analysis_getPerformance",
+        "summary": "getPerformance",
+        "tags": [
+          "analysis-controller"
+        ],
+        "path_params": [
+          "type",
+          "id"
+        ],
+        "query_params": [
+          "timeFrame"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "type": "path",
+          "id": "path",
+          "timeFrame": "query"
+        },
+        "auth": "executor_injected",
+        "route": "analysis-controller",
+        "sdk_api": "AnalysisControllerApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_analysis_getAllocation",
+        "description": "[am-analysis] GET /api/v1/analysis/{type}/{id}/allocation | getAllocation | tags: analysis-controller | PATH required: type, id | Query optional: groupBy | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 type",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "groupBy": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 groupBy \u2014 enum=['STOCK', 'SECTOR', 'ASSET_CLASS', 'MARKET_CAP']",
+              "x-param-in": "query",
+              "x-required": false,
+              "enum": [
+                "STOCK",
+                "SECTOR",
+                "ASSET_CLASS",
+                "MARKET_CAP"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/analysis/{type}/{id}/allocation",
+        "base_url": "https://am-dev.asrax.in/analysis",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/analysis",
+          "preprod": "https://am-preprod.asrax.in/analysis",
+          "prod": "https://am.asrax.in/analysis"
+        },
+        "op_id": "getAllocation",
+        "service": "am-analysis",
+        "tool_name": "api_am_analysis_getAllocation",
+        "summary": "getAllocation",
+        "tags": [
+          "analysis-controller"
+        ],
+        "path_params": [
+          "type",
+          "id"
+        ],
+        "query_params": [
+          "groupBy"
+        ],
+        "header_params": [
+          "groupBy"
+        ],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "type": "path",
+          "id": "path",
+          "groupBy": "query"
+        },
+        "auth": "executor_injected",
+        "route": "analysis-controller",
+        "sdk_api": "AnalysisControllerApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_analysis_getTopMoversByCategory",
+        "description": "[am-analysis] GET /api/v1/analysis/{type}/top-movers | getTopMoversByCategory | tags: analysis-controller | PATH required: type | Query optional: timeFrame, groupBy | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 type",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 timeFrame",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "groupBy": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 groupBy \u2014 enum=['STOCK', 'SECTOR', 'ASSET_CLASS', 'MARKET_CAP']",
+              "x-param-in": "query",
+              "x-required": false,
+              "enum": [
+                "STOCK",
+                "SECTOR",
+                "ASSET_CLASS",
+                "MARKET_CAP"
+              ]
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/analysis/{type}/top-movers",
+        "base_url": "https://am-dev.asrax.in/analysis",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/analysis",
+          "preprod": "https://am-preprod.asrax.in/analysis",
+          "prod": "https://am.asrax.in/analysis"
+        },
+        "op_id": "getTopMoversByCategory",
+        "service": "am-analysis",
+        "tool_name": "api_am_analysis_getTopMoversByCategory",
+        "summary": "getTopMoversByCategory",
+        "tags": [
+          "analysis-controller"
+        ],
+        "path_params": [
+          "type"
+        ],
+        "query_params": [
+          "timeFrame",
+          "groupBy"
+        ],
+        "header_params": [
+          "groupBy"
+        ],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "type": "path",
+          "timeFrame": "query",
+          "groupBy": "query"
+        },
+        "auth": "executor_injected",
+        "route": "analysis-controller",
+        "sdk_api": "AnalysisControllerApi",
+        "group": "other"
+      }
+    }
+  ]
+}

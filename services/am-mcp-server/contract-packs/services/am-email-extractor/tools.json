@@ -1,0 +1,359 @@
+{
+  "service": "am-email-extractor",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/email",
+    "preprod": "https://am-preprod.asrax.in/email",
+    "prod": "https://am.asrax.in/email"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 7,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_get_api_v1_health",
+        "description": "[am-email-extractor] GET /api/v1/health | Health check endpoint | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/health",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "get_api_v1_health",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_get_api_v1_health",
+        "summary": "Health check endpoint",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "response_schema_ref": "HealthCheckResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_get_api_v1_brokers",
+        "description": "[am-email-extractor] GET /api/v1/brokers | List supported brokers | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/brokers",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "get_api_v1_brokers",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_get_api_v1_brokers",
+        "summary": "List supported brokers",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "response_schema_ref": "BrokerListResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_get_api_v1_gmail_connect",
+        "description": "[am-email-extractor] GET /api/v1/gmail/connect | Start Gmail OAuth flow | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/gmail/connect",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "get_api_v1_gmail_connect",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_get_api_v1_gmail_connect",
+        "summary": "Start Gmail OAuth flow",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_get_api_v1_gmail_status",
+        "description": "[am-email-extractor] GET /api/v1/gmail/status | Check Gmail connection status | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/gmail/status",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "get_api_v1_gmail_status",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_get_api_v1_gmail_status",
+        "summary": "Check Gmail connection status",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_delete_api_v1_gmail_disconnect",
+        "description": "[am-email-extractor] DELETE /api/v1/gmail/disconnect | Disconnect Gmail account | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/api/v1/gmail/disconnect",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "delete_api_v1_gmail_disconnect",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_delete_api_v1_gmail_disconnect",
+        "summary": "Disconnect Gmail account",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_get_api_v1_extract_gmail__broker",
+        "description": "[am-email-extractor] GET /api/v1/extract/gmail/{broker} | Fetch statement from Gmail and extract holdings | PATH required: broker | Query optional: pan | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "broker": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 Allowed values: [groww, zerodha, angleone, dhan, mstock] \u2014 example='[groww, zerodha, angleone, dhan, mstock]' \u2014 enum=['groww', 'zerodha', 'angleone', 'dhan', 'mstock']",
+              "x-param-in": "path",
+              "x-required": true,
+              "enum": [
+                "groww",
+                "zerodha",
+                "angleone",
+                "dhan",
+                "mstock"
+              ],
+              "example": "[groww, zerodha, angleone, dhan, mstock]"
+            },
+            "pan": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 pan",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [
+            "broker"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/extract/gmail/{broker}",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "get_api_v1_extract_gmail__broker",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_get_api_v1_extract_gmail__broker",
+        "summary": "Fetch statement from Gmail and extract holdings",
+        "tags": [],
+        "path_params": [
+          "broker"
+        ],
+        "query_params": [
+          "pan"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "broker": "path",
+          "pan": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "response_schema_ref": "ExtractionResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_email_extractor_post_api_v1_extract_upload__broker",
+        "description": "[am-email-extractor] POST /api/v1/extract/upload/{broker} | Upload file and extract holdings | PATH required: broker | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "broker": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 Allowed values: [groww, zerodha, angleone, dhan, mstock] \u2014 example='[groww, zerodha, angleone, dhan, mstock]' \u2014 enum=['groww', 'zerodha', 'angleone', 'dhan', 'mstock']",
+              "x-param-in": "path",
+              "x-required": true,
+              "enum": [
+                "groww",
+                "zerodha",
+                "angleone",
+                "dhan",
+                "mstock"
+              ],
+              "example": "[groww, zerodha, angleone, dhan, mstock]"
+            },
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 file \u2014 format=binary",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "password": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 password",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "broker"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/extract/upload/{broker}",
+        "base_url": "https://am-dev.asrax.in/email",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/email",
+          "preprod": "https://am-preprod.asrax.in/email",
+          "prod": "https://am.asrax.in/email"
+        },
+        "op_id": "post_api_v1_extract_upload__broker",
+        "service": "am-email-extractor",
+        "tool_name": "api_am_email_extractor_post_api_v1_extract_upload__broker",
+        "summary": "Upload file and extract holdings",
+        "tags": [],
+        "path_params": [
+          "broker"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "file",
+          "password"
+        ],
+        "param_locations": {
+          "broker": "path",
+          "file": "body",
+          "password": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "response_schema_ref": "ExtractionResponse",
+        "group": "other"
+      }
+    }
+  ]
+}

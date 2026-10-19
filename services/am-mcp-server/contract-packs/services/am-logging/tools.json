@@ -1,0 +1,452 @@
+{
+  "service": "am-logging",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/logging",
+    "preprod": "https://am-preprod.asrax.in/logging",
+    "prod": "https://am.asrax.in/logging"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 6,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_logging_list_logs_v1_logs_get",
+        "description": "[am-logging] GET /v1/logs | List all logs | tags: Logs | Query optional: limit, offset | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 Number of logs to return (1-100) \u2014 default=10",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "offset": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 Number of logs to skip for pagination \u2014 default=0",
+              "x-param-in": "query",
+              "x-required": false,
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/logs",
+        "base_url": "https://am-dev.asrax.in/logging",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/logging",
+          "preprod": "https://am-preprod.asrax.in/logging",
+          "prod": "https://am.asrax.in/logging"
+        },
+        "op_id": "list_logs_v1_logs_get",
+        "service": "am-logging",
+        "tool_name": "api_am_logging_list_logs_v1_logs_get",
+        "summary": "List all logs",
+        "tags": [
+          "Logs"
+        ],
+        "path_params": [],
+        "query_params": [
+          "limit",
+          "offset"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "limit": "query",
+          "offset": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Logs",
+        "sdk_api": "LogsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_logging_ingest_log_v1_logs_post",
+        "description": "[am-logging] POST /v1/logs | Create a new log entry | tags: Logs | BODY required: trace_id, span_id, service, timestamp, log_type, level, payload | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "trace_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=traceId (producer=trace_id) \u2014 Unique identifier for the entire transaction/request",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "traceId"
+            },
+            "span_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Identifier for this specific operation within the trace",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "service": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Service name that generated the log",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Timestamp when the log was created (ISO 8601 format) \u2014 format=date-time",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "log_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Type of log: BUSINESS, AUDIT, or TECHNICAL",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "level": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Log level: DEBUG, INFO, WARN, ERROR, CRITICAL",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "status": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Current status: pending, processing, in_progress, completed, failed, cancelled \u2014 default='pending'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "status",
+              "default": "pending"
+            },
+            "intensity": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Intensity level: low, normal, urgent \u2014 default='normal'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "normal"
+            },
+            "context": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Context information about the operation",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "payload": {
+              "type": "object",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Main log data/content",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "exception": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Exception details if an error occurred",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "metadata": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Additional metadata as key-value pairs",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "trace_id",
+            "span_id",
+            "service",
+            "timestamp",
+            "log_type",
+            "level",
+            "payload"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LogEntry.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/logs",
+        "base_url": "https://am-dev.asrax.in/logging",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/logging",
+          "preprod": "https://am-preprod.asrax.in/logging",
+          "prod": "https://am.asrax.in/logging"
+        },
+        "op_id": "ingest_log_v1_logs_post",
+        "service": "am-logging",
+        "tool_name": "api_am_logging_ingest_log_v1_logs_post",
+        "summary": "Create a new log entry",
+        "tags": [
+          "Logs"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "trace_id",
+          "span_id",
+          "service",
+          "timestamp",
+          "log_type",
+          "level",
+          "payload"
+        ],
+        "body_optional": [
+          "status",
+          "intensity",
+          "context",
+          "exception",
+          "metadata"
+        ],
+        "param_locations": {
+          "trace_id": "body",
+          "span_id": "body",
+          "service": "body",
+          "timestamp": "body",
+          "log_type": "body",
+          "level": "body",
+          "status": "body",
+          "intensity": "body",
+          "context": "body",
+          "payload": "body",
+          "exception": "body",
+          "metadata": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Logs",
+        "sdk_api": "LogsApi",
+        "schema_ref": "LogEntry",
+        "x-asrax-schema": "models/LogEntry.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_logging_ingest_telemetry_v1_telemetry_events_post",
+        "description": "[am-logging] POST /v1/telemetry/events | Ingest Flutter product telemetry | tags: Telemetry | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/telemetry/events",
+        "base_url": "https://am-dev.asrax.in/logging",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/logging",
+          "preprod": "https://am-preprod.asrax.in/logging",
+          "prod": "https://am.asrax.in/logging"
+        },
+        "op_id": "ingest_telemetry_v1_telemetry_events_post",
+        "service": "am-logging",
+        "tool_name": "api_am_logging_ingest_telemetry_v1_telemetry_events_post",
+        "summary": "Ingest Flutter product telemetry",
+        "tags": [
+          "Telemetry"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Telemetry",
+        "sdk_api": "TelemetryApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_logging_get_log_v1_logs__trace_id__get",
+        "description": "[am-logging] GET /v1/logs/{trace_id} | Get log by trace ID | tags: Logs | PATH required: trace_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "trace_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=traceId (producer=trace_id) \u2014 Unique trace identifier for the log entry",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "traceId"
+            }
+          },
+          "required": [
+            "trace_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/logs/{trace_id}",
+        "base_url": "https://am-dev.asrax.in/logging",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/logging",
+          "preprod": "https://am-preprod.asrax.in/logging",
+          "prod": "https://am.asrax.in/logging"
+        },
+        "op_id": "get_log_v1_logs__trace_id__get",
+        "service": "am-logging",
+        "tool_name": "api_am_logging_get_log_v1_logs__trace_id__get",
+        "summary": "Get log by trace ID",
+        "tags": [
+          "Logs"
+        ],
+        "path_params": [
+          "trace_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "trace_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Logs",
+        "sdk_api": "LogsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_logging_update_log_status_v1_logs__trace_id__put",
+        "description": "[am-logging] PUT /v1/logs/{trace_id} | Update log status | tags: Logs | PATH required: trace_id | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "trace_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=traceId (producer=trace_id) \u2014 Unique trace identifier for the log entry",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "traceId"
+            },
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "trace_id",
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/logs/{trace_id}",
+        "base_url": "https://am-dev.asrax.in/logging",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/logging",
+          "preprod": "https://am-preprod.asrax.in/logging",
+          "prod": "https://am.asrax.in/logging"
+        },
+        "op_id": "update_log_status_v1_logs__trace_id__put",
+        "service": "am-logging",
+        "tool_name": "api_am_logging_update_log_status_v1_logs__trace_id__put",
+        "summary": "Update log status",
+        "tags": [
+          "Logs"
+        ],
+        "path_params": [
+          "trace_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "trace_id": "path",
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Logs",
+        "sdk_api": "LogsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_logging_health_health_get",
+        "description": "[am-logging] GET /health | Health check | tags: System | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/logging",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/logging",
+          "preprod": "https://am-preprod.asrax.in/logging",
+          "prod": "https://am.asrax.in/logging"
+        },
+        "op_id": "health_health_get",
+        "service": "am-logging",
+        "tool_name": "api_am_logging_health_health_get",
+        "summary": "Health check",
+        "tags": [
+          "System"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "System",
+        "sdk_api": "SystemApi",
+        "group": "other"
+      }
+    }
+  ]
+}

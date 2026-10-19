@@ -1,0 +1,375 @@
+{
+  "service": "am-db-agent",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/db",
+    "preprod": "https://am-preprod.asrax.in/db",
+    "prod": "https://am.asrax.in/db"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 5,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_db_agent_db_query_api_v1_db_query_post",
+        "description": "[am-db-agent] POST /api/v1/db/query | Db Query | BODY required: query | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "X-Agent-Caller": {
+              "type": "string",
+              "description": "[HEADER] \u2014 optional \u2014 X-Agent-Caller",
+              "x-param-in": "header",
+              "x-required": false
+            },
+            "query": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 query",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "backend": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 backend",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "environment": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 environment",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "environment"
+            },
+            "read_only": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 read_only \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "include_summary": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 include_summary \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "max_rows": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 max_rows \u2014 default=100",
+              "x-param-in": "body",
+              "x-required": false,
+              "minimum": 1.0,
+              "maximum": 1000.0,
+              "default": 100
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DbQueryRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/db/query",
+        "base_url": "https://am-dev.asrax.in/db",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/db",
+          "preprod": "https://am-preprod.asrax.in/db",
+          "prod": "https://am.asrax.in/db"
+        },
+        "op_id": "db_query_api_v1_db_query_post",
+        "service": "am-db-agent",
+        "tool_name": "api_am_db_agent_db_query_api_v1_db_query_post",
+        "summary": "Db Query",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [
+          "X-Agent-Caller"
+        ],
+        "body_required": [
+          "query"
+        ],
+        "body_optional": [
+          "backend",
+          "environment",
+          "read_only",
+          "include_summary",
+          "max_rows"
+        ],
+        "param_locations": {
+          "X-Agent-Caller": "header",
+          "query": "body",
+          "backend": "body",
+          "environment": "body",
+          "read_only": "body",
+          "include_summary": "body",
+          "max_rows": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "DbQueryRequest",
+        "x-asrax-schema": "models/DbQueryRequest.json",
+        "response_schema_ref": "DbQueryResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_db_agent_db_plan_api_v1_db_plan_post",
+        "description": "[am-db-agent] POST /api/v1/db/plan | Db Plan | BODY required: query | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "X-Agent-Caller": {
+              "type": "string",
+              "description": "[HEADER] \u2014 optional \u2014 X-Agent-Caller",
+              "x-param-in": "header",
+              "x-required": false
+            },
+            "query": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 query",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "backend": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 backend",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "read_only": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 read_only \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DbPlanRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/db/plan",
+        "base_url": "https://am-dev.asrax.in/db",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/db",
+          "preprod": "https://am-preprod.asrax.in/db",
+          "prod": "https://am.asrax.in/db"
+        },
+        "op_id": "db_plan_api_v1_db_plan_post",
+        "service": "am-db-agent",
+        "tool_name": "api_am_db_agent_db_plan_api_v1_db_plan_post",
+        "summary": "Db Plan",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [
+          "X-Agent-Caller"
+        ],
+        "body_required": [
+          "query"
+        ],
+        "body_optional": [
+          "backend",
+          "read_only"
+        ],
+        "param_locations": {
+          "X-Agent-Caller": "header",
+          "query": "body",
+          "backend": "body",
+          "read_only": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "DbPlanRequest",
+        "x-asrax-schema": "models/DbPlanRequest.json",
+        "response_schema_ref": "DbPlanResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_db_agent_db_execute_api_v1_db_execute_post",
+        "description": "[am-db-agent] POST /api/v1/db/execute | Db Execute | BODY required: intent | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "X-Agent-Caller": {
+              "type": "string",
+              "description": "[HEADER] \u2014 optional \u2014 X-Agent-Caller",
+              "x-param-in": "header",
+              "x-required": false
+            },
+            "intent": {
+              "type": "object",
+              "description": "[BODY] \u2014 REQUIRED \u2014 intent",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "include_summary": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 include_summary \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "max_rows": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 max_rows \u2014 default=100",
+              "x-param-in": "body",
+              "x-required": false,
+              "minimum": 1.0,
+              "maximum": 1000.0,
+              "default": 100
+            }
+          },
+          "required": [
+            "intent"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DbExecuteRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/db/execute",
+        "base_url": "https://am-dev.asrax.in/db",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/db",
+          "preprod": "https://am-preprod.asrax.in/db",
+          "prod": "https://am.asrax.in/db"
+        },
+        "op_id": "db_execute_api_v1_db_execute_post",
+        "service": "am-db-agent",
+        "tool_name": "api_am_db_agent_db_execute_api_v1_db_execute_post",
+        "summary": "Db Execute",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [
+          "X-Agent-Caller"
+        ],
+        "body_required": [
+          "intent"
+        ],
+        "body_optional": [
+          "include_summary",
+          "max_rows"
+        ],
+        "param_locations": {
+          "X-Agent-Caller": "header",
+          "intent": "body",
+          "include_summary": "body",
+          "max_rows": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "DbExecuteRequest",
+        "x-asrax-schema": "models/DbExecuteRequest.json",
+        "response_schema_ref": "DbQueryResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_db_agent_health_health_get",
+        "description": "[am-db-agent] GET /health | Health | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/db",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/db",
+          "preprod": "https://am-preprod.asrax.in/db",
+          "prod": "https://am.asrax.in/db"
+        },
+        "op_id": "health_health_get",
+        "service": "am-db-agent",
+        "tool_name": "api_am_db_agent_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_db_agent_ready_ready_get",
+        "description": "[am-db-agent] GET /ready | Ready | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/ready",
+        "base_url": "https://am-dev.asrax.in/db",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/db",
+          "preprod": "https://am-preprod.asrax.in/db",
+          "prod": "https://am.asrax.in/db"
+        },
+        "op_id": "ready_ready_get",
+        "service": "am-db-agent",
+        "tool_name": "api_am_db_agent_ready_ready_get",
+        "summary": "Ready",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    }
+  ]
+}

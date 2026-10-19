@@ -1,0 +1,2703 @@
+{
+  "service": "am-portfolio",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/portfolio",
+    "preprod": "https://am-preprod.asrax.in/portfolio",
+    "prod": "https://am.asrax.in/portfolio"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 53,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getAdvancedAnalytics",
+        "description": "[am-portfolio] POST /v1/analytics/index/{indexSymbol}/advanced | POST /v1/analytics/index/{indexSymbol}/advanced | tags: Index Analytics | PATH required: indexSymbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "indexSymbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 indexSymbol",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "fromDate": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 fromDate \u2014 format=date",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "toDate": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 toDate \u2014 format=date",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 timeFrame \u2014 enum=['1m', '3m', '5m', '10m', '15m', '30m', '1H', '4H', '1D', '1W', '1M', '1Y']",
+              "x-param-in": "body",
+              "x-required": false,
+              "enum": [
+                "1m",
+                "3m",
+                "5m",
+                "10m",
+                "15m",
+                "30m",
+                "1H",
+                "4H",
+                "1D",
+                "1W",
+                "1M",
+                "1Y"
+              ]
+            },
+            "coreIdentifiers": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 coreIdentifiers",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pagination": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 pagination",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "featureToggles": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 featureToggles",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "featureConfiguration": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 featureConfiguration",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timeFrameRequest": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 timeFrameRequest",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "indexSymbol"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AdvancedAnalyticsRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/index/{indexSymbol}/advanced",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getAdvancedAnalytics",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getAdvancedAnalytics",
+        "summary": "POST /v1/analytics/index/{indexSymbol}/advanced",
+        "tags": [
+          "Index Analytics"
+        ],
+        "path_params": [
+          "indexSymbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "fromDate",
+          "toDate",
+          "timeFrame",
+          "coreIdentifiers",
+          "pagination",
+          "featureToggles",
+          "featureConfiguration",
+          "timeFrameRequest"
+        ],
+        "param_locations": {
+          "indexSymbol": "path",
+          "fromDate": "body",
+          "toDate": "body",
+          "timeFrame": "body",
+          "coreIdentifiers": "body",
+          "pagination": "body",
+          "featureToggles": "body",
+          "featureConfiguration": "body",
+          "timeFrameRequest": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Index Analytics",
+        "sdk_api": "IndexAnalyticsApi",
+        "schema_ref": "AdvancedAnalyticsRequest",
+        "x-asrax-schema": "models/AdvancedAnalyticsRequest.json",
+        "response_schema_ref": "AdvancedAnalyticsResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getAllPortfoliosAdvancedAnalytics",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/all/advanced | All-portfolios advanced analytics | tags: Portfolio Analytics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/all/advanced",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getAllPortfoliosAdvancedAnalytics",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getAllPortfoliosAdvancedAnalytics",
+        "summary": "All-portfolios advanced analytics",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getAllPortfoliosIntelligence",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/all/intelligence | All-portfolios intelligence | tags: Portfolio Analytics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/all/intelligence",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getAllPortfoliosIntelligence",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getAllPortfoliosIntelligence",
+        "summary": "All-portfolios intelligence",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_runAllPortfoliosStress",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/all/stress | All-portfolios stress | tags: Portfolio Analytics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/all/stress",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "runAllPortfoliosStress",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_runAllPortfoliosStress",
+        "summary": "All-portfolios stress",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_suggestAllPortfoliosIntelligence",
+        "description": "[am-portfolio] GET /v1/analytics/portfolio/all/suggest | All-portfolios intelligence suggest | tags: Portfolio Analytics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/portfolio/all/suggest",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "suggestAllPortfoliosIntelligence",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_suggestAllPortfoliosIntelligence",
+        "summary": "All-portfolios intelligence suggest",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_runAllPortfoliosWhatIf",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/all/what-if | All-portfolios what-if | tags: Portfolio Analytics | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/all/what-if",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "runAllPortfoliosWhatIf",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_runAllPortfoliosWhatIf",
+        "summary": "All-portfolios what-if",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getAdvancedAnalytics",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/{portfolioId}/advanced | POST /v1/analytics/portfolio/{portfolioId}/advanced | tags: Portfolio Analytics | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            },
+            "fromDate": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 fromDate \u2014 format=date",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "toDate": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 toDate \u2014 format=date",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 timeFrame \u2014 enum=['1m', '3m', '5m', '10m', '15m', '30m', '1H', '4H', '1D', '1W', '1M', '1Y']",
+              "x-param-in": "body",
+              "x-required": false,
+              "enum": [
+                "1m",
+                "3m",
+                "5m",
+                "10m",
+                "15m",
+                "30m",
+                "1H",
+                "4H",
+                "1D",
+                "1W",
+                "1M",
+                "1Y"
+              ]
+            },
+            "coreIdentifiers": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 coreIdentifiers",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pagination": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 pagination",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "featureToggles": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 featureToggles",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "featureConfiguration": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 featureConfiguration",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timeFrameRequest": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 timeFrameRequest",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AdvancedAnalyticsRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/{portfolioId}/advanced",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getAdvancedAnalytics",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getAdvancedAnalytics",
+        "summary": "POST /v1/analytics/portfolio/{portfolioId}/advanced",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "fromDate",
+          "toDate",
+          "timeFrame",
+          "coreIdentifiers",
+          "pagination",
+          "featureToggles",
+          "featureConfiguration",
+          "timeFrameRequest"
+        ],
+        "param_locations": {
+          "portfolioId": "path",
+          "fromDate": "body",
+          "toDate": "body",
+          "timeFrame": "body",
+          "coreIdentifiers": "body",
+          "pagination": "body",
+          "featureToggles": "body",
+          "featureConfiguration": "body",
+          "timeFrameRequest": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "schema_ref": "AdvancedAnalyticsRequest",
+        "x-asrax-schema": "models/AdvancedAnalyticsRequest.json",
+        "response_schema_ref": "AdvancedAnalyticsResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getIntelligence",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/{portfolioId}/intelligence | POST /v1/analytics/portfolio/{portfolioId}/intelligence | tags: Portfolio Analytics | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/{portfolioId}/intelligence",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getIntelligence",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getIntelligence",
+        "summary": "POST /v1/analytics/portfolio/{portfolioId}/intelligence",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_reportPreview",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/{portfolioId}/report/preview | POST /v1/analytics/portfolio/{portfolioId}/report/preview | tags: Portfolio Analytics | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/{portfolioId}/report/preview",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "reportPreview",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_reportPreview",
+        "summary": "POST /v1/analytics/portfolio/{portfolioId}/report/preview",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_runStress",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/{portfolioId}/stress | POST /v1/analytics/portfolio/{portfolioId}/stress | tags: Portfolio Analytics | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/{portfolioId}/stress",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "runStress",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_runStress",
+        "summary": "POST /v1/analytics/portfolio/{portfolioId}/stress",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_suggest",
+        "description": "[am-portfolio] GET /v1/analytics/portfolio/{portfolioId}/suggest | GET /v1/analytics/portfolio/{portfolioId}/suggest | tags: Portfolio Analytics | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/analytics/portfolio/{portfolioId}/suggest",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "suggest",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_suggest",
+        "summary": "GET /v1/analytics/portfolio/{portfolioId}/suggest",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_runWhatIf",
+        "description": "[am-portfolio] POST /v1/analytics/portfolio/{portfolioId}/what-if | POST /v1/analytics/portfolio/{portfolioId}/what-if | tags: Portfolio Analytics | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/analytics/portfolio/{portfolioId}/what-if",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "runWhatIf",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_runWhatIf",
+        "summary": "POST /v1/analytics/portfolio/{portfolioId}/what-if",
+        "tags": [
+          "Portfolio Analytics"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Analytics",
+        "sdk_api": "PortfolioAnalyticsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getBasketAllocations",
+        "description": "[am-portfolio] POST /v1/basket/allocations | Post /allocations | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/allocations",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getBasketAllocations",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getBasketAllocations",
+        "summary": "Post /allocations",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_applySubstitutes",
+        "description": "[am-portfolio] POST /v1/basket/apply-substitutes | Post /apply-substitutes | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/apply-substitutes",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "applySubstitutes",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_applySubstitutes",
+        "summary": "Post /apply-substitutes",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_calculateQuantities",
+        "description": "[am-portfolio] POST /v1/basket/calculate-quantities | Post /calculate-quantities | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/calculate-quantities",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "calculateQuantities",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_calculateQuantities",
+        "summary": "Post /calculate-quantities",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_calculateQuantitiesFinalPreview",
+        "description": "[am-portfolio] POST /v1/basket/calculate-quantities/final-preview | Final preview quantities | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/calculate-quantities/final-preview",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "calculateQuantitiesFinalPreview",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_calculateQuantitiesFinalPreview",
+        "summary": "Final preview quantities",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getBasketCatalog",
+        "description": "[am-portfolio] GET /v1/basket/catalog | Get basket catalog | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/basket/catalog",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getBasketCatalog",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getBasketCatalog",
+        "summary": "Get basket catalog",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_upsertBasketCatalog",
+        "description": "[am-portfolio] PUT /v1/basket/catalog | Upsert basket catalog | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/basket/catalog",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "upsertBasketCatalog",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_upsertBasketCatalog",
+        "summary": "Upsert basket catalog",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_createBasketPortfolio",
+        "description": "[am-portfolio] POST /v1/basket/create-portfolio | Create basket portfolio | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/create-portfolio",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "createBasketPortfolio",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_createBasketPortfolio",
+        "summary": "Create basket portfolio",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_listBasketDrafts",
+        "description": "[am-portfolio] GET /v1/basket/drafts | List basket drafts | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/basket/drafts",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "listBasketDrafts",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_listBasketDrafts",
+        "summary": "List basket drafts",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_upsertBasketDraftPost",
+        "description": "[am-portfolio] POST /v1/basket/drafts | Upsert basket draft (POST) | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/drafts",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "upsertBasketDraftPost",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_upsertBasketDraftPost",
+        "summary": "Upsert basket draft (POST)",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_upsertBasketDraft",
+        "description": "[am-portfolio] PUT /v1/basket/drafts | Upsert basket draft | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/basket/drafts",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "upsertBasketDraft",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_upsertBasketDraft",
+        "summary": "Upsert basket draft",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getBasketDraft",
+        "description": "[am-portfolio] GET /v1/basket/drafts/{draftId} | Get basket draft | tags: Basket | PATH required: draftId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "draftId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 draftId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "draftId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/basket/drafts/{draftId}",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getBasketDraft",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getBasketDraft",
+        "summary": "Get basket draft",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [
+          "draftId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "draftId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_deleteBasketDraft",
+        "description": "[am-portfolio] DELETE /v1/basket/drafts/{draftId} | Delete basket draft | tags: Basket | PATH required: draftId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "draftId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 draftId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "draftId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/basket/drafts/{draftId}",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "deleteBasketDraft",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_deleteBasketDraft",
+        "summary": "Delete basket draft",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [
+          "draftId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "draftId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getBasketExposure",
+        "description": "[am-portfolio] POST /v1/basket/exposure | Post /exposure | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/exposure",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getBasketExposure",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getBasketExposure",
+        "summary": "Post /exposure",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getMyBaskets",
+        "description": "[am-portfolio] GET /v1/basket/my | Get /my | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/basket/my",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getMyBaskets",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getMyBaskets",
+        "summary": "Get /my",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getOpportunities",
+        "description": "[am-portfolio] POST /v1/basket/opportunities | Post /opportunities | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/opportunities",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getOpportunities",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getOpportunities",
+        "summary": "Post /opportunities",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPreview",
+        "description": "[am-portfolio] POST /v1/basket/preview | Post /preview | tags: Basket | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/basket/preview",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPreview",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPreview",
+        "summary": "Post /preview",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getBasketDetail",
+        "description": "[am-portfolio] GET /v1/basket/{basketId} | Get /{basketId} | tags: Basket | PATH required: basketId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "basketId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 basketId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "basketId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/basket/{basketId}",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getBasketDetail",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getBasketDetail",
+        "summary": "Get /{basketId}",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [
+          "basketId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "basketId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_deleteBasket",
+        "description": "[am-portfolio] DELETE /v1/basket/{basketId} | Delete /{basketId} | tags: Basket | PATH required: basketId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "basketId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 basketId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "basketId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/basket/{basketId}",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "deleteBasket",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_deleteBasket",
+        "summary": "Delete /{basketId}",
+        "tags": [
+          "Basket"
+        ],
+        "path_params": [
+          "basketId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "basketId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Basket",
+        "sdk_api": "BasketApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getRawMarketData",
+        "description": "[am-portfolio] GET /v1/debug/market-data/raw | Get /market-data/raw | tags: Market Data Debug | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/debug/market-data/raw",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getRawMarketData",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getRawMarketData",
+        "summary": "Get /market-data/raw",
+        "tags": [
+          "Market Data Debug"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Market Data Debug",
+        "sdk_api": "MarketDataDebugApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getRawNseIndicesData",
+        "description": "[am-portfolio] GET /v1/debug/nse-indices/raw | Get /nse-indices/raw | tags: Market Data Debug | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/debug/nse-indices/raw",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getRawNseIndicesData",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getRawNseIndicesData",
+        "summary": "Get /nse-indices/raw",
+        "tags": [
+          "Market Data Debug"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Market Data Debug",
+        "sdk_api": "MarketDataDebugApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getAllMarketIndices",
+        "description": "[am-portfolio] GET /v1/market-index/all | Get all market indices | tags: Market Indices | Query optional: interval, type | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "interval": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=timeInterval (producer=interval) \u2014 timeInterval",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "timeInterval"
+            },
+            "type": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 type",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-index/all",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getAllMarketIndices",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getAllMarketIndices",
+        "summary": "Get all market indices",
+        "tags": [
+          "Market Indices"
+        ],
+        "path_params": [],
+        "query_params": [
+          "interval",
+          "type"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "interval": "query",
+          "type": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Market Indices",
+        "sdk_api": "MarketIndicesApi",
+        "response_schema_ref": "IndexIndices",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_dismissDemoPortfolio",
+        "description": "[am-portfolio] DELETE /v1/portfolios/demo | Restore demo portfolio eligibility | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/portfolios/demo",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "dismissDemoPortfolio",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_dismissDemoPortfolio",
+        "summary": "Restore demo portfolio eligibility",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_backfillSnapshots",
+        "description": "[am-portfolio] POST /v1/portfolios/dev/backfill-snapshots | POST /v1/portfolios/dev/backfill-snapshots | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/dev/backfill-snapshots",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "backfillSnapshots",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_backfillSnapshots",
+        "summary": "POST /v1/portfolios/dev/backfill-snapshots",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_migrateGrowwNames",
+        "description": "[am-portfolio] POST /v1/portfolios/dev/migrate-groww | POST /v1/portfolios/dev/migrate-groww | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/dev/migrate-groww",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "migrateGrowwNames",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_migrateGrowwNames",
+        "summary": "POST /v1/portfolios/dev/migrate-groww",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_normalizeStoredSymbols",
+        "description": "[am-portfolio] POST /v1/portfolios/dev/normalize-symbols | POST /v1/portfolios/dev/normalize-symbols | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/dev/normalize-symbols",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "normalizeStoredSymbols",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_normalizeStoredSymbols",
+        "summary": "POST /v1/portfolios/dev/normalize-symbols",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_deleteSnapshot",
+        "description": "[am-portfolio] DELETE /v1/portfolios/dev/snapshot | DELETE /v1/portfolios/dev/snapshot | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/portfolios/dev/snapshot",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "deleteSnapshot",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_deleteSnapshot",
+        "summary": "DELETE /v1/portfolios/dev/snapshot",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_triggerCatchUpForUser",
+        "description": "[am-portfolio] POST /v1/portfolios/dev/trigger-catchup | POST /v1/portfolios/dev/trigger-catchup | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/dev/trigger-catchup",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "triggerCatchUpForUser",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_triggerCatchUpForUser",
+        "summary": "POST /v1/portfolios/dev/trigger-catchup",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_triggerSnapshotForUser",
+        "description": "[am-portfolio] POST /v1/portfolios/dev/trigger-snapshot | POST /v1/portfolios/dev/trigger-snapshot | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/dev/trigger-snapshot",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "triggerSnapshotForUser",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_triggerSnapshotForUser",
+        "summary": "POST /v1/portfolios/dev/trigger-snapshot",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioHistory",
+        "description": "[am-portfolio] GET /v1/portfolios/history | Get portfolio history | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/history",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioHistory",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioHistory",
+        "summary": "Get portfolio history",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioHoldings",
+        "description": "[am-portfolio] GET /v1/portfolios/holdings | Get portfolio holdings | tags: Portfolio Management | Required args: userId | Query optional: portfolioId, page, size, interval | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 User ID to fetch portfolio holdings for \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "portfolioId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 Optional portfolio ID to filter results for specific portfolio \u2014 example='pf-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            },
+            "page": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 page \u2014 format=int32",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "page"
+            },
+            "size": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=size) \u2014 pageSize \u2014 format=int32",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize"
+            },
+            "interval": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=timeInterval (producer=interval) \u2014 timeInterval",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "timeInterval"
+            }
+          },
+          "required": [
+            "userId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/holdings",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioHoldings",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioHoldings",
+        "summary": "Get portfolio holdings",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [
+          "userId",
+          "portfolioId",
+          "page",
+          "size",
+          "interval"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "userId": "query",
+          "portfolioId": "query",
+          "page": "query",
+          "size": "query",
+          "interval": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getAllPortfoliosIntraday",
+        "description": "[am-portfolio] GET /v1/portfolios/intraday | Get intraday data for all portfolios | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/intraday",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getAllPortfoliosIntraday",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getAllPortfoliosIntraday",
+        "summary": "Get intraday data for all portfolios",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioBasicDetails",
+        "description": "[am-portfolio] GET /v1/portfolios/list | Get portfolio IDs and names | tags: Portfolio Management | Required args: userId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 User ID to fetch portfolio basic details for \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "userId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/list",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioBasicDetails",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioBasicDetails",
+        "summary": "Get portfolio IDs and names",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [
+          "userId"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "userId": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioSummary",
+        "description": "[am-portfolio] GET /v1/portfolios/summary | Get portfolio summary | tags: Portfolio Management | Required args: userId | Query optional: portfolioId, page, size, interval | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 User ID to fetch portfolio summary for \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "portfolioId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 Optional portfolio ID to filter results for specific portfolio \u2014 example='pf-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            },
+            "page": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 page \u2014 format=int32",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "page"
+            },
+            "size": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=size) \u2014 pageSize \u2014 format=int32",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize"
+            },
+            "interval": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=timeInterval (producer=interval) \u2014 timeInterval",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "timeInterval"
+            }
+          },
+          "required": [
+            "userId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/summary",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioSummary",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioSummary",
+        "summary": "Get portfolio summary",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [
+          "userId",
+          "portfolioId",
+          "page",
+          "size",
+          "interval"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "userId": "query",
+          "portfolioId": "query",
+          "page": "query",
+          "size": "query",
+          "interval": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_syncPortfolioFromTrade",
+        "description": "[am-portfolio] POST /v1/portfolios/sync | Sync portfolio from trade management (internal) | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/sync",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "syncPortfolioFromTrade",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_syncPortfolioFromTrade",
+        "summary": "Sync portfolio from trade management (internal)",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_triggerSnapshot",
+        "description": "[am-portfolio] POST /v1/portfolios/trigger-snapshot | Trigger snapshot | tags: Portfolio Management | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios/trigger-snapshot",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "triggerSnapshot",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_triggerSnapshot",
+        "summary": "Trigger snapshot",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioById",
+        "description": "[am-portfolio] GET /v1/portfolios/{portfolioId} | Get portfolio by ID | tags: Portfolio Management | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/{portfolioId}",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioById",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioById",
+        "summary": "Get portfolio by ID",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "response_schema_ref": "PortfolioModelV1",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioAnalysis",
+        "description": "[am-portfolio] GET /v1/portfolios/{portfolioId}/analysis | Get portfolio analysis | tags: Portfolio Management | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/{portfolioId}/analysis",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioAnalysis",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioAnalysis",
+        "summary": "Get portfolio analysis",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_replaceAssetClassList",
+        "description": "[am-portfolio] PUT /v1/portfolios/{portfolioId}/asset-classes/{assetClass} | PUT /v1/portfolios/{portfolioId}/asset-classes/{assetClass} | tags: Portfolio Management | PATH required: portfolioId, assetClass | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            },
+            "assetClass": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 assetClass",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "assetClass"
+            }
+          },
+          "required": [
+            "portfolioId",
+            "assetClass"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/portfolios/{portfolioId}/asset-classes/{assetClass}",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "replaceAssetClassList",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_replaceAssetClassList",
+        "summary": "PUT /v1/portfolios/{portfolioId}/asset-classes/{assetClass}",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [
+          "portfolioId",
+          "assetClass"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path",
+          "assetClass": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getSpecificPortfolioHistory",
+        "description": "[am-portfolio] GET /v1/portfolios/{portfolioId}/history | Get specific portfolio history | tags: Portfolio Management | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/{portfolioId}/history",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getSpecificPortfolioHistory",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getSpecificPortfolioHistory",
+        "summary": "Get specific portfolio history",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolioIntraday",
+        "description": "[am-portfolio] GET /v1/portfolios/{portfolioId}/intraday | Get intraday data for specific portfolio | tags: Portfolio Management | PATH required: portfolioId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolioId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolioId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/{portfolioId}/intraday",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolioIntraday",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolioIntraday",
+        "summary": "Get intraday data for specific portfolio",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [
+          "portfolioId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolioId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_portfolio_getPortfolios",
+        "description": "[am-portfolio] GET /v1/portfolios | Get all portfolios for user | tags: Portfolio Management | Required args: userId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 User ID to fetch portfolios for \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "userId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios",
+        "base_url": "https://am-dev.asrax.in/portfolio",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/portfolio",
+          "preprod": "https://am-preprod.asrax.in/portfolio",
+          "prod": "https://am.asrax.in/portfolio"
+        },
+        "op_id": "getPortfolios",
+        "service": "am-portfolio",
+        "tool_name": "api_am_portfolio_getPortfolios",
+        "summary": "Get all portfolios for user",
+        "tags": [
+          "Portfolio Management"
+        ],
+        "path_params": [],
+        "query_params": [
+          "userId"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "userId": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Portfolio Management",
+        "sdk_api": "PortfolioManagementApi",
+        "group": "other"
+      }
+    }
+  ]
+}

@@ -1,0 +1,417 @@
+{
+  "service": "am-cloudinary-manager",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/v1/cloudinary",
+    "preprod": "https://am-preprod.asrax.in/v1/cloudinary",
+    "prod": "https://am.asrax.in/v1/cloudinary"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 5,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_cloudinary_manager_uploadFile",
+        "description": "[am-cloudinary-manager] POST /v1/cloudinary/upload | Upload a file to Cloudinary | tags: Cloudinary API | BODY required: fileContent, filename | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "fileContent": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 fileContent",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "filename": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 filename",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "folder": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 folder",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "overwrite": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 overwrite",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "resourceType": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 resourceType",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "fileContent",
+            "filename"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/UploadRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/cloudinary/upload",
+        "base_url": "https://am-dev.asrax.in/v1/cloudinary",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/cloudinary",
+          "preprod": "https://am-preprod.asrax.in/v1/cloudinary",
+          "prod": "https://am.asrax.in/v1/cloudinary"
+        },
+        "op_id": "uploadFile",
+        "service": "am-cloudinary-manager",
+        "tool_name": "api_am_cloudinary_manager_uploadFile",
+        "summary": "Upload a file to Cloudinary",
+        "tags": [
+          "Cloudinary API"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "fileContent",
+          "filename"
+        ],
+        "body_optional": [
+          "folder",
+          "overwrite",
+          "resourceType"
+        ],
+        "param_locations": {
+          "fileContent": "body",
+          "filename": "body",
+          "folder": "body",
+          "overwrite": "body",
+          "resourceType": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Cloudinary API",
+        "sdk_api": "CloudinaryAPIApi",
+        "schema_ref": "UploadRequest",
+        "x-asrax-schema": "models/UploadRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_cloudinary_manager_generateSignature",
+        "description": "[am-cloudinary-manager] POST /v1/cloudinary/signature | Generate upload signature | tags: Cloudinary API | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "publicId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 publicId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "publicId"
+            },
+            "folder": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 folder",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "resourceType": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 resourceType",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "params": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 params",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timestamp": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 timestamp \u2014 format=int64",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SignatureRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/cloudinary/signature",
+        "base_url": "https://am-dev.asrax.in/v1/cloudinary",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/cloudinary",
+          "preprod": "https://am-preprod.asrax.in/v1/cloudinary",
+          "prod": "https://am.asrax.in/v1/cloudinary"
+        },
+        "op_id": "generateSignature",
+        "service": "am-cloudinary-manager",
+        "tool_name": "api_am_cloudinary_manager_generateSignature",
+        "summary": "Generate upload signature",
+        "tags": [
+          "Cloudinary API"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "publicId",
+          "folder",
+          "resourceType",
+          "params",
+          "timestamp"
+        ],
+        "param_locations": {
+          "publicId": "body",
+          "folder": "body",
+          "resourceType": "body",
+          "params": "body",
+          "timestamp": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Cloudinary API",
+        "sdk_api": "CloudinaryAPIApi",
+        "schema_ref": "SignatureRequest",
+        "x-asrax-schema": "models/SignatureRequest.json",
+        "response_schema_ref": "SignatureResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_cloudinary_manager_listResources",
+        "description": "[am-cloudinary-manager] GET /v1/cloudinary/resources | List resources | tags: Cloudinary API | Query optional: folder, resourceType, maxResults | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "folder": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 folder \u2014 default='uploads'",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": "uploads"
+            },
+            "resourceType": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 resourceType \u2014 default='image'",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": "image"
+            },
+            "maxResults": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 Maximum number of results to return \u2014 format=int32 \u2014 default=10",
+              "x-param-in": "query",
+              "x-required": false,
+              "minimum": 1,
+              "default": 10
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/cloudinary/resources",
+        "base_url": "https://am-dev.asrax.in/v1/cloudinary",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/cloudinary",
+          "preprod": "https://am-preprod.asrax.in/v1/cloudinary",
+          "prod": "https://am.asrax.in/v1/cloudinary"
+        },
+        "op_id": "listResources",
+        "service": "am-cloudinary-manager",
+        "tool_name": "api_am_cloudinary_manager_listResources",
+        "summary": "List resources",
+        "tags": [
+          "Cloudinary API"
+        ],
+        "path_params": [],
+        "query_params": [
+          "folder",
+          "resourceType",
+          "maxResults"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "folder": "query",
+          "resourceType": "query",
+          "maxResults": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Cloudinary API",
+        "sdk_api": "CloudinaryAPIApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_cloudinary_manager_getResource",
+        "description": "[am-cloudinary-manager] GET /v1/cloudinary/resources/{*publicId} | Get resource details | tags: Cloudinary API | PATH required: publicId, *publicId | Query optional: resourceType | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "publicId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 publicId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "publicId"
+            },
+            "resourceType": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 resourceType \u2014 default='image'",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": "image"
+            },
+            "*publicId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 *publicId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "publicId",
+            "*publicId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/cloudinary/resources/{*publicId}",
+        "base_url": "https://am-dev.asrax.in/v1/cloudinary",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/cloudinary",
+          "preprod": "https://am-preprod.asrax.in/v1/cloudinary",
+          "prod": "https://am.asrax.in/v1/cloudinary"
+        },
+        "op_id": "getResource",
+        "service": "am-cloudinary-manager",
+        "tool_name": "api_am_cloudinary_manager_getResource",
+        "summary": "Get resource details",
+        "tags": [
+          "Cloudinary API"
+        ],
+        "path_params": [
+          "publicId",
+          "*publicId"
+        ],
+        "query_params": [
+          "resourceType"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "publicId": "path",
+          "resourceType": "query",
+          "*publicId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Cloudinary API",
+        "sdk_api": "CloudinaryAPIApi",
+        "response_schema_ref": "CloudinaryResource",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_cloudinary_manager_deleteResource",
+        "description": "[am-cloudinary-manager] DELETE /v1/cloudinary/resources/{*publicId} | Delete resource | tags: Cloudinary API | PATH required: publicId, *publicId | Query optional: resourceType | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "publicId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 publicId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "publicId"
+            },
+            "resourceType": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 resourceType \u2014 default='image'",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": "image"
+            },
+            "*publicId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 *publicId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "publicId",
+            "*publicId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/cloudinary/resources/{*publicId}",
+        "base_url": "https://am-dev.asrax.in/v1/cloudinary",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/cloudinary",
+          "preprod": "https://am-preprod.asrax.in/v1/cloudinary",
+          "prod": "https://am.asrax.in/v1/cloudinary"
+        },
+        "op_id": "deleteResource",
+        "service": "am-cloudinary-manager",
+        "tool_name": "api_am_cloudinary_manager_deleteResource",
+        "summary": "Delete resource",
+        "tags": [
+          "Cloudinary API"
+        ],
+        "path_params": [
+          "publicId",
+          "*publicId"
+        ],
+        "query_params": [
+          "resourceType"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "publicId": "path",
+          "resourceType": "query",
+          "*publicId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Cloudinary API",
+        "sdk_api": "CloudinaryAPIApi",
+        "group": "other"
+      }
+    }
+  ]
+}

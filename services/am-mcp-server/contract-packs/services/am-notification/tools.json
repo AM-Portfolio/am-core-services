@@ -1,0 +1,676 @@
+{
+  "service": "am-notification",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/notifications",
+    "preprod": "https://am-preprod.asrax.in/notifications",
+    "prod": "https://am.asrax.in/notifications"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 12,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_health_health_get",
+        "description": "[am-notification] GET /health | Health | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "health_health_get",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_health_live_health_live_get",
+        "description": "[am-notification] GET /health/live | Health Live | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/live",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "health_live_health_live_get",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_health_live_health_live_get",
+        "summary": "Health Live",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_health_ready_health_ready_get",
+        "description": "[am-notification] GET /health/ready | Health Ready | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/ready",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "health_ready_health_ready_get",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_health_ready_health_ready_get",
+        "summary": "Health Ready",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_list_my_notifications_notifications_me_get",
+        "description": "[am-notification] GET /notifications/me | List My Notifications | tags: notifications | Query optional: page, page_size, unread_only | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 page \u2014 default=0",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "page",
+              "minimum": 0,
+              "default": 0
+            },
+            "page_size": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=page_size) \u2014 pageSize \u2014 default=20",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "unread_only": {
+              "type": "boolean",
+              "description": "[QUERY] \u2014 optional \u2014 unread_only \u2014 default=False",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/notifications/me",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "list_my_notifications_notifications_me_get",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_list_my_notifications_notifications_me_get",
+        "summary": "List My Notifications",
+        "tags": [
+          "notifications"
+        ],
+        "path_params": [],
+        "query_params": [
+          "page",
+          "page_size",
+          "unread_only"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "page": "query",
+          "page_size": "query",
+          "unread_only": "query"
+        },
+        "auth": "executor_injected",
+        "route": "notifications",
+        "sdk_api": "NotificationsApi",
+        "response_schema_ref": "APIResponse_list_dict__",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_unread_count_notifications_me_unread_count_get",
+        "description": "[am-notification] GET /notifications/me/unread-count | Unread Count | tags: notifications | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/notifications/me/unread-count",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "unread_count_notifications_me_unread_count_get",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_unread_count_notifications_me_unread_count_get",
+        "summary": "Unread Count",
+        "tags": [
+          "notifications"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "notifications",
+        "sdk_api": "NotificationsApi",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_mark_notification_read_notifications__notification_id__read_patch",
+        "description": "[am-notification] PATCH /notifications/{notification_id}/read | Mark Notification Read | tags: notifications | PATH required: notification_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "notification_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=notificationId (producer=notification_id) \u2014 notificationId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "notificationId"
+            }
+          },
+          "required": [
+            "notification_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/notifications/{notification_id}/read",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "mark_notification_read_notifications__notification_id__read_patch",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_mark_notification_read_notifications__notification_id__read_patch",
+        "summary": "Mark Notification Read",
+        "tags": [
+          "notifications"
+        ],
+        "path_params": [
+          "notification_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "notification_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "notifications",
+        "sdk_api": "NotificationsApi",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_mark_all_read_notifications_read_all_patch",
+        "description": "[am-notification] PATCH /notifications/read-all | Mark All Read | tags: notifications | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/notifications/read-all",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "mark_all_read_notifications_read_all_patch",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_mark_all_read_notifications_read_all_patch",
+        "summary": "Mark All Read",
+        "tags": [
+          "notifications"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "notifications",
+        "sdk_api": "NotificationsApi",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_mark_read_batch_notifications_mark_read_post",
+        "description": "[am-notification] POST /notifications/mark-read | Mark Read Batch | tags: notifications | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "notification_ids": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 notification_ids",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/MarkReadRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/notifications/mark-read",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "mark_read_batch_notifications_mark_read_post",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_mark_read_batch_notifications_mark_read_post",
+        "summary": "Mark Read Batch",
+        "tags": [
+          "notifications"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "notification_ids"
+        ],
+        "param_locations": {
+          "notification_ids": "body"
+        },
+        "auth": "executor_injected",
+        "route": "notifications",
+        "sdk_api": "NotificationsApi",
+        "schema_ref": "MarkReadRequest",
+        "x-asrax-schema": "models/MarkReadRequest.json",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_get_preferences_notifications_preferences_get",
+        "description": "[am-notification] GET /notifications/preferences | Get Preferences | tags: preferences | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/notifications/preferences",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "get_preferences_notifications_preferences_get",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_get_preferences_notifications_preferences_get",
+        "summary": "Get Preferences",
+        "tags": [
+          "preferences"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "preferences",
+        "sdk_api": "PreferencesApi",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_update_preferences_notifications_preferences_put",
+        "description": "[am-notification] PUT /notifications/preferences | Update Preferences | tags: preferences | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "channels": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 channels",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "categories": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 categories",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "quiet_hours": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 quiet_hours",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "locale": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 locale",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PreferenceUpdate.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/notifications/preferences",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "update_preferences_notifications_preferences_put",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_update_preferences_notifications_preferences_put",
+        "summary": "Update Preferences",
+        "tags": [
+          "preferences"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "channels",
+          "categories",
+          "quiet_hours",
+          "locale"
+        ],
+        "param_locations": {
+          "channels": "body",
+          "categories": "body",
+          "quiet_hours": "body",
+          "locale": "body"
+        },
+        "auth": "executor_injected",
+        "route": "preferences",
+        "sdk_api": "PreferencesApi",
+        "schema_ref": "PreferenceUpdate",
+        "x-asrax-schema": "models/PreferenceUpdate.json",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_internal_send_notifications_internal_send_post",
+        "description": "[am-notification] POST /notifications/internal/send | Internal Send | tags: internal | BODY required: workflow_key, recipient_user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=eventId (producer=event_id) \u2014 eventId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "eventId"
+            },
+            "correlation_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 correlation_id",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "workflow_key": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 workflow_key",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "recipient_user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 recipient_user_id",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "payload": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 payload",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "critical": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 critical \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "category": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 category \u2014 default='system'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "system"
+            }
+          },
+          "required": [
+            "workflow_key",
+            "recipient_user_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/NotificationCommand.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/notifications/internal/send",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "internal_send_notifications_internal_send_post",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_internal_send_notifications_internal_send_post",
+        "summary": "Internal Send",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "workflow_key",
+          "recipient_user_id"
+        ],
+        "body_optional": [
+          "event_id",
+          "correlation_id",
+          "payload",
+          "critical",
+          "category"
+        ],
+        "param_locations": {
+          "event_id": "body",
+          "correlation_id": "body",
+          "workflow_key": "body",
+          "recipient_user_id": "body",
+          "payload": "body",
+          "critical": "body",
+          "category": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "NotificationCommand",
+        "x-asrax-schema": "models/NotificationCommand.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_notification_novu_webhook_webhooks_novu_post",
+        "description": "[am-notification] POST /webhooks/novu | Novu Webhook | tags: webhooks | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/webhooks/novu",
+        "base_url": "https://am-dev.asrax.in/notifications",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/notifications",
+          "preprod": "https://am-preprod.asrax.in/notifications",
+          "prod": "https://am.asrax.in/notifications"
+        },
+        "op_id": "novu_webhook_webhooks_novu_post",
+        "service": "am-notification",
+        "tool_name": "api_am_notification_novu_webhook_webhooks_novu_post",
+        "summary": "Novu Webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "webhooks",
+        "sdk_api": "WebhooksApi",
+        "response_schema_ref": "APIResponse_dict_",
+        "group": "other"
+      }
+    }
+  ]
+}

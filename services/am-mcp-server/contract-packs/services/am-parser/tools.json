@@ -1,0 +1,1694 @@
+{
+  "service": "am-parser",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/parser",
+    "preprod": "https://am-preprod.asrax.in/parser",
+    "prod": "https://am.asrax.in/parser"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 29,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Configure pack env once; use routes.json for controller groups (same as SDK Service).",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_upload_excel_async_v1_upload_excel_async_post",
+        "description": "[am-parser] POST /v1/upload-excel-async | Upload Excel Async | tags: Background Jobs | BODY required: file | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 file \u2014 format=binary",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "parse_method": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 parse_method \u2014 default='together'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "together"
+            },
+            "callback_url": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 callback_url",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/upload-excel-async",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "upload_excel_async_v1_upload_excel_async_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_upload_excel_async_v1_upload_excel_async_post",
+        "summary": "Upload Excel Async",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "file"
+        ],
+        "body_optional": [
+          "parse_method",
+          "callback_url",
+          "user_id"
+        ],
+        "param_locations": {
+          "file": "body",
+          "parse_method": "body",
+          "callback_url": "body",
+          "user_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs",
+        "response_schema_ref": "JobResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_job_status_v1__job_id__status_get",
+        "description": "[am-parser] GET /v1/{job_id}/status | Get Job Status | tags: Background Jobs | PATH required: job_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=jobId (producer=job_id) \u2014 jobId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "jobId"
+            }
+          },
+          "required": [
+            "job_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/{job_id}/status",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_job_status_v1__job_id__status_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_job_status_v1__job_id__status_get",
+        "summary": "Get Job Status",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [
+          "job_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "job_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs",
+        "response_schema_ref": "JobStatusResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_job_result_v1__job_id__result_get",
+        "description": "[am-parser] GET /v1/{job_id}/result | Get Job Result | tags: Background Jobs | PATH required: job_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=jobId (producer=job_id) \u2014 jobId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "jobId"
+            }
+          },
+          "required": [
+            "job_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/{job_id}/result",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_job_result_v1__job_id__result_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_job_result_v1__job_id__result_get",
+        "summary": "Get Job Result",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [
+          "job_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "job_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_cancel_job_v1__job_id__delete",
+        "description": "[am-parser] DELETE /v1/{job_id} | Cancel Job | tags: Background Jobs | PATH required: job_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=jobId (producer=job_id) \u2014 jobId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "jobId"
+            }
+          },
+          "required": [
+            "job_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/{job_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "cancel_job_v1__job_id__delete",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_cancel_job_v1__job_id__delete",
+        "summary": "Cancel Job",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [
+          "job_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "job_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_list_jobs_v1__get",
+        "description": "[am-parser] GET /v1/ | List Jobs | tags: Background Jobs | Query optional: job_status, user_id, limit | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "job_status": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 job_status",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 default=50",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "default": 50
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "list_jobs_v1__get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_list_jobs_v1__get",
+        "summary": "List Jobs",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [],
+        "query_params": [
+          "job_status",
+          "user_id",
+          "limit"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "job_status": "query",
+          "user_id": "query",
+          "limit": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_fix_stuck_job_v1_admin_fix_stuck_job__job_id__post",
+        "description": "[am-parser] POST /v1/admin/fix-stuck-job/{job_id} | Fix Stuck Job | tags: Background Jobs | PATH required: job_id | Query optional: mark_as_failed | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=jobId (producer=job_id) \u2014 jobId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "jobId"
+            },
+            "mark_as_failed": {
+              "type": "boolean",
+              "description": "[QUERY] \u2014 optional \u2014 mark_as_failed \u2014 default=True",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": true
+            }
+          },
+          "required": [
+            "job_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/fix-stuck-job/{job_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "fix_stuck_job_v1_admin_fix_stuck_job__job_id__post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_fix_stuck_job_v1_admin_fix_stuck_job__job_id__post",
+        "summary": "Fix Stuck Job",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [
+          "job_id"
+        ],
+        "query_params": [
+          "mark_as_failed"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "job_id": "path",
+          "mark_as_failed": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_recover_all_stuck_jobs_v1_admin_recover_stuck_jobs_post",
+        "description": "[am-parser] POST /v1/admin/recover-stuck-jobs | Recover All Stuck Jobs | tags: Background Jobs | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/recover-stuck-jobs",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "recover_all_stuck_jobs_v1_admin_recover_stuck_jobs_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_recover_all_stuck_jobs_v1_admin_recover_stuck_jobs_post",
+        "summary": "Recover All Stuck Jobs",
+        "tags": [
+          "Background Jobs"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Background Jobs",
+        "sdk_api": "BackgroundJobsApi",
+        "group": "jobs"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_fetch_all_etf_holdings_v1_fetch_all_holdings_post",
+        "description": "[am-parser] POST /v1/fetch-all-holdings | Fetch All Etf Holdings | tags: ETF Holdings | Query optional: callback_url, user_id, limit, force_refresh | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "callback_url": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 callback_url",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "limit": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 Limit number of ETFs to process",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize"
+            },
+            "force_refresh": {
+              "type": "boolean",
+              "description": "[QUERY] \u2014 optional \u2014 Force refresh even if data exists for today \u2014 default=False",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/fetch-all-holdings",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "fetch_all_etf_holdings_v1_fetch_all_holdings_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_fetch_all_etf_holdings_v1_fetch_all_holdings_post",
+        "summary": "Fetch All Etf Holdings",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [],
+        "query_params": [
+          "callback_url",
+          "user_id",
+          "limit",
+          "force_refresh"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "callback_url": "query",
+          "user_id": "query",
+          "limit": "query",
+          "force_refresh": "query"
+        },
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core",
+        "response_schema_ref": "JobResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_search_etfs_v1_search_get",
+        "description": "[am-parser] GET /v1/search | Search Etfs | tags: ETF Holdings | Required args: query | Query optional: limit | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 Search by symbol, name, or ISIN",
+              "x-param-in": "query",
+              "x-required": true
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 Maximum results to return \u2014 default=10",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "default": 10
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/search",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "search_etfs_v1_search_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_search_etfs_v1_search_get",
+        "summary": "Search Etfs",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [],
+        "query_params": [
+          "query",
+          "limit"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "query": "query",
+          "limit": "query"
+        },
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_fetch_holdings_for_etf_v1_fetch_holdings__symbol__post",
+        "description": "[am-parser] POST /v1/fetch-holdings/{symbol} | Fetch Holdings For Etf | tags: ETF Holdings | PATH required: symbol | Query optional: callback_url, user_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            },
+            "callback_url": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 callback_url",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/fetch-holdings/{symbol}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "fetch_holdings_for_etf_v1_fetch_holdings__symbol__post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_fetch_holdings_for_etf_v1_fetch_holdings__symbol__post",
+        "summary": "Fetch Holdings For Etf",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [
+          "callback_url",
+          "user_id"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path",
+          "callback_url": "query",
+          "user_id": "query"
+        },
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_etf_holdings_v1_holdings__symbol__get",
+        "description": "[am-parser] GET /v1/holdings/{symbol} | Get Etf Holdings | tags: ETF Holdings | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/holdings/{symbol}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_etf_holdings_v1_holdings__symbol__get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_etf_holdings_v1_holdings__symbol__get",
+        "summary": "Get Etf Holdings",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_cache_statistics_v1_cache_stats_get",
+        "description": "[am-parser] GET /v1/cache-stats | Get Cache Statistics | tags: ETF Holdings | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/cache-stats",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_cache_statistics_v1_cache_stats_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_cache_statistics_v1_cache_stats_get",
+        "summary": "Get Cache Statistics",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_etf_stats_v1_stats_get",
+        "description": "[am-parser] GET /v1/stats | Get Etf Stats | tags: ETF Holdings | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/stats",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_etf_stats_v1_stats_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_etf_stats_v1_stats_get",
+        "summary": "Get Etf Stats",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_load_etfs_from_json_v1_load_from_json_post",
+        "description": "[am-parser] POST /v1/load-from-json | Load Etfs From Json | tags: ETF Holdings | BODY required: file | Query optional: dry_run | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dry_run": {
+              "type": "boolean",
+              "description": "[QUERY] \u2014 optional \u2014 Validate only, don't persist \u2014 default=False",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": false
+            },
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 ETF details JSON file \u2014 format=binary",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/load-from-json",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "load_etfs_from_json_v1_load_from_json_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_load_etfs_from_json_v1_load_from_json_post",
+        "summary": "Load Etfs From Json",
+        "tags": [
+          "ETF Holdings"
+        ],
+        "path_params": [],
+        "query_params": [
+          "dry_run"
+        ],
+        "header_params": [],
+        "body_required": [
+          "file"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "dry_run": "query",
+          "file": "body"
+        },
+        "auth": "executor_injected",
+        "route": "ETF Holdings",
+        "sdk_api": "HoldingsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_root__get",
+        "description": "[am-parser] GET / | Root | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "root__get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_root__get",
+        "summary": "Root",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_health_check_health_get",
+        "description": "[am-parser] GET /health | Health Check | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "health_check_health_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_health_check_health_get",
+        "summary": "Health Check",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_list_portfolios_v1_portfolios_get",
+        "description": "[am-parser] GET /v1/portfolios | List Portfolios | tags: Mutual Funds | Query optional: fund_name, limit | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "fund_name": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 fund_name",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 default=50",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "default": 50
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "list_portfolios_v1_portfolios_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_list_portfolios_v1_portfolios_get",
+        "summary": "List Portfolios",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [],
+        "query_params": [
+          "fund_name",
+          "limit"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "fund_name": "query",
+          "limit": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_save_portfolio_v1_portfolios_post",
+        "description": "[am-parser] POST /v1/portfolios | Save Portfolio | tags: Mutual Funds | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/portfolios",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "save_portfolio_v1_portfolios_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_save_portfolio_v1_portfolios_post",
+        "summary": "Save Portfolio",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_portfolio_v1_portfolios__portfolio_id__get",
+        "description": "[am-parser] GET /v1/portfolios/{portfolio_id} | Get Portfolio | tags: Mutual Funds | PATH required: portfolio_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "portfolio_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=portfolioId (producer=portfolio_id) \u2014 portfolioId \u2014 example='pf-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "portfolio_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/{portfolio_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_portfolio_v1_portfolios__portfolio_id__get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_portfolio_v1_portfolios__portfolio_id__get",
+        "summary": "Get Portfolio",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "portfolio_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "portfolio_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_search_portfolios_v1_portfolios_search_get",
+        "description": "[am-parser] GET /v1/portfolios/search | Search Portfolios | tags: Mutual Funds | Required args: fund_name | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "fund_name": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 fund_name",
+              "x-param-in": "query",
+              "x-required": true
+            }
+          },
+          "required": [
+            "fund_name"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/portfolios/search",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "search_portfolios_v1_portfolios_search_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_search_portfolios_v1_portfolios_search_get",
+        "summary": "Search Portfolios",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [],
+        "query_params": [
+          "fund_name"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "fund_name": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_holdings_by_isin_v1_holdings__isin_code__get",
+        "description": "[am-parser] GET /v1/holdings/{isin_code} | Get Holdings By Isin | tags: Mutual Funds | PATH required: isin_code | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "isin_code": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 isin_code",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "isin_code"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/holdings/{isin_code}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_holdings_by_isin_v1_holdings__isin_code__get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_holdings_by_isin_v1_holdings__isin_code__get",
+        "summary": "Get Holdings By Isin",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "isin_code"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "isin_code": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_fund_statistics_v1_funds__fund_name__statistics_get",
+        "description": "[am-parser] GET /v1/funds/{fund_name}/statistics | Get Fund Statistics | tags: Mutual Funds | PATH required: fund_name | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "fund_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 fund_name",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "fund_name"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/funds/{fund_name}/statistics",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_fund_statistics_v1_funds__fund_name__statistics_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_fund_statistics_v1_funds__fund_name__statistics_get",
+        "summary": "Get Fund Statistics",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "fund_name"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "fund_name": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_upload_file_v1_upload_post",
+        "description": "[am-parser] POST /v1/upload | Upload File | tags: Mutual Funds | BODY required: file | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 file \u2014 format=binary",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "parse_method": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 parse_method \u2014 default='together'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "together"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/upload",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "upload_file_v1_upload_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_upload_file_v1_upload_post",
+        "summary": "Upload File",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "file"
+        ],
+        "body_optional": [
+          "parse_method"
+        ],
+        "param_locations": {
+          "file": "body",
+          "parse_method": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_upload_excel_complete_v1_upload_excel_post",
+        "description": "[am-parser] POST /v1/upload/excel | Upload Excel Complete | tags: Mutual Funds | BODY required: file | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 file \u2014 format=binary",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "parse_method": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 parse_method \u2014 default='together'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "together"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/upload/excel",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "upload_excel_complete_v1_upload_excel_post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_upload_excel_complete_v1_upload_excel_post",
+        "summary": "Upload Excel Complete",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "file"
+        ],
+        "body_optional": [
+          "parse_method"
+        ],
+        "param_locations": {
+          "file": "body",
+          "parse_method": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_process_file_v1_process__file_id__post",
+        "description": "[am-parser] POST /v1/process/{file_id} | Process File | tags: Mutual Funds | PATH required: file_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=fileId (producer=file_id) \u2014 fileId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "fileId"
+            }
+          },
+          "required": [
+            "file_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/process/{file_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "process_file_v1_process__file_id__post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_process_file_v1_process__file_id__post",
+        "summary": "Process File",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "file_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "file_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_parse_sheet_v1_parse__sheet_id__post",
+        "description": "[am-parser] POST /v1/parse/{sheet_id} | Parse Sheet | tags: Mutual Funds | PATH required: sheet_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sheet_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sheetId (producer=sheet_id) \u2014 sheetId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sheetId"
+            },
+            "method": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 method \u2014 default='manual'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "manual"
+            }
+          },
+          "required": [
+            "sheet_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/parse/{sheet_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "parse_sheet_v1_parse__sheet_id__post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_parse_sheet_v1_parse__sheet_id__post",
+        "summary": "Parse Sheet",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "sheet_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "method"
+        ],
+        "param_locations": {
+          "sheet_id": "path",
+          "method": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_list_files_v1_files_get",
+        "description": "[am-parser] GET /v1/files | List Files | tags: Mutual Funds | Query optional: skip, limit, status_filter | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "skip": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 skip \u2014 default=0",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": 0
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 default=100",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "default": 100
+            },
+            "status_filter": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 status_filter",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/files",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "list_files_v1_files_get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_list_files_v1_files_get",
+        "summary": "List Files",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [],
+        "query_params": [
+          "skip",
+          "limit",
+          "status_filter"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "skip": "query",
+          "limit": "query",
+          "status_filter": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core",
+        "response_schema_ref": "FileListResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_get_file_status_v1_files__file_id__get",
+        "description": "[am-parser] GET /v1/files/{file_id} | Get File Status | tags: Mutual Funds | PATH required: file_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=fileId (producer=file_id) \u2014 fileId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "fileId"
+            }
+          },
+          "required": [
+            "file_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/files/{file_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "get_file_status_v1_files__file_id__get",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_get_file_status_v1_files__file_id__get",
+        "summary": "Get File Status",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "file_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "file_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_parser_parse_all_sheets_v1_parse_all__file_id__post",
+        "description": "[am-parser] POST /v1/parse-all/{file_id} | Parse All Sheets | tags: Mutual Funds | PATH required: file_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=fileId (producer=file_id) \u2014 fileId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "fileId"
+            },
+            "method": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 method \u2014 default='manual'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "manual"
+            }
+          },
+          "required": [
+            "file_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/parse-all/{file_id}",
+        "base_url": "https://am-dev.asrax.in/parser",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/parser",
+          "preprod": "https://am-preprod.asrax.in/parser",
+          "prod": "https://am.asrax.in/parser"
+        },
+        "op_id": "parse_all_sheets_v1_parse_all__file_id__post",
+        "service": "am-parser",
+        "tool_name": "api_am_parser_parse_all_sheets_v1_parse_all__file_id__post",
+        "summary": "Parse All Sheets",
+        "tags": [
+          "Mutual Funds"
+        ],
+        "path_params": [
+          "file_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "method"
+        ],
+        "param_locations": {
+          "file_id": "path",
+          "method": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Mutual Funds",
+        "sdk_api": "MutualFundsApi",
+        "group": "core"
+      }
+    }
+  ]
+}

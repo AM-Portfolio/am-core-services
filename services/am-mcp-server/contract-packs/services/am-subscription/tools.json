@@ -1,0 +1,1303 @@
+{
+  "service": "am-subscription",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/subscriptions",
+    "preprod": "https://am-preprod.asrax.in/subscriptions",
+    "prod": "https://am.asrax.in/subscriptions"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 19,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_health_health_get",
+        "description": "[am-subscription] GET /health | Health | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "health_health_get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_list_plans_subscriptions_plans_get",
+        "description": "[am-subscription] GET /subscriptions/plans | List Plans | tags: plans | Query optional: interval | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "interval": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=timeInterval (producer=interval) \u2014 monthly or yearly",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "timeInterval"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/subscriptions/plans",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "list_plans_subscriptions_plans_get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_list_plans_subscriptions_plans_get",
+        "summary": "List Plans",
+        "tags": [
+          "plans"
+        ],
+        "path_params": [],
+        "query_params": [
+          "interval"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "interval": "query"
+        },
+        "auth": "executor_injected",
+        "route": "plans",
+        "sdk_api": "PlansApi",
+        "response_schema_ref": "APIResponse_list_PlanDTO__",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_create_subscription_subscriptions_post",
+        "description": "[am-subscription] POST /subscriptions | Create Subscription | tags: subscriptions | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "plan_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 plan_code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "billing_interval": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 billing_interval \u2014 default='monthly'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "monthly"
+            },
+            "tenant_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 tenant_id",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/CreateSubscriptionRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "create_subscription_subscriptions_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_create_subscription_subscriptions_post",
+        "summary": "Create Subscription",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "plan_code",
+          "billing_interval",
+          "tenant_id"
+        ],
+        "param_locations": {
+          "plan_code": "body",
+          "billing_interval": "body",
+          "tenant_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "schema_ref": "CreateSubscriptionRequest",
+        "x-asrax-schema": "models/CreateSubscriptionRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_get_my_subscription_subscriptions_me_get",
+        "description": "[am-subscription] GET /subscriptions/me | Get My Subscription | tags: subscriptions | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/subscriptions/me",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "get_my_subscription_subscriptions_me_get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_get_my_subscription_subscriptions_me_get",
+        "summary": "Get My Subscription",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "response_schema_ref": "APIResponse_SubscriptionDTO_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_cancel_subscription_subscriptions__subscription_id__cancel_patch",
+        "description": "[am-subscription] PATCH /subscriptions/{subscription_id}/cancel | Cancel Subscription | tags: subscriptions | PATH required: subscription_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=subscriptionId (producer=subscription_id) \u2014 subscriptionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "subscriptionId"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "subscription_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/StateChangeRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/subscriptions/{subscription_id}/cancel",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "cancel_subscription_subscriptions__subscription_id__cancel_patch",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_cancel_subscription_subscriptions__subscription_id__cancel_patch",
+        "summary": "Cancel Subscription",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [
+          "subscription_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "reason"
+        ],
+        "param_locations": {
+          "subscription_id": "path",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "schema_ref": "StateChangeRequest",
+        "x-asrax-schema": "models/StateChangeRequest.json",
+        "response_schema_ref": "APIResponse_SubscriptionDTO_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_pause_subscription_subscriptions__subscription_id__pause_patch",
+        "description": "[am-subscription] PATCH /subscriptions/{subscription_id}/pause | Pause Subscription | tags: subscriptions | PATH required: subscription_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=subscriptionId (producer=subscription_id) \u2014 subscriptionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "subscriptionId"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "subscription_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/StateChangeRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/subscriptions/{subscription_id}/pause",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "pause_subscription_subscriptions__subscription_id__pause_patch",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_pause_subscription_subscriptions__subscription_id__pause_patch",
+        "summary": "Pause Subscription",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [
+          "subscription_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "reason"
+        ],
+        "param_locations": {
+          "subscription_id": "path",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "schema_ref": "StateChangeRequest",
+        "x-asrax-schema": "models/StateChangeRequest.json",
+        "response_schema_ref": "APIResponse_SubscriptionDTO_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_resume_subscription_subscriptions__subscription_id__resume_patch",
+        "description": "[am-subscription] PATCH /subscriptions/{subscription_id}/resume | Resume Subscription | tags: subscriptions | PATH required: subscription_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=subscriptionId (producer=subscription_id) \u2014 subscriptionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "subscriptionId"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "subscription_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/StateChangeRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/subscriptions/{subscription_id}/resume",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "resume_subscription_subscriptions__subscription_id__resume_patch",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_resume_subscription_subscriptions__subscription_id__resume_patch",
+        "summary": "Resume Subscription",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [
+          "subscription_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "reason"
+        ],
+        "param_locations": {
+          "subscription_id": "path",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "schema_ref": "StateChangeRequest",
+        "x-asrax-schema": "models/StateChangeRequest.json",
+        "response_schema_ref": "APIResponse_SubscriptionDTO_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_upgrade_subscription_subscriptions__subscription_id__upgrade_patch",
+        "description": "[am-subscription] PATCH /subscriptions/{subscription_id}/upgrade | Upgrade Subscription | tags: subscriptions | PATH required: subscription_id | BODY required: plan_code | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subscription_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=subscriptionId (producer=subscription_id) \u2014 subscriptionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "subscriptionId"
+            },
+            "plan_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 plan_code",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "billing_interval": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 billing_interval",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "subscription_id",
+            "plan_code"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/UpgradeSubscriptionRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/subscriptions/{subscription_id}/upgrade",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "upgrade_subscription_subscriptions__subscription_id__upgrade_patch",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_upgrade_subscription_subscriptions__subscription_id__upgrade_patch",
+        "summary": "Upgrade Subscription",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [
+          "subscription_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "plan_code"
+        ],
+        "body_optional": [
+          "billing_interval",
+          "reason"
+        ],
+        "param_locations": {
+          "subscription_id": "path",
+          "plan_code": "body",
+          "billing_interval": "body",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "schema_ref": "UpgradeSubscriptionRequest",
+        "x-asrax-schema": "models/UpgradeSubscriptionRequest.json",
+        "response_schema_ref": "APIResponse_SubscriptionDTO_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_usage_history_subscriptions_usage_history_get",
+        "description": "[am-subscription] GET /subscriptions/usage/history | Usage History | tags: subscriptions | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/subscriptions/usage/history",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "usage_history_subscriptions_usage_history_get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_usage_history_subscriptions_usage_history_get",
+        "summary": "Usage History",
+        "tags": [
+          "subscriptions"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "subscriptions",
+        "sdk_api": "SubscriptionsApi",
+        "response_schema_ref": "APIResponse_UsageHistoryResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_get_my_referral_subscriptions_referrals_me_get",
+        "description": "[am-subscription] GET /subscriptions/referrals/me | Get My Referral | tags: referrals | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/subscriptions/referrals/me",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "get_my_referral_subscriptions_referrals_me_get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_get_my_referral_subscriptions_referrals_me_get",
+        "summary": "Get My Referral",
+        "tags": [
+          "referrals"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "referrals",
+        "sdk_api": "ReferralsApi",
+        "response_schema_ref": "APIResponse_ReferralMeResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_get_my_referral_history_subscriptions_referrals_me_history_get",
+        "description": "[am-subscription] GET /subscriptions/referrals/me/history | Get My Referral History | tags: referrals | Query optional: limit | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 default=50",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/subscriptions/referrals/me/history",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "get_my_referral_history_subscriptions_referrals_me_history_get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_get_my_referral_history_subscriptions_referrals_me_history_get",
+        "summary": "Get My Referral History",
+        "tags": [
+          "referrals"
+        ],
+        "path_params": [],
+        "query_params": [
+          "limit"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "limit": "query"
+        },
+        "auth": "executor_injected",
+        "route": "referrals",
+        "sdk_api": "ReferralsApi",
+        "response_schema_ref": "APIResponse_list_ReferralHistoryItem__",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_get_user_entitlements_subscriptions_internal_entitlements__user_id__get",
+        "description": "[am-subscription] GET /subscriptions/internal/entitlements/{user_id} | Get User Entitlements | tags: internal | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/subscriptions/internal/entitlements/{user_id}",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "get_user_entitlements_subscriptions_internal_entitlements__user_id__get",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_get_user_entitlements_subscriptions_internal_entitlements__user_id__get",
+        "summary": "Get User Entitlements",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "response_schema_ref": "APIResponse_EntitlementsResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_check_entitlement_subscriptions_internal_check_post",
+        "description": "[am-subscription] POST /subscriptions/internal/check | Check Entitlement | tags: internal | BODY required: user_id, feature, action, idempotency_key | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "tenant_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 tenant_id",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "feature": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 feature",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "action": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 action",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "quantity": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 quantity \u2014 default=1 \u2014 example=10",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "quantity",
+              "default": 1,
+              "example": 10
+            },
+            "idempotency_key": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 idempotency_key",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "user_id",
+            "feature",
+            "action",
+            "idempotency_key"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/EntitlementCheckRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions/internal/check",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "check_entitlement_subscriptions_internal_check_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_check_entitlement_subscriptions_internal_check_post",
+        "summary": "Check Entitlement",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "user_id",
+          "feature",
+          "action",
+          "idempotency_key"
+        ],
+        "body_optional": [
+          "tenant_id",
+          "quantity"
+        ],
+        "param_locations": {
+          "user_id": "body",
+          "tenant_id": "body",
+          "feature": "body",
+          "action": "body",
+          "quantity": "body",
+          "idempotency_key": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "EntitlementCheckRequest",
+        "x-asrax-schema": "models/EntitlementCheckRequest.json",
+        "response_schema_ref": "APIResponse_EntitlementCheckResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_record_meter_subscriptions_internal_meter_post",
+        "description": "[am-subscription] POST /subscriptions/internal/meter | Record Meter | tags: internal | BODY required: user_id, metric_code, idempotency_key | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "metric_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 metric_code",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "quantity": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 quantity \u2014 default=1 \u2014 example=10",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "quantity",
+              "default": 1,
+              "example": 10
+            },
+            "idempotency_key": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 idempotency_key",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "properties": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 properties",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "user_id",
+            "metric_code",
+            "idempotency_key"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/MeterRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions/internal/meter",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "record_meter_subscriptions_internal_meter_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_record_meter_subscriptions_internal_meter_post",
+        "summary": "Record Meter",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "user_id",
+          "metric_code",
+          "idempotency_key"
+        ],
+        "body_optional": [
+          "quantity",
+          "properties"
+        ],
+        "param_locations": {
+          "user_id": "body",
+          "metric_code": "body",
+          "quantity": "body",
+          "idempotency_key": "body",
+          "properties": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "MeterRequest",
+        "x-asrax-schema": "models/MeterRequest.json",
+        "response_schema_ref": "APIResponse_MeterResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_bootstrap_subscription_subscriptions_internal_bootstrap__user_id__post",
+        "description": "[am-subscription] POST /subscriptions/internal/bootstrap/{user_id} | Bootstrap Subscription | tags: internal | PATH required: user_id | Query optional: plan_code | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "plan_code": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 plan_code",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions/internal/bootstrap/{user_id}",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "bootstrap_subscription_subscriptions_internal_bootstrap__user_id__post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_bootstrap_subscription_subscriptions_internal_bootstrap__user_id__post",
+        "summary": "Bootstrap Subscription",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [
+          "plan_code"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path",
+          "plan_code": "query"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "response_schema_ref": "APIResponse_SubscriptionDTO_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_attribute_referral_subscriptions_internal_referrals_attribute_post",
+        "description": "[am-subscription] POST /subscriptions/internal/referrals/attribute | Attribute Referral | tags: internal | BODY required: referee_user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "referee_user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 referee_user_id",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 email",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "email"
+            },
+            "referral_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 referral_code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "device_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=deviceLinkId (producer=device_id) \u2014 deviceLinkId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "deviceLinkId"
+            },
+            "event_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=eventId (producer=event_id) \u2014 eventId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "eventId"
+            },
+            "idempotency_key": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 idempotency_key",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "referee_user_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AttributeReferralRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions/internal/referrals/attribute",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "attribute_referral_subscriptions_internal_referrals_attribute_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_attribute_referral_subscriptions_internal_referrals_attribute_post",
+        "summary": "Attribute Referral",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "referee_user_id"
+        ],
+        "body_optional": [
+          "email",
+          "referral_code",
+          "device_id",
+          "event_id",
+          "idempotency_key"
+        ],
+        "param_locations": {
+          "referee_user_id": "body",
+          "email": "body",
+          "referral_code": "body",
+          "device_id": "body",
+          "event_id": "body",
+          "idempotency_key": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "AttributeReferralRequest",
+        "x-asrax-schema": "models/AttributeReferralRequest.json",
+        "response_schema_ref": "APIResponse_AttributionResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_qualify_referral_subscriptions_internal_referrals_qualify_post",
+        "description": "[am-subscription] POST /subscriptions/internal/referrals/qualify | Qualify Referral | tags: internal | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "referee_user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 referee_user_id",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "attribution_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 UUID of pending attribution",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/QualifyReferralRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions/internal/referrals/qualify",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "qualify_referral_subscriptions_internal_referrals_qualify_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_qualify_referral_subscriptions_internal_referrals_qualify_post",
+        "summary": "Qualify Referral",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "referee_user_id",
+          "attribution_id"
+        ],
+        "param_locations": {
+          "referee_user_id": "body",
+          "attribution_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "QualifyReferralRequest",
+        "x-asrax-schema": "models/QualifyReferralRequest.json",
+        "response_schema_ref": "APIResponse_AttributionResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_grant_pro_days_subscriptions_internal_grants_pro_days_post",
+        "description": "[am-subscription] POST /subscriptions/internal/grants/pro-days | Grant Pro Days | tags: internal | BODY required: user_id, reason, idempotency_key | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "days": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 days \u2014 default=30",
+              "x-param-in": "body",
+              "x-required": false,
+              "minimum": 1.0,
+              "maximum": 365.0,
+              "default": 30
+            },
+            "plan_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 plan_code \u2014 default='am_pro'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "am_pro"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 trial | referral",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "idempotency_key": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 idempotency_key",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 email",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "email"
+            },
+            "attribution_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 attribution_id",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "user_id",
+            "reason",
+            "idempotency_key"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ProDaysGrantRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/subscriptions/internal/grants/pro-days",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "grant_pro_days_subscriptions_internal_grants_pro_days_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_grant_pro_days_subscriptions_internal_grants_pro_days_post",
+        "summary": "Grant Pro Days",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "user_id",
+          "reason",
+          "idempotency_key"
+        ],
+        "body_optional": [
+          "days",
+          "plan_code",
+          "email",
+          "attribution_id"
+        ],
+        "param_locations": {
+          "user_id": "body",
+          "days": "body",
+          "plan_code": "body",
+          "reason": "body",
+          "idempotency_key": "body",
+          "email": "body",
+          "attribution_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "ProDaysGrantRequest",
+        "x-asrax-schema": "models/ProDaysGrantRequest.json",
+        "response_schema_ref": "APIResponse_dict_str__Any__",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_subscription_provider_webhook_webhooks_provider_post",
+        "description": "[am-subscription] POST /webhooks/provider | Provider Webhook | tags: webhooks | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "x-lago-signature": {
+              "type": "string",
+              "description": "[HEADER] \u2014 optional \u2014 x-lago-signature",
+              "x-param-in": "header",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/webhooks/provider",
+        "base_url": "https://am-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in",
+          "preprod": "https://am-preprod.asrax.in",
+          "prod": "https://am.asrax.in"
+        },
+        "op_id": "provider_webhook_webhooks_provider_post",
+        "service": "am-subscription",
+        "tool_name": "api_am_subscription_provider_webhook_webhooks_provider_post",
+        "summary": "Provider Webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [
+          "x-lago-signature"
+        ],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "x-lago-signature": "header"
+        },
+        "auth": "executor_injected",
+        "route": "webhooks",
+        "sdk_api": "WebhooksApi",
+        "response_schema_ref": "APIResponse_dict_str__Any__",
+        "group": "other"
+      }
+    }
+  ]
+}

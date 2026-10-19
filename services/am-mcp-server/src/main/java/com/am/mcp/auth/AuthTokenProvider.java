@@ -17,9 +17,10 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * JWT provider for outbound calls to portfolio / market / trade / AI.
  * Priority:
- *   1. Inbound request Bearer ({@link UserContext#getToken()}) — user identity
+ *   1. Inbound request Bearer ({@link UserContext#getToken()}) — only when it looks like a
+ *      <em>user</em> JWT (not Keycloak client_credentials / service-account)
  *   2. {@code am.auth.static-token} — ops override
- *   3. Cached service login via am-identity — fallback when no user context
+ *   3. Cached service login via am-identity — fallback for MCP service tokens / prove scripts
  */
 @Slf4j
 @Component
@@ -35,7 +36,7 @@ public class AuthTokenProvider {
 
     public String getToken() {
         String requestToken = UserContext.getToken();
-        if (requestToken != null && !requestToken.isBlank()) {
+        if (requestToken != null && !requestToken.isBlank() && looksLikeUserJwt(requestToken)) {
             return requestToken;
         }
 
@@ -48,6 +49,48 @@ public class AuthTokenProvider {
             return cachedToken;
         }
         return fetch();
+    }
+
+    /**
+     * Client-credentials tokens (e.g. am-mcp-service) have {@code gty=client_credentials}
+     * or {@code preferred_username=service-account-*} — portfolio/trade reject those with 401.
+     */
+    static boolean looksLikeUserJwt(String token) {
+        try {
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) {
+                return false;
+            }
+            String payloadJson = new String(
+                    java.util.Base64.getUrlDecoder().decode(padBase64(parts[1])),
+                    java.nio.charset.StandardCharsets.UTF_8);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> payload = new com.fasterxml.jackson.databind.ObjectMapper()
+                    .readValue(payloadJson, Map.class);
+            if (payload == null) {
+                return false;
+            }
+            Object gty = payload.get("gty");
+            if (gty != null && "client_credentials".equalsIgnoreCase(String.valueOf(gty))) {
+                return false;
+            }
+            Object pref = payload.get("preferred_username");
+            if (pref != null && String.valueOf(pref).startsWith("service-account-")) {
+                return false;
+            }
+            return payload.get("email") != null
+                    || (pref != null && !String.valueOf(pref).isBlank());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String padBase64(String s) {
+        int mod = s.length() % 4;
+        if (mod == 0) {
+            return s;
+        }
+        return s + "====".substring(mod);
     }
 
     /** Returns Authorization header map ready for injection. */

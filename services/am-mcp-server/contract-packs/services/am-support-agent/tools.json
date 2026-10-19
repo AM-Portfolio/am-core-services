@@ -1,0 +1,1407 @@
+{
+  "service": "am-support-agent",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/support",
+    "preprod": "https://am-preprod.asrax.in/support",
+    "prod": "https://am.asrax.in/support"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 21,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_healthz_healthz_get",
+        "description": "[am-support-agent] GET /healthz | Healthz | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/healthz",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "healthz_healthz_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_healthz_healthz_get",
+        "summary": "Healthz",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_readyz_readyz_get",
+        "description": "[am-support-agent] GET /readyz | Readyz | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/readyz",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "readyz_readyz_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_readyz_readyz_get",
+        "summary": "Readyz",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_prometheus_metrics_metrics_get",
+        "description": "[am-support-agent] GET /metrics | Prometheus Metrics | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/metrics",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "prometheus_metrics_metrics_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_prometheus_metrics_metrics_get",
+        "summary": "Prometheus Metrics",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_list_agents_v2_agents_get",
+        "description": "[am-support-agent] GET /v2/agents | List Agents | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v2/agents",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "list_agents_v2_agents_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_list_agents_v2_agents_get",
+        "summary": "List Agents",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_catalog_summary_v2_catalog_get",
+        "description": "[am-support-agent] GET /v2/catalog | Catalog Summary | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v2/catalog",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "catalog_summary_v2_catalog_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_catalog_summary_v2_catalog_get",
+        "summary": "Catalog Summary",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_integrations_v2_integrations_get",
+        "description": "[am-support-agent] GET /v2/integrations | Integrations | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v2/integrations",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "integrations_v2_integrations_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_integrations_v2_integrations_get",
+        "summary": "Integrations",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_canary_status_v2_canary_get",
+        "description": "[am-support-agent] GET /v2/canary | Canary Status | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v2/canary",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "canary_status_v2_canary_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_canary_status_v2_canary_get",
+        "summary": "Canary Status",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_canary_decide_v2_canary_decide_post",
+        "description": "[am-support-agent] POST /v2/canary/decide | Canary Decide | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 key \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/CanaryDecideBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/canary/decide",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "canary_decide_v2_canary_decide_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_canary_decide_v2_canary_decide_post",
+        "summary": "Canary Decide",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "key"
+        ],
+        "param_locations": {
+          "key": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "CanaryDecideBody",
+        "x-asrax-schema": "models/CanaryDecideBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_a2a_v2_a2a_post",
+        "description": "[am-support-agent] POST /v2/a2a | A2A | BODY required: op | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "agent_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 agent_id",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "capability": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 capability \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "op": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 op \u2014 enum=['discover', 'plan', 'execute', 'stream', 'status', 'cancel', 'feedback']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "discover",
+                "plan",
+                "execute",
+                "stream",
+                "status",
+                "cancel",
+                "feedback"
+              ]
+            },
+            "business_domain": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Allowlisted business classification used by observability. \u2014 enum=['technical', 'billing', 'product', 'internal', 'external', 'unknown']",
+              "x-param-in": "body",
+              "x-required": false,
+              "enum": [
+                "technical",
+                "billing",
+                "product",
+                "internal",
+                "external",
+                "unknown"
+              ]
+            },
+            "requires_human": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 requires_human \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "correlation_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 correlation_id \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "idempotency_key": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 idempotency_key",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "require_legacy_db": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 require_legacy_db \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "payload": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 payload",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "max_latency_ms": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 max_latency_ms",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "max_cost_units": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 max_cost_units",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "max_fanout": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 max_fanout",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "op"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/A2ABody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/a2a",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "a2a_v2_a2a_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_a2a_v2_a2a_post",
+        "summary": "A2A",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "op"
+        ],
+        "body_optional": [
+          "agent_id",
+          "capability",
+          "business_domain",
+          "requires_human",
+          "correlation_id",
+          "idempotency_key",
+          "require_legacy_db",
+          "payload",
+          "max_latency_ms",
+          "max_cost_units",
+          "max_fanout"
+        ],
+        "param_locations": {
+          "agent_id": "body",
+          "capability": "body",
+          "op": "body",
+          "business_domain": "body",
+          "requires_human": "body",
+          "correlation_id": "body",
+          "idempotency_key": "body",
+          "require_legacy_db": "body",
+          "payload": "body",
+          "max_latency_ms": "body",
+          "max_cost_units": "body",
+          "max_fanout": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "A2ABody",
+        "x-asrax-schema": "models/A2ABody.json",
+        "response_schema_ref": "TaskResult",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_task_status_v2_tasks__task_id__get",
+        "description": "[am-support-agent] GET /v2/tasks/{task_id} | Task Status | PATH required: task_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 task_id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "task_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v2/tasks/{task_id}",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "task_status_v2_tasks__task_id__get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_task_status_v2_tasks__task_id__get",
+        "summary": "Task Status",
+        "tags": [],
+        "path_params": [
+          "task_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "task_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_shadow_compare_v2_shadow_post",
+        "description": "[am-support-agent] POST /v2/shadow | Shadow Compare | BODY required: task, legacy_result | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "task": {
+              "type": "object",
+              "description": "[BODY] \u2014 REQUIRED \u2014 task",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "legacy_result": {
+              "type": "object",
+              "description": "[BODY] \u2014 REQUIRED \u2014 legacy_result",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "task",
+            "legacy_result"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ShadowBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/shadow",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "shadow_compare_v2_shadow_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_shadow_compare_v2_shadow_post",
+        "summary": "Shadow Compare",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "task",
+          "legacy_result"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "task": "body",
+          "legacy_result": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "ShadowBody",
+        "x-asrax-schema": "models/ShadowBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_plan_only_v2_plan_post",
+        "description": "[am-support-agent] POST /v2/plan | Plan Only | BODY required: tasks | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "correlation_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 correlation_id \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "tasks": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 tasks",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "tasks"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/RunPlanBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/plan",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "plan_only_v2_plan_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_plan_only_v2_plan_post",
+        "summary": "Plan Only",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "tasks"
+        ],
+        "body_optional": [
+          "correlation_id"
+        ],
+        "param_locations": {
+          "correlation_id": "body",
+          "tasks": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "RunPlanBody",
+        "x-asrax-schema": "models/RunPlanBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_run_plan_v2_run_post",
+        "description": "[am-support-agent] POST /v2/run | Run Plan | BODY required: tasks | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "correlation_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 correlation_id \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "tasks": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 tasks",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "tasks"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/RunPlanBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/run",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "run_plan_v2_run_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_run_plan_v2_run_post",
+        "summary": "Run Plan",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "tasks"
+        ],
+        "body_optional": [
+          "correlation_id"
+        ],
+        "param_locations": {
+          "correlation_id": "body",
+          "tasks": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "RunPlanBody",
+        "x-asrax-schema": "models/RunPlanBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_start_a2a_workflow_v2_workflows_a2a_post",
+        "description": "[am-support-agent] POST /v2/workflows/a2a | Start A2A Workflow | BODY required: tasks | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "correlation_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 correlation_id \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "tasks": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 tasks",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "tasks"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/RunPlanBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/workflows/a2a",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "start_a2a_workflow_v2_workflows_a2a_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_start_a2a_workflow_v2_workflows_a2a_post",
+        "summary": "Start A2A Workflow",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "tasks"
+        ],
+        "body_optional": [
+          "correlation_id"
+        ],
+        "param_locations": {
+          "correlation_id": "body",
+          "tasks": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "RunPlanBody",
+        "x-asrax-schema": "models/RunPlanBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_start_alert_incident_v2_workflows_alert_incident_post",
+        "description": "[am-support-agent] POST /v2/workflows/alert-incident | Start Alert Incident | BODY required: tracking_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tracking_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 tracking_id",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "alert": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 alert",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "run_ref": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 run_ref",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "status": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 status",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "status"
+            }
+          },
+          "required": [
+            "tracking_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AlertIncidentStartBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/workflows/alert-incident",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "start_alert_incident_v2_workflows_alert_incident_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_start_alert_incident_v2_workflows_alert_incident_post",
+        "summary": "Start Alert Incident",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "tracking_id"
+        ],
+        "body_optional": [
+          "alert",
+          "run_ref",
+          "status"
+        ],
+        "param_locations": {
+          "tracking_id": "body",
+          "alert": "body",
+          "run_ref": "body",
+          "status": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "AlertIncidentStartBody",
+        "x-asrax-schema": "models/AlertIncidentStartBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_start_spt_v2_workflows_spt_post",
+        "description": "[am-support-agent] POST /v2/workflows/spt | Start Spt | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "demand": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 demand",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "workflow_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 workflow_id",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "run_ref": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 run_ref",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SptStartBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/workflows/spt",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "start_spt_v2_workflows_spt_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_start_spt_v2_workflows_spt_post",
+        "summary": "Start Spt",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "demand",
+          "workflow_id",
+          "run_ref"
+        ],
+        "param_locations": {
+          "demand": "body",
+          "workflow_id": "body",
+          "run_ref": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "SptStartBody",
+        "x-asrax-schema": "models/SptStartBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_signal_workflow_v2_workflows__workflow_id__signals__signal_name__post",
+        "description": "[am-support-agent] POST /v2/workflows/{workflow_id}/signals/{signal_name} | Signal Workflow | PATH required: workflow_id, signal_name | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "workflow_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 workflow_id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "signal_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 signal_name",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "workflow_id",
+            "signal_name"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/workflows/{workflow_id}/signals/{signal_name}",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "signal_workflow_v2_workflows__workflow_id__signals__signal_name__post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_signal_workflow_v2_workflows__workflow_id__signals__signal_name__post",
+        "summary": "Signal Workflow",
+        "tags": [],
+        "path_params": [
+          "workflow_id",
+          "signal_name"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "workflow_id": "path",
+          "signal_name": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_workflow_feedback_v2_workflows__workflow_id__feedback_post",
+        "description": "[am-support-agent] POST /v2/workflows/{workflow_id}/feedback | Workflow Feedback | PATH required: workflow_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "workflow_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 workflow_id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "kind": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 kind \u2014 default='silence'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "silence"
+            },
+            "requester": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 requester \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "notes": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 notes \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "duration_minutes": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 duration_minutes \u2014 default=60",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 60
+            },
+            "env": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=environment (producer=env) \u2014 environment \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "environment",
+              "default": ""
+            },
+            "service": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 service \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "request_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=requestId (producer=request_id) \u2014 requestId \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "requestId",
+              "default": ""
+            },
+            "matchers": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 matchers",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "workflow_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/WorkflowFeedbackBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/workflows/{workflow_id}/feedback",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "workflow_feedback_v2_workflows__workflow_id__feedback_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_workflow_feedback_v2_workflows__workflow_id__feedback_post",
+        "summary": "Workflow Feedback",
+        "tags": [],
+        "path_params": [
+          "workflow_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "kind",
+          "requester",
+          "reason",
+          "notes",
+          "duration_minutes",
+          "env",
+          "service",
+          "request_id",
+          "matchers"
+        ],
+        "param_locations": {
+          "workflow_id": "path",
+          "kind": "body",
+          "requester": "body",
+          "reason": "body",
+          "notes": "body",
+          "duration_minutes": "body",
+          "env": "body",
+          "service": "body",
+          "request_id": "body",
+          "matchers": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "WorkflowFeedbackBody",
+        "x-asrax-schema": "models/WorkflowFeedbackBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_workflow_approval_v2_workflows__workflow_id__approvals__purpose__post",
+        "description": "[am-support-agent] POST /v2/workflows/{workflow_id}/approvals/{purpose} | Workflow Approval | PATH required: workflow_id, purpose | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "workflow_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 workflow_id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "purpose": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 purpose",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "request_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=requestId (producer=request_id) \u2014 requestId \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "requestId",
+              "default": ""
+            },
+            "actor": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 actor \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "scope_hash": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 scope_hash \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "notes": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 notes \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 timestamp \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            }
+          },
+          "required": [
+            "workflow_id",
+            "purpose"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/WorkflowApprovalBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/workflows/{workflow_id}/approvals/{purpose}",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "workflow_approval_v2_workflows__workflow_id__approvals__purpose__post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_workflow_approval_v2_workflows__workflow_id__approvals__purpose__post",
+        "summary": "Workflow Approval",
+        "tags": [],
+        "path_params": [
+          "workflow_id",
+          "purpose"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "request_id",
+          "actor",
+          "scope_hash",
+          "notes",
+          "timestamp"
+        ],
+        "param_locations": {
+          "workflow_id": "path",
+          "purpose": "path",
+          "request_id": "body",
+          "actor": "body",
+          "scope_hash": "body",
+          "notes": "body",
+          "timestamp": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "WorkflowApprovalBody",
+        "x-asrax-schema": "models/WorkflowApprovalBody.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_workflow_status_v2_workflows__workflow_id__status_get",
+        "description": "[am-support-agent] GET /v2/workflows/{workflow_id}/status | Workflow Status | PATH required: workflow_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "workflow_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 workflow_id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "workflow_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v2/workflows/{workflow_id}/status",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "workflow_status_v2_workflows__workflow_id__status_get",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_workflow_status_v2_workflows__workflow_id__status_get",
+        "summary": "Workflow Status",
+        "tags": [],
+        "path_params": [
+          "workflow_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "workflow_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_support_agent_handoff_v2_handoff_post",
+        "description": "[am-support-agent] POST /v2/handoff | Handoff | BODY required: from_run_ref | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "from_run_ref": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 from_run_ref",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "to_kind": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 to_kind \u2014 default='handoff'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "handoff"
+            },
+            "depth": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 depth \u2014 default=1",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 1
+            },
+            "context": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 context",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "from_run_ref"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/HandoffBody.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v2/handoff",
+        "base_url": "https://am-dev.asrax.in/support",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/support",
+          "preprod": "https://am-preprod.asrax.in/support",
+          "prod": "https://am.asrax.in/support"
+        },
+        "op_id": "handoff_v2_handoff_post",
+        "service": "am-support-agent",
+        "tool_name": "api_am_support_agent_handoff_v2_handoff_post",
+        "summary": "Handoff",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "from_run_ref"
+        ],
+        "body_optional": [
+          "to_kind",
+          "depth",
+          "context"
+        ],
+        "param_locations": {
+          "from_run_ref": "body",
+          "to_kind": "body",
+          "depth": "body",
+          "context": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "HandoffBody",
+        "x-asrax-schema": "models/HandoffBody.json",
+        "group": "other"
+      }
+    }
+  ]
+}

@@ -1,0 +1,5386 @@
+{
+  "service": "am-market-data",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/market",
+    "preprod": "https://am-preprod.asrax.in/market",
+    "prod": "https://am.asrax.in/market"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 104,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Configure pack env once; use routes.json for controller groups (same as SDK Service).",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getBalanceSheet",
+        "description": "[am-market-data] GET /api/v1/stocks/{symbol}/balance-sheet | GET /api/v1/stocks/{symbol}/balance-sheet | tags: StockPortfolio | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/stocks/{symbol}/balance-sheet",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getBalanceSheet",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getBalanceSheet",
+        "summary": "GET /api/v1/stocks/{symbol}/balance-sheet",
+        "tags": [
+          "StockPortfolio"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "StockPortfolio",
+        "sdk_api": "StockPortfolioApi",
+        "group": "trading",
+        "response_schema_ref": "StockBalanceSheet"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_api_v1_stocks__symbol__board_of_directors",
+        "description": "[am-market-data] GET /api/v1/stocks/{symbol}/board-of-directors | GET /api/v1/stocks/{symbol}/board-of-directors | tags: StockPortfolio | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/stocks/{symbol}/board-of-directors",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_api_v1_stocks_{symbol}_board-of-directors",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_api_v1_stocks__symbol__board_of_directors",
+        "summary": "GET /api/v1/stocks/{symbol}/board-of-directors",
+        "tags": [
+          "StockPortfolio"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "StockPortfolio",
+        "sdk_api": "StockPortfolioApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_api_v1_stocks__symbol__cash_flow",
+        "description": "[am-market-data] GET /api/v1/stocks/{symbol}/cash-flow | GET /api/v1/stocks/{symbol}/cash-flow | tags: StockPortfolio | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/stocks/{symbol}/cash-flow",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_api_v1_stocks_{symbol}_cash-flow",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_api_v1_stocks__symbol__cash_flow",
+        "summary": "GET /api/v1/stocks/{symbol}/cash-flow",
+        "tags": [
+          "StockPortfolio"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "StockPortfolio",
+        "sdk_api": "StockPortfolioApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_api_v1_stocks__symbol__factsheet_dividend",
+        "description": "[am-market-data] GET /api/v1/stocks/{symbol}/factsheet-dividend | GET /api/v1/stocks/{symbol}/factsheet-dividend | tags: StockPortfolio | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/stocks/{symbol}/factsheet-dividend",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_api_v1_stocks_{symbol}_factsheet-dividend",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_api_v1_stocks__symbol__factsheet_dividend",
+        "summary": "GET /api/v1/stocks/{symbol}/factsheet-dividend",
+        "tags": [
+          "StockPortfolio"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "StockPortfolio",
+        "sdk_api": "StockPortfolioApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_api_v1_stocks__symbol__profit_and_loss",
+        "description": "[am-market-data] GET /api/v1/stocks/{symbol}/profit-and-loss | GET /api/v1/stocks/{symbol}/profit-and-loss | tags: StockPortfolio | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/stocks/{symbol}/profit-and-loss",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_api_v1_stocks_{symbol}_profit-and-loss",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_api_v1_stocks__symbol__profit_and_loss",
+        "summary": "GET /api/v1/stocks/{symbol}/profit-and-loss",
+        "tags": [
+          "StockPortfolio"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "StockPortfolio",
+        "sdk_api": "StockPortfolioApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_api_v1_stocks__symbol__quaterly_financials",
+        "description": "[am-market-data] GET /api/v1/stocks/{symbol}/quaterly-financials | GET /api/v1/stocks/{symbol}/quaterly-financials | tags: StockPortfolio | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/stocks/{symbol}/quaterly-financials",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_api_v1_stocks_{symbol}_quaterly-financials",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_api_v1_stocks__symbol__quaterly_financials",
+        "summary": "GET /api/v1/stocks/{symbol}/quaterly-financials",
+        "tags": [
+          "StockPortfolio"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "StockPortfolio",
+        "sdk_api": "StockPortfolioApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_checkAllEndpoints",
+        "description": "[am-market-data] GET /health/check/all | GET /health/check/all | tags: ApiHealth | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/check/all",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "checkAllEndpoints",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_checkAllEndpoints",
+        "summary": "GET /health/check/all",
+        "tags": [
+          "ApiHealth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ApiHealth",
+        "sdk_api": "ApiHealthApi",
+        "group": "admin",
+        "response_schema_ref": "ApiHealthStatus"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_checkEndpoint",
+        "description": "[am-market-data] GET /health/check/{endpointId} | GET /health/check/{endpointId} | tags: ApiHealth | PATH required: endpointId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "endpointId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 endpointId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "endpointId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/check/{endpointId}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "checkEndpoint",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_checkEndpoint",
+        "summary": "GET /health/check/{endpointId}",
+        "tags": [
+          "ApiHealth"
+        ],
+        "path_params": [
+          "endpointId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "endpointId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "ApiHealth",
+        "sdk_api": "ApiHealthApi",
+        "group": "admin",
+        "response_schema_ref": "ApiHealthStatus"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getOverallStatus",
+        "description": "[am-market-data] GET /health/status | GET /health/status | tags: ApiHealth | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/status",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getOverallStatus",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getOverallStatus",
+        "summary": "GET /health/status",
+        "tags": [
+          "ApiHealth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "ApiHealth",
+        "sdk_api": "ApiHealthApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getHealthStatus",
+        "description": "[am-market-data] GET /health/{endpointId} | GET /health/{endpointId} | tags: ApiHealth | PATH required: endpointId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "endpointId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 endpointId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "endpointId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/{endpointId}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getHealthStatus",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getHealthStatus",
+        "summary": "GET /health/{endpointId}",
+        "tags": [
+          "ApiHealth"
+        ],
+        "path_params": [
+          "endpointId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "endpointId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "ApiHealth",
+        "sdk_api": "ApiHealthApi",
+        "group": "admin",
+        "response_schema_ref": "ApiHealthStatus"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_scrapeCookies",
+        "description": "[am-market-data] GET /scraper/cookies | GET /scraper/cookies | tags: CookieScraper | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/scraper/cookies",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "scrapeCookies",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_scrapeCookies",
+        "summary": "GET /scraper/cookies",
+        "tags": [
+          "CookieScraper"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "CookieScraper",
+        "sdk_api": "CookieScraperApi",
+        "group": "admin",
+        "response_schema_ref": "WebsiteCookies"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getAllApiResponses",
+        "description": "[am-market-data] GET /tradebrain/api-responses | GET /tradebrain/api-responses | tags: TradeBrain | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/tradebrain/api-responses",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getAllApiResponses",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getAllApiResponses",
+        "summary": "GET /tradebrain/api-responses",
+        "tags": [
+          "TradeBrain"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeBrain",
+        "sdk_api": "TradeBrainApi",
+        "group": "trading",
+        "response_schema_ref": "EndpointResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getAllEndpoints",
+        "description": "[am-market-data] GET /tradebrain/endpoints | GET /tradebrain/endpoints | tags: TradeBrain | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/tradebrain/endpoints",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getAllEndpoints",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getAllEndpoints",
+        "summary": "GET /tradebrain/endpoints",
+        "tags": [
+          "TradeBrain"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeBrain",
+        "sdk_api": "TradeBrainApi",
+        "group": "trading",
+        "response_schema_ref": "EndpointHierarchy"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getEndpoint",
+        "description": "[am-market-data] GET /tradebrain/endpoints/{endpointId} | GET /tradebrain/endpoints/{endpointId} | tags: TradeBrain | PATH required: endpointId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "endpointId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 endpointId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "endpointId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/tradebrain/endpoints/{endpointId}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getEndpoint",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getEndpoint",
+        "summary": "GET /tradebrain/endpoints/{endpointId}",
+        "tags": [
+          "TradeBrain"
+        ],
+        "path_params": [
+          "endpointId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "endpointId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeBrain",
+        "sdk_api": "TradeBrainApi",
+        "group": "trading",
+        "response_schema_ref": "EndpointResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_checkEndpointsHealth",
+        "description": "[am-market-data] GET /tradebrain/health | GET /tradebrain/health | tags: TradeBrain | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/tradebrain/health",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "checkEndpointsHealth",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_checkEndpointsHealth",
+        "summary": "GET /tradebrain/health",
+        "tags": [
+          "TradeBrain"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeBrain",
+        "sdk_api": "TradeBrainApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getAllIndices",
+        "description": "[am-market-data] GET /tradebrain/indices | GET /tradebrain/indices | tags: TradeBrain | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/tradebrain/indices",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getAllIndices",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getAllIndices",
+        "summary": "GET /tradebrain/indices",
+        "tags": [
+          "TradeBrain"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "TradeBrain",
+        "sdk_api": "TradeBrainApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getStockDetails",
+        "description": "[am-market-data] GET /tradebrain/stock/{symbol} | GET /tradebrain/stock/{symbol} | tags: TradeBrain | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/tradebrain/stock/{symbol}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getStockDetails",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getStockDetails",
+        "summary": "GET /tradebrain/stock/{symbol}",
+        "tags": [
+          "TradeBrain"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "TradeBrain",
+        "sdk_api": "TradeBrainApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_startIngestion",
+        "description": "[am-market-data] POST /v1/admin/ingestion/start | POST /v1/admin/ingestion/start | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/ingestion/start",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "startIngestion",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_startIngestion",
+        "summary": "POST /v1/admin/ingestion/start",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_stopIngestion",
+        "description": "[am-market-data] POST /v1/admin/ingestion/stop | POST /v1/admin/ingestion/stop | tags: MarketDataAdmin | Query optional: provider | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 provider",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/ingestion/stop",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "stopIngestion",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_stopIngestion",
+        "summary": "POST /v1/admin/ingestion/stop",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [
+          "provider"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "provider": "query"
+        },
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getLogs",
+        "description": "[am-market-data] GET /v1/admin/logs | GET /v1/admin/logs | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/admin/logs",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getLogs",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getLogs",
+        "summary": "GET /v1/admin/logs",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin",
+        "response_schema_ref": "IngestionJobLog"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getJobDetails",
+        "description": "[am-market-data] GET /v1/admin/logs/{jobId} | GET /v1/admin/logs/{jobId} | tags: MarketDataAdmin | PATH required: jobId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 jobId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "jobId"
+            }
+          },
+          "required": [
+            "jobId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/admin/logs/{jobId}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getJobDetails",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getJobDetails",
+        "summary": "GET /v1/admin/logs/{jobId}",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [
+          "jobId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "jobId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin",
+        "response_schema_ref": "IngestionJobLog"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_setNseCookies",
+        "description": "[am-market-data] PUT /v1/admin/nse/cookies | PUT /v1/admin/nse/cookies | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "cookieHeader": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 cookieHeader",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "ttlMinutes": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 ttlMinutes \u2014 format=int32",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/NseCookiesSetRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/admin/nse/cookies",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "setNseCookies",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_setNseCookies",
+        "summary": "PUT /v1/admin/nse/cookies",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "cookieHeader",
+          "ttlMinutes"
+        ],
+        "param_locations": {
+          "cookieHeader": "body",
+          "ttlMinutes": "body"
+        },
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin",
+        "schema_ref": "NseCookiesSetRequest",
+        "x-asrax-schema": "models/NseCookiesSetRequest.json",
+        "response_schema_ref": "NseCookiesStatusResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getNseCookiesStatus",
+        "description": "[am-market-data] GET /v1/admin/nse/cookies/status | GET /v1/admin/nse/cookies/status | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/admin/nse/cookies/status",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getNseCookiesStatus",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getNseCookiesStatus",
+        "summary": "GET /v1/admin/nse/cookies/status",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin",
+        "response_schema_ref": "NseCookiesStatusResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerCookieRefresh",
+        "description": "[am-market-data] POST /v1/admin/scheduler/cookie/refresh | POST /v1/admin/scheduler/cookie/refresh | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/cookie/refresh",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerCookieRefresh",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerCookieRefresh",
+        "summary": "POST /v1/admin/scheduler/cookie/refresh",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin",
+        "response_schema_ref": "NseCookiesStatusResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerEveningIndicesFetch",
+        "description": "[am-market-data] POST /v1/admin/scheduler/indices/evening | POST /v1/admin/scheduler/indices/evening | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/indices/evening",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerEveningIndicesFetch",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerEveningIndicesFetch",
+        "summary": "POST /v1/admin/scheduler/indices/evening",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_forceTriggerIndicesProcessing",
+        "description": "[am-market-data] POST /v1/admin/scheduler/indices/force-process | POST /v1/admin/scheduler/indices/force-process | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/indices/force-process",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "forceTriggerIndicesProcessing",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_forceTriggerIndicesProcessing",
+        "summary": "POST /v1/admin/scheduler/indices/force-process",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerMorningIndicesFetch",
+        "description": "[am-market-data] POST /v1/admin/scheduler/indices/morning | POST /v1/admin/scheduler/indices/morning | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/indices/morning",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerMorningIndicesFetch",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerMorningIndicesFetch",
+        "summary": "POST /v1/admin/scheduler/indices/morning",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerIndicesProcessing",
+        "description": "[am-market-data] POST /v1/admin/scheduler/indices/process | POST /v1/admin/scheduler/indices/process | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/indices/process",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerIndicesProcessing",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerIndicesProcessing",
+        "summary": "POST /v1/admin/scheduler/indices/process",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerIndicesRetry",
+        "description": "[am-market-data] POST /v1/admin/scheduler/indices/retry | POST /v1/admin/scheduler/indices/retry | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/indices/retry",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerIndicesRetry",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerIndicesRetry",
+        "summary": "POST /v1/admin/scheduler/indices/retry",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerMarketClose",
+        "description": "[am-market-data] POST /v1/admin/scheduler/market/close | POST /v1/admin/scheduler/market/close | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/market/close",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerMarketClose",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerMarketClose",
+        "summary": "POST /v1/admin/scheduler/market/close",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerMarketOpen",
+        "description": "[am-market-data] POST /v1/admin/scheduler/market/open | POST /v1/admin/scheduler/market/open | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/market/open",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerMarketOpen",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerMarketOpen",
+        "summary": "POST /v1/admin/scheduler/market/open",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerPreviousCloseFetch",
+        "description": "[am-market-data] POST /v1/admin/scheduler/prev-close/trigger | POST /v1/admin/scheduler/prev-close/trigger | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/prev-close/trigger",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerPreviousCloseFetch",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerPreviousCloseFetch",
+        "summary": "POST /v1/admin/scheduler/prev-close/trigger",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerRedisCleanup",
+        "description": "[am-market-data] POST /v1/admin/scheduler/redis/cleanup | POST /v1/admin/scheduler/redis/cleanup | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/redis/cleanup",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerRedisCleanup",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerRedisCleanup",
+        "summary": "POST /v1/admin/scheduler/redis/cleanup",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerStreamerStart",
+        "description": "[am-market-data] POST /v1/admin/scheduler/streamer/start | POST /v1/admin/scheduler/streamer/start | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/streamer/start",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerStreamerStart",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerStreamerStart",
+        "summary": "POST /v1/admin/scheduler/streamer/start",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerStreamerStop",
+        "description": "[am-market-data] POST /v1/admin/scheduler/streamer/stop | POST /v1/admin/scheduler/streamer/stop | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/streamer/stop",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerStreamerStop",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerStreamerStop",
+        "summary": "POST /v1/admin/scheduler/streamer/stop",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_refreshSymbolUniverse",
+        "description": "[am-market-data] POST /v1/admin/scheduler/symbols/refresh | POST /v1/admin/scheduler/symbols/refresh | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/scheduler/symbols/refresh",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "refreshSymbolUniverse",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_refreshSymbolUniverse",
+        "summary": "POST /v1/admin/scheduler/symbols/refresh",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerGlobalSync",
+        "description": "[am-market-data] POST /v1/admin/sync/global | POST /v1/admin/sync/global | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/sync/global",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerGlobalSync",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerGlobalSync",
+        "summary": "POST /v1/admin/sync/global",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerHistoricalSync",
+        "description": "[am-market-data] POST /v1/admin/sync/historical | POST /v1/admin/sync/historical | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/sync/historical",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerHistoricalSync",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerHistoricalSync",
+        "summary": "POST /v1/admin/sync/historical",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_syncIpo",
+        "description": "[am-market-data] POST /v1/admin/sync/ipo | POST /v1/admin/sync/ipo | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/sync/ipo",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "syncIpo",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_syncIpo",
+        "summary": "POST /v1/admin/sync/ipo",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin",
+        "response_schema_ref": "IpoSyncResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_syncMarketCalendar",
+        "description": "[am-market-data] POST /v1/admin/sync/market-calendar | Refresh symbol universe cache (Nifty/ETF + Redis active portfolio set) | tags: MarketDataAdmin | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/admin/sync/market-calendar",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "syncMarketCalendar",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_syncMarketCalendar",
+        "summary": "Refresh symbol universe cache (Nifty/ETF + Redis active portfolio set)",
+        "tags": [
+          "MarketDataAdmin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketDataAdmin",
+        "sdk_api": "MarketDataAdminApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_calculateBreakeven",
+        "description": "[am-market-data] GET /v1/brokerage/breakeven | GET /v1/brokerage/breakeven | tags: BrokerageCalculator | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/brokerage/breakeven",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "calculateBreakeven",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_calculateBreakeven",
+        "summary": "GET /v1/brokerage/breakeven",
+        "tags": [
+          "BrokerageCalculator"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "BrokerageCalculator",
+        "sdk_api": "BrokerageCalculatorApi",
+        "group": "trading",
+        "response_schema_ref": "BrokerageCalculationResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_calculateBrokerage",
+        "description": "[am-market-data] POST /v1/brokerage/calculate | POST /v1/brokerage/calculate | tags: BrokerageCalculator | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tradingSymbol": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=symbol (producer=tradingSymbol) \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            },
+            "quantity": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 quantity \u2014 format=int32 \u2014 example=10",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "quantity",
+              "example": 10
+            },
+            "buyPrice": {
+              "type": "number",
+              "description": "[BODY] \u2014 optional \u2014 buyPrice",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "sellPrice": {
+              "type": "number",
+              "description": "[BODY] \u2014 optional \u2014 sellPrice",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "exchange": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 exchange",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "exchange"
+            },
+            "tradeType": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 glossary=side (producer=tradeType) \u2014 Referenced type TradeType (source not found during harvest)",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "side"
+            },
+            "brokerType": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 Referenced type BrokerType (source not found during harvest)",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "brokerName": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 brokerName",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "brokerFlatFee": {
+              "type": "number",
+              "description": "[BODY] \u2014 optional \u2014 brokerFlatFee",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "brokerPercentageFee": {
+              "type": "number",
+              "description": "[BODY] \u2014 optional \u2014 brokerPercentageFee",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "stateCode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 stateCode",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/BrokerageCalculationRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/brokerage/calculate",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "calculateBrokerage",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_calculateBrokerage",
+        "summary": "POST /v1/brokerage/calculate",
+        "tags": [
+          "BrokerageCalculator"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "tradingSymbol",
+          "quantity",
+          "buyPrice",
+          "sellPrice",
+          "exchange",
+          "tradeType",
+          "brokerType",
+          "brokerName",
+          "brokerFlatFee",
+          "brokerPercentageFee",
+          "stateCode"
+        ],
+        "param_locations": {
+          "tradingSymbol": "body",
+          "quantity": "body",
+          "buyPrice": "body",
+          "sellPrice": "body",
+          "exchange": "body",
+          "tradeType": "body",
+          "brokerType": "body",
+          "brokerName": "body",
+          "brokerFlatFee": "body",
+          "brokerPercentageFee": "body",
+          "stateCode": "body"
+        },
+        "auth": "executor_injected",
+        "route": "BrokerageCalculator",
+        "sdk_api": "BrokerageCalculatorApi",
+        "group": "trading",
+        "schema_ref": "BrokerageCalculationRequest",
+        "x-asrax-schema": "models/BrokerageCalculationRequest.json",
+        "response_schema_ref": "BrokerageCalculationResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_post_v1_brokerage_calculate_async",
+        "description": "[am-market-data] POST /v1/brokerage/calculate-async | POST /v1/brokerage/calculate-async | tags: BrokerageCalculator | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/brokerage/calculate-async",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "post_v1_brokerage_calculate-async",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_post_v1_brokerage_calculate_async",
+        "summary": "POST /v1/brokerage/calculate-async",
+        "tags": [
+          "BrokerageCalculator"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "BrokerageCalculator",
+        "sdk_api": "BrokerageCalculatorApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol_",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol} | GET /v1/fundamentals/{symbol} | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol_",
+        "summary": "GET /v1/fundamentals/{symbol}",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__analytics",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/analytics | GET /v1/fundamentals/{symbol}/analytics | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/analytics",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_analytics",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__analytics",
+        "summary": "GET /v1/fundamentals/{symbol}/analytics",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__corporate_actions",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/corporate-actions | GET /v1/fundamentals/{symbol}/corporate-actions | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/corporate-actions",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_corporate-actions",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__corporate_actions",
+        "summary": "GET /v1/fundamentals/{symbol}/corporate-actions",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__financials",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/financials | GET /v1/fundamentals/{symbol}/financials | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/financials",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_financials",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__financials",
+        "summary": "GET /v1/fundamentals/{symbol}/financials",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__peers",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/peers | GET /v1/fundamentals/{symbol}/peers | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/peers",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_peers",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__peers",
+        "summary": "GET /v1/fundamentals/{symbol}/peers",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__profile",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/profile | GET /v1/fundamentals/{symbol}/profile | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/profile",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_profile",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__profile",
+        "summary": "GET /v1/fundamentals/{symbol}/profile",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__ratios",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/ratios | GET /v1/fundamentals/{symbol}/ratios | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/ratios",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_ratios",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__ratios",
+        "summary": "GET /v1/fundamentals/{symbol}/ratios",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_fundamentals__symbol__shareholding",
+        "description": "[am-market-data] GET /v1/fundamentals/{symbol}/shareholding | GET /v1/fundamentals/{symbol}/shareholding | tags: FundamentalAnalysis | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/fundamentals/{symbol}/shareholding",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_fundamentals_{symbol}_shareholding",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_fundamentals__symbol__shareholding",
+        "summary": "GET /v1/fundamentals/{symbol}/shareholding",
+        "tags": [
+          "FundamentalAnalysis"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "FundamentalAnalysis",
+        "sdk_api": "FundamentalAnalysisApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getAvailableIndices",
+        "description": "[am-market-data] GET /v1/indices/available | GET /v1/indices/available | tags: MarketIndex | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/indices/available",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getAvailableIndices",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getAvailableIndices",
+        "summary": "GET /v1/indices/available",
+        "tags": [
+          "MarketIndex"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketIndex",
+        "sdk_api": "MarketIndexApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_post_v1_indices_batch",
+        "description": "[am-market-data] POST /v1/indices/batch | POST /v1/indices/batch | tags: MarketIndex | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/indices/batch",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "post_v1_indices_batch",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_post_v1_indices_batch",
+        "summary": "POST /v1/indices/batch",
+        "tags": [
+          "MarketIndex"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketIndex",
+        "sdk_api": "MarketIndexApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getAvailableGlobalIndices",
+        "description": "[am-market-data] GET /v1/indices/global/available | GET /v1/indices/global/available | tags: MarketIndex | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/indices/global/available",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getAvailableGlobalIndices",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getAvailableGlobalIndices",
+        "summary": "GET /v1/indices/global/available",
+        "tags": [
+          "MarketIndex"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketIndex",
+        "sdk_api": "MarketIndexApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_searchInstruments",
+        "description": "[am-market-data] POST /v1/instruments/search | Search Instruments | tags: Instrument | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "queries": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 queries",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "exchanges": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 exchanges",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "instrumentTypes": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 instrumentTypes",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "segments": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 segments",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "isins": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 isins",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "tradingSymbols": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 tradingSymbols",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "weekly": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 weekly",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "provider": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 provider",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/InstrumentSearchCriteria.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/instruments/search",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "searchInstruments",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_searchInstruments",
+        "summary": "Search Instruments",
+        "tags": [
+          "Instrument"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "queries",
+          "exchanges",
+          "instrumentTypes",
+          "segments",
+          "isins",
+          "tradingSymbols",
+          "weekly",
+          "provider"
+        ],
+        "param_locations": {
+          "queries": "body",
+          "exchanges": "body",
+          "instrumentTypes": "body",
+          "segments": "body",
+          "isins": "body",
+          "tradingSymbols": "body",
+          "weekly": "body",
+          "provider": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Instrument",
+        "sdk_api": "InstrumentApi",
+        "group": "core",
+        "schema_ref": "InstrumentSearchCriteria",
+        "x-asrax-schema": "models/InstrumentSearchCriteria.json"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_updateInstruments",
+        "description": "[am-market-data] POST /v1/instruments/update | Update Instruments from File | tags: Instrument | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/instruments/update",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "updateInstruments",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_updateInstruments",
+        "summary": "Update Instruments from File",
+        "tags": [
+          "Instrument"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Instrument",
+        "sdk_api": "InstrumentApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_ipo",
+        "description": "[am-market-data] GET /v1/ipo | GET /v1/ipo | tags: Ipo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/ipo",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_ipo",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_ipo",
+        "summary": "GET /v1/ipo",
+        "tags": [
+          "Ipo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Ipo",
+        "sdk_api": "IpoApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_syncMeta",
+        "description": "[am-market-data] GET /v1/ipo/meta/sync | GET /v1/ipo/meta/sync | tags: Ipo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/ipo/meta/sync",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "syncMeta",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_syncMeta",
+        "summary": "GET /v1/ipo/meta/sync",
+        "tags": [
+          "Ipo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Ipo",
+        "sdk_api": "IpoApi",
+        "group": "ipo",
+        "response_schema_ref": "IpoSyncMetaView"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_bySymbol",
+        "description": "[am-market-data] GET /v1/ipo/{symbol} | GET /v1/ipo/{symbol} | tags: Ipo | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/ipo/{symbol}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "bySymbol",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_bySymbol",
+        "summary": "GET /v1/ipo/{symbol}",
+        "tags": [
+          "Ipo"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Ipo",
+        "sdk_api": "IpoApi",
+        "group": "ipo",
+        "response_schema_ref": "IpoIssueListResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_detail",
+        "description": "[am-market-data] GET /v1/ipo/{symbol}/{openDate} | GET /v1/ipo/{symbol}/{openDate} | tags: Ipo | PATH required: symbol, openDate | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            },
+            "openDate": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 openDate",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "symbol",
+            "openDate"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/ipo/{symbol}/{openDate}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "detail",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_detail",
+        "summary": "GET /v1/ipo/{symbol}/{openDate}",
+        "tags": [
+          "Ipo"
+        ],
+        "path_params": [
+          "symbol",
+          "openDate"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path",
+          "openDate": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Ipo",
+        "sdk_api": "IpoApi",
+        "group": "ipo",
+        "response_schema_ref": "IpoIssueView"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_subscription",
+        "description": "[am-market-data] GET /v1/ipo/{symbol}/{openDate}/subscription | GET /v1/ipo/{symbol}/{openDate}/subscription | tags: Ipo | PATH required: symbol, openDate | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            },
+            "openDate": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 openDate",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "symbol",
+            "openDate"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/ipo/{symbol}/{openDate}/subscription",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "subscription",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_subscription",
+        "summary": "GET /v1/ipo/{symbol}/{openDate}/subscription",
+        "tags": [
+          "Ipo"
+        ],
+        "path_params": [
+          "symbol",
+          "openDate"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path",
+          "openDate": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Ipo",
+        "sdk_api": "IpoApi",
+        "group": "ipo",
+        "response_schema_ref": "IpoSubscriptionView"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_post_v1_margin_calculate",
+        "description": "[am-market-data] POST /v1/margin/calculate | POST /v1/margin/calculate | tags: MarginCalculator | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/margin/calculate",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "post_v1_margin_calculate",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_post_v1_margin_calculate",
+        "summary": "POST /v1/margin/calculate",
+        "tags": [
+          "MarginCalculator"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarginCalculator",
+        "sdk_api": "MarginCalculatorApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_post_v1_margin_calculate_async",
+        "description": "[am-market-data] POST /v1/margin/calculate-async | POST /v1/margin/calculate-async | tags: MarginCalculator | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/margin/calculate-async",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "post_v1_margin_calculate-async",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_post_v1_margin_calculate_async",
+        "summary": "POST /v1/margin/calculate-async",
+        "tags": [
+          "MarginCalculator"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarginCalculator",
+        "sdk_api": "MarginCalculatorApi",
+        "group": "trading"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_holidays",
+        "description": "[am-market-data] GET /v1/market-calendar/holidays | GET /v1/market-calendar/holidays | tags: MarketCalendar | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-calendar/holidays",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "holidays",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_holidays",
+        "summary": "GET /v1/market-calendar/holidays",
+        "tags": [
+          "MarketCalendar"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketCalendar",
+        "sdk_api": "MarketCalendarApi",
+        "group": "core",
+        "response_schema_ref": "MarketCalendarHolidaysResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_holiday",
+        "description": "[am-market-data] GET /v1/market-calendar/holidays/{date} | GET /v1/market-calendar/holidays/{date} | tags: MarketCalendar | PATH required: date | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 date",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "date"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-calendar/holidays/{date}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "holiday",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_holiday",
+        "summary": "GET /v1/market-calendar/holidays/{date}",
+        "tags": [
+          "MarketCalendar"
+        ],
+        "path_params": [
+          "date"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "date": "path"
+        },
+        "auth": "executor_injected",
+        "route": "MarketCalendar",
+        "sdk_api": "MarketCalendarApi",
+        "group": "core",
+        "response_schema_ref": "MarketCalendarHolidaysResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_status",
+        "description": "[am-market-data] GET /v1/market-calendar/status | GET /v1/market-calendar/status | tags: MarketCalendar | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-calendar/status",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "status",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_status",
+        "summary": "GET /v1/market-calendar/status",
+        "tags": [
+          "MarketCalendar"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketCalendar",
+        "sdk_api": "MarketCalendarApi",
+        "group": "core",
+        "response_schema_ref": "MarketStatusResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_timings",
+        "description": "[am-market-data] GET /v1/market-calendar/timings | GET /v1/market-calendar/timings | tags: MarketCalendar | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-calendar/timings",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "timings",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_timings",
+        "summary": "GET /v1/market-calendar/timings",
+        "tags": [
+          "MarketCalendar"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketCalendar",
+        "sdk_api": "MarketCalendarApi",
+        "group": "core",
+        "response_schema_ref": "MarketSessionTimingResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getLoginUrl",
+        "description": "[am-market-data] GET /v1/market-data/auth/login-url | GET /v1/market-data/auth/login-url | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/auth/login-url",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getLoginUrl",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getLoginUrl",
+        "summary": "GET /v1/market-data/auth/login-url",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_logout",
+        "description": "[am-market-data] POST /v1/market-data/auth/logout | POST /v1/market-data/auth/logout | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/auth/logout",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "logout",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_logout",
+        "summary": "POST /v1/market-data/auth/logout",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_generateSession",
+        "description": "[am-market-data] GET /v1/market-data/auth/session | GET /v1/market-data/auth/session | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/auth/session",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "generateSession",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_generateSession",
+        "summary": "GET /v1/market-data/auth/session",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getHistoricalData",
+        "description": "[am-market-data] POST /v1/market-data/historical-data | POST /v1/market-data/historical-data | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbols": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 symbols",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "from": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 from",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "to": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 to",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "interval": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 glossary=timeInterval (producer=interval) \u2014 Referenced type TimeFrame (source not found during harvest)",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "timeInterval"
+            },
+            "continuous": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 continuous",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "indexSymbol": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 indexSymbol",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "instrumentType": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 instrumentType",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "forceRefresh": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 forceRefresh",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "filterType": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 filterType",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "filterFrequency": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 filterFrequency \u2014 format=int32",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "additionalParams": {
+              "type": "object",
+              "description": "[BODY] \u2014 optional \u2014 Referenced type Map (source not found during harvest)",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/HistoricalDataRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/historical-data",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getHistoricalData",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getHistoricalData",
+        "summary": "POST /v1/market-data/historical-data",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "symbols",
+          "from",
+          "to",
+          "interval",
+          "continuous",
+          "indexSymbol",
+          "instrumentType",
+          "forceRefresh",
+          "filterType",
+          "filterFrequency",
+          "additionalParams"
+        ],
+        "param_locations": {
+          "symbols": "body",
+          "from": "body",
+          "to": "body",
+          "interval": "body",
+          "continuous": "body",
+          "indexSymbol": "body",
+          "instrumentType": "body",
+          "forceRefresh": "body",
+          "filterType": "body",
+          "filterFrequency": "body",
+          "additionalParams": "body"
+        },
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core",
+        "schema_ref": "HistoricalDataRequest",
+        "x-asrax-schema": "models/HistoricalDataRequest.json",
+        "response_schema_ref": "HistoricalDataResponseV1"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_market_data_ipo",
+        "description": "[am-market-data] GET /v1/market-data/ipo | GET /v1/market-data/ipo | tags: UpstoxIpo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/ipo",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_market-data_ipo",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_market_data_ipo",
+        "summary": "GET /v1/market-data/ipo",
+        "tags": [
+          "UpstoxIpo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "UpstoxIpo",
+        "sdk_api": "UpstoxIpoApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerSync",
+        "description": "[am-market-data] POST /v1/market-data/ipo/admin/sync | POST /v1/market-data/ipo/admin/sync | tags: UpstoxIpo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/ipo/admin/sync",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerSync",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerSync",
+        "summary": "POST /v1/market-data/ipo/admin/sync",
+        "tags": [
+          "UpstoxIpo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "UpstoxIpo",
+        "sdk_api": "UpstoxIpoApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_market_data_ipo_counts",
+        "description": "[am-market-data] GET /v1/market-data/ipo/counts | GET /v1/market-data/ipo/counts | tags: UpstoxIpo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/ipo/counts",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_market-data_ipo_counts",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_market_data_ipo_counts",
+        "summary": "GET /v1/market-data/ipo/counts",
+        "tags": [
+          "UpstoxIpo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "UpstoxIpo",
+        "sdk_api": "UpstoxIpoApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_get_v1_market_data_ipo__id_",
+        "description": "[am-market-data] GET /v1/market-data/ipo/{id} | GET /v1/market-data/ipo/{id} | tags: UpstoxIpo | PATH required: id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/ipo/{id}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "get_v1_market-data_ipo_{id}",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_get_v1_market_data_ipo__id_",
+        "summary": "GET /v1/market-data/ipo/{id}",
+        "tags": [
+          "UpstoxIpo"
+        ],
+        "path_params": [
+          "id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "UpstoxIpo",
+        "sdk_api": "UpstoxIpoApi",
+        "group": "ipo"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getLiveLTP",
+        "description": "[am-market-data] GET /v1/market-data/live-ltp | GET /v1/market-data/live-ltp | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/live-ltp",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getLiveLTP",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getLiveLTP",
+        "summary": "GET /v1/market-data/live-ltp",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getLivePrices",
+        "description": "[am-market-data] GET /v1/market-data/live-prices | GET /v1/market-data/live-prices | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/live-prices",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getLivePrices",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getLivePrices",
+        "summary": "GET /v1/market-data/live-prices",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getMutualFundDetails",
+        "description": "[am-market-data] GET /v1/market-data/mutual-fund/{schemeCode} | GET /v1/market-data/mutual-fund/{schemeCode} | tags: MarketData | PATH required: schemeCode | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "schemeCode": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 schemeCode",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "schemeCode"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/mutual-fund/{schemeCode}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getMutualFundDetails",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getMutualFundDetails",
+        "summary": "GET /v1/market-data/mutual-fund/{schemeCode}",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [
+          "schemeCode"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "schemeCode": "path"
+        },
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getMutualFundNavHistory",
+        "description": "[am-market-data] GET /v1/market-data/mutual-fund/{schemeCode}/history | GET /v1/market-data/mutual-fund/{schemeCode}/history | tags: MarketData | PATH required: schemeCode | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "schemeCode": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 schemeCode",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "schemeCode"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/mutual-fund/{schemeCode}/history",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getMutualFundNavHistory",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getMutualFundNavHistory",
+        "summary": "GET /v1/market-data/mutual-fund/{schemeCode}/history",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [
+          "schemeCode"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "schemeCode": "path"
+        },
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_post_v1_market_data_ohlc",
+        "description": "[am-market-data] POST /v1/market-data/ohlc | POST /v1/market-data/ohlc | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/ohlc",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "post_v1_market-data_ohlc",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_post_v1_market_data_ohlc",
+        "summary": "POST /v1/market-data/ohlc",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getOptionChain",
+        "description": "[am-market-data] GET /v1/market-data/option-chain | GET /v1/market-data/option-chain | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/option-chain",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getOptionChain",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getOptionChain",
+        "summary": "GET /v1/market-data/option-chain",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getQuotes",
+        "description": "[am-market-data] GET /v1/market-data/quotes | GET /v1/market-data/quotes | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/quotes",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getQuotes",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getQuotes",
+        "summary": "GET /v1/market-data/quotes",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_post_v1_market_data_quotes",
+        "description": "[am-market-data] POST /v1/market-data/quotes | POST /v1/market-data/quotes | tags: MarketData | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/quotes",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "post_v1_market-data_quotes",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_post_v1_market_data_quotes",
+        "summary": "POST /v1/market-data/quotes",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_connect",
+        "description": "[am-market-data] POST /v1/market-data/stream/connect | POST /v1/market-data/stream/connect | tags: MarketDataStream | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "instrumentKeys": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 instrumentKeys",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "mode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 mode",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "expandIndices": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 expandIndices",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 timeFrame",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "isIndexSymbol": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 isIndexSymbol",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "stream": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 stream",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "provider": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 provider",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "forcePolling": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 forcePolling",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "mockMode": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 mockMode",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/StreamConnectRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/stream/connect",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "connect",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_connect",
+        "summary": "POST /v1/market-data/stream/connect",
+        "tags": [
+          "MarketDataStream"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "instrumentKeys",
+          "mode",
+          "expandIndices",
+          "timeFrame",
+          "isIndexSymbol",
+          "stream",
+          "provider",
+          "forcePolling",
+          "mockMode"
+        ],
+        "param_locations": {
+          "instrumentKeys": "body",
+          "mode": "body",
+          "expandIndices": "body",
+          "timeFrame": "body",
+          "isIndexSymbol": "body",
+          "stream": "body",
+          "provider": "body",
+          "forcePolling": "body",
+          "mockMode": "body"
+        },
+        "auth": "executor_injected",
+        "route": "MarketDataStream",
+        "sdk_api": "MarketDataStreamApi",
+        "group": "stream",
+        "schema_ref": "StreamConnectRequest",
+        "x-asrax-schema": "models/StreamConnectRequest.json"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_disconnect",
+        "description": "[am-market-data] POST /v1/market-data/stream/disconnect | POST /v1/market-data/stream/disconnect | tags: MarketDataStream | Query optional: provider | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 provider",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/stream/disconnect",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "disconnect",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_disconnect",
+        "summary": "POST /v1/market-data/stream/disconnect",
+        "tags": [
+          "MarketDataStream"
+        ],
+        "path_params": [],
+        "query_params": [
+          "provider"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "provider": "query"
+        },
+        "auth": "executor_injected",
+        "route": "MarketDataStream",
+        "sdk_api": "MarketDataStreamApi",
+        "group": "stream"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_initiate",
+        "description": "[am-market-data] POST /v1/market-data/stream/initiate | POST /v1/market-data/stream/initiate | tags: MarketDataStream | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "instrumentKeys": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 instrumentKeys",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "mode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 mode",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "expandIndices": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 expandIndices",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "timeFrame": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 timeFrame",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "isIndexSymbol": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 isIndexSymbol",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "stream": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 stream",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "provider": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 provider",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "forcePolling": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 forcePolling",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "mockMode": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 mockMode",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/StreamConnectRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/market-data/stream/initiate",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "initiate",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_initiate",
+        "summary": "POST /v1/market-data/stream/initiate",
+        "tags": [
+          "MarketDataStream"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "instrumentKeys",
+          "mode",
+          "expandIndices",
+          "timeFrame",
+          "isIndexSymbol",
+          "stream",
+          "provider",
+          "forcePolling",
+          "mockMode"
+        ],
+        "param_locations": {
+          "instrumentKeys": "body",
+          "mode": "body",
+          "expandIndices": "body",
+          "timeFrame": "body",
+          "isIndexSymbol": "body",
+          "stream": "body",
+          "provider": "body",
+          "forcePolling": "body",
+          "mockMode": "body"
+        },
+        "auth": "executor_injected",
+        "route": "MarketDataStream",
+        "sdk_api": "MarketDataStreamApi",
+        "group": "stream",
+        "schema_ref": "StreamConnectRequest",
+        "x-asrax-schema": "models/StreamConnectRequest.json",
+        "response_schema_ref": "StreamConnectResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getSymbolsForExchange",
+        "description": "[am-market-data] GET /v1/market-data/symbols/{exchange} | GET /v1/market-data/symbols/{exchange} | tags: MarketData | PATH required: exchange | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 exchange",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "exchange"
+            }
+          },
+          "required": [
+            "exchange"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-data/symbols/{exchange}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getSymbolsForExchange",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getSymbolsForExchange",
+        "summary": "GET /v1/market-data/symbols/{exchange}",
+        "tags": [
+          "MarketData"
+        ],
+        "path_params": [
+          "exchange"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "exchange": "path"
+        },
+        "auth": "executor_injected",
+        "route": "MarketData",
+        "sdk_api": "MarketDataApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getChangeOi",
+        "description": "[am-market-data] GET /v1/market-info/change-oi | Get index option open interest | tags: MarketInfo | Query optional: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-info/change-oi",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getChangeOi",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getChangeOi",
+        "summary": "Get index option open interest",
+        "tags": [
+          "MarketInfo"
+        ],
+        "path_params": [],
+        "query_params": [
+          "symbol"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "query"
+        },
+        "auth": "executor_injected",
+        "route": "MarketInfo",
+        "sdk_api": "MarketInfoApi",
+        "group": "core",
+        "response_schema_ref": "ChangeOiResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getDii",
+        "description": "[am-market-data] GET /v1/market-info/dii | Get FII flows | tags: MarketInfo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-info/dii",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getDii",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getDii",
+        "summary": "Get FII flows",
+        "tags": [
+          "MarketInfo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketInfo",
+        "sdk_api": "MarketInfoApi",
+        "group": "core",
+        "response_schema_ref": "InstitutionalFlowResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getFii",
+        "description": "[am-market-data] GET /v1/market-info/fii | GET /v1/market-info/fii | tags: MarketInfo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-info/fii",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getFii",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getFii",
+        "summary": "GET /v1/market-info/fii",
+        "tags": [
+          "MarketInfo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketInfo",
+        "sdk_api": "MarketInfoApi",
+        "group": "core",
+        "response_schema_ref": "InstitutionalFlowResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getFlowsOverview",
+        "description": "[am-market-data] GET /v1/market-info/flows-overview | Get change in index option open interest | tags: MarketInfo | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-info/flows-overview",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getFlowsOverview",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getFlowsOverview",
+        "summary": "Get change in index option open interest",
+        "tags": [
+          "MarketInfo"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "MarketInfo",
+        "sdk_api": "MarketInfoApi",
+        "group": "core",
+        "response_schema_ref": "FlowsOverviewResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getOi",
+        "description": "[am-market-data] GET /v1/market-info/oi | Get DII cash-market flows | tags: MarketInfo | Query optional: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/market-info/oi",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getOi",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getOi",
+        "summary": "Get DII cash-market flows",
+        "tags": [
+          "MarketInfo"
+        ],
+        "path_params": [],
+        "query_params": [
+          "symbol"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "query"
+        },
+        "auth": "executor_injected",
+        "route": "MarketInfo",
+        "sdk_api": "MarketInfoApi",
+        "group": "core",
+        "response_schema_ref": "OiResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_listSchedulers",
+        "description": "[am-market-data] GET /v1/scheduler/jobs | GET /v1/scheduler/jobs | tags: Scheduler | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/scheduler/jobs",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "listSchedulers",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_listSchedulers",
+        "summary": "GET /v1/scheduler/jobs",
+        "tags": [
+          "Scheduler"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Scheduler",
+        "sdk_api": "SchedulerApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_triggerScheduler",
+        "description": "[am-market-data] POST /v1/scheduler/trigger/{jobName} | List all available schedulers | tags: Scheduler | PATH required: jobName | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "jobName": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 jobName",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "jobName"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/scheduler/trigger/{jobName}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "triggerScheduler",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_triggerScheduler",
+        "summary": "List all available schedulers",
+        "tags": [
+          "Scheduler"
+        ],
+        "path_params": [
+          "jobName"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "jobName": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Scheduler",
+        "sdk_api": "SchedulerApi",
+        "group": "admin"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_batchSearch",
+        "description": "[am-market-data] POST /v1/securities/batch-search | POST /v1/securities/batch-search | tags: Security | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "queries": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 queries",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 format=int32",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "pageSize"
+            },
+            "searchFields": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 searchFields",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "minMatchScore": {
+              "type": "number",
+              "description": "[BODY] \u2014 optional \u2014 minMatchScore \u2014 format=double",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/BatchSearchRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/securities/batch-search",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "batchSearch",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_batchSearch",
+        "summary": "POST /v1/securities/batch-search",
+        "tags": [
+          "Security"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "queries",
+          "limit",
+          "searchFields",
+          "minMatchScore"
+        ],
+        "param_locations": {
+          "queries": "body",
+          "limit": "body",
+          "searchFields": "body",
+          "minMatchScore": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Security",
+        "sdk_api": "SecurityApi",
+        "group": "admin",
+        "schema_ref": "BatchSearchRequest",
+        "x-asrax-schema": "models/BatchSearchRequest.json",
+        "response_schema_ref": "BatchSearchResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_bulkUpdate",
+        "description": "[am-market-data] POST /v1/securities/bulk-update | POST /v1/securities/bulk-update | tags: Security | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/securities/bulk-update",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "bulkUpdate",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_bulkUpdate",
+        "summary": "POST /v1/securities/bulk-update",
+        "tags": [
+          "Security"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Security",
+        "sdk_api": "SecurityApi",
+        "group": "admin",
+        "response_schema_ref": "BulkUpdateResponse"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_search",
+        "description": "[am-market-data] GET /v1/securities/search | GET /v1/securities/search | tags: Security | Query optional: query | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 query",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/securities/search",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "search",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_search",
+        "summary": "GET /v1/securities/search",
+        "tags": [
+          "Security"
+        ],
+        "path_params": [],
+        "query_params": [
+          "query"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "query": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Security",
+        "sdk_api": "SecurityApi",
+        "group": "admin",
+        "response_schema_ref": "SecurityDocument"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_searchAdvanced",
+        "description": "[am-market-data] POST /v1/securities/search | POST /v1/securities/search | tags: Security | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbols": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 symbols",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "object"
+              }
+            },
+            "isin": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=instrumentId (producer=isin) \u2014 instrumentId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "instrumentId"
+            },
+            "sector": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 sector",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "industry": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 industry",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "index": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 index",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "query": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 query",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 format=int32",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "pageSize"
+            },
+            "smartRecommendations": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 smartRecommendations",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "category": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 category",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SecuritySearchRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/securities/search",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "searchAdvanced",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_searchAdvanced",
+        "summary": "POST /v1/securities/search",
+        "tags": [
+          "Security"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "symbols",
+          "isin",
+          "sector",
+          "industry",
+          "index",
+          "query",
+          "limit",
+          "smartRecommendations",
+          "category"
+        ],
+        "param_locations": {
+          "symbols": "body",
+          "isin": "body",
+          "sector": "body",
+          "industry": "body",
+          "index": "body",
+          "query": "body",
+          "limit": "body",
+          "smartRecommendations": "body",
+          "category": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Security",
+        "sdk_api": "SecurityApi",
+        "group": "admin",
+        "schema_ref": "SecuritySearchRequest",
+        "x-asrax-schema": "models/SecuritySearchRequest.json",
+        "response_schema_ref": "SecurityDocument"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_checkSymbolAcrossWatchlists",
+        "description": "[am-market-data] GET /v1/watchlists/check/{symbol} | GET /v1/watchlists/check/{symbol} | tags: Watchlist | PATH required: symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/watchlists/check/{symbol}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "checkSymbolAcrossWatchlists",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_checkSymbolAcrossWatchlists",
+        "summary": "GET /v1/watchlists/check/{symbol}",
+        "tags": [
+          "Watchlist"
+        ],
+        "path_params": [
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Watchlist",
+        "sdk_api": "WatchlistApi",
+        "group": "core",
+        "response_schema_ref": "WatchlistCheckStatusDto"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_renameWatchlist",
+        "description": "[am-market-data] PUT /v1/watchlists/{watchlistId} | PUT /v1/watchlists/{watchlistId} | tags: Watchlist | PATH required: watchlistId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "watchlistId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 watchlistId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "watchlistId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/watchlists/{watchlistId}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "renameWatchlist",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_renameWatchlist",
+        "summary": "PUT /v1/watchlists/{watchlistId}",
+        "tags": [
+          "Watchlist"
+        ],
+        "path_params": [
+          "watchlistId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "watchlistId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Watchlist",
+        "sdk_api": "WatchlistApi",
+        "group": "core",
+        "response_schema_ref": "WatchlistDto"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_deleteWatchlist",
+        "description": "[am-market-data] DELETE /v1/watchlists/{watchlistId} | DELETE /v1/watchlists/{watchlistId} | tags: Watchlist | PATH required: watchlistId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "watchlistId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 watchlistId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "watchlistId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/watchlists/{watchlistId}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "deleteWatchlist",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_deleteWatchlist",
+        "summary": "DELETE /v1/watchlists/{watchlistId}",
+        "tags": [
+          "Watchlist"
+        ],
+        "path_params": [
+          "watchlistId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "watchlistId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Watchlist",
+        "sdk_api": "WatchlistApi",
+        "group": "core"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_getWatchlistItems",
+        "description": "[am-market-data] GET /v1/watchlists/{watchlistId}/items | GET /v1/watchlists/{watchlistId}/items | tags: Watchlist | PATH required: watchlistId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "watchlistId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 watchlistId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "watchlistId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/watchlists/{watchlistId}/items",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "getWatchlistItems",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_getWatchlistItems",
+        "summary": "GET /v1/watchlists/{watchlistId}/items",
+        "tags": [
+          "Watchlist"
+        ],
+        "path_params": [
+          "watchlistId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "watchlistId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Watchlist",
+        "sdk_api": "WatchlistApi",
+        "group": "core",
+        "response_schema_ref": "WatchlistItemDto"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_addStockToWatchlist",
+        "description": "[am-market-data] POST /v1/watchlists/{watchlistId}/items | POST /v1/watchlists/{watchlistId}/items | tags: Watchlist | PATH required: watchlistId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "watchlistId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 watchlistId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "watchlistId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/watchlists/{watchlistId}/items",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "addStockToWatchlist",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_addStockToWatchlist",
+        "summary": "POST /v1/watchlists/{watchlistId}/items",
+        "tags": [
+          "Watchlist"
+        ],
+        "path_params": [
+          "watchlistId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "watchlistId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Watchlist",
+        "sdk_api": "WatchlistApi",
+        "group": "core",
+        "response_schema_ref": "WatchlistItemDto"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_market_data_removeStockFromWatchlist",
+        "description": "[am-market-data] DELETE /v1/watchlists/{watchlistId}/items/{symbol} | DELETE /v1/watchlists/{watchlistId}/items/{symbol} | tags: Watchlist | PATH required: watchlistId, symbol | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "watchlistId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 watchlistId",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "symbol": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            }
+          },
+          "required": [
+            "watchlistId",
+            "symbol"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/watchlists/{watchlistId}/items/{symbol}",
+        "base_url": "https://am-dev.asrax.in/market",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/market",
+          "preprod": "https://am-preprod.asrax.in/market",
+          "prod": "https://am.asrax.in/market"
+        },
+        "op_id": "removeStockFromWatchlist",
+        "service": "am-market-data",
+        "tool_name": "api_am_market_data_removeStockFromWatchlist",
+        "summary": "DELETE /v1/watchlists/{watchlistId}/items/{symbol}",
+        "tags": [
+          "Watchlist"
+        ],
+        "path_params": [
+          "watchlistId",
+          "symbol"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "watchlistId": "path",
+          "symbol": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Watchlist",
+        "sdk_api": "WatchlistApi",
+        "group": "core"
+      }
+    }
+  ]
+}

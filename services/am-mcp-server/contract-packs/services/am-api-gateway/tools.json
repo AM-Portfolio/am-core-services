@@ -1,0 +1,1670 @@
+{
+  "service": "am-api-gateway",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/router",
+    "preprod": "https://am.asrax.in/am",
+    "prod": "https://am.munish.org/am"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 28,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Configure pack env once; use routes.json for controller groups (same as SDK Service).",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_health_check_health_get",
+        "description": "[am-api-gateway] GET /health | Health Check | tags: System | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "health_check_health_get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_health_check_health_get",
+        "summary": "Health Check",
+        "tags": [
+          "System"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "System",
+        "sdk_api": "SystemApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_health_check_router_health_get",
+        "description": "[am-api-gateway] GET /router/health | Health Check | tags: System | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/router/health",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "health_check_router_health_get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_health_check_router_health_get",
+        "summary": "Health Check",
+        "tags": [
+          "System"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "System",
+        "sdk_api": "SystemApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_root__get",
+        "description": "[am-api-gateway] GET / | Root | tags: System | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "root__get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_root__get",
+        "summary": "Root",
+        "tags": [
+          "System"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "System",
+        "sdk_api": "SystemApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_root_router_get",
+        "description": "[am-api-gateway] GET /router | Root | tags: System | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/router",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "root_router_get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_root_router_get",
+        "summary": "Root",
+        "tags": [
+          "System"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "System",
+        "sdk_api": "SystemApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__get",
+        "description": "[am-api-gateway] GET /am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_am__service_name___path__get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__get",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__post",
+        "description": "[am-api-gateway] POST /am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_am__service_name___path__post",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__post",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__put",
+        "description": "[am-api-gateway] PUT /am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_am__service_name___path__put",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__put",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__patch",
+        "description": "[am-api-gateway] PATCH /am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_am__service_name___path__patch",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__patch",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__delete",
+        "description": "[am-api-gateway] DELETE /am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_am__service_name___path__delete",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__delete",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__options",
+        "description": "[am-api-gateway] OPTIONS /am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "options",
+        "path": "/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_am__service_name___path__options",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_am__service_name___path__options",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__get",
+        "description": "[am-api-gateway] GET /router/am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/router/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_router_am__service_name___path__get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__get",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__post",
+        "description": "[am-api-gateway] POST /router/am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/router/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_router_am__service_name___path__post",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__post",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__put",
+        "description": "[am-api-gateway] PUT /router/am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/router/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_router_am__service_name___path__put",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__put",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__patch",
+        "description": "[am-api-gateway] PATCH /router/am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/router/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_router_am__service_name___path__patch",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__patch",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__delete",
+        "description": "[am-api-gateway] DELETE /router/am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/router/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_router_am__service_name___path__delete",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__delete",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__options",
+        "description": "[am-api-gateway] OPTIONS /router/am/{service_name}/{path} | Dynamic Proxy | tags: Proxy | PATH required: service_name, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "service_name": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 service_name",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "service_name",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "options",
+        "path": "/router/am/{service_name}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_proxy_router_am__service_name___path__options",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_proxy_router_am__service_name___path__options",
+        "summary": "Dynamic Proxy",
+        "tags": [
+          "Proxy"
+        ],
+        "path_params": [
+          "service_name",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "service_name": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Proxy",
+        "sdk_api": "ProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__get",
+        "description": "[am-api-gateway] GET /{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy__first_segment___path__get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__get",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__post",
+        "description": "[am-api-gateway] POST /{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy__first_segment___path__post",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__post",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__put",
+        "description": "[am-api-gateway] PUT /{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy__first_segment___path__put",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__put",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__patch",
+        "description": "[am-api-gateway] PATCH /{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy__first_segment___path__patch",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__patch",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__delete",
+        "description": "[am-api-gateway] DELETE /{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy__first_segment___path__delete",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__delete",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__options",
+        "description": "[am-api-gateway] OPTIONS /{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "options",
+        "path": "/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy__first_segment___path__options",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy__first_segment___path__options",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__get",
+        "description": "[am-api-gateway] GET /router/{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/router/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy_router__first_segment___path__get",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__get",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__post",
+        "description": "[am-api-gateway] POST /router/{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/router/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy_router__first_segment___path__post",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__post",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__put",
+        "description": "[am-api-gateway] PUT /router/{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/router/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy_router__first_segment___path__put",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__put",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__patch",
+        "description": "[am-api-gateway] PATCH /router/{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/router/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy_router__first_segment___path__patch",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__patch",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__delete",
+        "description": "[am-api-gateway] DELETE /router/{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/router/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy_router__first_segment___path__delete",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__delete",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__options",
+        "description": "[am-api-gateway] OPTIONS /router/{first_segment}/{path} | Dynamic Direct Proxy | tags: Direct Proxy | PATH required: first_segment, path | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "first_segment": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 first_segment",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "path": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 path",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "first_segment",
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "options",
+        "path": "/router/{first_segment}/{path}",
+        "base_url": "https://am-dev.asrax.in/router",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/router",
+          "preprod": "https://am.asrax.in/am",
+          "prod": "https://am.munish.org/am"
+        },
+        "op_id": "dynamic_direct_proxy_router__first_segment___path__options",
+        "service": "am-api-gateway",
+        "tool_name": "api_am_api_gateway_dynamic_direct_proxy_router__first_segment___path__options",
+        "summary": "Dynamic Direct Proxy",
+        "tags": [
+          "Direct Proxy"
+        ],
+        "path_params": [
+          "first_segment",
+          "path"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "first_segment": "path",
+          "path": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Direct Proxy",
+        "sdk_api": "DirectProxyApi",
+        "group": "other"
+      }
+    }
+  ]
+}

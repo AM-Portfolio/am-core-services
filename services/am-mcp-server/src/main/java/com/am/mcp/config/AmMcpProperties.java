@@ -193,9 +193,8 @@ public class AmMcpProperties {
         private String packsDir = "";
         /** Target env key in tool _meta.base_urls (dev|preprod|prod). */
         private String environment = "dev";
-        /** Empty = all services that have tools.json. */
-        private List<String> services = new ArrayList<>(List.of(
-                "am-market-data", "am-news", "am-parser"));
+        /** Empty = all services that have tools.json under packs-dir. */
+        private List<String> services = new ArrayList<>();
         /** Product groups from grouping.yaml / tools _meta.group. */
         private List<String> groups = new ArrayList<>(List.of("core"));
         private boolean includeAllGroups = false;

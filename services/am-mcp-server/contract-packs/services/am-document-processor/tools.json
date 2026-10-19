@@ -1,0 +1,470 @@
+{
+  "service": "am-document-processor",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/doc/processor",
+    "preprod": "https://am-preprod.asrax.in/doc/processor",
+    "prod": "https://am.asrax.in/doc/processor"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 7,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_processDocument",
+        "description": "[am-document-processor] POST /documents/process | Process a single document | tags: Documents | BODY required: file, documentType | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Portfolio document file to process \u2014 format=binary",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "documentType": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Type of document being processed \u2014 enum=['STOCK_PORTFOLIO', 'MUTUAL_FUND_PORTFOLIO']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "STOCK_PORTFOLIO",
+                "MUTUAL_FUND_PORTFOLIO"
+              ]
+            }
+          },
+          "required": [
+            "file",
+            "documentType"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/documents/process",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "processDocument",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_processDocument",
+        "summary": "Process a single document",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "file",
+          "documentType"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "file": "body",
+          "documentType": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "response_schema_ref": "DocumentProcessResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_processBatchDocuments",
+        "description": "[am-document-processor] POST /documents/batch-process | Process multiple documents | tags: Documents | BODY required: files, documentType | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "files": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 List of portfolio document files to process",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "documentType": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Type of documents being processed \u2014 enum=['STOCK_PORTFOLIO', 'MUTUAL_FUND_PORTFOLIO']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "STOCK_PORTFOLIO",
+                "MUTUAL_FUND_PORTFOLIO"
+              ]
+            }
+          },
+          "required": [
+            "files",
+            "documentType"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/documents/batch-process",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "processBatchDocuments",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_processBatchDocuments",
+        "summary": "Process multiple documents",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "files",
+          "documentType"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "files": "body",
+          "documentType": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_getProcessingStatus",
+        "description": "[am-document-processor] GET /documents/status/{processId} | Get document processing status | tags: Documents | PATH required: processId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "processId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 Unique identifier of the processing request \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "processId"
+            }
+          },
+          "required": [
+            "processId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/documents/status/{processId}",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "getProcessingStatus",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_getProcessingStatus",
+        "summary": "Get document processing status",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [
+          "processId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "processId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "response_schema_ref": "ProcessingStatus",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_submitBatchSync",
+        "description": "[am-document-processor] POST /documents/sync | Submit a multi-broker batch sync | tags: Documents | BODY required: files | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "files": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Files to process (one or more, different brokers allowed)",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "brokerTypes": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 Optional per-file broker hints (same order as files)",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            },
+            "documentTypes": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 Optional per-file document type hints (same order as files)",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            },
+            "passwords": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 Optional per-file passwords for encrypted files",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            },
+            "portfolioIds": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 Optional per-file portfolio names/IDs (same order as files)",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            },
+            "portfolioId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Optional batch-level portfolio ID used when a file has no per-file value \u2014 example='pf-demo-001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "portfolioId",
+              "example": "pf-demo-001"
+            }
+          },
+          "required": [
+            "files"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/documents/sync",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "submitBatchSync",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_submitBatchSync",
+        "summary": "Submit a multi-broker batch sync",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "files"
+        ],
+        "body_optional": [
+          "brokerTypes",
+          "documentTypes",
+          "passwords",
+          "portfolioIds",
+          "portfolioId"
+        ],
+        "param_locations": {
+          "files": "body",
+          "brokerTypes": "body",
+          "documentTypes": "body",
+          "passwords": "body",
+          "portfolioIds": "body",
+          "portfolioId": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_getBatchSyncStatus",
+        "description": "[am-document-processor] GET /documents/sync/{batchId}/status | Get batch sync status | tags: Documents | PATH required: batchId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "batchId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 batchId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "batchId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/documents/sync/{batchId}/status",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "getBatchSyncStatus",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_getBatchSyncStatus",
+        "summary": "Get batch sync status",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [
+          "batchId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "batchId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "response_schema_ref": "BatchSyncStatus",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_streamBatchSyncProgress",
+        "description": "[am-document-processor] GET /documents/sync/{batchId}/stream | Stream batch sync progress via SSE | tags: Documents | PATH required: batchId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "batchId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 batchId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "batchId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/documents/sync/{batchId}/stream",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "streamBatchSyncProgress",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_streamBatchSyncProgress",
+        "summary": "Stream batch sync progress via SSE",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [
+          "batchId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "batchId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_document_processor_getSupportedDocumentTypes",
+        "description": "[am-document-processor] GET /documents/types | Get supported document types | tags: Documents | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/documents/types",
+        "base_url": "https://am-dev.asrax.in/doc/processor",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/doc/processor",
+          "preprod": "https://am-preprod.asrax.in/doc/processor",
+          "prod": "https://am.asrax.in/doc/processor"
+        },
+        "op_id": "getSupportedDocumentTypes",
+        "service": "am-document-processor",
+        "tool_name": "api_am_document_processor_getSupportedDocumentTypes",
+        "summary": "Get supported document types",
+        "tags": [
+          "Documents"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Documents",
+        "sdk_api": "DocumentsApi",
+        "group": "other"
+      }
+    }
+  ]
+}

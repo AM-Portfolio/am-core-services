@@ -103,13 +103,11 @@ am:
     enabled: ${AM_CONTRACT_MCP_ENABLED:false}
     packs-dir: ${AM_CONTRACT_MCP_PACKS_DIR:}
     environment: ${AM_CONTRACT_MCP_ENV:dev}
-    # Empty list in YAML override = all services with tools.json
-    services:
-      - am-market-data
-      - am-news
-      - am-parser
+    # Empty = every tools.json under packs-dir (am-specs fleet).
+    services: []
     groups:
       - core
+    # DEV image sets AM_CONTRACT_MCP_ALL_GROUPS=true so all groups ship (not only core).
     include-all-groups: ${AM_CONTRACT_MCP_ALL_GROUPS:false}
 
 # ── Connection Pool ───────────────────────────────────────────────────────────

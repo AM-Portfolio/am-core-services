@@ -1,0 +1,499 @@
+{
+  "service": "am-fin-agent",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/ai",
+    "preprod": "https://am-preprod.asrax.in/ai",
+    "prod": "https://am.asrax.in/ai"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 8,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_root__get",
+        "description": "[am-fin-agent] GET / | Root | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "root__get",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_root__get",
+        "summary": "Root",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_chat_api_v1_ai_chat_post",
+        "description": "[am-fin-agent] POST /api/v1/ai/chat | Chat | BODY required: message, userId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 message",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "userId": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 sessionId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "sessionId"
+            }
+          },
+          "required": [
+            "message",
+            "userId"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ChatRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/ai/chat",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "chat_api_v1_ai_chat_post",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_chat_api_v1_ai_chat_post",
+        "summary": "Chat",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "message",
+          "userId"
+        ],
+        "body_optional": [
+          "sessionId"
+        ],
+        "param_locations": {
+          "message": "body",
+          "userId": "body",
+          "sessionId": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "ChatRequest",
+        "x-asrax-schema": "models/ChatRequest.json",
+        "response_schema_ref": "AiIntentResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_chat_stream_api_v1_ai_chat_stream_get",
+        "description": "[am-fin-agent] GET /api/v1/ai/chat/stream | Chat Stream | BODY required: message, userId | Query optional: user_id, session_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 message",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "session_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "sessionId"
+            },
+            "userId": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 sessionId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "sessionId"
+            }
+          },
+          "required": [
+            "message",
+            "userId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/ai/chat/stream",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "chat_stream_api_v1_ai_chat_stream_get",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_chat_stream_api_v1_ai_chat_stream_get",
+        "summary": "Chat Stream",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "message",
+          "user_id",
+          "session_id"
+        ],
+        "header_params": [],
+        "body_required": [
+          "message",
+          "userId"
+        ],
+        "body_optional": [
+          "sessionId"
+        ],
+        "param_locations": {
+          "message": "body",
+          "user_id": "query",
+          "session_id": "query",
+          "userId": "body",
+          "sessionId": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_chat_stream_api_v1_ai_chat_stream_post",
+        "description": "[am-fin-agent] POST /api/v1/ai/chat/stream | Chat Stream | BODY required: message, userId | Query optional: user_id, session_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 message",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "session_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "sessionId"
+            },
+            "userId": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 sessionId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "sessionId"
+            }
+          },
+          "required": [
+            "message",
+            "userId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/ai/chat/stream",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "chat_stream_api_v1_ai_chat_stream_post",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_chat_stream_api_v1_ai_chat_stream_post",
+        "summary": "Chat Stream",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "message",
+          "user_id",
+          "session_id"
+        ],
+        "header_params": [],
+        "body_required": [
+          "message",
+          "userId"
+        ],
+        "body_optional": [
+          "sessionId"
+        ],
+        "param_locations": {
+          "message": "body",
+          "user_id": "query",
+          "session_id": "query",
+          "userId": "body",
+          "sessionId": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_feedback_api_v1_ai_feedback_post",
+        "description": "[am-fin-agent] POST /api/v1/ai/feedback | Feedback | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/ai/feedback",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "feedback_api_v1_ai_feedback_post",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_feedback_api_v1_ai_feedback_post",
+        "summary": "Feedback",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_confirm_action_api_v1_ai_actions_confirm_post",
+        "description": "[am-fin-agent] POST /api/v1/ai/actions/confirm | Confirm Action | BODY required: body | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "object",
+              "description": "[BODY] REQUIRED \u2014 JSON request body",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "body"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/ai/actions/confirm",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "confirm_action_api_v1_ai_actions_confirm_post",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_confirm_action_api_v1_ai_actions_confirm_post",
+        "summary": "Confirm Action",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "body"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "body": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_health_health_get",
+        "description": "[am-fin-agent] GET /health | Health | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "health_health_get",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_fin_agent_ready_ready_get",
+        "description": "[am-fin-agent] GET /ready | Ready | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/ready",
+        "base_url": "https://am-dev.asrax.in/ai",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ai",
+          "preprod": "https://am-preprod.asrax.in/ai",
+          "prod": "https://am.asrax.in/ai"
+        },
+        "op_id": "ready_ready_get",
+        "service": "am-fin-agent",
+        "tool_name": "api_am_fin_agent_ready_ready_get",
+        "summary": "Ready",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    }
+  ]
+}

@@ -1,0 +1,4030 @@
+{
+  "service": "am-asrax-corp",
+  "targets": {
+    "dev": "https://corp-dev.asrax.in",
+    "preprod": "https://corp-preprod.asrax.in",
+    "prod": "https://corp.asrax.in"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 41,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_health_health_get",
+        "description": "[am-asrax-corp] GET /health | Health | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "health_health_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_get_company_master_api_v1_master_company_get",
+        "description": "[am-asrax-corp] GET /api/v1/master/company | Get Company Master | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/company",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "get_company_master_api_v1_master_company_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_get_company_master_api_v1_master_company_get",
+        "summary": "Get Company Master",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_get_employees_master_api_v1_master_employees_get",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees | Get Employees Master | Query optional: role, status | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 role",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "status": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 ACTIVE, INACTIVE, or ALL \u2014 default='ACTIVE'",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "status",
+              "default": "ACTIVE"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "get_employees_master_api_v1_master_employees_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_get_employees_master_api_v1_master_employees_get",
+        "summary": "Get Employees Master",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "role",
+          "status"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "role": "query",
+          "status": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_create_employee_master_api_v1_master_employees_post",
+        "description": "[am-asrax-corp] POST /api/v1/master/employees | Create Employee Master | BODY required: employee_id, name, designation, annual_ctc | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "name": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 name",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 designation",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "status": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 status \u2014 default='ACTIVE'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "status",
+              "default": "ACTIVE"
+            },
+            "department": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 department \u2014 default='Engineering'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Engineering"
+            },
+            "annual_ctc": {
+              "type": "integer",
+              "description": "[BODY] \u2014 REQUIRED \u2014 annual_ctc",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "roles": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 roles",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            },
+            "bank_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "account_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 account_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 pan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "uan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 uan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pf_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 pf_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pf": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pf",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pt": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pt",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_basic_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_basic_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_hra_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_hra_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_allowances_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_allowances_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_certified": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_certified",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_registration_no": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_registration_no",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_valid_till": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_valid_till",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_exam": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_exam",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id",
+            "name",
+            "designation",
+            "annual_ctc"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/EmployeeWrite.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/master/employees",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "create_employee_master_api_v1_master_employees_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_create_employee_master_api_v1_master_employees_post",
+        "summary": "Create Employee Master",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "employee_id",
+          "name",
+          "designation",
+          "annual_ctc"
+        ],
+        "body_optional": [
+          "status",
+          "department",
+          "roles",
+          "bank_name",
+          "account_number",
+          "pan",
+          "uan",
+          "pf_number",
+          "include_pf",
+          "include_pt",
+          "custom_basic_m",
+          "custom_hra_m",
+          "custom_allowances_m",
+          "nism_certified",
+          "nism_registration_no",
+          "nism_valid_till",
+          "nism_exam"
+        ],
+        "param_locations": {
+          "employee_id": "body",
+          "name": "body",
+          "designation": "body",
+          "status": "body",
+          "department": "body",
+          "annual_ctc": "body",
+          "roles": "body",
+          "bank_name": "body",
+          "account_number": "body",
+          "pan": "body",
+          "uan": "body",
+          "pf_number": "body",
+          "include_pf": "body",
+          "include_pt": "body",
+          "custom_basic_m": "body",
+          "custom_hra_m": "body",
+          "custom_allowances_m": "body",
+          "nism_certified": "body",
+          "nism_registration_no": "body",
+          "nism_valid_till": "body",
+          "nism_exam": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "EmployeeWrite",
+        "x-asrax-schema": "models/EmployeeWrite.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_get_employee_master_api_v1_master_employees__employee_id__get",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees/{employee_id} | Get Employee Master | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "get_employee_master_api_v1_master_employees__employee_id__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_get_employee_master_api_v1_master_employees__employee_id__get",
+        "summary": "Get Employee Master",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_update_employee_master_api_v1_master_employees__employee_id__put",
+        "description": "[am-asrax-corp] PUT /api/v1/master/employees/{employee_id} | Update Employee Master | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 designation",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "status": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 status",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "status"
+            },
+            "department": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 department",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "annual_ctc": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 annual_ctc",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "roles": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 roles",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "bank_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "account_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 account_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 pan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "uan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 uan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pf_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 pf_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pf": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pf",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pt": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pt",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_basic_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_basic_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_hra_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_hra_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_allowances_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_allowances_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_certified": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_certified",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_registration_no": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_registration_no",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_valid_till": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_valid_till",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_exam": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_exam",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/EmployeeUpdate.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/api/v1/master/employees/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "update_employee_master_api_v1_master_employees__employee_id__put",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_update_employee_master_api_v1_master_employees__employee_id__put",
+        "summary": "Update Employee Master",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "name",
+          "designation",
+          "status",
+          "department",
+          "annual_ctc",
+          "roles",
+          "bank_name",
+          "account_number",
+          "pan",
+          "uan",
+          "pf_number",
+          "include_pf",
+          "include_pt",
+          "custom_basic_m",
+          "custom_hra_m",
+          "custom_allowances_m",
+          "nism_certified",
+          "nism_registration_no",
+          "nism_valid_till",
+          "nism_exam"
+        ],
+        "param_locations": {
+          "employee_id": "path",
+          "name": "body",
+          "designation": "body",
+          "status": "body",
+          "department": "body",
+          "annual_ctc": "body",
+          "roles": "body",
+          "bank_name": "body",
+          "account_number": "body",
+          "pan": "body",
+          "uan": "body",
+          "pf_number": "body",
+          "include_pf": "body",
+          "include_pt": "body",
+          "custom_basic_m": "body",
+          "custom_hra_m": "body",
+          "custom_allowances_m": "body",
+          "nism_certified": "body",
+          "nism_registration_no": "body",
+          "nism_valid_till": "body",
+          "nism_exam": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "EmployeeUpdate",
+        "x-asrax-schema": "models/EmployeeUpdate.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_delete_employee_master_api_v1_master_employees__employee_id__delete",
+        "description": "[am-asrax-corp] DELETE /api/v1/master/employees/{employee_id} | Delete Employee Master | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/api/v1/master/employees/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "delete_employee_master_api_v1_master_employees__employee_id__delete",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_delete_employee_master_api_v1_master_employees__employee_id__delete",
+        "summary": "Delete Employee Master",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_get_employee_profile_api_v1_master_employees__employee_id__profile_get",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees/{employee_id}/profile | Get Employee Profile | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees/{employee_id}/profile",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "get_employee_profile_api_v1_master_employees__employee_id__profile_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_get_employee_profile_api_v1_master_employees__employee_id__profile_get",
+        "summary": "Get Employee Profile",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_put_employee_profile_api_v1_master_employees__employee_id__profile_put",
+        "description": "[am-asrax-corp] PUT /api/v1/master/employees/{employee_id}/profile | Put Employee Profile | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 designation",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "department": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 department",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "date_of_joining": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 date_of_joining",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "blood_group": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 blood_group",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "profile_photo_doc_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 profile_photo_doc_id",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "annual_ctc": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 annual_ctc",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "roles": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 roles",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "contact": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 contact",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "address": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 address",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "statutory": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 statutory",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "bank": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "board": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 board",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "skills": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 skills",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pf": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pf",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pt": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pt",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_basic_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_basic_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_hra_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_hra_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_allowances_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_allowances_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_certified": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_certified",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_registration_no": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_registration_no",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_valid_till": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_valid_till",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_exam": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_exam",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ProfileUpdate.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/api/v1/master/employees/{employee_id}/profile",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "put_employee_profile_api_v1_master_employees__employee_id__profile_put",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_put_employee_profile_api_v1_master_employees__employee_id__profile_put",
+        "summary": "Put Employee Profile",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "name",
+          "designation",
+          "department",
+          "date_of_joining",
+          "blood_group",
+          "profile_photo_doc_id",
+          "annual_ctc",
+          "roles",
+          "contact",
+          "address",
+          "statutory",
+          "bank",
+          "board",
+          "skills",
+          "include_pf",
+          "include_pt",
+          "custom_basic_m",
+          "custom_hra_m",
+          "custom_allowances_m",
+          "nism_certified",
+          "nism_registration_no",
+          "nism_valid_till",
+          "nism_exam"
+        ],
+        "param_locations": {
+          "employee_id": "path",
+          "name": "body",
+          "designation": "body",
+          "department": "body",
+          "date_of_joining": "body",
+          "blood_group": "body",
+          "profile_photo_doc_id": "body",
+          "annual_ctc": "body",
+          "roles": "body",
+          "contact": "body",
+          "address": "body",
+          "statutory": "body",
+          "bank": "body",
+          "board": "body",
+          "skills": "body",
+          "include_pf": "body",
+          "include_pt": "body",
+          "custom_basic_m": "body",
+          "custom_hra_m": "body",
+          "custom_allowances_m": "body",
+          "nism_certified": "body",
+          "nism_registration_no": "body",
+          "nism_valid_till": "body",
+          "nism_exam": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "ProfileUpdate",
+        "x-asrax-schema": "models/ProfileUpdate.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_get_employee_documents_api_v1_master_employees__employee_id__documents_get",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees/{employee_id}/documents | Get Employee Documents | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees/{employee_id}/documents",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "get_employee_documents_api_v1_master_employees__employee_id__documents_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_get_employee_documents_api_v1_master_employees__employee_id__documents_get",
+        "summary": "Get Employee Documents",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_post_employee_document_api_v1_master_employees__employee_id__documents_post",
+        "description": "[am-asrax-corp] POST /api/v1/master/employees/{employee_id}/documents | Post Employee Document | PATH required: employee_id | BODY required: doc_type, file | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "doc_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 doc_type",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 file",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "employee_id",
+            "doc_type",
+            "file"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/master/employees/{employee_id}/documents",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "post_employee_document_api_v1_master_employees__employee_id__documents_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_post_employee_document_api_v1_master_employees__employee_id__documents_post",
+        "summary": "Post Employee Document",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "doc_type",
+          "file"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "doc_type": "body",
+          "file": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_post_employee_document_base64_api_v1_master_employees__employee_id__documents_",
+        "description": "[am-asrax-corp] POST /api/v1/master/employees/{employee_id}/documents/base64 | Post Employee Document Base64 | PATH required: employee_id | BODY required: doc_type, filename, content_base64 | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "doc_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 doc_type",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "filename": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 filename",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "content_base64": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 content_base64",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "content_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=mimeType (producer=content_type) \u2014 mimeType \u2014 default='application/octet-stream'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "mimeType",
+              "default": "application/octet-stream"
+            }
+          },
+          "required": [
+            "employee_id",
+            "doc_type",
+            "filename",
+            "content_base64"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DocumentUploadBase64.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/master/employees/{employee_id}/documents/base64",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "post_employee_document_base64_api_v1_master_employees__employee_id__documents_base64_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_post_employee_document_base64_api_v1_master_employees__employee_id__documents_",
+        "summary": "Post Employee Document Base64",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "doc_type",
+          "filename",
+          "content_base64"
+        ],
+        "body_optional": [
+          "content_type"
+        ],
+        "param_locations": {
+          "employee_id": "path",
+          "doc_type": "body",
+          "filename": "body",
+          "content_base64": "body",
+          "content_type": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "DocumentUploadBase64",
+        "x-asrax-schema": "models/DocumentUploadBase64.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_download_employee_document_api_v1_master_employees__employee_id__documents__do",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees/{employee_id}/documents/{doc_id} | Download Employee Document | PATH required: employee_id, doc_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=documentId (producer=doc_id) \u2014 documentId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "documentId"
+            }
+          },
+          "required": [
+            "employee_id",
+            "doc_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees/{employee_id}/documents/{doc_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "download_employee_document_api_v1_master_employees__employee_id__documents__doc_id__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_download_employee_document_api_v1_master_employees__employee_id__documents__do",
+        "summary": "Download Employee Document",
+        "tags": [],
+        "path_params": [
+          "employee_id",
+          "doc_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "doc_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_remove_employee_document_api_v1_master_employees__employee_id__documents__doc_",
+        "description": "[am-asrax-corp] DELETE /api/v1/master/employees/{employee_id}/documents/{doc_id} | Remove Employee Document | PATH required: employee_id, doc_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=documentId (producer=doc_id) \u2014 documentId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "documentId"
+            }
+          },
+          "required": [
+            "employee_id",
+            "doc_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/api/v1/master/employees/{employee_id}/documents/{doc_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "remove_employee_document_api_v1_master_employees__employee_id__documents__doc_id__delete",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_remove_employee_document_api_v1_master_employees__employee_id__documents__doc_",
+        "summary": "Remove Employee Document",
+        "tags": [],
+        "path_params": [
+          "employee_id",
+          "doc_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "doc_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_download_id_card_api_v1_master_employees__employee_id__id_card_get",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees/{employee_id}/id-card | Download Id Card | PATH required: employee_id | Query optional: regenerate, format, side | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "regenerate": {
+              "type": "boolean",
+              "description": "[QUERY] \u2014 optional \u2014 regenerate \u2014 default=False",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": false
+            },
+            "format": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 format \u2014 default='png'",
+              "x-param-in": "query",
+              "x-required": false,
+              "default": "png"
+            },
+            "side": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 side",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "side"
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees/{employee_id}/id-card",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "download_id_card_api_v1_master_employees__employee_id__id_card_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_download_id_card_api_v1_master_employees__employee_id__id_card_get",
+        "summary": "Download Id Card",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [
+          "regenerate",
+          "format",
+          "side"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "regenerate": "query",
+          "format": "query",
+          "side": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_get_employee_payslips_api_v1_master_employees__employee_id__payslips_get",
+        "description": "[am-asrax-corp] GET /api/v1/master/employees/{employee_id}/payslips | Get Employee Payslips | PATH required: employee_id | Query optional: month, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "month": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 month",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "year": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 year",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/master/employees/{employee_id}/payslips",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "get_employee_payslips_api_v1_master_employees__employee_id__payslips_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_get_employee_payslips_api_v1_master_employees__employee_id__payslips_get",
+        "summary": "Get Employee Payslips",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [
+          "month",
+          "year"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "month": "query",
+          "year": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_resend_payslip_email_api_v1_master_employees__employee_id__payslips_resend_ema",
+        "description": "[am-asrax-corp] POST /api/v1/master/employees/{employee_id}/payslips/resend-email | Resend Payslip Email | PATH required: employee_id | BODY required: period | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "period": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=timeInterval (producer=period) \u2014 timeInterval",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "timeInterval"
+            }
+          },
+          "required": [
+            "employee_id",
+            "period"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ResendPayslipEmailRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/master/employees/{employee_id}/payslips/resend-email",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "resend_payslip_email_api_v1_master_employees__employee_id__payslips_resend_email_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_resend_payslip_email_api_v1_master_employees__employee_id__payslips_resend_ema",
+        "summary": "Resend Payslip Email",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "period"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "period": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "ResendPayslipEmailRequest",
+        "x-asrax-schema": "models/ResendPayslipEmailRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_payroll_preview_api_v1_payroll_preview_post",
+        "description": "[am-asrax-corp] POST /api/v1/payroll/preview | Payroll Preview | BODY required: month, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "month": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 month",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "year": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 year",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "employee_ids": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 employee_ids",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "overrides": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 overrides",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "force": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 force \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "send_email": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 send_email \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            }
+          },
+          "required": [
+            "month",
+            "year"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PayrollRunRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/payroll/preview",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "payroll_preview_api_v1_payroll_preview_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_payroll_preview_api_v1_payroll_preview_post",
+        "summary": "Payroll Preview",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "month",
+          "year"
+        ],
+        "body_optional": [
+          "employee_ids",
+          "overrides",
+          "force",
+          "send_email"
+        ],
+        "param_locations": {
+          "month": "body",
+          "year": "body",
+          "employee_ids": "body",
+          "overrides": "body",
+          "force": "body",
+          "send_email": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "PayrollRunRequest",
+        "x-asrax-schema": "models/PayrollRunRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_list_payslips_api_v1_payslips_get",
+        "description": "[am-asrax-corp] GET /api/v1/payslips | List Payslips | Query optional: employee_id, month, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "employeeId"
+            },
+            "month": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 month",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "year": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 year",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/payslips",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "list_payslips_api_v1_payslips_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_list_payslips_api_v1_payslips_get",
+        "summary": "List Payslips",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "employee_id",
+          "month",
+          "year"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "query",
+          "month": "query",
+          "year": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_download_payslip_api_v1_payslips__employee_id___period__get",
+        "description": "[am-asrax-corp] GET /api/v1/payslips/{employee_id}/{period} | Download Payslip | PATH required: employee_id, period | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "period": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=timeInterval (producer=period) \u2014 timeInterval",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "timeInterval"
+            }
+          },
+          "required": [
+            "employee_id",
+            "period"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/payslips/{employee_id}/{period}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "download_payslip_api_v1_payslips__employee_id___period__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_download_payslip_api_v1_payslips__employee_id___period__get",
+        "summary": "Download Payslip",
+        "tags": [],
+        "path_params": [
+          "employee_id",
+          "period"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "period": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_upload_payslip_api_v1_payslips__employee_id___period__post",
+        "description": "[am-asrax-corp] POST /api/v1/payslips/{employee_id}/{period} | Upload Payslip | PATH required: employee_id, period | BODY required: file | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "period": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=timeInterval (producer=period) \u2014 timeInterval",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "timeInterval"
+            },
+            "file": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 file",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "employee_id",
+            "period",
+            "file"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/payslips/{employee_id}/{period}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "upload_payslip_api_v1_payslips__employee_id___period__post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_upload_payslip_api_v1_payslips__employee_id___period__post",
+        "summary": "Upload Payslip",
+        "tags": [],
+        "path_params": [
+          "employee_id",
+          "period"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "file"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "period": "path",
+          "file": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_delete_payslip_api_v1_payslips__employee_id___period__delete",
+        "description": "[am-asrax-corp] DELETE /api/v1/payslips/{employee_id}/{period} | Delete Payslip | PATH required: employee_id, period | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "period": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=timeInterval (producer=period) \u2014 timeInterval",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "timeInterval"
+            }
+          },
+          "required": [
+            "employee_id",
+            "period"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/api/v1/payslips/{employee_id}/{period}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "delete_payslip_api_v1_payslips__employee_id___period__delete",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_delete_payslip_api_v1_payslips__employee_id___period__delete",
+        "summary": "Delete Payslip",
+        "tags": [],
+        "path_params": [
+          "employee_id",
+          "period"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "period": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_payroll_run_api_v1_payroll_run_post",
+        "description": "[am-asrax-corp] POST /api/v1/payroll/run | Payroll Run | BODY required: month, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "month": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 month",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "year": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 year",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "employee_ids": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 employee_ids",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "overrides": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 overrides",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "force": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 force \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "send_email": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 send_email \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            }
+          },
+          "required": [
+            "month",
+            "year"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PayrollRunRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/payroll/run",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "payroll_run_api_v1_payroll_run_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_payroll_run_api_v1_payroll_run_post",
+        "summary": "Payroll Run",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "month",
+          "year"
+        ],
+        "body_optional": [
+          "employee_ids",
+          "overrides",
+          "force",
+          "send_email"
+        ],
+        "param_locations": {
+          "month": "body",
+          "year": "body",
+          "employee_ids": "body",
+          "overrides": "body",
+          "force": "body",
+          "send_email": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "PayrollRunRequest",
+        "x-asrax-schema": "models/PayrollRunRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_balances_api_v1_leave_balances_get",
+        "description": "[am-asrax-corp] GET /api/v1/leave/balances | Leave Balances | Query optional: employee_id, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "employeeId"
+            },
+            "year": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 year",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/leave/balances",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_balances_api_v1_leave_balances_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_balances_api_v1_leave_balances_get",
+        "summary": "Leave Balances",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "employee_id",
+          "year"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "query",
+          "year": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_balance_one_api_v1_leave_balances__employee_id__get",
+        "description": "[am-asrax-corp] GET /api/v1/leave/balances/{employee_id} | Leave Balance One | PATH required: employee_id | Query optional: year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "year": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 year",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/leave/balances/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_balance_one_api_v1_leave_balances__employee_id__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_balance_one_api_v1_leave_balances__employee_id__get",
+        "summary": "Leave Balance One",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [
+          "year"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "year": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_balance_put_api_v1_leave_balances__employee_id__put",
+        "description": "[am-asrax-corp] PUT /api/v1/leave/balances/{employee_id} | Leave Balance Put | PATH required: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "year": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 year",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "CL": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 CL",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "SL": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 SL",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "EL": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 EL",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LeaveBalancePutRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/api/v1/leave/balances/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_balance_put_api_v1_leave_balances__employee_id__put",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_balance_put_api_v1_leave_balances__employee_id__put",
+        "summary": "Leave Balance Put",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "year",
+          "CL",
+          "SL",
+          "EL"
+        ],
+        "param_locations": {
+          "employee_id": "path",
+          "year": "body",
+          "CL": "body",
+          "SL": "body",
+          "EL": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "LeaveBalancePutRequest",
+        "x-asrax-schema": "models/LeaveBalancePutRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_calendar_api_v1_leave_calendar_get",
+        "description": "[am-asrax-corp] GET /api/v1/leave/calendar | Leave Calendar | Required args: year, month | Query optional: employee_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "year": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 year",
+              "x-param-in": "query",
+              "x-required": true
+            },
+            "month": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 month",
+              "x-param-in": "query",
+              "x-required": true,
+              "minimum": 1,
+              "maximum": 12
+            },
+            "employee_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "employeeId"
+            }
+          },
+          "required": [
+            "year",
+            "month"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/leave/calendar",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_calendar_api_v1_leave_calendar_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_calendar_api_v1_leave_calendar_get",
+        "summary": "Leave Calendar",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "year",
+          "month",
+          "employee_id"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "year": "query",
+          "month": "query",
+          "employee_id": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_entries_api_v1_leave_entries_get",
+        "description": "[am-asrax-corp] GET /api/v1/leave/entries | Leave Entries | Query optional: employee_id, year, status | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "employeeId"
+            },
+            "year": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 year",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "status": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 status",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "status"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/leave/entries",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_entries_api_v1_leave_entries_get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_entries_api_v1_leave_entries_get",
+        "summary": "Leave Entries",
+        "tags": [],
+        "path_params": [],
+        "query_params": [
+          "employee_id",
+          "year",
+          "status"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "query",
+          "year": "query",
+          "status": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_apply_api_v1_leave_entries_post",
+        "description": "[am-asrax-corp] POST /api/v1/leave/entries | Leave Apply | BODY required: employee_id, leave_type, start_date, end_date | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "leave_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 leave_type",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "start_date": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 start_date",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "end_date": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 end_date",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            }
+          },
+          "required": [
+            "employee_id",
+            "leave_type",
+            "start_date",
+            "end_date"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LeaveApplyRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/leave/entries",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_apply_api_v1_leave_entries_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_apply_api_v1_leave_entries_post",
+        "summary": "Leave Apply",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "employee_id",
+          "leave_type",
+          "start_date",
+          "end_date"
+        ],
+        "body_optional": [
+          "reason"
+        ],
+        "param_locations": {
+          "employee_id": "body",
+          "leave_type": "body",
+          "start_date": "body",
+          "end_date": "body",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "LeaveApplyRequest",
+        "x-asrax-schema": "models/LeaveApplyRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_approve_api_v1_leave_entries__entry_id__approve_post",
+        "description": "[am-asrax-corp] POST /api/v1/leave/entries/{entry_id}/approve | Leave Approve | PATH required: entry_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entry_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entry_id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "decided_by": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 decided_by \u2014 default='system'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "system"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            }
+          },
+          "required": [
+            "entry_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LeaveDecisionRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/leave/entries/{entry_id}/approve",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_approve_api_v1_leave_entries__entry_id__approve_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_approve_api_v1_leave_entries__entry_id__approve_post",
+        "summary": "Leave Approve",
+        "tags": [],
+        "path_params": [
+          "entry_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "decided_by",
+          "reason"
+        ],
+        "param_locations": {
+          "entry_id": "path",
+          "decided_by": "body",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "LeaveDecisionRequest",
+        "x-asrax-schema": "models/LeaveDecisionRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_reject_api_v1_leave_entries__entry_id__reject_post",
+        "description": "[am-asrax-corp] POST /api/v1/leave/entries/{entry_id}/reject | Leave Reject | PATH required: entry_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entry_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entry_id",
+              "x-param-in": "path",
+              "x-required": true
+            },
+            "decided_by": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 decided_by \u2014 default='system'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "system"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason \u2014 default=''",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": ""
+            }
+          },
+          "required": [
+            "entry_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LeaveDecisionRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/leave/entries/{entry_id}/reject",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_reject_api_v1_leave_entries__entry_id__reject_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_reject_api_v1_leave_entries__entry_id__reject_post",
+        "summary": "Leave Reject",
+        "tags": [],
+        "path_params": [
+          "entry_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "decided_by",
+          "reason"
+        ],
+        "param_locations": {
+          "entry_id": "path",
+          "decided_by": "body",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "LeaveDecisionRequest",
+        "x-asrax-schema": "models/LeaveDecisionRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_cancel_api_v1_leave_entries__entry_id__cancel_post",
+        "description": "[am-asrax-corp] POST /api/v1/leave/entries/{entry_id}/cancel | Leave Cancel | PATH required: entry_id | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entry_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 entry_id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "entry_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/leave/entries/{entry_id}/cancel",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_cancel_api_v1_leave_entries__entry_id__cancel_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_cancel_api_v1_leave_entries__entry_id__cancel_post",
+        "summary": "Leave Cancel",
+        "tags": [],
+        "path_params": [
+          "entry_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "entry_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_quarterly_report_api_v1_leave_report__employee_id__get",
+        "description": "[am-asrax-corp] GET /api/v1/leave/report/{employee_id} | Leave Quarterly Report | PATH required: employee_id | Query optional: year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "year": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 Financial Year start (e.g. 2026 = Apr 2026 \u2013 Mar 2027)",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/leave/report/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_quarterly_report_api_v1_leave_report__employee_id__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_quarterly_report_api_v1_leave_report__employee_id__get",
+        "summary": "Leave Quarterly Report",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [
+          "year"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "year": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_leave_month_impact_api_v1_leave_month_impact__employee_id__get",
+        "description": "[am-asrax-corp] GET /api/v1/leave/month-impact/{employee_id} | Leave Month Impact | PATH required: employee_id | Required args: month, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "month": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 month",
+              "x-param-in": "query",
+              "x-required": true,
+              "minimum": 1,
+              "maximum": 12
+            },
+            "year": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 year",
+              "x-param-in": "query",
+              "x-required": true
+            }
+          },
+          "required": [
+            "employee_id",
+            "month",
+            "year"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/leave/month-impact/{employee_id}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "leave_month_impact_api_v1_leave_month_impact__employee_id__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_leave_month_impact_api_v1_leave_month_impact__employee_id__get",
+        "summary": "Leave Month Impact",
+        "tags": [],
+        "path_params": [
+          "employee_id"
+        ],
+        "query_params": [
+          "month",
+          "year"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "employee_id": "path",
+          "month": "query",
+          "year": "query"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_generate_offer_letter_api_v1_generate_offer_letter_post",
+        "description": "[am-asrax-corp] POST /api/v1/generate/offer-letter | Generate Offer Letter | BODY required: employee_name, designation, joining_date, base_salary | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 employee_name \u2014 example='John Doe'",
+              "x-param-in": "body",
+              "x-required": true,
+              "example": "John Doe"
+            },
+            "candidate_address": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 candidate_address \u2014 example='Bangalore, India'",
+              "x-param-in": "body",
+              "x-required": false,
+              "example": "Bangalore, India"
+            },
+            "work_location": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 work_location \u2014 example='Kolkata'",
+              "x-param-in": "body",
+              "x-required": false,
+              "example": "Kolkata"
+            },
+            "designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 designation \u2014 example='Software Engineer'",
+              "x-param-in": "body",
+              "x-required": true,
+              "example": "Software Engineer"
+            },
+            "joining_date": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 joining_date \u2014 example='01-April-2026'",
+              "x-param-in": "body",
+              "x-required": true,
+              "example": "01-April-2026"
+            },
+            "base_salary": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 base_salary \u2014 example='1200000'",
+              "x-param-in": "body",
+              "x-required": true,
+              "example": "1200000"
+            },
+            "include_hra": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 include_hra \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "include_epf": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 include_epf \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "include_medical": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 include_medical \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "include_gratuity": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 include_gratuity \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "custom_basic_pa": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_basic_pa",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_allowances_pa": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_allowances_pa",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_medical_pa": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_medical_pa",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_variable_pay_pa": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_variable_pay_pa",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_total_ctc_pa": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_total_ctc_pa",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "employee_name",
+            "designation",
+            "joining_date",
+            "base_salary"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/OfferLetterRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/generate/offer-letter",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "generate_offer_letter_api_v1_generate_offer_letter_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_generate_offer_letter_api_v1_generate_offer_letter_post",
+        "summary": "Generate Offer Letter",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "employee_name",
+          "designation",
+          "joining_date",
+          "base_salary"
+        ],
+        "body_optional": [
+          "candidate_address",
+          "work_location",
+          "include_hra",
+          "include_epf",
+          "include_medical",
+          "include_gratuity",
+          "custom_basic_pa",
+          "custom_allowances_pa",
+          "custom_medical_pa",
+          "custom_variable_pay_pa",
+          "custom_total_ctc_pa"
+        ],
+        "param_locations": {
+          "employee_name": "body",
+          "candidate_address": "body",
+          "work_location": "body",
+          "designation": "body",
+          "joining_date": "body",
+          "base_salary": "body",
+          "include_hra": "body",
+          "include_epf": "body",
+          "include_medical": "body",
+          "include_gratuity": "body",
+          "custom_basic_pa": "body",
+          "custom_allowances_pa": "body",
+          "custom_medical_pa": "body",
+          "custom_variable_pay_pa": "body",
+          "custom_total_ctc_pa": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "OfferLetterRequest",
+        "x-asrax-schema": "models/OfferLetterRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_generate_payslip_api_v1_generate_payslip_post",
+        "description": "[am-asrax-corp] POST /api/v1/generate/payslip | Generate Payslip | BODY required: employee_id, month, year | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "employee_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "employeeId"
+            },
+            "employee_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 employee_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 designation",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "month": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 month",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "year": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 year",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "base_salary": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 base_salary",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "department": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 department",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "bank_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "account_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 account_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 pan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "uan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 uan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "pf_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 pf_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "bonus": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 bonus \u2014 default=0",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 0
+            },
+            "lwp": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 lwp \u2014 default=0",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 0
+            },
+            "other_deductions": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 other_deductions \u2014 default=0",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 0
+            },
+            "income_tax": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 income_tax \u2014 default=0",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 0
+            },
+            "professional_tax": {
+              "type": "integer",
+              "description": "[BODY] \u2014 optional \u2014 professional_tax \u2014 default=200",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": 200
+            },
+            "include_pf": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pf",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "include_pt": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 include_pt",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_basic_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_basic_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_hra_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_hra_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "custom_allowances_m": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 custom_allowances_m",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "store": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 store \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "force": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 force \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "send_email": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 send_email \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            }
+          },
+          "required": [
+            "employee_id",
+            "month",
+            "year"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PayslipRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/generate/payslip",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "generate_payslip_api_v1_generate_payslip_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_generate_payslip_api_v1_generate_payslip_post",
+        "summary": "Generate Payslip",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "employee_id",
+          "month",
+          "year"
+        ],
+        "body_optional": [
+          "employee_name",
+          "designation",
+          "base_salary",
+          "department",
+          "bank_name",
+          "account_number",
+          "pan",
+          "uan",
+          "pf_number",
+          "bonus",
+          "lwp",
+          "other_deductions",
+          "income_tax",
+          "professional_tax",
+          "include_pf",
+          "include_pt",
+          "custom_basic_m",
+          "custom_hra_m",
+          "custom_allowances_m",
+          "store",
+          "force",
+          "send_email"
+        ],
+        "param_locations": {
+          "employee_id": "body",
+          "employee_name": "body",
+          "designation": "body",
+          "month": "body",
+          "year": "body",
+          "base_salary": "body",
+          "department": "body",
+          "bank_name": "body",
+          "account_number": "body",
+          "pan": "body",
+          "uan": "body",
+          "pf_number": "body",
+          "bonus": "body",
+          "lwp": "body",
+          "other_deductions": "body",
+          "income_tax": "body",
+          "professional_tax": "body",
+          "include_pf": "body",
+          "include_pt": "body",
+          "custom_basic_m": "body",
+          "custom_hra_m": "body",
+          "custom_allowances_m": "body",
+          "store": "body",
+          "force": "body",
+          "send_email": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "PayslipRequest",
+        "x-asrax-schema": "models/PayslipRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_generate_amfi_pack_api_v1_generate_amfi_mfd_pack_post",
+        "description": "[am-asrax-corp] POST /api/v1/generate/amfi-mfd-pack | Generate Amfi Pack | BODY required: meeting_date | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "resolution_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 resolution_number \u2014 default='BR/2026/01'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "BR/2026/01"
+            },
+            "meeting_date": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 meeting_date",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "meeting_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 meeting_type \u2014 default='Board Meeting'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Board Meeting"
+            },
+            "meeting_place": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 meeting_place \u2014 default='Registered Office, Begusarai'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Registered Office, Begusarai"
+            },
+            "employee_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId \u2014 default='ASRAX-011'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "employeeId",
+              "default": "ASRAX-011"
+            },
+            "company_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 company_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "cin": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 cin",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "registered_office": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 registered_office",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "bank_auth_names": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_auth_names",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_employee_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_employee_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_employee_designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_employee_designation",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_registration_no": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_registration_no",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_valid_till": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_valid_till",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "save_filename_prefix": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 save_filename_prefix \u2014 default='AMFI-MFD'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "AMFI-MFD"
+            }
+          },
+          "required": [
+            "meeting_date"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AmfiMfdPackRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/generate/amfi-mfd-pack",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "generate_amfi_pack_api_v1_generate_amfi_mfd_pack_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_generate_amfi_pack_api_v1_generate_amfi_mfd_pack_post",
+        "summary": "Generate Amfi Pack",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "meeting_date"
+        ],
+        "body_optional": [
+          "resolution_number",
+          "meeting_type",
+          "meeting_place",
+          "employee_id",
+          "company_name",
+          "cin",
+          "registered_office",
+          "bank_auth_names",
+          "nism_employee_name",
+          "nism_employee_designation",
+          "nism_registration_no",
+          "nism_valid_till",
+          "save_filename_prefix"
+        ],
+        "param_locations": {
+          "resolution_number": "body",
+          "meeting_date": "body",
+          "meeting_type": "body",
+          "meeting_place": "body",
+          "employee_id": "body",
+          "company_name": "body",
+          "cin": "body",
+          "registered_office": "body",
+          "bank_auth_names": "body",
+          "nism_employee_name": "body",
+          "nism_employee_designation": "body",
+          "nism_registration_no": "body",
+          "nism_valid_till": "body",
+          "save_filename_prefix": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "AmfiMfdPackRequest",
+        "x-asrax-schema": "models/AmfiMfdPackRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_generate_board_resolution_api_v1_generate_board_resolution_post",
+        "description": "[am-asrax-corp] POST /api/v1/generate/board-resolution | Generate Board Resolution | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "company_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 company_name \u2014 default='ASRAX Technologies Private Limited'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "ASRAX Technologies Private Limited"
+            },
+            "cin": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 cin \u2014 default='U66190BR2026PTC082564'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "U66190BR2026PTC082564"
+            },
+            "registered_office": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 registered_office \u2014 default='Bari Ballia, Begusarai - 851211, Bihar'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Bari Ballia, Begusarai - 851211, Bihar"
+            },
+            "resolution_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 resolution_number \u2014 default='6/BR/01'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "6/BR/01"
+            },
+            "resolution_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 resolution_type \u2014 default='Bank Account Opening'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Bank Account Opening"
+            },
+            "meeting_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 meeting_type \u2014 default='Board Meeting'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Board Meeting"
+            },
+            "meeting_date": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 meeting_date",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "meeting_place": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 meeting_place \u2014 default='Bari Ballia'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Bari Ballia"
+            },
+            "directors": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 directors \u2014 default=[]",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": [],
+              "items": {
+                "type": "object"
+              }
+            },
+            "bank_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "bank_branch": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_branch",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "account_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 account_type \u2014 default='Current Account'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Current Account"
+            },
+            "bank_auth_mode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_auth_mode \u2014 default='singly'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "singly"
+            },
+            "bank_auth_names": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 bank_auth_names",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "transferor_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 transferor_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "transferor_folio": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 transferor_folio",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "transferee_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 transferee_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "transferee_folio": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 transferee_folio",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "num_shares": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 num_shares",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "face_value": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 face_value \u2014 default='10'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "10"
+            },
+            "certificate_numbers": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 certificate_numbers",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "distinctive_from": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 distinctive_from",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "distinctive_to": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 distinctive_to",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "consideration": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 consideration",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "issue_price": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 issue_price",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "allotment_mode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 allotment_mode \u2014 default='Private Placement'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Private Placement"
+            },
+            "allottees": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 allottees \u2014 default=[]",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": [],
+              "items": {
+                "type": "object"
+              }
+            },
+            "resolution_body": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 resolution_body",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "employee_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=employeeId (producer=employee_id) \u2014 employeeId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "employeeId"
+            },
+            "nism_employee_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_employee_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_employee_designation": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_employee_designation",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_registration_no": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_registration_no",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "nism_valid_till": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 nism_valid_till",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/BoardResolutionRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/generate/board-resolution",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "generate_board_resolution_api_v1_generate_board_resolution_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_generate_board_resolution_api_v1_generate_board_resolution_post",
+        "summary": "Generate Board Resolution",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "company_name",
+          "cin",
+          "registered_office",
+          "resolution_number",
+          "resolution_type",
+          "meeting_type",
+          "meeting_date",
+          "meeting_place",
+          "directors",
+          "bank_name",
+          "bank_branch",
+          "account_type",
+          "bank_auth_mode",
+          "bank_auth_names",
+          "transferor_name",
+          "transferor_folio",
+          "transferee_name",
+          "transferee_folio",
+          "num_shares",
+          "face_value",
+          "certificate_numbers",
+          "distinctive_from",
+          "distinctive_to",
+          "consideration",
+          "issue_price",
+          "allotment_mode",
+          "allottees",
+          "resolution_body",
+          "employee_id",
+          "nism_employee_name",
+          "nism_employee_designation",
+          "nism_registration_no",
+          "nism_valid_till"
+        ],
+        "param_locations": {
+          "company_name": "body",
+          "cin": "body",
+          "registered_office": "body",
+          "resolution_number": "body",
+          "resolution_type": "body",
+          "meeting_type": "body",
+          "meeting_date": "body",
+          "meeting_place": "body",
+          "directors": "body",
+          "bank_name": "body",
+          "bank_branch": "body",
+          "account_type": "body",
+          "bank_auth_mode": "body",
+          "bank_auth_names": "body",
+          "transferor_name": "body",
+          "transferor_folio": "body",
+          "transferee_name": "body",
+          "transferee_folio": "body",
+          "num_shares": "body",
+          "face_value": "body",
+          "certificate_numbers": "body",
+          "distinctive_from": "body",
+          "distinctive_to": "body",
+          "consideration": "body",
+          "issue_price": "body",
+          "allotment_mode": "body",
+          "allottees": "body",
+          "resolution_body": "body",
+          "employee_id": "body",
+          "nism_employee_name": "body",
+          "nism_employee_designation": "body",
+          "nism_registration_no": "body",
+          "nism_valid_till": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "BoardResolutionRequest",
+        "x-asrax-schema": "models/BoardResolutionRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_generate_share_certificate_api_v1_generate_share_certificate_post",
+        "description": "[am-asrax-corp] POST /api/v1/generate/share-certificate | Generate Share Certificate | BODY required: holder_name, num_shares | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "company_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 company_name \u2014 default='ASRAX Technologies Private Limited'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "ASRAX Technologies Private Limited"
+            },
+            "cin": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 cin \u2014 default='U66190BR2026PTC082564'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "U66190BR2026PTC082564"
+            },
+            "registered_office": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 registered_office \u2014 default='Bari Ballia, Begusarai - 851211, Bihar'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Bari Ballia, Begusarai - 851211, Bihar"
+            },
+            "authorised_capital": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 authorised_capital",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "paidup_capital": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 paidup_capital",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "cert_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 cert_number \u2014 default='SHC/001'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "SHC/001"
+            },
+            "holder_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 holder_name",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "holder_parent_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 holder_parent_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "holder_address": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 holder_address",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "holder_pan": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 holder_pan",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "folio_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 folio_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "num_shares": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 num_shares",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "num_shares_words": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 num_shares_words",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "face_value": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 face_value \u2014 default='10'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "10"
+            },
+            "share_blocks": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 share_blocks \u2014 default=[]",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": [],
+              "items": {
+                "type": "object"
+              }
+            },
+            "distinctive_from": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 distinctive_from",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "distinctive_to": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 distinctive_to",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "transfer_date": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 transfer_date",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "board_resolution_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 board_resolution_number",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "previous_cert_number": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 previous_cert_number \u2014 default='Original Share Certificate'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "Original Share Certificate"
+            },
+            "signatories": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 signatories \u2014 default=[]",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": [],
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "holder_name",
+            "num_shares"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ShareCertificateRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/generate/share-certificate",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "generate_share_certificate_api_v1_generate_share_certificate_post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_generate_share_certificate_api_v1_generate_share_certificate_post",
+        "summary": "Generate Share Certificate",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "holder_name",
+          "num_shares"
+        ],
+        "body_optional": [
+          "company_name",
+          "cin",
+          "registered_office",
+          "authorised_capital",
+          "paidup_capital",
+          "cert_number",
+          "holder_parent_name",
+          "holder_address",
+          "holder_pan",
+          "folio_number",
+          "num_shares_words",
+          "face_value",
+          "share_blocks",
+          "distinctive_from",
+          "distinctive_to",
+          "transfer_date",
+          "board_resolution_number",
+          "previous_cert_number",
+          "signatories"
+        ],
+        "param_locations": {
+          "company_name": "body",
+          "cin": "body",
+          "registered_office": "body",
+          "authorised_capital": "body",
+          "paidup_capital": "body",
+          "cert_number": "body",
+          "holder_name": "body",
+          "holder_parent_name": "body",
+          "holder_address": "body",
+          "holder_pan": "body",
+          "folio_number": "body",
+          "num_shares": "body",
+          "num_shares_words": "body",
+          "face_value": "body",
+          "share_blocks": "body",
+          "distinctive_from": "body",
+          "distinctive_to": "body",
+          "transfer_date": "body",
+          "board_resolution_number": "body",
+          "previous_cert_number": "body",
+          "signatories": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "ShareCertificateRequest",
+        "x-asrax-schema": "models/ShareCertificateRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_receive_webhook_webhooks__provider__post",
+        "description": "[am-asrax-corp] POST /webhooks/{provider} | Receive Webhook | tags: webhooks | PATH required: provider | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 provider",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "provider"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/webhooks/{provider}",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "receive_webhook_webhooks__provider__post",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_receive_webhook_webhooks__provider__post",
+        "summary": "Receive Webhook",
+        "tags": [
+          "webhooks"
+        ],
+        "path_params": [
+          "provider"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "provider": "path"
+        },
+        "auth": "executor_injected",
+        "route": "webhooks",
+        "sdk_api": "WebhooksApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_asrax_corp_list_webhook_providers_webhooks__get",
+        "description": "[am-asrax-corp] GET /webhooks/ | List Webhook Providers | tags: webhooks | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/webhooks/",
+        "base_url": "https://corp-dev.asrax.in",
+        "base_urls": {
+          "dev": "https://corp-dev.asrax.in",
+          "preprod": "https://corp-preprod.asrax.in",
+          "prod": "https://corp.asrax.in"
+        },
+        "op_id": "list_webhook_providers_webhooks__get",
+        "service": "am-asrax-corp",
+        "tool_name": "api_am_asrax_corp_list_webhook_providers_webhooks__get",
+        "summary": "List Webhook Providers",
+        "tags": [
+          "webhooks"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "webhooks",
+        "sdk_api": "WebhooksApi",
+        "group": "other"
+      }
+    }
+  ]
+}

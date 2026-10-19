@@ -1,0 +1,423 @@
+{
+  "service": "am-ui-test-agent",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/ui-test",
+    "preprod": "https://am-preprod.asrax.in/ui-test",
+    "prod": "https://am.asrax.in/ui-test"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 6,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_ui_test_agent_run_test_suite_api_v1_test_run_post",
+        "description": "[am-ui-test-agent] POST /api/v1/test/run | Run Test Suite | BODY required: targetUrl | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "targetUrl": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Staging/Preprod application base URL",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "specification": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Gherkin specs for target assertions",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "profile": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Run profile: AUTH_FLOW | RELEASE_GATE | SMOKE \u2014 default='RELEASE_GATE'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "RELEASE_GATE"
+            },
+            "commitSha": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Git commit hash from code repository",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "branch": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Source branch \u2014 default='main'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "main"
+            },
+            "callbackUrl": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 VCS system commit status endpoint",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "baselineMode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 compare | seed | promote \u2014 Qdrant baseline lifecycle",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "targetUrl"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/TestRunRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/test/run",
+        "base_url": "https://am-dev.asrax.in/ui-test",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ui-test",
+          "preprod": "https://am-preprod.asrax.in/ui-test",
+          "prod": "https://am.asrax.in/ui-test"
+        },
+        "op_id": "run_test_suite_api_v1_test_run_post",
+        "service": "am-ui-test-agent",
+        "tool_name": "api_am_ui_test_agent_run_test_suite_api_v1_test_run_post",
+        "summary": "Run Test Suite",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "targetUrl"
+        ],
+        "body_optional": [
+          "specification",
+          "profile",
+          "commitSha",
+          "branch",
+          "callbackUrl",
+          "baselineMode"
+        ],
+        "param_locations": {
+          "targetUrl": "body",
+          "specification": "body",
+          "profile": "body",
+          "commitSha": "body",
+          "branch": "body",
+          "callbackUrl": "body",
+          "baselineMode": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "TestRunRequest",
+        "x-asrax-schema": "models/TestRunRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_ui_test_agent_run_auth_flow_test_api_v1_test_run_auth_post",
+        "description": "[am-ui-test-agent] POST /api/v1/test/run/auth | Run Auth Flow Test | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "targetUrl": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Override URL; defaults to MODERN_UI_PORTFOLIO_URL or MODERN_UI_MAIN_URL",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "uiMode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 portfolio | main \u2014 sets AUTH_FLOW_* profile",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "commitSha": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 commitSha",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "branch": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 branch \u2014 default='main'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "main"
+            },
+            "baselineMode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 compare | seed | promote \u2014 Qdrant baseline lifecycle",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AuthTestRunRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/test/run/auth",
+        "base_url": "https://am-dev.asrax.in/ui-test",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ui-test",
+          "preprod": "https://am-preprod.asrax.in/ui-test",
+          "prod": "https://am.asrax.in/ui-test"
+        },
+        "op_id": "run_auth_flow_test_api_v1_test_run_auth_post",
+        "service": "am-ui-test-agent",
+        "tool_name": "api_am_ui_test_agent_run_auth_flow_test_api_v1_test_run_auth_post",
+        "summary": "Run Auth Flow Test",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "targetUrl",
+          "uiMode",
+          "commitSha",
+          "branch",
+          "baselineMode"
+        ],
+        "param_locations": {
+          "targetUrl": "body",
+          "uiMode": "body",
+          "commitSha": "body",
+          "branch": "body",
+          "baselineMode": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "AuthTestRunRequest",
+        "x-asrax-schema": "models/AuthTestRunRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_ui_test_agent_get_test_status_api_v1_test_status__testId__get",
+        "description": "[am-ui-test-agent] GET /api/v1/test/status/{testId} | Get Test Status | PATH required: testId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "testId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 testId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "testId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/test/status/{testId}",
+        "base_url": "https://am-dev.asrax.in/ui-test",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ui-test",
+          "preprod": "https://am-preprod.asrax.in/ui-test",
+          "prod": "https://am.asrax.in/ui-test"
+        },
+        "op_id": "get_test_status_api_v1_test_status__testId__get",
+        "service": "am-ui-test-agent",
+        "tool_name": "api_am_ui_test_agent_get_test_status_api_v1_test_status__testId__get",
+        "summary": "Get Test Status",
+        "tags": [],
+        "path_params": [
+          "testId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "testId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_ui_test_agent_get_test_report_html_api_v1_test_report__testId__get",
+        "description": "[am-ui-test-agent] GET /api/v1/test/report/{testId} | Get Test Report Html | PATH required: testId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "testId": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 testId",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "testId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/api/v1/test/report/{testId}",
+        "base_url": "https://am-dev.asrax.in/ui-test",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ui-test",
+          "preprod": "https://am-preprod.asrax.in/ui-test",
+          "prod": "https://am.asrax.in/ui-test"
+        },
+        "op_id": "get_test_report_html_api_v1_test_report__testId__get",
+        "service": "am-ui-test-agent",
+        "tool_name": "api_am_ui_test_agent_get_test_report_html_api_v1_test_report__testId__get",
+        "summary": "Get Test Report Html",
+        "tags": [],
+        "path_params": [
+          "testId"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "testId": "path"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_ui_test_agent_promote_design_baseline_api_v1_design_baseline_promote_post",
+        "description": "[am-ui-test-agent] POST /api/v1/design/baseline/promote | Promote Design Baseline | BODY required: testId | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "testId": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 Completed test ID with report JSON on disk",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "stepLabels": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Optional subset of screenshot step labels to promote",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "profile": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 Override profile from report",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "testId"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PromoteBaselineRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/api/v1/design/baseline/promote",
+        "base_url": "https://am-dev.asrax.in/ui-test",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ui-test",
+          "preprod": "https://am-preprod.asrax.in/ui-test",
+          "prod": "https://am.asrax.in/ui-test"
+        },
+        "op_id": "promote_design_baseline_api_v1_design_baseline_promote_post",
+        "service": "am-ui-test-agent",
+        "tool_name": "api_am_ui_test_agent_promote_design_baseline_api_v1_design_baseline_promote_post",
+        "summary": "Promote Design Baseline",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "testId"
+        ],
+        "body_optional": [
+          "stepLabels",
+          "profile"
+        ],
+        "param_locations": {
+          "testId": "body",
+          "stepLabels": "body",
+          "profile": "body"
+        },
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "schema_ref": "PromoteBaselineRequest",
+        "x-asrax-schema": "models/PromoteBaselineRequest.json",
+        "response_schema_ref": "PromoteBaselineResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_ui_test_agent_health_health_get",
+        "description": "[am-ui-test-agent] GET /health | Health | Auth: none declared in OpenAPI; executor may still attach platform credentials. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/ui-test",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/ui-test",
+          "preprod": "https://am-preprod.asrax.in/ui-test",
+          "prod": "https://am.asrax.in/ui-test"
+        },
+        "op_id": "health_health_get",
+        "service": "am-ui-test-agent",
+        "tool_name": "api_am_ui_test_agent_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    }
+  ]
+}

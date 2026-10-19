@@ -1,0 +1,1038 @@
+{
+  "service": "am-oms",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/oms",
+    "preprod": "https://am-preprod.asrax.in/oms",
+    "prod": "https://am.asrax.in/oms"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 16,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_live_health_live_get",
+        "description": "[am-oms] GET /health/live | Live | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/live",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "live_health_live_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_live_health_live_get",
+        "summary": "Live",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_live_health_get",
+        "description": "[am-oms] GET /health | Live | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "live_health_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_live_health_get",
+        "summary": "Live",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_ready_health_ready_get",
+        "description": "[am-oms] GET /health/ready | Ready | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/ready",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "ready_health_ready_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_ready_health_ready_get",
+        "summary": "Ready",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_list_wallets_v1_wallets_get",
+        "description": "[am-oms] GET /v1/wallets | List Wallets | tags: wallets | Query optional: kind | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 kind",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/wallets",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "list_wallets_v1_wallets_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_list_wallets_v1_wallets_get",
+        "summary": "List Wallets",
+        "tags": [
+          "wallets"
+        ],
+        "path_params": [],
+        "query_params": [
+          "kind"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "kind": "query"
+        },
+        "auth": "executor_injected",
+        "route": "wallets",
+        "sdk_api": "WalletsApi",
+        "response_schema_ref": "APIResponse_WalletListResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_create_wallet_v1_wallets_post",
+        "description": "[am-oms] POST /v1/wallets | Create Wallet | tags: wallets | BODY required: kind | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 kind \u2014 enum=['PAPER', 'LIVE']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "PAPER",
+                "LIVE"
+              ]
+            },
+            "currency": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 currency \u2014 default='INR'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "currency",
+              "default": "INR"
+            },
+            "seedAmount": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 seedAmount",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/WalletCreateRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/wallets",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "create_wallet_v1_wallets_post",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_create_wallet_v1_wallets_post",
+        "summary": "Create Wallet",
+        "tags": [
+          "wallets"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "kind"
+        ],
+        "body_optional": [
+          "currency",
+          "seedAmount"
+        ],
+        "param_locations": {
+          "kind": "body",
+          "currency": "body",
+          "seedAmount": "body"
+        },
+        "auth": "executor_injected",
+        "route": "wallets",
+        "sdk_api": "WalletsApi",
+        "schema_ref": "WalletCreateRequest",
+        "x-asrax-schema": "models/WalletCreateRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_get_wallet_v1_wallets__wallet_id__get",
+        "description": "[am-oms] GET /v1/wallets/{wallet_id} | Get Wallet | tags: wallets | PATH required: wallet_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "wallet_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 wallet_id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "wallet_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/wallets/{wallet_id}",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "get_wallet_v1_wallets__wallet_id__get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_get_wallet_v1_wallets__wallet_id__get",
+        "summary": "Get Wallet",
+        "tags": [
+          "wallets"
+        ],
+        "path_params": [
+          "wallet_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "wallet_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "wallets",
+        "sdk_api": "WalletsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_list_positions_v1_wallets__wallet_id__positions_get",
+        "description": "[am-oms] GET /v1/wallets/{wallet_id}/positions | List Positions | tags: wallets | PATH required: wallet_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "wallet_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 wallet_id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "wallet_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/wallets/{wallet_id}/positions",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "list_positions_v1_wallets__wallet_id__positions_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_list_positions_v1_wallets__wallet_id__positions_get",
+        "summary": "List Positions",
+        "tags": [
+          "wallets"
+        ],
+        "path_params": [
+          "wallet_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "wallet_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "wallets",
+        "sdk_api": "WalletsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_ledger_v1_wallets__wallet_id__ledger_get",
+        "description": "[am-oms] GET /v1/wallets/{wallet_id}/ledger | Ledger | tags: wallets | PATH required: wallet_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "wallet_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 wallet_id",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "wallet_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/wallets/{wallet_id}/ledger",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "ledger_v1_wallets__wallet_id__ledger_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_ledger_v1_wallets__wallet_id__ledger_get",
+        "summary": "Ledger",
+        "tags": [
+          "wallets"
+        ],
+        "path_params": [
+          "wallet_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "wallet_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "wallets",
+        "sdk_api": "WalletsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_list_orders_v1_orders_get",
+        "description": "[am-oms] GET /v1/orders | List Orders | tags: orders | Query optional: walletId, status, from, to | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "walletId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 walletId",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "status": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 status",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "status"
+            },
+            "from": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 from",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "to": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 to",
+              "x-param-in": "query",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/orders",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "list_orders_v1_orders_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_list_orders_v1_orders_get",
+        "summary": "List Orders",
+        "tags": [
+          "orders"
+        ],
+        "path_params": [],
+        "query_params": [
+          "walletId",
+          "status",
+          "from",
+          "to"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "walletId": "query",
+          "status": "query",
+          "from": "query",
+          "to": "query"
+        },
+        "auth": "executor_injected",
+        "route": "orders",
+        "sdk_api": "OrdersApi",
+        "response_schema_ref": "APIResponse_OrderListResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_create_order_v1_orders_post",
+        "description": "[am-oms] POST /v1/orders | Create Order | tags: orders | BODY required: walletId, venue, instrumentType, symbol, side, orderType, quantity | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "Idempotency-Key": {
+              "type": "string",
+              "description": "[HEADER] \u2014 REQUIRED \u2014 Idempotency-Key",
+              "x-param-in": "header",
+              "x-required": true
+            },
+            "walletId": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 walletId",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "venue": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 venue \u2014 enum=['PAPER', 'LIVE']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "PAPER",
+                "LIVE"
+              ]
+            },
+            "instrumentType": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 instrumentType \u2014 enum=['EQUITY', 'OPTION']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "EQUITY",
+                "OPTION"
+              ]
+            },
+            "symbol": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 symbol \u2014 example='RELIANCE'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "symbol",
+              "example": "RELIANCE"
+            },
+            "side": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 side \u2014 enum=['BUY', 'SELL']",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "side",
+              "enum": [
+                "BUY",
+                "SELL"
+              ]
+            },
+            "orderType": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 orderType \u2014 enum=['MARKET', 'LIMIT', 'STOP', 'STOP_LIMIT', 'SUPER', 'TRAIL']",
+              "x-param-in": "body",
+              "x-required": true,
+              "enum": [
+                "MARKET",
+                "LIMIT",
+                "STOP",
+                "STOP_LIMIT",
+                "SUPER",
+                "TRAIL"
+              ]
+            },
+            "quantity": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 quantity \u2014 example=10",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "quantity",
+              "example": 10
+            },
+            "limitPrice": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 limitPrice",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "triggerPrice": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 triggerPrice",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "targetPrice": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 targetPrice",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "stopLoss": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 stopLoss",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "trailJump": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 trailJump",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "entryType": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 entryType",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "option": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 option",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "amo": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 amo \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "productMode": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 productMode",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "Idempotency-Key",
+            "walletId",
+            "venue",
+            "instrumentType",
+            "symbol",
+            "side",
+            "orderType",
+            "quantity"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/OrderCreateRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/orders",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "create_order_v1_orders_post",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_create_order_v1_orders_post",
+        "summary": "Create Order",
+        "tags": [
+          "orders"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [
+          "Idempotency-Key"
+        ],
+        "body_required": [
+          "walletId",
+          "venue",
+          "instrumentType",
+          "symbol",
+          "side",
+          "orderType",
+          "quantity"
+        ],
+        "body_optional": [
+          "limitPrice",
+          "triggerPrice",
+          "targetPrice",
+          "stopLoss",
+          "trailJump",
+          "entryType",
+          "option",
+          "amo",
+          "productMode"
+        ],
+        "param_locations": {
+          "Idempotency-Key": "header",
+          "walletId": "body",
+          "venue": "body",
+          "instrumentType": "body",
+          "symbol": "body",
+          "side": "body",
+          "orderType": "body",
+          "quantity": "body",
+          "limitPrice": "body",
+          "triggerPrice": "body",
+          "targetPrice": "body",
+          "stopLoss": "body",
+          "trailJump": "body",
+          "entryType": "body",
+          "option": "body",
+          "amo": "body",
+          "productMode": "body"
+        },
+        "auth": "executor_injected",
+        "route": "orders",
+        "sdk_api": "OrdersApi",
+        "schema_ref": "OrderCreateRequest",
+        "x-asrax-schema": "models/OrderCreateRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_cancel_all_v1_orders_cancel_all_post",
+        "description": "[am-oms] POST /v1/orders/cancel-all | Cancel All | tags: orders | Required args: walletId | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "walletId": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 walletId",
+              "x-param-in": "query",
+              "x-required": true
+            }
+          },
+          "required": [
+            "walletId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/orders/cancel-all",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "cancel_all_v1_orders_cancel_all_post",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_cancel_all_v1_orders_cancel_all_post",
+        "summary": "Cancel All",
+        "tags": [
+          "orders"
+        ],
+        "path_params": [],
+        "query_params": [
+          "walletId"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "walletId": "query"
+        },
+        "auth": "executor_injected",
+        "route": "orders",
+        "sdk_api": "OrdersApi",
+        "response_schema_ref": "APIResponse_CancelAllResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_get_order_v1_orders__order_id__get",
+        "description": "[am-oms] GET /v1/orders/{order_id} | Get Order | tags: orders | PATH required: order_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=orderId (producer=order_id) \u2014 orderId \u2014 example='ord-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "orderId",
+              "example": "ord-001"
+            }
+          },
+          "required": [
+            "order_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/orders/{order_id}",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "get_order_v1_orders__order_id__get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_get_order_v1_orders__order_id__get",
+        "summary": "Get Order",
+        "tags": [
+          "orders"
+        ],
+        "path_params": [
+          "order_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "order_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "orders",
+        "sdk_api": "OrdersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_cancel_order_v1_orders__order_id__cancel_post",
+        "description": "[am-oms] POST /v1/orders/{order_id}/cancel | Cancel Order | tags: orders | PATH required: order_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=orderId (producer=order_id) \u2014 orderId \u2014 example='ord-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "orderId",
+              "example": "ord-001"
+            }
+          },
+          "required": [
+            "order_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/orders/{order_id}/cancel",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "cancel_order_v1_orders__order_id__cancel_post",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_cancel_order_v1_orders__order_id__cancel_post",
+        "summary": "Cancel Order",
+        "tags": [
+          "orders"
+        ],
+        "path_params": [
+          "order_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "order_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "orders",
+        "sdk_api": "OrdersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_replace_order_v1_orders__order_id__replace_post",
+        "description": "[am-oms] POST /v1/orders/{order_id}/replace | Replace Order | tags: orders | PATH required: order_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=orderId (producer=order_id) \u2014 orderId \u2014 example='ord-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "orderId",
+              "example": "ord-001"
+            }
+          },
+          "required": [
+            "order_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/orders/{order_id}/replace",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "replace_order_v1_orders__order_id__replace_post",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_replace_order_v1_orders__order_id__replace_post",
+        "summary": "Replace Order",
+        "tags": [
+          "orders"
+        ],
+        "path_params": [
+          "order_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "order_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "orders",
+        "sdk_api": "OrdersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_get_prefs_v1_prefs_get",
+        "description": "[am-oms] GET /v1/prefs | Get Prefs | tags: prefs | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/prefs",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "get_prefs_v1_prefs_get",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_get_prefs_v1_prefs_get",
+        "summary": "Get Prefs",
+        "tags": [
+          "prefs"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "prefs",
+        "sdk_api": "PrefsApi",
+        "response_schema_ref": "APIResponse_PrefsResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_oms_put_prefs_v1_prefs_put",
+        "description": "[am-oms] PUT /v1/prefs | Put Prefs | tags: prefs | BODY required: orderTypeFavorite | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "orderTypeFavorite": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 orderTypeFavorite",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "orderTypeFavorite"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PrefsUpdateRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/v1/prefs",
+        "base_url": "https://am-dev.asrax.in/oms",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/oms",
+          "preprod": "https://am-preprod.asrax.in/oms",
+          "prod": "https://am.asrax.in/oms"
+        },
+        "op_id": "put_prefs_v1_prefs_put",
+        "service": "am-oms",
+        "tool_name": "api_am_oms_put_prefs_v1_prefs_put",
+        "summary": "Put Prefs",
+        "tags": [
+          "prefs"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "orderTypeFavorite"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "orderTypeFavorite": "body"
+        },
+        "auth": "executor_injected",
+        "route": "prefs",
+        "sdk_api": "PrefsApi",
+        "schema_ref": "PrefsUpdateRequest",
+        "x-asrax-schema": "models/PrefsUpdateRequest.json",
+        "response_schema_ref": "APIResponse_PrefsResponse_",
+        "group": "other"
+      }
+    }
+  ]
+}

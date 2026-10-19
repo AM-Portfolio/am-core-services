@@ -1,0 +1,3052 @@
+{
+  "service": "am-identity",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/identity",
+    "preprod": "https://am-preprod.asrax.in/identity",
+    "prod": "https://am.asrax.in/identity"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 47,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_health_health_get",
+        "description": "[am-identity] GET /health | Health | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "health_health_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_register_user_auth_register_post",
+        "description": "[am-identity] POST /auth/register | Register User | tags: auth | BODY required: email, password | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 email \u2014 format=email",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "email"
+            },
+            "password": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 password",
+              "x-param-in": "body",
+              "x-required": true,
+              "minLength": 8
+            },
+            "first_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 first_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "last_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 last_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "phone": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 phone",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "referral_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 referral_code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "device_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=deviceLinkId (producer=device_id) \u2014 deviceLinkId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "deviceLinkId"
+            }
+          },
+          "required": [
+            "email",
+            "password"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/RegisterRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/register",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "register_user_auth_register_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_register_user_auth_register_post",
+        "summary": "Register User",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "email",
+          "password"
+        ],
+        "body_optional": [
+          "first_name",
+          "last_name",
+          "phone",
+          "referral_code",
+          "device_id"
+        ],
+        "param_locations": {
+          "email": "body",
+          "password": "body",
+          "first_name": "body",
+          "last_name": "body",
+          "phone": "body",
+          "referral_code": "body",
+          "device_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "RegisterRequest",
+        "x-asrax-schema": "models/RegisterRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_login_auth_login_post",
+        "description": "[am-identity] POST /auth/login | Login | tags: auth | BODY required: username, password | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 username",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "password": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 password",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "platform": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 platform",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "username",
+            "password"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LoginRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/login",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "login_auth_login_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_login_auth_login_post",
+        "summary": "Login",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "username",
+          "password"
+        ],
+        "body_optional": [
+          "platform"
+        ],
+        "param_locations": {
+          "username": "body",
+          "password": "body",
+          "platform": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "LoginRequest",
+        "x-asrax-schema": "models/LoginRequest.json",
+        "response_schema_ref": "TokenResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_login_otp_auth_login_otp_post",
+        "description": "[am-identity] POST /auth/login/otp | Login Otp | tags: auth | BODY required: username, otp | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 username",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "otp": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 otp",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "username",
+            "otp"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/OTPLoginRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/login/otp",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "login_otp_auth_login_otp_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_login_otp_auth_login_otp_post",
+        "summary": "Login Otp",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "username",
+          "otp"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "username": "body",
+          "otp": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "OTPLoginRequest",
+        "x-asrax-schema": "models/OTPLoginRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_google_auth_url_auth_google_url_post",
+        "description": "[am-identity] POST /auth/google/url | Google Auth Url | tags: auth | BODY required: redirect_uri | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "redirect_uri": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 redirect_uri",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "referral_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 referral_code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "device_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=deviceLinkId (producer=device_id) \u2014 deviceLinkId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "deviceLinkId"
+            }
+          },
+          "required": [
+            "redirect_uri"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/GoogleAuthURLRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/google/url",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "google_auth_url_auth_google_url_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_google_auth_url_auth_google_url_post",
+        "summary": "Google Auth Url",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "redirect_uri"
+        ],
+        "body_optional": [
+          "referral_code",
+          "device_id"
+        ],
+        "param_locations": {
+          "redirect_uri": "body",
+          "referral_code": "body",
+          "device_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "GoogleAuthURLRequest",
+        "x-asrax-schema": "models/GoogleAuthURLRequest.json",
+        "response_schema_ref": "GoogleAuthURLResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_google_callback_auth_google_callback_post",
+        "description": "[am-identity] POST /auth/google/callback | Google Callback | tags: auth | BODY required: code, state, redirect_uri | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 code",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "state": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=status (producer=state) \u2014 status",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "status"
+            },
+            "redirect_uri": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 redirect_uri",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "referral_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 referral_code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "device_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=deviceLinkId (producer=device_id) \u2014 deviceLinkId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "deviceLinkId"
+            }
+          },
+          "required": [
+            "code",
+            "state",
+            "redirect_uri"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/GoogleCallbackRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/google/callback",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "google_callback_auth_google_callback_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_google_callback_auth_google_callback_post",
+        "summary": "Google Callback",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "code",
+          "state",
+          "redirect_uri"
+        ],
+        "body_optional": [
+          "referral_code",
+          "device_id"
+        ],
+        "param_locations": {
+          "code": "body",
+          "state": "body",
+          "redirect_uri": "body",
+          "referral_code": "body",
+          "device_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "GoogleCallbackRequest",
+        "x-asrax-schema": "models/GoogleCallbackRequest.json",
+        "response_schema_ref": "TokenResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_google_token_auth_google_token_post",
+        "description": "[am-identity] POST /auth/google/token | Google Token | tags: auth | BODY required: id_token | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id_token": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 id_token",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "referral_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 referral_code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "device_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=deviceLinkId (producer=device_id) \u2014 deviceLinkId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "deviceLinkId"
+            }
+          },
+          "required": [
+            "id_token"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/GoogleTokenRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/google/token",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "google_token_auth_google_token_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_google_token_auth_google_token_post",
+        "summary": "Google Token",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "id_token"
+        ],
+        "body_optional": [
+          "referral_code",
+          "device_id"
+        ],
+        "param_locations": {
+          "id_token": "body",
+          "referral_code": "body",
+          "device_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "GoogleTokenRequest",
+        "x-asrax-schema": "models/GoogleTokenRequest.json",
+        "response_schema_ref": "TokenResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_refresh_auth_refresh_post",
+        "description": "[am-identity] POST /auth/refresh | Refresh | tags: auth | BODY required: refresh_token | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "refresh_token": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=refreshToken (producer=refresh_token) \u2014 refreshToken",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "refreshToken"
+            },
+            "client_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=clientId (producer=client_id) \u2014 clientId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "clientId"
+            }
+          },
+          "required": [
+            "refresh_token"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/RefreshRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/refresh",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "refresh_auth_refresh_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_refresh_auth_refresh_post",
+        "summary": "Refresh",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "refresh_token"
+        ],
+        "body_optional": [
+          "client_id"
+        ],
+        "param_locations": {
+          "refresh_token": "body",
+          "client_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "RefreshRequest",
+        "x-asrax-schema": "models/RefreshRequest.json",
+        "response_schema_ref": "TokenResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_logout_auth_logout_post",
+        "description": "[am-identity] POST /auth/logout | Logout | tags: auth | BODY required: refresh_token | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "refresh_token": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=refreshToken (producer=refresh_token) \u2014 refreshToken",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "refreshToken"
+            },
+            "client_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=clientId (producer=client_id) \u2014 clientId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "clientId"
+            }
+          },
+          "required": [
+            "refresh_token"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/LogoutRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/logout",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "logout_auth_logout_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_logout_auth_logout_post",
+        "summary": "Logout",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "refresh_token"
+        ],
+        "body_optional": [
+          "client_id"
+        ],
+        "param_locations": {
+          "refresh_token": "body",
+          "client_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "LogoutRequest",
+        "x-asrax-schema": "models/LogoutRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_password_reset_auth_password_reset_post",
+        "description": "[am-identity] POST /auth/password-reset | Password Reset | tags: auth | BODY required: email | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 email \u2014 format=email",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "email"
+            }
+          },
+          "required": [
+            "email"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PasswordResetRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/password-reset",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "password_reset_auth_password_reset_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_password_reset_auth_password_reset_post",
+        "summary": "Password Reset",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "email"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "email": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "PasswordResetRequest",
+        "x-asrax-schema": "models/PasswordResetRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_password_reset_confirm_auth_password_reset_confirm_post",
+        "description": "[am-identity] POST /auth/password-reset/confirm | Password Reset Confirm | tags: auth | BODY required: new_password | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 token",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 code",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "new_password": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 new_password",
+              "x-param-in": "body",
+              "x-required": true,
+              "minLength": 8
+            }
+          },
+          "required": [
+            "new_password"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/PasswordResetConfirmRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/password-reset/confirm",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "password_reset_confirm_auth_password_reset_confirm_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_password_reset_confirm_auth_password_reset_confirm_post",
+        "summary": "Password Reset Confirm",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "new_password"
+        ],
+        "body_optional": [
+          "token",
+          "code"
+        ],
+        "param_locations": {
+          "token": "body",
+          "code": "body",
+          "new_password": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "PasswordResetConfirmRequest",
+        "x-asrax-schema": "models/PasswordResetConfirmRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_resend_verify_email_auth_verify_email_resend_post",
+        "description": "[am-identity] POST /auth/verify-email/resend | Resend Verify Email | tags: auth | BODY required: email | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 email \u2014 format=email",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "email"
+            }
+          },
+          "required": [
+            "email"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ResendVerifyEmailRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/verify-email/resend",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "resend_verify_email_auth_verify_email_resend_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_resend_verify_email_auth_verify_email_resend_post",
+        "summary": "Resend Verify Email",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "email"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "email": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "ResendVerifyEmailRequest",
+        "x-asrax-schema": "models/ResendVerifyEmailRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_confirm_verify_email_auth_verify_email_confirm_post",
+        "description": "[am-identity] POST /auth/verify-email/confirm | Confirm Verify Email | tags: auth | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 token",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "code": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 code",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/VerifyEmailConfirmRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/verify-email/confirm",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "confirm_verify_email_auth_verify_email_confirm_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_confirm_verify_email_auth_verify_email_confirm_post",
+        "summary": "Confirm Verify Email",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "token",
+          "code"
+        ],
+        "param_locations": {
+          "token": "body",
+          "code": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "VerifyEmailConfirmRequest",
+        "x-asrax-schema": "models/VerifyEmailConfirmRequest.json",
+        "response_schema_ref": "VerifyEmailConfirmResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_change_password_auth_change_password_post",
+        "description": "[am-identity] POST /auth/change-password | Change Password | tags: auth | BODY required: email, current_password, new_password | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 email \u2014 format=email",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "email"
+            },
+            "current_password": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 current_password",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "new_password": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 new_password",
+              "x-param-in": "body",
+              "x-required": true,
+              "minLength": 8
+            }
+          },
+          "required": [
+            "email",
+            "current_password",
+            "new_password"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ChangePasswordRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/change-password",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "change_password_auth_change_password_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_change_password_auth_change_password_post",
+        "summary": "Change Password",
+        "tags": [
+          "auth"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "email",
+          "current_password",
+          "new_password"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "email": "body",
+          "current_password": "body",
+          "new_password": "body"
+        },
+        "auth": "executor_injected",
+        "route": "auth",
+        "sdk_api": "AuthApi",
+        "schema_ref": "ChangePasswordRequest",
+        "x-asrax-schema": "models/ChangePasswordRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_start_device_link_auth_device_link_start_post",
+        "description": "[am-identity] POST /auth/device-link/start | Start Device Link | tags: device-link | BODY required: redirect_hint, code_challenge | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "client": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 client \u2014 default='web'",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": "web"
+            },
+            "redirect_hint": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 redirect_hint",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "code_challenge": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 code_challenge",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "browser": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 browser",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "os": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 os",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "redirect_hint",
+            "code_challenge"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DeviceLinkStartRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/device-link/start",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "start_device_link_auth_device_link_start_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_start_device_link_auth_device_link_start_post",
+        "summary": "Start Device Link",
+        "tags": [
+          "device-link"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "redirect_hint",
+          "code_challenge"
+        ],
+        "body_optional": [
+          "client",
+          "browser",
+          "os"
+        ],
+        "param_locations": {
+          "client": "body",
+          "redirect_hint": "body",
+          "code_challenge": "body",
+          "browser": "body",
+          "os": "body"
+        },
+        "auth": "executor_injected",
+        "route": "device-link",
+        "sdk_api": "DeviceLinkApi",
+        "schema_ref": "DeviceLinkStartRequest",
+        "x-asrax-schema": "models/DeviceLinkStartRequest.json",
+        "response_schema_ref": "DeviceLinkStartResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_device_link_status_auth_device_link__device_link_id__status_get",
+        "description": "[am-identity] GET /auth/device-link/{device_link_id}/status | Device Link Status | tags: device-link | PATH required: device_link_id | Required args: code_verifier | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "device_link_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=deviceLinkId (producer=device_link_id) \u2014 deviceLinkId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "deviceLinkId"
+            },
+            "code_verifier": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 code_verifier",
+              "x-param-in": "query",
+              "x-required": true
+            }
+          },
+          "required": [
+            "device_link_id",
+            "code_verifier"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/auth/device-link/{device_link_id}/status",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "device_link_status_auth_device_link__device_link_id__status_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_device_link_status_auth_device_link__device_link_id__status_get",
+        "summary": "Device Link Status",
+        "tags": [
+          "device-link"
+        ],
+        "path_params": [
+          "device_link_id"
+        ],
+        "query_params": [
+          "code_verifier"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "device_link_id": "path",
+          "code_verifier": "query"
+        },
+        "auth": "executor_injected",
+        "route": "device-link",
+        "sdk_api": "DeviceLinkApi",
+        "response_schema_ref": "DeviceLinkStatusResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_device_link_preview_auth_device_link__device_link_id__preview_get",
+        "description": "[am-identity] GET /auth/device-link/{device_link_id}/preview | Device Link Preview | tags: device-link | PATH required: device_link_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "device_link_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=deviceLinkId (producer=device_link_id) \u2014 deviceLinkId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "deviceLinkId"
+            }
+          },
+          "required": [
+            "device_link_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/auth/device-link/{device_link_id}/preview",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "device_link_preview_auth_device_link__device_link_id__preview_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_device_link_preview_auth_device_link__device_link_id__preview_get",
+        "summary": "Device Link Preview",
+        "tags": [
+          "device-link"
+        ],
+        "path_params": [
+          "device_link_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "device_link_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "device-link",
+        "sdk_api": "DeviceLinkApi",
+        "response_schema_ref": "DeviceLinkPreviewResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_device_link_approve_auth_device_link__device_link_id__approve_post",
+        "description": "[am-identity] POST /auth/device-link/{device_link_id}/approve | Device Link Approve | tags: device-link | PATH required: device_link_id | BODY required: confirmation_code | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "device_link_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=deviceLinkId (producer=device_link_id) \u2014 deviceLinkId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "deviceLinkId"
+            },
+            "device_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 device_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "confirmation_code": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 confirmation_code",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "machine_label": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 machine_label",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "device_link_id",
+            "confirmation_code"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DeviceLinkApproveRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/device-link/{device_link_id}/approve",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "device_link_approve_auth_device_link__device_link_id__approve_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_device_link_approve_auth_device_link__device_link_id__approve_post",
+        "summary": "Device Link Approve",
+        "tags": [
+          "device-link"
+        ],
+        "path_params": [
+          "device_link_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "confirmation_code"
+        ],
+        "body_optional": [
+          "device_name",
+          "machine_label"
+        ],
+        "param_locations": {
+          "device_link_id": "path",
+          "device_name": "body",
+          "confirmation_code": "body",
+          "machine_label": "body"
+        },
+        "auth": "executor_injected",
+        "route": "device-link",
+        "sdk_api": "DeviceLinkApi",
+        "schema_ref": "DeviceLinkApproveRequest",
+        "x-asrax-schema": "models/DeviceLinkApproveRequest.json",
+        "response_schema_ref": "DeviceLinkApproveResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_device_link_deny_auth_device_link__device_link_id__deny_post",
+        "description": "[am-identity] POST /auth/device-link/{device_link_id}/deny | Device Link Deny | tags: device-link | PATH required: device_link_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "device_link_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=deviceLinkId (producer=device_link_id) \u2014 deviceLinkId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "deviceLinkId"
+            },
+            "reason": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 reason",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "device_link_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/DeviceLinkDenyRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/device-link/{device_link_id}/deny",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "device_link_deny_auth_device_link__device_link_id__deny_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_device_link_deny_auth_device_link__device_link_id__deny_post",
+        "summary": "Device Link Deny",
+        "tags": [
+          "device-link"
+        ],
+        "path_params": [
+          "device_link_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "reason"
+        ],
+        "param_locations": {
+          "device_link_id": "path",
+          "reason": "body"
+        },
+        "auth": "executor_injected",
+        "route": "device-link",
+        "sdk_api": "DeviceLinkApi",
+        "schema_ref": "DeviceLinkDenyRequest",
+        "x-asrax-schema": "models/DeviceLinkDenyRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_device_link_cancel_auth_device_link__device_link_id__cancel_post",
+        "description": "[am-identity] POST /auth/device-link/{device_link_id}/cancel | Device Link Cancel | tags: device-link | PATH required: device_link_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "device_link_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=deviceLinkId (producer=device_link_id) \u2014 deviceLinkId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "deviceLinkId"
+            }
+          },
+          "required": [
+            "device_link_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/device-link/{device_link_id}/cancel",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "device_link_cancel_auth_device_link__device_link_id__cancel_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_device_link_cancel_auth_device_link__device_link_id__cancel_post",
+        "summary": "Device Link Cancel",
+        "tags": [
+          "device-link"
+        ],
+        "path_params": [
+          "device_link_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "device_link_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "device-link",
+        "sdk_api": "DeviceLinkApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_web_otp_send_auth_web_otp_send_post",
+        "description": "[am-identity] POST /auth/web/otp/send | Web Otp Send | tags: web-otp | BODY required: channel, destination | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 channel \u2014 enum=['email', 'sms']",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "channel",
+              "enum": [
+                "email",
+                "sms"
+              ]
+            },
+            "destination": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 destination",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "channel",
+            "destination"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/WebOtpSendRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/web/otp/send",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "web_otp_send_auth_web_otp_send_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_web_otp_send_auth_web_otp_send_post",
+        "summary": "Web Otp Send",
+        "tags": [
+          "web-otp"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "channel",
+          "destination"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "channel": "body",
+          "destination": "body"
+        },
+        "auth": "executor_injected",
+        "route": "web-otp",
+        "sdk_api": "WebOtpApi",
+        "schema_ref": "WebOtpSendRequest",
+        "x-asrax-schema": "models/WebOtpSendRequest.json",
+        "response_schema_ref": "WebOtpSendResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_web_otp_verify_auth_web_otp_verify_post",
+        "description": "[am-identity] POST /auth/web/otp/verify | Web Otp Verify | tags: web-otp | BODY required: otp_session_id, code | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "otp_session_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 otp_session_id",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "code": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 code",
+              "x-param-in": "body",
+              "x-required": true,
+              "minLength": 4,
+              "maxLength": 8
+            }
+          },
+          "required": [
+            "otp_session_id",
+            "code"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/WebOtpVerifyRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/web/otp/verify",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "web_otp_verify_auth_web_otp_verify_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_web_otp_verify_auth_web_otp_verify_post",
+        "summary": "Web Otp Verify",
+        "tags": [
+          "web-otp"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "otp_session_id",
+          "code"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "otp_session_id": "body",
+          "code": "body"
+        },
+        "auth": "executor_injected",
+        "route": "web-otp",
+        "sdk_api": "WebOtpApi",
+        "schema_ref": "WebOtpVerifyRequest",
+        "x-asrax-schema": "models/WebOtpVerifyRequest.json",
+        "response_schema_ref": "WebOtpVerifyResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_step_up_auth_step_up_post",
+        "description": "[am-identity] POST /auth/step-up | Step Up | tags: step-up | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/auth/step-up",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "step_up_auth_step_up_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_step_up_auth_step_up_post",
+        "summary": "Step Up",
+        "tags": [
+          "step-up"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "step-up",
+        "sdk_api": "StepUpApi",
+        "response_schema_ref": "StepUpResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_bff_me_bff_me_get",
+        "description": "[am-identity] GET /bff/me | Bff Me | tags: bff | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "am_session": {
+              "type": "string",
+              "description": "[COOKIE] \u2014 optional \u2014 am_session",
+              "x-param-in": "cookie",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/bff/me",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "bff_me_bff_me_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_bff_me_bff_me_get",
+        "summary": "Bff Me",
+        "tags": [
+          "bff"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "am_session": "cookie"
+        },
+        "auth": "executor_injected",
+        "route": "bff",
+        "sdk_api": "BffApi",
+        "response_schema_ref": "BffMeResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_bff_audit_bff_audit_get",
+        "description": "[am-identity] GET /bff/audit | Bff Audit | tags: bff | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/bff/audit",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "bff_audit_bff_audit_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_bff_audit_bff_audit_get",
+        "summary": "Bff Audit",
+        "tags": [
+          "bff"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "bff",
+        "sdk_api": "BffApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_get_me_users_me_get",
+        "description": "[am-identity] GET /users/me | Get Me | tags: users | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/users/me",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "get_me_users_me_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_get_me_users_me_get",
+        "summary": "Get Me",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "response_schema_ref": "UserProfileResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_request_deletion_users_me_request_deletion_post",
+        "description": "[am-identity] POST /users/me/request-deletion | Request Deletion | tags: users | BODY required: feedback | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "feedback": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 feedback",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "feedback"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AccountDeletionRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/users/me/request-deletion",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "request_deletion_users_me_request_deletion_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_request_deletion_users_me_request_deletion_post",
+        "summary": "Request Deletion",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "feedback"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "feedback": "body"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "schema_ref": "AccountDeletionRequest",
+        "x-asrax-schema": "models/AccountDeletionRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_restore_account_users_me_restore_post",
+        "description": "[am-identity] POST /users/me/restore | Restore Account | tags: users | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/users/me/restore",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "restore_account_users_me_restore_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_restore_account_users_me_restore_post",
+        "summary": "Restore Account",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_update_my_settings_users_me_settings_patch",
+        "description": "[am-identity] PATCH /users/me/settings | Update My Settings | tags: users | BODY required: settings | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "settings": {
+              "type": "object",
+              "description": "[BODY] \u2014 REQUIRED \u2014 settings",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "settings"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/UpdateUserSettingsRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/users/me/settings",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "update_my_settings_users_me_settings_patch",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_update_my_settings_users_me_settings_patch",
+        "summary": "Update My Settings",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "settings"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "settings": "body"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "schema_ref": "UpdateUserSettingsRequest",
+        "x-asrax-schema": "models/UpdateUserSettingsRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_list_security_events_users_me_security_events_get",
+        "description": "[am-identity] GET /users/me/security-events | List Security Events | tags: users | Query optional: since | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "since": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 since",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "am_session": {
+              "type": "string",
+              "description": "[COOKIE] \u2014 optional \u2014 am_session",
+              "x-param-in": "cookie",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/users/me/security-events",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "list_security_events_users_me_security_events_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_list_security_events_users_me_security_events_get",
+        "summary": "List Security Events",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [
+          "since"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "since": "query",
+          "am_session": "cookie"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_acknowledge_security_event_users_me_security_events__event_id__ack_post",
+        "description": "[am-identity] POST /users/me/security-events/{event_id}/ack | Acknowledge Security Event | tags: users | PATH required: event_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "event_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=eventId (producer=event_id) \u2014 eventId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "eventId"
+            },
+            "am_session": {
+              "type": "string",
+              "description": "[COOKIE] \u2014 optional \u2014 am_session",
+              "x-param-in": "cookie",
+              "x-required": false
+            }
+          },
+          "required": [
+            "event_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/users/me/security-events/{event_id}/ack",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "acknowledge_security_event_users_me_security_events__event_id__ack_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_acknowledge_security_event_users_me_security_events__event_id__ack_post",
+        "summary": "Acknowledge Security Event",
+        "tags": [
+          "users"
+        ],
+        "path_params": [
+          "event_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "event_id": "path",
+          "am_session": "cookie"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "response_schema_ref": "SecurityEventResponse",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_list_login_sessions_users_me_login_sessions_get",
+        "description": "[am-identity] GET /users/me/login-sessions | List Login Sessions | tags: users | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "am_session": {
+              "type": "string",
+              "description": "[COOKIE] \u2014 optional \u2014 am_session",
+              "x-param-in": "cookie",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/users/me/login-sessions",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "list_login_sessions_users_me_login_sessions_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_list_login_sessions_users_me_login_sessions_get",
+        "summary": "List Login Sessions",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "am_session": "cookie"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_revoke_all_login_sessions_users_me_login_sessions_delete",
+        "description": "[am-identity] DELETE /users/me/login-sessions | Revoke All Login Sessions | tags: users | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "am_session": {
+              "type": "string",
+              "description": "[COOKIE] \u2014 optional \u2014 am_session",
+              "x-param-in": "cookie",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/users/me/login-sessions",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "revoke_all_login_sessions_users_me_login_sessions_delete",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_revoke_all_login_sessions_users_me_login_sessions_delete",
+        "summary": "Revoke All Login Sessions",
+        "tags": [
+          "users"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "am_session": "cookie"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_revoke_login_session_users_me_login_sessions__session_id__delete",
+        "description": "[am-identity] DELETE /users/me/login-sessions/{session_id} | Revoke Login Session | tags: users | PATH required: session_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            },
+            "am_session": {
+              "type": "string",
+              "description": "[COOKIE] \u2014 optional \u2014 am_session",
+              "x-param-in": "cookie",
+              "x-required": false
+            }
+          },
+          "required": [
+            "session_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/users/me/login-sessions/{session_id}",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "revoke_login_session_users_me_login_sessions__session_id__delete",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_revoke_login_session_users_me_login_sessions__session_id__delete",
+        "summary": "Revoke Login Session",
+        "tags": [
+          "users"
+        ],
+        "path_params": [
+          "session_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "session_id": "path",
+          "am_session": "cookie"
+        },
+        "auth": "executor_injected",
+        "route": "users",
+        "sdk_api": "UsersApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_list_roles_admin_roles_get",
+        "description": "[am-identity] GET /admin/roles | List Roles | tags: admin | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/admin/roles",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "list_roles_admin_roles_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_list_roles_admin_roles_get",
+        "summary": "List Roles",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_list_users_admin_users_get",
+        "description": "[am-identity] GET /admin/users | List Users | tags: admin | Query optional: email, q, first, max | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 email",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "email"
+            },
+            "q": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 q",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "first": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 first \u2014 default=0",
+              "x-param-in": "query",
+              "x-required": false,
+              "minimum": 0,
+              "default": 0
+            },
+            "max": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 max \u2014 default=50",
+              "x-param-in": "query",
+              "x-required": false,
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/admin/users",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "list_users_admin_users_get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_list_users_admin_users_get",
+        "summary": "List Users",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [],
+        "query_params": [
+          "email",
+          "q",
+          "first",
+          "max"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "email": "query",
+          "q": "query",
+          "first": "query",
+          "max": "query"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_create_user_admin_users_post",
+        "description": "[am-identity] POST /admin/users | Create User | tags: admin | BODY required: email | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 email \u2014 format=email",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "email"
+            },
+            "password": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 password",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "first_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 first_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "last_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 last_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 enabled \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "send_verify_email": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 send_verify_email \u2014 default=True",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": true
+            },
+            "temporary_password": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 optional \u2014 temporary_password \u2014 default=False",
+              "x-param-in": "body",
+              "x-required": false,
+              "default": false
+            },
+            "roles": {
+              "type": "array",
+              "description": "[BODY] \u2014 optional \u2014 roles",
+              "x-param-in": "body",
+              "x-required": false,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "email"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/CreateAdminUserRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/admin/users",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "create_user_admin_users_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_create_user_admin_users_post",
+        "summary": "Create User",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "email"
+        ],
+        "body_optional": [
+          "password",
+          "first_name",
+          "last_name",
+          "enabled",
+          "send_verify_email",
+          "temporary_password",
+          "roles"
+        ],
+        "param_locations": {
+          "email": "body",
+          "password": "body",
+          "first_name": "body",
+          "last_name": "body",
+          "enabled": "body",
+          "send_verify_email": "body",
+          "temporary_password": "body",
+          "roles": "body"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "schema_ref": "CreateAdminUserRequest",
+        "x-asrax-schema": "models/CreateAdminUserRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_get_user_admin_users__user_id__get",
+        "description": "[am-identity] GET /admin/users/{user_id} | Get User | tags: admin | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/admin/users/{user_id}",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "get_user_admin_users__user_id__get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_get_user_admin_users__user_id__get",
+        "summary": "Get User",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "response_schema_ref": "AdminUserSummary",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_update_user_admin_users__user_id__patch",
+        "description": "[am-identity] PATCH /admin/users/{user_id} | Update User | tags: admin | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "enabled": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 enabled",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "first_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 first_name",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "last_name": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 last_name",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/UpdateAdminUserRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/admin/users/{user_id}",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "update_user_admin_users__user_id__patch",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_update_user_admin_users__user_id__patch",
+        "summary": "Update User",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "enabled",
+          "first_name",
+          "last_name"
+        ],
+        "param_locations": {
+          "user_id": "path",
+          "enabled": "body",
+          "first_name": "body",
+          "last_name": "body"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "schema_ref": "UpdateAdminUserRequest",
+        "x-asrax-schema": "models/UpdateAdminUserRequest.json",
+        "response_schema_ref": "AdminUserSummary",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_set_enabled_admin_users__user_id__enabled_post",
+        "description": "[am-identity] POST /admin/users/{user_id}/enabled | Set Enabled | tags: admin | PATH required: user_id | BODY required: enabled | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "[BODY] \u2014 REQUIRED \u2014 enabled",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "user_id",
+            "enabled"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SetEnabledRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/admin/users/{user_id}/enabled",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "set_enabled_admin_users__user_id__enabled_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_set_enabled_admin_users__user_id__enabled_post",
+        "summary": "Set Enabled",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "enabled"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path",
+          "enabled": "body"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "schema_ref": "SetEnabledRequest",
+        "x-asrax-schema": "models/SetEnabledRequest.json",
+        "response_schema_ref": "AdminUserSummary",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_send_verify_email_admin_users__user_id__send_verify_email_post",
+        "description": "[am-identity] POST /admin/users/{user_id}/send-verify-email | Send Verify Email | tags: admin | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/admin/users/{user_id}/send-verify-email",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "send_verify_email_admin_users__user_id__send_verify_email_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_send_verify_email_admin_users__user_id__send_verify_email_post",
+        "summary": "Send Verify Email",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_logout_user_admin_users__user_id__logout_post",
+        "description": "[am-identity] POST /admin/users/{user_id}/logout | Logout User | tags: admin | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/admin/users/{user_id}/logout",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "logout_user_admin_users__user_id__logout_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_logout_user_admin_users__user_id__logout_post",
+        "summary": "Logout User",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_add_roles_admin_users__user_id__roles_post",
+        "description": "[am-identity] POST /admin/users/{user_id}/roles | Add Roles | tags: admin | PATH required: user_id | BODY required: roles | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "roles": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 roles",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "user_id",
+            "roles"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AddRolesRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/admin/users/{user_id}/roles",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "add_roles_admin_users__user_id__roles_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_add_roles_admin_users__user_id__roles_post",
+        "summary": "Add Roles",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "roles"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path",
+          "roles": "body"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "schema_ref": "AddRolesRequest",
+        "x-asrax-schema": "models/AddRolesRequest.json",
+        "response_schema_ref": "AdminUserSummary",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_replace_roles_admin_users__user_id__roles_put",
+        "description": "[am-identity] PUT /admin/users/{user_id}/roles | Replace Roles | tags: admin | PATH required: user_id | BODY required: roles | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "roles": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 roles",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "user_id",
+            "roles"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SetRolesRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "put",
+        "path": "/admin/users/{user_id}/roles",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "replace_roles_admin_users__user_id__roles_put",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_replace_roles_admin_users__user_id__roles_put",
+        "summary": "Replace Roles",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "roles"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path",
+          "roles": "body"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "schema_ref": "SetRolesRequest",
+        "x-asrax-schema": "models/SetRolesRequest.json",
+        "response_schema_ref": "AdminUserSummary",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_remove_role_admin_users__user_id__roles__role__delete",
+        "description": "[am-identity] DELETE /admin/users/{user_id}/roles/{role} | Remove Role | tags: admin | PATH required: user_id, role | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "role": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 role",
+              "x-param-in": "path",
+              "x-required": true
+            }
+          },
+          "required": [
+            "user_id",
+            "role"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/admin/users/{user_id}/roles/{role}",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "remove_role_admin_users__user_id__roles__role__delete",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_remove_role_admin_users__user_id__roles__role__delete",
+        "summary": "Remove Role",
+        "tags": [
+          "admin"
+        ],
+        "path_params": [
+          "user_id",
+          "role"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path",
+          "role": "path"
+        },
+        "auth": "executor_injected",
+        "route": "admin",
+        "sdk_api": "AdminApi",
+        "response_schema_ref": "AdminUserSummary",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_get_internal_user_internal_users__user_id__get",
+        "description": "[am-identity] GET /internal/users/{user_id} | Get Internal User | tags: internal | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/internal/users/{user_id}",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "get_internal_user_internal_users__user_id__get",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_get_internal_user_internal_users__user_id__get",
+        "summary": "Get Internal User",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_identity_issue_service_token_internal_auth_service_token_post",
+        "description": "[am-identity] POST /internal/auth/service-token | Issue Service Token | tags: internal | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "audience": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 audience",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/ServiceTokenRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/internal/auth/service-token",
+        "base_url": "https://am-dev.asrax.in/identity",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/identity",
+          "preprod": "https://am-preprod.asrax.in/identity",
+          "prod": "https://am.asrax.in/identity"
+        },
+        "op_id": "issue_service_token_internal_auth_service_token_post",
+        "service": "am-identity",
+        "tool_name": "api_am_identity_issue_service_token_internal_auth_service_token_post",
+        "summary": "Issue Service Token",
+        "tags": [
+          "internal"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [
+          "audience"
+        ],
+        "param_locations": {
+          "audience": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal",
+        "sdk_api": "InternalApi",
+        "schema_ref": "ServiceTokenRequest",
+        "x-asrax-schema": "models/ServiceTokenRequest.json",
+        "response_schema_ref": "ServiceTokenResponse",
+        "group": "other"
+      }
+    }
+  ]
+}

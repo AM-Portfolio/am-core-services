@@ -1,0 +1,837 @@
+{
+  "service": "am-user-platform",
+  "targets": {
+    "dev": "https://am-dev.asrax.in/v1/user-platform",
+    "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+    "prod": "https://am.asrax.in/v1/user-platform"
+  },
+  "default_environment": "dev",
+  "environment": "dev",
+  "count": 12,
+  "auth": "executor_injected",
+  "notes": [
+    "Auth headers (Authorization, X-Api-Key, X-Api-Secret) are injected by the executor \u2014 omit them.",
+    "PATH params are always required.",
+    "BODY required fields are listed in description and parameters.required.",
+    "additionalProperties=false \u2014 do not send undeclared fields.",
+    "Use targets / tool _meta.base_urls[env] for multi-env; base_url is default_environment."
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_health_health_get",
+        "description": "[am-user-platform] GET /health | Health | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "health_health_get",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_health_health_get",
+        "summary": "Health",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_health_live_health_live_get",
+        "description": "[am-user-platform] GET /health/live | Health Live | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/health/live",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "health_live_health_live_get",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_health_live_health_live_get",
+        "summary": "Health Live",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_ready_ready_get",
+        "description": "[am-user-platform] GET /ready | Ready | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/ready",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "ready_ready_get",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_ready_ready_get",
+        "summary": "Ready",
+        "tags": [],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {},
+        "auth": "executor_injected",
+        "route": "Default",
+        "sdk_api": "DefaultApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_list_sessions_v1_user_platform_ai_sessions_get",
+        "description": "[am-user-platform] GET /v1/user-platform/ai/sessions | List Sessions | tags: ai-sessions | Query optional: product_id, agent_type, limit, offset | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "product_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=planId (producer=product_id) \u2014 planId",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "planId"
+            },
+            "agent_type": {
+              "type": "string",
+              "description": "[QUERY] \u2014 optional \u2014 agent_type",
+              "x-param-in": "query",
+              "x-required": false
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 default=50",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "offset": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 offset \u2014 default=0",
+              "x-param-in": "query",
+              "x-required": false,
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/user-platform/ai/sessions",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "list_sessions_v1_user_platform_ai_sessions_get",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_list_sessions_v1_user_platform_ai_sessions_get",
+        "summary": "List Sessions",
+        "tags": [
+          "ai-sessions"
+        ],
+        "path_params": [],
+        "query_params": [
+          "product_id",
+          "agent_type",
+          "limit",
+          "offset"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "product_id": "query",
+          "agent_type": "query",
+          "limit": "query",
+          "offset": "query"
+        },
+        "auth": "executor_injected",
+        "route": "ai-sessions",
+        "sdk_api": "AiSessionsApi",
+        "response_schema_ref": "APIResponse_SessionListResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_create_session_v1_user_platform_ai_sessions_post",
+        "description": "[am-user-platform] POST /v1/user-platform/ai/sessions | Create Session | tags: ai-sessions | BODY required: product_id, agent_type | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "product_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=planId (producer=product_id) \u2014 planId",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "planId"
+            },
+            "agent_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 agent_type",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "channel": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 channel \u2014 default='user_app'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "channel",
+              "default": "user_app"
+            },
+            "title": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 title",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 id",
+              "x-param-in": "body",
+              "x-required": false
+            }
+          },
+          "required": [
+            "product_id",
+            "agent_type"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SessionCreate.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/user-platform/ai/sessions",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "create_session_v1_user_platform_ai_sessions_post",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_create_session_v1_user_platform_ai_sessions_post",
+        "summary": "Create Session",
+        "tags": [
+          "ai-sessions"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "product_id",
+          "agent_type"
+        ],
+        "body_optional": [
+          "channel",
+          "title",
+          "id"
+        ],
+        "param_locations": {
+          "product_id": "body",
+          "agent_type": "body",
+          "channel": "body",
+          "title": "body",
+          "id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "ai-sessions",
+        "sdk_api": "AiSessionsApi",
+        "schema_ref": "SessionCreate",
+        "x-asrax-schema": "models/SessionCreate.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_get_session_v1_user_platform_ai_sessions__session_id__get",
+        "description": "[am-user-platform] GET /v1/user-platform/ai/sessions/{session_id} | Get Session | tags: ai-sessions | PATH required: session_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            }
+          },
+          "required": [
+            "session_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/v1/user-platform/ai/sessions/{session_id}",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "get_session_v1_user_platform_ai_sessions__session_id__get",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_get_session_v1_user_platform_ai_sessions__session_id__get",
+        "summary": "Get Session",
+        "tags": [
+          "ai-sessions"
+        ],
+        "path_params": [
+          "session_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "session_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "ai-sessions",
+        "sdk_api": "AiSessionsApi",
+        "response_schema_ref": "APIResponse_SessionDetailResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_update_session_v1_user_platform_ai_sessions__session_id__patch",
+        "description": "[am-user-platform] PATCH /v1/user-platform/ai/sessions/{session_id} | Update Session | tags: ai-sessions | PATH required: session_id | BODY required: title | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            },
+            "title": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 title",
+              "x-param-in": "body",
+              "x-required": true
+            }
+          },
+          "required": [
+            "session_id",
+            "title"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/SessionUpdate.json"
+        }
+      },
+      "_meta": {
+        "method": "patch",
+        "path": "/v1/user-platform/ai/sessions/{session_id}",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "update_session_v1_user_platform_ai_sessions__session_id__patch",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_update_session_v1_user_platform_ai_sessions__session_id__patch",
+        "summary": "Update Session",
+        "tags": [
+          "ai-sessions"
+        ],
+        "path_params": [
+          "session_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "title"
+        ],
+        "body_optional": [],
+        "param_locations": {
+          "session_id": "path",
+          "title": "body"
+        },
+        "auth": "executor_injected",
+        "route": "ai-sessions",
+        "sdk_api": "AiSessionsApi",
+        "schema_ref": "SessionUpdate",
+        "x-asrax-schema": "models/SessionUpdate.json",
+        "response_schema_ref": "APIResponse_SessionResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_delete_session_v1_user_platform_ai_sessions__session_id__delete",
+        "description": "[am-user-platform] DELETE /v1/user-platform/ai/sessions/{session_id} | Delete Session | tags: ai-sessions | PATH required: session_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            }
+          },
+          "required": [
+            "session_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/v1/user-platform/ai/sessions/{session_id}",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "delete_session_v1_user_platform_ai_sessions__session_id__delete",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_delete_session_v1_user_platform_ai_sessions__session_id__delete",
+        "summary": "Delete Session",
+        "tags": [
+          "ai-sessions"
+        ],
+        "path_params": [
+          "session_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "session_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "ai-sessions",
+        "sdk_api": "AiSessionsApi",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_create_feedback_v1_user_platform_ai_feedback_post",
+        "description": "[am-user-platform] POST /v1/user-platform/ai/feedback | Create Feedback | tags: ai-sessions | BODY required: session_id, agent_type, rating | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId \u2014 format=uuid",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            },
+            "message_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=notificationId (producer=message_id) \u2014 notificationId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "notificationId"
+            },
+            "agent_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 agent_type",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "rating": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 rating",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "comment": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 comment",
+              "x-param-in": "body",
+              "x-required": false
+            },
+            "trace_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 glossary=traceId (producer=trace_id) \u2014 traceId",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "traceId"
+            }
+          },
+          "required": [
+            "session_id",
+            "agent_type",
+            "rating"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/FeedbackCreate.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/v1/user-platform/ai/feedback",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "create_feedback_v1_user_platform_ai_feedback_post",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_create_feedback_v1_user_platform_ai_feedback_post",
+        "summary": "Create Feedback",
+        "tags": [
+          "ai-sessions"
+        ],
+        "path_params": [],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "session_id",
+          "agent_type",
+          "rating"
+        ],
+        "body_optional": [
+          "message_id",
+          "comment",
+          "trace_id"
+        ],
+        "param_locations": {
+          "session_id": "body",
+          "message_id": "body",
+          "agent_type": "body",
+          "rating": "body",
+          "comment": "body",
+          "trace_id": "body"
+        },
+        "auth": "executor_injected",
+        "route": "ai-sessions",
+        "sdk_api": "AiSessionsApi",
+        "schema_ref": "FeedbackCreate",
+        "x-asrax-schema": "models/FeedbackCreate.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_get_session_context_internal_ai_sessions__session_id__context_get",
+        "description": "[am-user-platform] GET /internal/ai/sessions/{session_id}/context | Get Session Context | tags: internal-ai | PATH required: session_id | Required args: user_id | Query optional: limit | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[QUERY] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "query",
+              "x-required": true,
+              "x-glossary": "userId",
+              "minLength": 1,
+              "example": "user-demo-001"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "[QUERY] \u2014 optional \u2014 glossary=pageSize (producer=limit) \u2014 pageSize \u2014 default=20",
+              "x-param-in": "query",
+              "x-required": false,
+              "x-glossary": "pageSize",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          "required": [
+            "session_id",
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "get",
+        "path": "/internal/ai/sessions/{session_id}/context",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "get_session_context_internal_ai_sessions__session_id__context_get",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_get_session_context_internal_ai_sessions__session_id__context_get",
+        "summary": "Get Session Context",
+        "tags": [
+          "internal-ai"
+        ],
+        "path_params": [
+          "session_id"
+        ],
+        "query_params": [
+          "user_id",
+          "limit"
+        ],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "session_id": "path",
+          "user_id": "query",
+          "limit": "query"
+        },
+        "auth": "executor_injected",
+        "route": "internal-ai",
+        "sdk_api": "InternalAiApi",
+        "response_schema_ref": "APIResponse_ContextResponse_",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_append_session_messages_internal_ai_sessions__session_id__messages_post",
+        "description": "[am-user-platform] POST /internal/ai/sessions/{session_id}/messages | Append Session Messages | tags: internal-ai | PATH required: session_id | BODY required: user_id, product_id, agent_type, messages | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=sessionId (producer=session_id) \u2014 sessionId \u2014 format=uuid",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "sessionId"
+            },
+            "user_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            },
+            "product_id": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 glossary=planId (producer=product_id) \u2014 planId",
+              "x-param-in": "body",
+              "x-required": true,
+              "x-glossary": "planId"
+            },
+            "agent_type": {
+              "type": "string",
+              "description": "[BODY] \u2014 REQUIRED \u2014 agent_type",
+              "x-param-in": "body",
+              "x-required": true
+            },
+            "channel": {
+              "type": "string",
+              "description": "[BODY] \u2014 optional \u2014 channel \u2014 default='user_app'",
+              "x-param-in": "body",
+              "x-required": false,
+              "x-glossary": "channel",
+              "default": "user_app"
+            },
+            "messages": {
+              "type": "array",
+              "description": "[BODY] \u2014 REQUIRED \u2014 messages",
+              "x-param-in": "body",
+              "x-required": true,
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "session_id",
+            "user_id",
+            "product_id",
+            "agent_type",
+            "messages"
+          ],
+          "additionalProperties": false,
+          "x-asrax-schema": "models/AppendMessagesRequest.json"
+        }
+      },
+      "_meta": {
+        "method": "post",
+        "path": "/internal/ai/sessions/{session_id}/messages",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "append_session_messages_internal_ai_sessions__session_id__messages_post",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_append_session_messages_internal_ai_sessions__session_id__messages_post",
+        "summary": "Append Session Messages",
+        "tags": [
+          "internal-ai"
+        ],
+        "path_params": [
+          "session_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [
+          "user_id",
+          "product_id",
+          "agent_type",
+          "messages"
+        ],
+        "body_optional": [
+          "channel"
+        ],
+        "param_locations": {
+          "session_id": "path",
+          "user_id": "body",
+          "product_id": "body",
+          "agent_type": "body",
+          "channel": "body",
+          "messages": "body"
+        },
+        "auth": "executor_injected",
+        "route": "internal-ai",
+        "sdk_api": "InternalAiApi",
+        "schema_ref": "AppendMessagesRequest",
+        "x-asrax-schema": "models/AppendMessagesRequest.json",
+        "group": "other"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "api_am_user_platform_purge_user_ai_data_internal_ai_users__user_id__data_delete",
+        "description": "[am-user-platform] DELETE /internal/ai/users/{user_id}/data | Purge User Ai Data | tags: internal-ai | PATH required: user_id | Auth: injected by executor (Bearer / API key+secret) \u2014 do not pass Authorization. | Do not invent query/body fields not listed in parameters.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "description": "[PATH] \u2014 REQUIRED \u2014 glossary=userId (producer=user_id) \u2014 userId \u2014 example='user-demo-001'",
+              "x-param-in": "path",
+              "x-required": true,
+              "x-glossary": "userId",
+              "example": "user-demo-001"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "_meta": {
+        "method": "delete",
+        "path": "/internal/ai/users/{user_id}/data",
+        "base_url": "https://am-dev.asrax.in/v1/user-platform",
+        "base_urls": {
+          "dev": "https://am-dev.asrax.in/v1/user-platform",
+          "preprod": "https://am-preprod.asrax.in/v1/user-platform",
+          "prod": "https://am.asrax.in/v1/user-platform"
+        },
+        "op_id": "purge_user_ai_data_internal_ai_users__user_id__data_delete",
+        "service": "am-user-platform",
+        "tool_name": "api_am_user_platform_purge_user_ai_data_internal_ai_users__user_id__data_delete",
+        "summary": "Purge User Ai Data",
+        "tags": [
+          "internal-ai"
+        ],
+        "path_params": [
+          "user_id"
+        ],
+        "query_params": [],
+        "header_params": [],
+        "body_required": [],
+        "body_optional": [],
+        "param_locations": {
+          "user_id": "path"
+        },
+        "auth": "executor_injected",
+        "route": "internal-ai",
+        "sdk_api": "InternalAiApi",
+        "response_schema_ref": "APIResponse_dict_str__int__",
+        "group": "other"
+      }
+    }
+  ]
+}
