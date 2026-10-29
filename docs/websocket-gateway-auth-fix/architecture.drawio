@@ -1,0 +1,358 @@
+﻿<mxfile host="app.diagrams.net" agent="am-architecture-drawio">
+  <diagram id="context" name="Context">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ctx_title" value="WebSocket Gateway Auth Fix â€” Context" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1080" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_purpose" value="Purpose: external WebSocket route, environment Middleware boundary, gateway, and identity provider." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="64" width="720" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_actor" value="Browser / Flutter user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="220" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_sys" value="AM product&#10;(system boundary)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#FFFFFF;strokeColor=#0B4F8A;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="200" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_ext" value="Traefik / OIDC / Kafka&#10;(IdP, market, â€¦)" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="660" y="200" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_e1" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="ctx_actor" target="ctx_sys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_e2" value="depends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;fontColor=#B45F06;" edge="1" parent="1" source="ctx_sys" target="ctx_ext">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="760" width="1080" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="business" name="BusinessFlow">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bf_title" value="WebSocket Gateway Auth Fix â€” BusinessFlow" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1520" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_purpose" value="Purpose: WebSocket handshake happy path and ingress/auth rejection across User | UI | Service | Traefik / OIDC." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="58" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_user" value="User" style="swimlane;fontStyle=1;startSize=32;horizontal=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontColor=#08427B;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="280" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_u1" value="Opens streaming page" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;" vertex="1" parent="lane_user">
+          <mxGeometry x="20" y="50" width="240" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_u2" value="Starts WebSocket connection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;" vertex="1" parent="lane_user">
+          <mxGeometry x="20" y="220" width="240" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_u3" value="Sees live connection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;" vertex="1" parent="lane_user">
+          <mxGeometry x="20" y="390" width="240" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_u4" value="Sees reject (toast / 4xx, no write)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;fontColor=#333333;strokeColor=#B85450;" vertex="1" parent="lane_user">
+          <mxGeometry x="20" y="530" width="240" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_ui" value="UI" style="swimlane;fontStyle=1;startSize=32;horizontal=1;fillColor=#BBDEFB;strokeColor=#1168BD;fontColor=#08427B;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="90" width="300" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_ui1" value="am-modern-ui WebSocket client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#FFFFFF;strokeColor=#0B4F8A;" vertex="1" parent="lane_ui">
+          <mxGeometry x="20" y="50" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_ui2" value="Opens wss://.../gateway/v1/streams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="lane_ui">
+          <mxGeometry x="20" y="220" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_ui3" value="Receives 101 + CONNECTED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="lane_ui">
+          <mxGeometry x="20" y="390" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_ui4" value="Shows connection error / retry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="lane_ui">
+          <mxGeometry x="20" y="530" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_svc" value="Service" style="swimlane;fontStyle=1;startSize=32;horizontal=1;fillColor=#90CAF9;strokeColor=#438DD5;fontColor=#0B4F8A;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="660" y="90" width="300" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_s1" value="am-gateway receives /v1/streams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="lane_svc">
+          <mxGeometry x="20" y="220" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_s2" value="STOMP CONNECT binds Principal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="lane_svc">
+          <mxGeometry x="20" y="390" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_s3" value="Spring Security rejects / before STOMP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="lane_svc">
+          <mxGeometry x="20" y="530" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_ext" value="Traefik / OIDC" style="swimlane;fontStyle=1;startSize=32;horizontal=1;dashed=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="90" width="300" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_e1" value="OIDC IdP / Kafka downstream" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=#F5F5F5;strokeColor=#666666;" vertex="1" parent="lane_ext">
+          <mxGeometry x="20" y="390" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge1" value="opens" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="bf_u1" target="bf_ui1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge2" value="submits" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="bf_u2" target="bf_ui2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge3" value="GET /gateway/v1/streams Upgrade; resolve env Middleware; strip /gateway once" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="bf_ui2" target="bf_s1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge4" value="success" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="bf_s2" target="bf_ui3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge5" value="STOMP CONNECT / Kafka streams" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;fontColor=#B45F06;" edge="1" parent="1" source="bf_s2" target="bf_e1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge6" value="reject" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;fontColor=#B85450;" edge="1" parent="1" source="bf_s3" target="bf_ui4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_edge7" value="shows error" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;fontColor=#B85450;" edge="1" parent="1" source="bf_ui4" target="bf_u4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="940" width="1520" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="containers" name="Containers">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c_title" value="WebSocket Gateway Auth Fix â€” Containers" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1320" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="c_purpose" value="Purpose: C4 nested AM boundary. STOMP brokers are own shapes. Every edge labeled method+path or Kafka topic." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="58" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="c_boundary" value="AM product" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1168BD;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fontColor=#1168BD;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="920" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ui" value="am-modern-ui" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;fontStyle=1;" vertex="1" parent="c_boundary">
+          <mxGeometry x="40" y="160" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_lead" value="am-gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;fontStyle=1;" vertex="1" parent="c_boundary">
+          <mxGeometry x="320" y="160" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_other" value="Kafka relay" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;fontStyle=1;" vertex="1" parent="c_boundary">
+          <mxGeometry x="640" y="160" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_store" value="Lead store" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#2E7D32;fontColor=#FFFFFF;strokeColor=#1B5E20;" vertex="1" parent="c_boundary">
+          <mxGeometry x="340" y="300" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ext" value="Traefik + env Middleware / OIDC / Kafka" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=#F5F5F5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="260" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c_e1" value="GET /gateway/v1/streams; Middleware strips /gateway once" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="c_ui" target="c_lead">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_e2" value="read/write" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="c_lead" target="c_store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_e3" value="STOMP CONNECT / Kafka streams" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;fontColor=#B45F06;" edge="1" parent="1" source="c_lead" target="c_other">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_e4" value="vendor API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;fontColor=#B45F06;" edge="1" parent="1" source="c_other" target="c_ext">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="840" width="1320" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="sequence" name="Sequence">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="seq_title" value="WebSocket Gateway Auth Fix â€” Sequence" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1320" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_purpose" value="Purpose: numbered WebSocket handshake, STOMP auth, and reject sequence." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="58" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="life_actor" value="Browser" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;size=40;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="100" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="life_ui" value="am-modern-ui" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;size=40;" vertex="1" parent="1">
+          <mxGeometry x="280" y="100" width="120" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="life_lead" value="am-gateway" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;size=40;" vertex="1" parent="1">
+          <mxGeometry x="520" y="100" width="140" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="life_store" value="STOMP broker" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#2E7D32;fontColor=#FFFFFF;strokeColor=#1B5E20;size=40;" vertex="1" parent="1">
+          <mxGeometry x="780" y="100" width="120" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="life_ext" value="Traefik / OIDC" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F5F5F5;fontColor=#333333;strokeColor=#666666;dashed=1;size=40;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="100" width="120" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_m1" value="1 Create / open" style="html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;exitX=1;exitY=0.18;entryX=0;entryY=0.18;" edge="1" parent="1" source="life_actor" target="life_ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_m2" value="2 GET /gateway/v1/streams; resolve Middleware; strip /gateway once" style="html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;exitX=1;exitY=0.32;entryX=0;entryY=0.32;" edge="1" parent="1" source="life_ui" target="life_lead">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_m3" value="3 persist" style="html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;exitX=1;exitY=0.44;entryX=0;entryY=0.44;" edge="1" parent="1" source="life_lead" target="life_store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_m4" value="4 STOMP CONNECT / Kafka streams" style="html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;fontColor=#B45F06;exitX=1;exitY=0.56;entryX=0;entryY=0.56;" edge="1" parent="1" source="life_lead" target="life_ext">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_m5" value="5 live STOMP data" style="html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;exitX=0;exitY=0.68;entryX=1;entryY=0.68;" edge="1" parent="1" source="life_lead" target="life_ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_m6" value="6 Reject 401 before STOMP" style="html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;fontColor=#B85450;exitX=1;exitY=0.84;entryX=0;entryY=0.84;" edge="1" parent="1" source="life_ui" target="life_lead">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="840" width="1320" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="data" name="DataIdentity">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="di_title" value="WebSocket Gateway Auth Fix â€” DataIdentity" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1080" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="di_purpose" value="Purpose: identity and path ownership for the handshake." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="58" width="720" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="di_lead" value="Gateway session&#10;sessionId&#10;Principal=userId&#10;path=/v1/streams" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#2E7D32;fontColor=#FFFFFF;strokeColor=#1B5E20;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="di_other" value="Ingress route + Middleware&#10;host=am-dev.asrax.in&#10;resource exists; /gateway→/" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#2E7D32;fontColor=#FFFFFF;strokeColor=#1B5E20;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="700" y="140" width="240" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="di_ev" value="STOMP CONNECT&#10;Authorization header&#10;no URL token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="390" y="360" width="240" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="di_e1" value="maps" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="di_lead" target="di_ev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="di_e2" value="maps" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;fontColor=#B45F06;" edge="1" parent="1" source="di_ev" target="di_other">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="di_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="760" width="1080" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="security" name="SecurityTrust">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="st_title" value="WebSocket Gateway Auth Fix â€” SecurityTrust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1080" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="st_purpose" value="Purpose: handshake trust boundary and token placement." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="58" width="720" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="st_idp" value="IdP / Keycloak" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=#F5F5F5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="st_api" value="Public route&#10;/gateway/v1/streams&#10;→ internal /v1/streams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="1">
+          <mxGeometry x="340" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="st_int" value="STOMP CONNECT&#10;Authorization native header" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="640" y="140" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="st_iso" value="Path boundary&#10;do not expose /" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#FFFFFF;strokeColor=#0B4F8A;" vertex="1" parent="1">
+          <mxGeometry x="340" y="320" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="st_e1" value="Bearer / STOMP header" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#82B366;strokeWidth=2;fontColor=#2E7D32;" edge="1" parent="1" source="st_idp" target="st_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="st_e2" value="trust / secret header" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;fontColor=#B85450;" edge="1" parent="1" source="st_api" target="st_int">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="st_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="760" width="1080" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="failures" name="Failures">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="fail_title" value="WebSocket Gateway Auth Fix â€” Failures" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1A1A2E;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#1A1A2E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1320" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_purpose" value="Purpose: each row is Trigger â†’ system â†’ user-sees. Not disconnected cards." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="58" width="900" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_h1" value="Trigger" style="text;html=1;fontStyle=1;fontColor=#B85450;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_h2" value="System" style="text;html=1;fontStyle=1;fontColor=#0B4F8A;align=center;" vertex="1" parent="1">
+          <mxGeometry x="460" y="100" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_h3" value="User sees" style="text;html=1;fontStyle=1;fontColor=#08427B;align=center;" vertex="1" parent="1">
+          <mxGeometry x="860" y="100" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_t1" value="Trigger: Middleware missing or wrong namespace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_s1" value="Traefik cannot build router; returns HTTP 500; gateway not reached" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="1">
+          <mxGeometry x="460" y="140" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_u1" value="Browser reports handshake 500" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;" vertex="1" parent="1">
+          <mxGeometry x="860" y="140" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_e1a" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;" edge="1" parent="1" source="fail_t1" target="fail_s1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_e1b" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;" edge="1" parent="1" source="fail_s1" target="fail_u1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_t2" value="Trigger: missing STOMP header" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_s2" value="Handshake reaches gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="1">
+          <mxGeometry x="460" y="280" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_u2" value="STOMP rejection; no subscriptions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;" vertex="1" parent="1">
+          <mxGeometry x="860" y="280" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_e2a" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;" edge="1" parent="1" source="fail_t2" target="fail_s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_e2b" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#D79B00;strokeWidth=2;" edge="1" parent="1" source="fail_s2" target="fail_u2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_t3" value="Trigger: query token exposed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="420" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_s3" value="Log/request pipeline redacts query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#FFFFFF;strokeColor=#2E6DA4;" vertex="1" parent="1">
+          <mxGeometry x="460" y="420" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_u3" value="Token not present in URL/logs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#FFFFFF;strokeColor=#08427B;" vertex="1" parent="1">
+          <mxGeometry x="860" y="420" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_e3a" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;" edge="1" parent="1" source="fail_t3" target="fail_s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_e3b" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeColor=#B85450;strokeWidth=2;" edge="1" parent="1" source="fail_s3" target="fail_u3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fail_legend" value="Legend: navy person Â· #1168BD AM system Â· light-blue container Â· green store Â· dashed gray external Â· solid green happy Â· gold dashed Kafka/async Â· red reject/trust" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="840" width="1320" height="36" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+
+
+
