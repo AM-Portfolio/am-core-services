@@ -13,7 +13,7 @@
 | Scorecard overall | `8.5/10` current adversarial review |
 | Agent satisfied | `no` — execution started after user confirmation; browser/prod credentialed verification pending |
 
-Execute gate: **Delivery 10 + Design 10 + overall ≥ 9.5 + all dims ≥ 9.0 + Agent satisfied: yes** + user confirmation. No implementation or deployment before that gate.
+Deployment gate: **Delivery 10 + Design 10 + overall ≥ 9.5 + all dims ≥ 9.0 + Agent satisfied: yes** + explicit deployment confirmation. Implementation is authorized; deployment and production mutation remain gated.
 
 ## Goal
 
@@ -80,7 +80,7 @@ Implementation is split by ownership; no deployment is included in this planning
 
 1. `am-gitops/manifests/dev/traefik-dev-cors.yaml` (or an adjacent authoritative dev routing manifest) — define `Middleware/dev-strip-prefix` in `am-apps-dev` with `/gateway` plus the existing module prefixes; ensure the name matches `am-gateway` Helm values.
 2. `am-infra/k8s/ingress-routing.yaml` — update the preprod shared `strip-prefix-apps` contract to include `/gateway`, or document the authoritative replacement if that manifest is no longer the live source.
-3. Production GitOps/infra routing source — locate the authoritative prod Middleware resource, verify its namespace/name, and add `/gateway` only if absent. Do not invent a second production routing source.
+3. Production/DR GitOps routing source — `am-gitops/manifests/cors-local-origins.yaml` is the desired-state source for `am-apps-prod/strip-prefix-apps` and `am-apps-dr/dr-strip-prefix`; verify the live resources before promotion and do not invent a second routing source.
 4. `am-core-services/services/am-gateway/helm/values.dev.yaml`, `values.preprod.yaml`, and `values.prod.yaml` — keep the public `/gateway` path and align middleware references with the verified resource names; retain `/v1/streams` during compatibility rollout.
 5. `am-modern-ui/am_common/lib/core/config/env_domains.dart` — keep the deployed default `wsStream` at `/gateway/v1/streams`.
 6. `am-modern-ui/am_app/web/config.local.json.example` — document the direct local override `ws://localhost:8091/v1/streams` when local ingress is absent.

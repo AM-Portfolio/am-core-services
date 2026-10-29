@@ -1,6 +1,10 @@
 # Gateway WebSocket Streaming — Documentation
 
-Live streaming from Kafka through **am-gateway** to Flutter over STOMP/WebSocket (`/v1/streams`).
+Live streaming from Kafka through **am-gateway** to Flutter over STOMP/WebSocket.
+
+The gateway service receives the internal endpoint `/v1/streams`. Through the
+public Traefik ingress, clients connect to `/gateway/v1/streams`; the ingress
+strips `/gateway` before forwarding the upgrade.
 
 Companion to [dashboard-streaming](../dashboard-streaming/README.md) (widget-level dashboard topics).
 
