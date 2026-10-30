@@ -77,6 +77,24 @@ class KafkaRelayServiceTest {
     }
 
     @Test
+    void handleStockUpdate_relaysIndexSymbolsWithoutNormalizingSpaces() {
+        String message = """
+                {
+                  "eventType": "EQUITY_PRICE_UPDATE",
+                  "equityPrices": [
+                    {"symbol": "NIFTY 50", "lastPrice": 22000.5},
+                    {"symbol": "NIFTY BANK", "lastPrice": 48000.0}
+                  ]
+                }
+                """;
+
+        relayService.handleStockUpdate(message);
+
+        verify(messagingTemplate).convertAndSend(eq("/topic/stock/NIFTY 50"), any(String.class));
+        verify(messagingTemplate).convertAndSend(eq("/topic/stock/NIFTY BANK"), any(String.class));
+    }
+
+    @Test
     void handlePortfolioStreamUpdate_relaysToUserQueue() {
         String message = """
                 {

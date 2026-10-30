@@ -2,7 +2,11 @@
 
 How live data flows from backend Kafka topics through **am-gateway** [`KafkaRelayService`](../../services/am-gateway/src/main/java/com/am/gateway/service/KafkaRelayService.java) to Flutter over STOMP.
 
-**Transport:** WebSocket upgrade at `GET /v1/streams` → STOMP `CONNECT` with JWT (see [`SecurityConfig`](../../services/am-gateway/src/main/java/com/am/gateway/config/SecurityConfig.java)). Not UDP.
+**Transport:** WebSocket upgrade at the internal gateway path `GET /v1/streams`.
+For dev, preprod, prod, and DR ingress traffic, clients use
+`GET /gateway/v1/streams`; Traefik strips `/gateway` before forwarding the
+upgrade. The upgrade is followed by a STOMP `CONNECT` with JWT (see
+[`SecurityConfig`](../../services/am-gateway/src/main/java/com/am/gateway/config/SecurityConfig.java)). Not UDP.
 
 ---
 

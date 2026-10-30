@@ -38,6 +38,7 @@ public class MarketStreamProxyService {
     }
 
     public void connect(String userId, Map<String, Object> body) {
+        long startedAt = System.nanoTime();
         try (FlowSpan span = flowLogger.start("gateway.market.connect.proxy",
                 "userId", userId,
                 "market_url", marketDataUrl)) {
@@ -58,10 +59,13 @@ public class MarketStreamProxyService {
 
             flowLogger.complete(span,
                     "status", response.getStatusCode().value(),
-                    "response_bytes", response.getBody() != null ? response.getBody().length() : 0);
-            log.info("[MarketProxy] Connect proxied for user {} → status {}", userId, response.getStatusCode());
+                    "response_bytes", response.getBody() != null ? response.getBody().length() : 0,
+                    "duration_ms", (System.nanoTime() - startedAt) / 1_000_000);
+            log.info("[MarketProxy] Connect proxied for user {} → status {} duration_ms={}",
+                    userId, response.getStatusCode(), (System.nanoTime() - startedAt) / 1_000_000);
         } catch (Exception e) {
-            log.error("[MarketProxy] Failed to proxy market connect for user {}", userId, e);
+            log.error("[MarketProxy] Failed to proxy market connect for user {} duration_ms={}",
+                    userId, (System.nanoTime() - startedAt) / 1_000_000, e);
         }
     }
 }

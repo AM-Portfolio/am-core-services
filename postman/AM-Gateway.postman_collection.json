@@ -52,7 +52,7 @@
     },
     {
       "name": "WebSocket (STOMP)",
-      "description": "The Gateway uses STOMP over WebSocket. These are NOT traditional HTTP requests — use Postman's WebSocket request type or a STOMP client.\n\nWebSocket endpoint: {{ws_url}}/ws-gateway-raw\n\nAfter connecting, send STOMP frames to the following destinations.",
+      "description": "The Gateway uses STOMP over WebSocket. These are NOT traditional HTTP requests — use Postman's WebSocket request type or a STOMP client.\n\nWebSocket endpoint: {{ws_url}}{{ws_path}}\n\nUse /v1/streams for a direct local gateway connection. Use /gateway/v1/streams through the dev, preprod, prod, or DR ingress.\n\nAfter connecting, send STOMP frames to the following destinations.",
       "item": [
         {
           "name": "WS - Subscribe to Portfolio",
@@ -62,9 +62,9 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "{{gateway_url}}/ws-gateway-raw",
-              "host": ["{{gateway_url}}"],
-              "path": ["ws-gateway-raw"]
+              "raw": "{{ws_url}}{{ws_path}}",
+              "host": ["{{ws_url}}"],
+              "path": ["{{ws_path}}"]
             },
             "description": "WebSocket upgrade endpoint.\n\nAfter connecting, send a STOMP SEND frame:\n\nDestination: /app/portfolio/subscribe\nBody: {\"userId\": \"{{user_id}}\", \"portfolioId\": \"{{portfolio_id}}\"}\n\nSubscribe to updates on: /user/queue/portfolio/dashboard"
           }
@@ -75,9 +75,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/ws-gateway-raw",
-              "host": ["{{gateway_url}}"],
-              "path": ["ws-gateway-raw"]
+              "raw": "{{ws_url}}{{ws_path}}",
+              "host": ["{{ws_url}}"],
+              "path": ["{{ws_path}}"]
             },
             "description": "After connecting via WebSocket, send heartbeat to renew Redis TTL.\n\nSTOMP Destination: /app/portfolio/heartbeat\nBody: {\"userId\": \"{{user_id}}\"}"
           }
@@ -88,9 +88,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/ws-gateway-raw",
-              "host": ["{{gateway_url}}"],
-              "path": ["ws-gateway-raw"]
+              "raw": "{{ws_url}}{{ws_path}}",
+              "host": ["{{ws_url}}"],
+              "path": ["{{ws_path}}"]
             },
             "description": "After connecting via WebSocket, send unsubscribe to remove from Redis.\n\nSTOMP Destination: /app/portfolio/unsubscribe\nBody: {\"userId\": \"{{user_id}}\"}"
           }
@@ -108,6 +108,11 @@
       "key": "ws_url",
       "value": "ws://localhost:8080",
       "description": "WebSocket URL (ws:// or wss://)"
+    },
+    {
+      "key": "ws_path",
+      "value": "/v1/streams",
+      "description": "Direct local gateway path. Set to /gateway/v1/streams when connecting through dev, preprod, prod, or DR ingress."
     },
     {
       "key": "jwt_token",
