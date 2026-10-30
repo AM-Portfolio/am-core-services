@@ -1,0 +1,26 @@
+# TODO — Market WebSocket live updates
+
+- [x] Add converter tests for Upstox `marketFF` and `indexFF`.
+- [x] Support index LTP when optional index OHLC is absent.
+- [x] Reject malformed/zero-LTP feeds without dropping the rest of the batch.
+- [x] Normalize symbol mapping for whitespace/case and direct instrument keys.
+- [x] Add dedicated symbol-mapping tests for whitespace/case index aliases.
+- [x] Define unresolved-symbol behavior; never silently fall back from an unknown index to an equity.
+- [x] Preserve provider quote timestamps and handle missing/invalid event fields.
+- [x] Add gateway destination/relay test for index symbols.
+- [x] Remove the silent 20-symbol UI cap.
+- [x] Subscribe global indices when they are displayed.
+- [x] Update selected-index and stock/constituent UI state from live quotes.
+- [x] Subscribe the stock-detail page to its opened symbol and unsubscribe on close.
+- [x] Merge live stock-detail ticks into the visible chart series.
+- [x] Prevent older/out-of-order ticks from overwriting newer quotes.
+- [ ] Test market-closed, polling, snapshot-only, and provider-fallback behavior.
+- [ ] Test reconnects for duplicate topic/upstream subscriptions.
+- [ ] Handle missing `change`/`changePercent` safely in the stock-detail UI.
+- [ ] Add end-to-end timestamp logging across UI → gateway → market → Upstox → Kafka → gateway → UI.
+- [ ] Redact access tokens and authorization headers from all streaming logs.
+- [ ] Measure the first-message delay before changing the synchronous proxy design.
+- [x] Run market backend and Flutter focused tests.
+- [ ] Run gateway tests after private Maven package credentials are available.
+- [ ] Run a browser smoke test with at least one stock and one index for several minutes.
+- [x] Review this plan before implementation.
