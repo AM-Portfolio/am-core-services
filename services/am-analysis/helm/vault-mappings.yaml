@@ -18,6 +18,8 @@ vault:
     mongodb:
       mappings:
         MONGODB_CONNECTION_URL: "url" # mongodb://admin:pass@host:27017
+        MONGODB_DATABASE: "AM_ANALYSIS_MONGO_DATABASE"
+        SPRING_DATA_MONGODB_DATABASE: "AM_ANALYSIS_MONGO_DATABASE"
 
     kafka:
       mappings:

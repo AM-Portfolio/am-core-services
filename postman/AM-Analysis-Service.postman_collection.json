@@ -16,8 +16,13 @@
             "header": [],
             "url": {
               "raw": "{{analysis_url}}/actuator/health",
-              "host": ["{{analysis_url}}"],
-              "path": ["actuator", "health"]
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
             }
           }
         },
@@ -28,8 +33,13 @@
             "header": [],
             "url": {
               "raw": "{{analysis_url}}/swagger-ui/index.html",
-              "host": ["{{analysis_url}}"],
-              "path": ["swagger-ui", "index.html"]
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "swagger-ui",
+                "index.html"
+              ]
             }
           }
         }
@@ -43,13 +53,23 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/summary?userId={{user_id}}",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "summary"],
-              "query": [{ "key": "userId", "value": "{{user_id}}" }]
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/summary",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "summary"
+              ],
+              "query": []
             },
             "description": "Returns the top-level dashboard summary for a user (total invested, current value, P&L etc.)."
           }
@@ -59,15 +79,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/portfolio-overviews?userId={{user_id}}",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "portfolio-overviews"],
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/portfolio-overviews",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "portfolio-overviews"
+              ],
               "query": [
-                { "key": "userId", "value": "{{user_id}}" },
-                { "key": "portfolioId", "value": "", "disabled": true, "description": "Optional. Filter to a single portfolio." }
+                {
+                  "key": "portfolioId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Optional. Filter to a single portfolio."
+                }
               ]
             },
             "description": "Returns one overview card per portfolio. Omit portfolioId to get all portfolios."
@@ -78,15 +112,27 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/portfolio-overviews?userId={{user_id}}&portfolioId={{portfolio_id}}",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "portfolio-overviews"],
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/portfolio-overviews?portfolioId=%7B%7Bportfolio_id%7D%7D",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "portfolio-overviews"
+              ],
               "query": [
-                { "key": "userId", "value": "{{user_id}}" },
-                { "key": "portfolioId", "value": "{{portfolio_id}}" }
+                {
+                  "key": "portfolioId",
+                  "value": "{{portfolio_id}}"
+                }
               ]
             }
           }
@@ -96,15 +142,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/top-movers?userId={{user_id}}&timeFrame=1D",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "top-movers"],
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/top-movers?timeFrame=1D",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "top-movers"
+              ],
               "query": [
-                { "key": "userId", "value": "{{user_id}}" },
-                { "key": "timeFrame", "value": "1D", "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL" }
+                {
+                  "key": "timeFrame",
+                  "value": "1D",
+                  "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL"
+                }
               ]
             }
           }
@@ -114,15 +173,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/performance?userId={{user_id}}&timeFrame=1M",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "performance"],
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/performance?timeFrame=1M",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "performance"
+              ],
               "query": [
-                { "key": "userId", "value": "{{user_id}}" },
-                { "key": "timeFrame", "value": "1M", "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL" }
+                {
+                  "key": "timeFrame",
+                  "value": "1M",
+                  "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL"
+                }
               ]
             }
           }
@@ -132,21 +204,60 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/recent-activity?userId={{user_id}}&page=0&size=20",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "recent-activity"],
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/recent-activity?page=0&size=20",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "recent-activity"
+              ],
               "query": [
-                { "key": "userId", "value": "{{user_id}}" },
-                { "key": "type", "value": "", "disabled": true, "description": "Optional: trade type filter" },
-                { "key": "status", "value": "", "disabled": true, "description": "Optional: WIN, LOSS, NEUTRAL" },
-                { "key": "sector", "value": "", "disabled": true, "description": "Optional: sector name" },
-                { "key": "portfolioName", "value": "", "disabled": true, "description": "Optional: portfolio name filter" },
-                { "key": "sortBy", "value": "TIMESTAMP", "description": "Options: TIMESTAMP, PROFIT_LOSS" },
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" }
+                {
+                  "key": "type",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Optional: trade type filter"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Optional: WIN, LOSS, NEUTRAL"
+                },
+                {
+                  "key": "sector",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Optional: sector name"
+                },
+                {
+                  "key": "portfolioName",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Optional: portfolio name filter"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "TIMESTAMP",
+                  "description": "Options: TIMESTAMP, PROFIT_LOSS"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
               ]
             },
             "description": "Paginated, filterable recent activity feed. Supports filters: type, status (WIN/LOSS/NEUTRAL), sector, portfolioName, sortBy."
@@ -157,13 +268,23 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
-              "raw": "{{analysis_url}}/v1/analysis/dashboard/publish-update?userId={{user_id}}",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "dashboard", "publish-update"],
-              "query": [{ "key": "userId", "value": "{{user_id}}" }]
+              "raw": "{{analysis_url}}/v1/analysis/dashboard/publish-update",
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "dashboard",
+                "publish-update"
+              ],
+              "query": []
             },
             "description": "Manually trigger a dashboard recalculation and publish to WebSocket subscribers."
           }
@@ -179,14 +300,35 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
-              { "key": "groupBy", "value": "STOCK", "description": "Optional: STOCK or SECTOR" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "groupBy",
+                "value": "STOCK",
+                "description": "Optional: STOCK or SECTOR"
+              }
             ],
             "url": {
               "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/allocation?groupBy=STOCK",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "allocation"],
-              "query": [{ "key": "groupBy", "value": "STOCK", "description": "Options: STOCK, SECTOR" }]
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "portfolio",
+                "{{portfolio_id}}",
+                "allocation"
+              ],
+              "query": [
+                {
+                  "key": "groupBy",
+                  "value": "STOCK",
+                  "description": "Options: STOCK, SECTOR"
+                }
+              ]
             },
             "description": "Get allocation breakdown for a specific portfolio. type=portfolio | stock | holding"
           }
@@ -196,13 +338,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
               "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/allocation?groupBy=SECTOR",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "allocation"],
-              "query": [{ "key": "groupBy", "value": "SECTOR" }]
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "portfolio",
+                "{{portfolio_id}}",
+                "allocation"
+              ],
+              "query": [
+                {
+                  "key": "groupBy",
+                  "value": "SECTOR"
+                }
+              ]
             }
           }
         },
@@ -211,13 +369,30 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
               "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/performance?timeFrame=1M",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "performance"],
-              "query": [{ "key": "timeFrame", "value": "1M", "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL" }]
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "portfolio",
+                "{{portfolio_id}}",
+                "performance"
+              ],
+              "query": [
+                {
+                  "key": "timeFrame",
+                  "value": "1M",
+                  "description": "Options: 1D, 1W, 1M, 3M, 6M, 1Y, ALL"
+                }
+              ]
             }
           }
         },
@@ -226,15 +401,31 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
               "raw": "{{analysis_url}}/v1/analysis/portfolio/top-movers?timeFrame=1D&groupBy=STOCK",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "portfolio", "top-movers"],
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "portfolio",
+                "top-movers"
+              ],
               "query": [
-                { "key": "timeFrame", "value": "1D" },
-                { "key": "groupBy", "value": "STOCK" }
+                {
+                  "key": "timeFrame",
+                  "value": "1D"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "STOCK"
+                }
               ]
             },
             "description": "Top movers across all entities of a given type."
@@ -245,15 +436,32 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
             ],
             "url": {
               "raw": "{{analysis_url}}/v1/analysis/portfolio/{{portfolio_id}}/top-movers?timeFrame=1D&groupBy=STOCK",
-              "host": ["{{analysis_url}}"],
-              "path": ["v1", "analysis", "portfolio", "{{portfolio_id}}", "top-movers"],
+              "host": [
+                "{{analysis_url}}"
+              ],
+              "path": [
+                "v1",
+                "analysis",
+                "portfolio",
+                "{{portfolio_id}}",
+                "top-movers"
+              ],
               "query": [
-                { "key": "timeFrame", "value": "1D" },
-                { "key": "groupBy", "value": "STOCK" }
+                {
+                  "key": "timeFrame",
+                  "value": "1D"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "STOCK"
+                }
               ]
             }
           }

@@ -189,6 +189,37 @@ def cmd_notify() -> int:
         with open(gh_out, "a", encoding="utf-8") as f:
             f.write(f"tracking_id={tid}\n")
     print(f"qa-agent activated for {os.environ['SERVICE']} on {os.environ['BRANCH']}")
+
+    # Fire-and-forget Specs onboard prep (OpenAPI → tools → payloads → smoke)
+    onboard_url = f"{base}/v2/workflows/service-onboard"
+    onboard_payload = {
+        "service": os.environ["SERVICE"],
+        "environment": os.environ.get("ENV") or "dev",
+        "allow_llm": True,
+        "use_temporal": True,
+        "wait": False,
+    }
+    print(f"POST {onboard_url} (onboard prep, fire-and-forget)")
+    try:
+        oc, ob = _http_json(
+            onboard_url, method="POST", data=onboard_payload, token=token, timeout=60
+        )
+        print(f"onboard HTTP {oc}")
+        print(ob[:2000] if ob else "")
+        if 200 <= oc < 300:
+            try:
+                odata = json.loads(ob)
+            except json.JSONDecodeError:
+                odata = {}
+            owid = odata.get("workflow_id") or ""
+            if gh_out and owid:
+                with open(gh_out, "a", encoding="utf-8") as f:
+                    f.write(f"onboard_workflow_id={owid}\n")
+        else:
+            print(f"::warning::service onboard start failed HTTP {oc}", file=sys.stderr)
+    except Exception as e:
+        print(f"::warning::service onboard start error: {e}", file=sys.stderr)
+
     return 0
 
 

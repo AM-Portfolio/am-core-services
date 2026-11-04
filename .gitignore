@@ -3,9 +3,20 @@ target/
 *.log
 *.txt
 
+# Python runtime
+**/__pycache__/
+*.py[cod]
+*$py.class
+
 # Local image/jar patch scratch (never commit)
 services/am-mcp-server/_patch_build/
 **/_patch_build/
+
+# MCP server local runtime / pilot artifacts (never commit)
+services/am-mcp-server/dist/
+services/am-mcp-server/scripts/_tmp_*.py
+**/*.token
+**/*.local.xml
 
 # IDE
 .idea/

@@ -11,6 +11,12 @@ vault:
         REDIS_HOSTNAME: "host"
         REDIS_PASSWORD: "password"
         REDIS_PORT: "port"
+        # Contabo dig/preprod ACL (apps/data/*/infra/redis username)
+        REDIS_USERNAME: "username"
+        SPRING_DATA_REDIS_USERNAME: "username"
+        SPRING_DATA_REDIS_PASSWORD: "password"
+        SPRING_DATA_REDIS_HOST: "host"
+        SPRING_DATA_REDIS_PORT: "port"
 
     identity-oidc:
       mappings:

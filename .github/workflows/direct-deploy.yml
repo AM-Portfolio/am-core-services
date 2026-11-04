@@ -24,6 +24,16 @@ on:
         required: true
         default: "latest"
         type: string
+      git_ref:
+        description: "Service repo branch/tag (empty = workflow branch). Preprod feature-branch."
+        required: false
+        default: ""
+        type: string
+      force_helm:
+        description: "Preprod: allow Helm when Argo auto on main (may revert)"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   setup:
@@ -82,4 +92,6 @@ jobs:
       environment: ${{ github.event.inputs.environment }}
       image_tag: ${{ github.event.inputs.image_tag }}
       namespace: ${{ needs.setup.outputs.namespace }}
+      git_ref: ${{ github.event.inputs.git_ref }}
+      force_helm: ${{ github.event.inputs.force_helm == 'true' }}
     secrets: inherit
