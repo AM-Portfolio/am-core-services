@@ -6,17 +6,17 @@
   <servers>
     <server>
       <id>github-investment</id>
-      <username>priyanshukpd</username>
+      <username>ssd2658</username>
       <password>${env.GHCR_TOKEN}</password>
     </server>
     <server>
       <id>github-trade</id>
-      <username>priyanshukpd</username>
+      <username>ssd2658</username>
       <password>${env.GHCR_TOKEN}</password>
     </server>
     <server>
       <id>github</id>
-      <username>priyanshukpd</username>
+      <username>ssd2658</username>
       <password>${env.GHCR_TOKEN}</password>
     </server>
   </servers>
